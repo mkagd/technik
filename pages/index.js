@@ -135,23 +135,26 @@ export default function Home() {
                   >
                     Moje zamówienie
                   </Link>
+                  <Link
+                    href="/rejestracja"
+                    className="px-4 py-2 text-blue-600 hover:text-blue-800 transition-colors"
+                  >
+                    Zarejestruj się
+                  </Link>
                   
-                  {/* Rozwijane menu konta - responsive */}
+                  {/* Rozwijane menu logowania - responsive */}
                   <div className="relative dropdown-container">
                     <button
                       onClick={() => setShowLoginDropdown(!showLoginDropdown)}
                       className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
                     >
                       <FiUser className="h-4 w-4" />
-                      Konto
+                      Logowanie
                       <FiChevronDown className={`h-4 w-4 transition-transform ${showLoginDropdown ? 'rotate-180' : ''}`} />
                     </button>
                     
                     {showLoginDropdown && (
-                      <div className="absolute top-full mt-2 right-0 bg-white rounded-lg shadow-lg border border-gray-200 py-2 min-w-[220px] z-50">
-                        <div className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wide border-b border-gray-100">
-                          Logowanie
-                        </div>
+                      <div className="absolute top-full mt-2 right-0 bg-white rounded-lg shadow-lg border border-gray-200 py-2 min-w-[200px] z-50">
                         <Link
                           href="/logowanie"
                           className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
@@ -174,17 +177,6 @@ export default function Home() {
                         >
                           🛡️ Administrator
                         </Link>
-                        
-                        <div className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wide border-t border-gray-100 mt-1">
-                          Nowe konto
-                        </div>
-                        <Link
-                          href="/rejestracja"
-                          className="block px-4 py-2 text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors"
-                          onClick={() => setShowLoginDropdown(false)}
-                        >
-                          ✨ Zarejestruj się
-                        </Link>
                       </div>
                     )}
                   </div>
@@ -196,24 +188,24 @@ export default function Home() {
       </nav>
 
       {/* Main Content */}
-      <main className="min-h-screen bg-gradient-to-br from-orange-50 via-red-50 to-orange-100 p-4 relative overflow-hidden">
+      <main className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 p-4 relative overflow-hidden">
         {/* Background decoration */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-orange-400/20 to-red-400/20 rounded-full blur-3xl"></div>
-          <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-br from-red-400/20 to-orange-400/20 rounded-full blur-3xl"></div>
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-br from-yellow-300/10 to-orange-300/10 rounded-full blur-3xl"></div>
+          <div className="absolute -top-32 -right-32 w-64 h-64 bg-gradient-to-br from-blue-400/20 to-indigo-400/20 rounded-full blur-3xl"></div>
+          <div className="absolute -bottom-32 -left-32 w-64 h-64 bg-gradient-to-br from-indigo-400/20 to-blue-400/20 rounded-full blur-3xl"></div>
         </div>
 
         {/* Content */}
         <div className="relative z-10">
           <div className="text-center py-12">
-            <h1 className="text-4xl md:text-6xl font-bold text-gray-800 mb-4">
-              <span className="bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">
-                Technik Serwis 🚀
+            <h1 className="text-5xl md:text-7xl font-extrabold text-gray-900 mb-6 leading-tight">
+              <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-800 bg-clip-text text-transparent">
+                Technik Serwis
               </span>
             </h1>
-            <p className="text-xl text-gray-700 mb-8">
-              Profesjonalne usługi serwisowe na najwyższym poziomie - Wdrożono z Vercel!
+            <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed">
+              Profesjonalne naprawy sprzętu elektronicznego z gwarancją zadowolenia. 
+              Rezerwuj online i śledź status swojego zamówienia.
             </p>
             <div className="flex items-center justify-center gap-8 text-sm text-gray-600 mb-12">
               <div className="flex items-center gap-2">
