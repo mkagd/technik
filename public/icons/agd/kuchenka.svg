@@ -1,0 +1,12 @@
+<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Obudowa kuchenki -->
+  <rect x="8" y="16" width="32" height="24" rx="4" stroke="white" stroke-width="2" fill="none"/>
+  
+  <!-- Palniki -->
+  <circle cx="18" cy="26" r="4" stroke="white" stroke-width="2" fill="none"/>
+  <circle cx="30" cy="26" r="4" stroke="white" stroke-width="2" fill="none"/>
+  
+  <!-- Nogi -->
+  <rect x="12" y="8" width="4" height="8" fill="white"/>
+  <rect x="32" y="8" width="4" height="8" fill="white"/>
+</svg>

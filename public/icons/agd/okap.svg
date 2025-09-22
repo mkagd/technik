@@ -1,0 +1,10 @@
+<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Korpus okapu -->
+  <path d="M8 16h32v12c0 2.2-1.8 4-4 4H12c-2.2 0-4-1.8-4-4V16z" stroke="white" stroke-width="2" fill="none"/>
+  
+  <!-- Kształt pod szafką -->
+  <path d="M16 16V12c0-2.2 1.8-4 4-4h8c2.2 0 4 1.8 4 4v4" stroke="white" stroke-width="2" fill="none"/>
+  
+  <!-- Rury wyciągowe -->
+  <path d="M18 34v4M30 34v4" stroke="white" stroke-width="2"/>
+</svg>

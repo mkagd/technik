@@ -1,0 +1,11 @@
+<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Obudowa lodówki -->
+  <rect x="10" y="4" width="28" height="40" rx="4" stroke="white" stroke-width="2" fill="none"/>
+  
+  <!-- Podział na zamrażarkę -->
+  <path d="M10 22h28" stroke="white" stroke-width="2"/>
+  
+  <!-- Uchwyty -->
+  <rect x="14" y="10" width="2" height="8" fill="white"/>
+  <rect x="14" y="26" width="2" height="8" fill="white"/>
+</svg>
