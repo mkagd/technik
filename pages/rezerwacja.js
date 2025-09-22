@@ -19,7 +19,8 @@ export default function Rezerwacja() {
         device: '',
         brand: '',
         problem: '',
-        availability: ''
+        timeSlot: '',
+        additionalNotes: ''
     });
 
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -92,12 +93,14 @@ export default function Rezerwacja() {
     const nextStep = () => {
         if (currentStep < totalSteps) {
             setCurrentStep(currentStep + 1);
+            setMessage(''); // Czyszczenie komunikatu przy przejściu do następnego kroku
         }
     };
 
     const prevStep = () => {
         if (currentStep > 1) {
             setCurrentStep(currentStep - 1);
+            setMessage(''); // Czyszczenie komunikatu przy powrocie
         }
     };
 
@@ -161,7 +164,7 @@ export default function Rezerwacja() {
             case 1: return formData.category && formData.problem; // Co naprawiamy - tylko kategoria i problem
             case 2: return formData.postalCode && formData.city && formData.street; // Gdzie - kod pocztowy, miasto, ulica
             case 3: return formData.name && formData.phone; // Dane kontaktowe (email opcjonalny)
-            case 4: return true; // availability is optional
+            case 4: return formData.timeSlot; // Dostępność - wymagany przedział czasowy
             default: return false;
         }
     };
@@ -459,46 +462,49 @@ export default function Rezerwacja() {
 
                                 <div className="space-y-4">
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                                            Preferowany czas wizyty
+                                        <label className="block text-sm font-medium text-gray-700 mb-3">
+                                            🕒 W jakich godzinach możemy umówić wizytę? *
                                         </label>
-                                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+                                        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-4">
                                             {[
-                                                'Dzisiaj po 16:00',
-                                                'Jutro rano',
-                                                'Jutro po południu',
-                                                'W weekend',
-                                                'Pon-Pt 9-17',
-                                                'Wieczorami',
-                                                'Do uzgodnienia',
-                                                'Jak najszybciej'
-                                            ].map((time) => (
-                                                <label key={time} className={`cursor-pointer border rounded-lg p-2 text-center text-sm transition-colors ${
-                                                    formData.availability === time 
-                                                        ? 'border-blue-500 bg-blue-50 text-blue-700' 
-                                                        : 'border-gray-200 hover:border-gray-300'
+                                                { value: '8:00-12:00', label: '🌅 Rano', desc: '8:00-12:00', color: 'from-orange-400 to-orange-600' },
+                                                { value: '12:00-16:00', label: '☀️ Południe', desc: '12:00-16:00', color: 'from-yellow-400 to-yellow-600' },
+                                                { value: '16:00-20:00', label: '🌆 Popołudnie', desc: '16:00-20:00', color: 'from-blue-400 to-blue-600' },
+                                                { value: 'Weekend', label: '🏠 Weekend', desc: 'Sobota/Niedziela', color: 'from-green-400 to-green-600' },
+                                            ].map((option) => (
+                                                <label key={option.value} className={`cursor-pointer border-2 rounded-xl p-4 text-center transition-all duration-300 transform hover:scale-105 ${
+                                                    formData.timeSlot === option.value 
+                                                        ? 'border-blue-500 bg-gradient-to-br from-blue-50 to-blue-100 shadow-lg' 
+                                                        : 'border-gray-200 hover:border-gray-300 hover:shadow-md bg-white'
                                                 }`}>
                                                     <input
                                                         type="radio"
-                                                        name="availability"
-                                                        value={time}
-                                                        checked={formData.availability === time}
+                                                        name="timeSlot"
+                                                        value={option.value}
+                                                        checked={formData.timeSlot === option.value}
                                                         onChange={handleChange}
                                                         className="sr-only"
                                                     />
-                                                    {time}
+                                                    <div className={`w-12 h-12 mx-auto mb-2 rounded-full bg-gradient-to-br ${option.color} flex items-center justify-center text-white text-xl font-bold shadow-md`}>
+                                                        {option.label.split(' ')[0]}
+                                                    </div>
+                                                    <div className="text-sm font-semibold text-gray-800 mb-1">{option.label.split(' ').slice(1).join(' ')}</div>
+                                                    <div className="text-xs text-gray-500">{option.desc}</div>
                                                 </label>
                                             ))}
                                         </div>
+                                        <p className="text-sm text-gray-500 mt-2">
+                                            💡 Wybierz preferowany przedział czasowy - ułatwi to planowanie wizyty
+                                        </p>
                                     </div>
 
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                                            Dodatkowe uwagi
+                                            Dodatkowe uwagi o dostępności
                                         </label>
                                         <textarea
-                                            name="availability"
-                                            value={formData.availability}
+                                            name="additionalNotes"
+                                            value={formData.additionalNotes}
                                             onChange={handleChange}
                                             rows={3}
                                             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -518,27 +524,31 @@ export default function Rezerwacja() {
                                                 {formData.device}
                                             </div>
                                             <div><strong>Problem:</strong> {formData.problem}</div>
-                                            {formData.availability && <div><strong>Dostępność:</strong> {formData.availability}</div>}
+                                            <div><strong>Preferowane godziny:</strong> {formData.timeSlot}</div>
+                                            {formData.additionalNotes && <div><strong>Uwagi:</strong> {formData.additionalNotes}</div>}
                                         </div>
                                     </div>
+                                </div>
+                            </div>
+                        )}
 
-                                    {message && (
-                                        <div className={`p-4 rounded-lg text-sm ${message.includes('✅')
-                                            ? 'bg-green-100 text-green-800 border border-green-200'
-                                            : 'bg-red-100 text-red-800 border border-red-200'
-                                            }`}>
-                                            <div className="whitespace-pre-line">{message}</div>
-                                            {message.includes('✅') && message.includes('🗺️') && (
-                                                <div className="mt-3">
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => router.push('/mapa')}
-                                                        className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors font-medium"
-                                                    >
-                                                        🗺️ Zobacz na mapie
-                                                    </button>
-                                                </div>
-                                            )}
+                        {/* Komunikaty - poza krokami, zawsze widoczne */}
+                        {message && (
+                            <div className="p-6 border-t">
+                                <div className={`p-4 rounded-lg text-sm ${message.includes('✅')
+                                    ? 'bg-green-100 text-green-800 border border-green-200'
+                                    : 'bg-red-100 text-red-800 border border-red-200'
+                                    }`}>
+                                    <div className="whitespace-pre-line">{message}</div>
+                                    {message.includes('✅') && message.includes('🗺️') && (
+                                        <div className="mt-3">
+                                            <button
+                                                type="button"
+                                                onClick={() => router.push('/mapa')}
+                                                className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors font-medium"
+                                            >
+                                                🗺️ Zobacz na mapie
+                                            </button>
                                         </div>
                                     )}
                                 </div>
