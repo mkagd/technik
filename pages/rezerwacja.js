@@ -101,7 +101,7 @@ export default function Rezerwacja() {
 
     const isStepValid = (step) => {
         switch (step) {
-            case 1: return formData.name && formData.phone && formData.email;
+            case 1: return formData.name && formData.phone; // email nie jest wymagany
             case 2: return formData.fullAddress || (formData.city && formData.street);
             case 3: return formData.category && formData.device && formData.problem;
             case 4: return true; // availability is optional
