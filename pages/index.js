@@ -77,105 +77,96 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Navigation */}
+      {/* Minimal Professional Navigation Bar */}
       <nav className="bg-white shadow-sm border-b relative z-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-4">
+          <div className="flex justify-between items-center py-2.5">
+            {/* Logo/Brand */}
             <div className="flex items-center">
-              <h1 className="text-xl font-bold text-gray-900">TechSerwis</h1>
+              <div className="text-sm font-semibold text-gray-900 tracking-wide">TECHSERWIS</div>
             </div>
-            <div className="flex items-center space-x-4">
+            
+            {/* Navigation Menu */}
+            <div className="flex items-center space-x-3 text-sm">
               {currentUser ? (
-                // Menu dla zalogowanego użytkownika
+                // Logged user menu
                 <>
-                  <div className="flex items-center space-x-2 text-gray-700">
-                    <FiUser className="h-4 w-4" />
-                    <span className="text-sm">
-                      Witaj, {currentUser.firstName} {currentUser.lastName}
-                    </span>
-                  </div>
-                  <Link
-                    href="/historia-napraw"
-                    className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
-                  >
-                    Historia napraw
-                  </Link>
+                  <span className="text-xs text-gray-500 hidden sm:inline">
+                    {currentUser.firstName} {currentUser.lastName}
+                  </span>
                   <Link
                     href="/moje-zamowienie"
-                    className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
+                    className="px-2 py-1 text-gray-600 hover:text-blue-600 transition-colors text-xs"
                   >
-                    Moje zamówienie
+                    Zamówienia
                   </Link>
                   <Link
-                    href="/profil"
-                    className="px-4 py-2 text-blue-600 hover:text-blue-800 transition-colors"
+                    href="/historia-napraw"
+                    className="px-2 py-1 text-gray-600 hover:text-blue-600 transition-colors text-xs hidden sm:inline-block"
                   >
-                    Mój profil
+                    Historia
                   </Link>
                   <Link
                     href="/admin-new"
-                    className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
+                    className="px-2 py-1 bg-gray-600 text-white rounded text-xs hover:bg-gray-700 transition-colors"
                   >
-                    Panel Admin
+                    Admin
                   </Link>
                   <button
                     onClick={handleLogout}
-                    className="flex items-center space-x-2 px-4 py-2 text-red-600 hover:text-red-800 transition-colors"
+                    className="text-xs text-red-600 hover:text-red-700 transition-colors px-2 py-1"
                   >
-                    <FiLogOut className="h-4 w-4" />
-                    <span>Wyloguj</span>
+                    Wyloguj
                   </button>
                 </>
               ) : (
-                // Menu dla niezalogowanego użytkownika
+                // Non-logged user menu  
                 <>
                   <Link
                     href="/moje-zamowienie"
-                    className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
+                    className="px-2 py-1 text-gray-600 hover:text-blue-600 transition-colors text-xs"
                   >
-                    Moje zamówienie
+                    Zamówienia
                   </Link>
                   <Link
                     href="/rejestracja"
-                    className="px-4 py-2 text-blue-600 hover:text-blue-800 transition-colors"
+                    className="px-2 py-1 text-blue-600 hover:text-blue-700 transition-colors text-xs"
                   >
-                    Zarejestruj się
+                    Rejestracja
                   </Link>
                   
-                  {/* Rozwijane menu logowania - responsive */}
+                  {/* Compact Login Dropdown */}
                   <div className="relative dropdown-container">
                     <button
                       onClick={() => setShowLoginDropdown(!showLoginDropdown)}
-                      className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
+                      className="px-3 py-1.5 bg-blue-600 text-white rounded text-xs hover:bg-blue-700 transition-colors flex items-center gap-1"
                     >
-                      <FiUser className="h-4 w-4" />
                       Logowanie
-                      <FiChevronDown className={`h-4 w-4 transition-transform ${showLoginDropdown ? 'rotate-180' : ''}`} />
+                      <FiChevronDown className={`h-3 w-3 transition-transform ${showLoginDropdown ? 'rotate-180' : ''}`} />
                     </button>
                     
                     {showLoginDropdown && (
-                      <div className="absolute top-full mt-2 right-0 bg-white rounded-lg shadow-lg border border-gray-200 py-2 min-w-[200px] z-50">
+                      <div className="absolute top-full mt-1 right-0 bg-white rounded shadow-lg border border-gray-200 py-1 min-w-[140px] z-50">
                         <Link
                           href="/logowanie"
-                          className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+                          className="block px-3 py-1.5 text-xs text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
                           onClick={() => setShowLoginDropdown(false)}
                         >
-                          <FiUser className="inline h-4 w-4 mr-2" />
-                          Klient
+                          👤 Klient
                         </Link>
                         <Link
                           href="/pracownik-logowanie"
-                          className="block px-4 py-2 text-gray-700 hover:bg-green-50 hover:text-green-600 transition-colors"
+                          className="block px-3 py-1.5 text-xs text-gray-700 hover:bg-green-50 hover:text-green-600 transition-colors"
                           onClick={() => setShowLoginDropdown(false)}
                         >
                           🔧 Pracownik
                         </Link>
                         <Link
                           href="/admin-new"
-                          className="block px-4 py-2 text-gray-700 hover:bg-gray-50 hover:text-gray-600 transition-colors"
+                          className="block px-3 py-1.5 text-xs text-gray-700 hover:bg-gray-50 hover:text-gray-600 transition-colors"
                           onClick={() => setShowLoginDropdown(false)}
                         >
-                          🛡️ Administrator
+                          🛡️ Admin
                         </Link>
                       </div>
                     )}
@@ -197,31 +188,16 @@ export default function Home() {
 
         {/* Content */}
         <div className="relative z-10">
-          <div className="text-center py-12">
-            <h1 className="text-5xl md:text-7xl font-extrabold text-gray-900 mb-6 leading-tight">
+          <div className="text-center py-16">
+            <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-4 leading-tight">
               <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-800 bg-clip-text text-transparent">
-                Technik Serwis
+                Profesjonalny Serwis
               </span>
             </h1>
-            <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed">
-              Profesjonalne naprawy sprzętu elektronicznego z gwarancją zadowolenia. 
-              Rezerwuj online i śledź status swojego zamówienia.
+            <p className="text-lg md:text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
+              Szybko, sprawnie i profesjonalnie - wszystko czego potrzebujesz w jednym miejscu
             </p>
-            <div className="flex items-center justify-center gap-8 text-sm text-gray-600 mb-12">
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                <span>12-miesięczna gwarancja</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
-                <span>Fachowcy od ręki</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                <span>Bezpłatne odwołanie</span>
-              </div>
-            </div>
-
+            
             {/* Sekcja logowania/rejestracji dla niezalogowanych */}
             {!currentUser && (
               <div className="max-w-4xl mx-auto mb-12">
