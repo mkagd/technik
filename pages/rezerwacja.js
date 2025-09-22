@@ -91,9 +91,9 @@ export default function Rezerwacja() {
 
     const getStepIcon = (step) => {
         switch (step) {
-            case 1: return <FiUser className="w-5 h-5" />;
+            case 1: return <FiTool className="w-5 h-5" />;
             case 2: return <FiMapPin className="w-5 h-5" />;
-            case 3: return <FiTool className="w-5 h-5" />;
+            case 3: return <FiUser className="w-5 h-5" />;
             case 4: return <FiClock className="w-5 h-5" />;
             default: return null;
         }
@@ -101,9 +101,9 @@ export default function Rezerwacja() {
 
     const isStepValid = (step) => {
         switch (step) {
-            case 1: return formData.name && formData.phone; // email nie jest wymagany
-            case 2: return formData.fullAddress || (formData.city && formData.street);
-            case 3: return formData.category && formData.device && formData.problem;
+            case 1: return formData.category && formData.device && formData.problem; // Co naprawiamy
+            case 2: return formData.fullAddress || (formData.city && formData.street); // Gdzie
+            case 3: return formData.name && formData.phone; // Dane kontaktowe (email opcjonalny)
             case 4: return true; // availability is optional
             default: return false;
         }
@@ -152,12 +152,12 @@ export default function Rezerwacja() {
                 {/* Form Content */}
                 <div className="bg-white rounded-xl shadow-lg overflow-hidden">
                     <form onSubmit={handleSubmit}>
-                        {/* Step 1: Dane osobowe */}
-                        {currentStep === 1 && (
+                        {/* Step 3: Dane kontaktowe */}
+                        {currentStep === 3 && (
                             <div className="p-6">
                                 <div className="flex items-center mb-4">
                                     <FiUser className="w-6 h-6 text-blue-600 mr-3" />
-                                    <h2 className="text-xl font-semibold text-gray-900">Dane kontaktowe</h2>
+                                    <h2 className="text-xl font-semibold text-gray-900">Twoje dane kontaktowe</h2>
                                 </div>
 
                                 <div className="space-y-4">
@@ -276,12 +276,12 @@ export default function Rezerwacja() {
                             </div>
                         )}
 
-                        {/* Step 3: Serwis */}
-                        {currentStep === 3 && (
+                        {/* Step 1: Serwis */}
+                        {currentStep === 1 && (
                             <div className="p-6">
                                 <div className="flex items-center mb-4">
                                     <FiTool className="w-6 h-6 text-blue-600 mr-3" />
-                                    <h2 className="text-xl font-semibold text-gray-900">Szczegóły serwisu</h2>
+                                    <h2 className="text-xl font-semibold text-gray-900">Co naprawiamy?</h2>
                                 </div>
 
                                 <div className="space-y-4">
