@@ -8,13 +8,15 @@ export default function Rezerwacja() {
     const router = useRouter();
     const [currentStep, setCurrentStep] = useState(1);
     const [getCityByPostalCode, setGetCityByPostalCode] = useState(null);
+    const [postalCodeMap, setPostalCodeMap] = useState({});
     
     // Dynamiczne ładowanie funkcji kodów pocztowych
     useEffect(() => {
         const loadPostalCodes = async () => {
             try {
-                const { getCityByPostalCode: getCity } = await import('../data/postalCodes');
+                const { getCityByPostalCode: getCity, postalCodeMap: codeMap } = await import('../data/postalCodes');
                 setGetCityByPostalCode(() => getCity);
+                setPostalCodeMap(codeMap || {});
             } catch (error) {
                 console.error('Error loading postal codes:', error);
             }
@@ -30,17 +32,23 @@ export default function Rezerwacja() {
         city: '',
         street: '',
         fullAddress: '',
-        category: 'Pralka',
-        device: '',
-        brand: '',
-        problem: '',
+        categories: [], // Zmienione na tablicę dla wielu typów urządzeń
+        devices: [], // Tablica modeli dla każdego urządzenia
+        brands: [], // Tablica marek dla każdego urządzenia
+        problems: [], // Tablica problemów dla każdego urządzenia
         timeSlot: '',
         additionalNotes: ''
     });
 
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [message, setMessage] = useState('');
-    const [showBrandSuggestions, setShowBrandSuggestions] = useState(false);
+    const [showBrandSuggestions, setShowBrandSuggestions] = useState(null); // Zmieniamy na index lub null
+    const [editMode, setEditMode] = useState({
+        client: false,
+        address: false,
+        timeSlot: false,
+        notes: false
+    });
 
     // Lista popularnych marek AGD
     const brands = [
@@ -83,19 +91,90 @@ export default function Rezerwacja() {
         }
     };
 
-    const handleBrandSelect = (brand) => {
-        setFormData({
-            ...formData,
-            brand: brand
-        });
-        setShowBrandSuggestions(false);
+    const handleBrandSelect = (brand, index = null) => {
+        if (index !== null) {
+            // Multi-device mode
+            const newBrands = [...formData.brands];
+            newBrands[index] = brand;
+            setFormData({
+                ...formData,
+                brands: newBrands
+            });
+        } else {
+            // Single field mode (for backward compatibility)
+            setFormData({
+                ...formData,
+                brand: brand
+            });
+        }
+        setShowBrandSuggestions(null);
     };
 
-    const getFilteredBrands = () => {
-        if (!formData.brand) return brands.slice(0, 8); // Pokaż pierwsze 8 gdy puste
+    const getFilteredBrands = (searchTerm = '') => {
+        const term = searchTerm || formData.brand || '';
+        if (!term) return brands.slice(0, 8); // Pokaż pierwsze 8 gdy puste
         return brands.filter(brand => 
-            brand.toLowerCase().includes(formData.brand.toLowerCase())
+            brand.toLowerCase().includes(term.toLowerCase())
         ).slice(0, 6); // Maksymalnie 6 podpowiedzi
+    };
+
+    // Nowa funkcja do obsługi wyboru kategorii (multi-select)
+    const handleCategoryToggle = (e) => {
+        const category = e.target.value;
+        const newCategories = formData.categories.includes(category)
+            ? formData.categories.filter(cat => cat !== category)
+            : [...formData.categories, category];
+        
+        // Jeśli usuwamy kategorię, usuń też jej detale
+        if (formData.categories.includes(category)) {
+            const index = formData.categories.indexOf(category);
+            const newBrands = [...formData.brands];
+            const newDevices = [...formData.devices];
+            const newProblems = [...formData.problems];
+            
+            newBrands.splice(index, 1);
+            newDevices.splice(index, 1);
+            newProblems.splice(index, 1);
+            
+            setFormData({
+                ...formData,
+                categories: newCategories,
+                brands: newBrands,
+                devices: newDevices,
+                problems: newProblems
+            });
+        } else {
+            // Dodajemy nową kategorię
+            setFormData({
+                ...formData,
+                categories: newCategories
+            });
+        }
+    };
+
+    // Funkcja do obsługi detali urządzeń
+    const handleDeviceDetailChange = (index, field, value) => {
+        const newArray = [...(formData[field + 's'] || [])];
+        newArray[index] = value;
+        
+        setFormData({
+            ...formData,
+            [field + 's']: newArray
+        });
+    };
+
+    const toggleEditMode = (field) => {
+        setEditMode(prev => ({
+            ...prev,
+            [field]: !prev[field]
+        }));
+    };
+
+    const saveEdit = (field) => {
+        setEditMode(prev => ({
+            ...prev,
+            [field]: false
+        }));
     };
 
     const nextStep = () => {
@@ -117,15 +196,34 @@ export default function Rezerwacja() {
         setIsSubmitting(true);
         setMessage('');
 
+        // Walidacja adresu
         if (!formData.postalCode || !formData.city || !formData.street) {
             setMessage('❌ Uzupełnij wszystkie pola adresu: kod pocztowy, miasto i ulicę');
             setIsSubmitting(false);
             return;
         }
 
+        // Walidacja multi-device
+        if (formData.categories.length === 0) {
+            setMessage('❌ Wybierz przynajmniej jeden typ urządzenia');
+            setIsSubmitting(false);
+            return;
+        }
+
+        if (formData.categories.some((_, index) => !formData.problems[index]?.trim())) {
+            setMessage('❌ Opisz problemy dla wszystkich wybranych urządzeń');
+            setIsSubmitting(false);
+            return;
+        }
+
         const submitData = {
             ...formData,
-            address: `${formData.street}, ${formData.postalCode} ${formData.city}`
+            address: `${formData.street}, ${formData.postalCode} ${formData.city}`,
+            // Dla kompatybilności z API, wysyłamy również stare pola z pierwszego urządzenia
+            category: formData.categories[0] || '',
+            brand: formData.brands[0] || '',
+            device: formData.devices[0] || '',
+            problem: formData.problems[0] || ''
         };
 
         try {
@@ -140,7 +238,10 @@ export default function Rezerwacja() {
             const result = await response.json();
 
             if (response.ok) {
-                setMessage('✅ Zgłoszenie zostało wysłane! Nasz zespół skontaktuje się z Tobą wkrótce.');
+                const deviceCount = formData.categories.length;
+                const deviceText = deviceCount === 1 ? 'urządzenie' : 
+                                 deviceCount < 5 ? 'urządzenia' : 'urządzeń';
+                setMessage(`✅ Zgłoszenie na ${deviceCount} ${deviceText} zostało wysłane! Nasz zespół skontaktuje się z Tobą wkrótce.`);
                 setTimeout(() => {
                     setMessage(prevMessage =>
                         prevMessage + '\n\n🗺️ Możesz już zobaczyć swoje zgłoszenie na mapie!'
@@ -169,7 +270,10 @@ export default function Rezerwacja() {
 
     const isStepValid = (step) => {
         switch (step) {
-            case 1: return formData.category && formData.problem; // Co naprawiamy - tylko kategoria i problem
+            case 1: 
+                // Multi-device: musi być wybrana przynajmniej jedna kategoria i każda musi mieć opis problemu
+                return formData.categories.length > 0 && 
+                       formData.categories.every((_, index) => formData.problems[index]?.trim());
             case 2: return formData.postalCode && formData.city && formData.street; // Gdzie - kod pocztowy, miasto, ulica
             case 3: return formData.name && formData.phone; // Dane kontaktowe (email opcjonalny)
             case 4: return formData.timeSlot; // Dostępność - wymagany przedział czasowy
@@ -228,10 +332,10 @@ export default function Rezerwacja() {
                                     <h2 className="text-xl font-semibold text-gray-900">Co naprawiamy?</h2>
                                 </div>
 
-                                <div className="space-y-4">
+                                <div className="space-y-6">
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                                            Typ urządzenia AGD *
+                                        <label className="block text-sm font-medium text-gray-700 mb-3">
+                                            Typ urządzenia AGD * (możesz wybrać kilka)
                                         </label>
                                         <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                                             {[
@@ -246,16 +350,16 @@ export default function Rezerwacja() {
                                                 { value: 'Inne AGD', icon: '/icons/agd/inne.svg', label: 'Inne AGD', desc: 'Pozostałe', color: 'from-green-400 to-green-600' },
                                             ].map((option) => (
                                                 <label key={option.value} className={`cursor-pointer border-2 rounded-xl p-4 text-center transition-all duration-300 transform hover:scale-105 ${
-                                                    formData.category === option.value 
+                                                    formData.categories.includes(option.value)
                                                         ? 'border-blue-500 bg-gradient-to-br from-blue-50 to-blue-100 shadow-lg' 
                                                         : 'border-gray-200 hover:border-gray-300 hover:shadow-md bg-white'
                                                 }`}>
                                                     <input
-                                                        type="radio"
-                                                        name="category"
+                                                        type="checkbox"
+                                                        name="categories"
                                                         value={option.value}
-                                                        checked={formData.category === option.value}
-                                                        onChange={handleChange}
+                                                        checked={formData.categories.includes(option.value)}
+                                                        onChange={handleCategoryToggle}
                                                         className="sr-only"
                                                     />
                                                     <div className={`w-12 h-12 mx-auto mb-2 rounded-full bg-gradient-to-br ${option.color} flex items-center justify-center text-white text-xl font-bold shadow-md p-2`}>
@@ -267,71 +371,95 @@ export default function Rezerwacja() {
                                                     </div>
                                                     <div className="text-sm font-semibold text-gray-800 mb-1">{option.label}</div>
                                                     <div className="text-xs text-gray-500">{option.desc}</div>
+                                                    {formData.categories.includes(option.value) && (
+                                                        <div className="mt-2 text-blue-600 text-sm font-semibold">✓ Wybrane</div>
+                                                    )}
                                                 </label>
                                             ))}
                                         </div>
                                     </div>
 
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                                            Marka (opcjonalnie)
-                                        </label>
-                                        <div className="relative">
-                                            <input
-                                                type="text"
-                                                name="brand"
-                                                value={formData.brand}
-                                                onChange={handleChange}
-                                                onFocus={() => setShowBrandSuggestions(true)}
-                                                onBlur={() => setTimeout(() => setShowBrandSuggestions(false), 200)}
-                                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                                placeholder="np. Samsung, Bosch, LG..."
-                                            />
-                                            {showBrandSuggestions && (
-                                                <div className="absolute z-10 w-full bg-white border border-gray-200 rounded-lg shadow-lg mt-1 max-h-48 overflow-y-auto">
-                                                    {getFilteredBrands().map((brand) => (
-                                                        <button
-                                                            key={brand}
-                                                            type="button"
-                                                            onClick={() => handleBrandSelect(brand)}
-                                                            className="w-full text-left px-4 py-2 hover:bg-gray-100 focus:bg-gray-100 focus:outline-none"
-                                                        >
-                                                            {brand}
-                                                        </button>
-                                                    ))}
+                                    {/* Detale dla każdego wybranego urządzenia */}
+                                    {formData.categories.length > 0 && (
+                                        <div className="space-y-4">
+                                            <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">
+                                                Szczegóły urządzeń ({formData.categories.length})
+                                            </h3>
+                                            {formData.categories.map((category, index) => (
+                                                <div key={category} className="border rounded-lg p-4 bg-gray-50">
+                                                    <h4 className="text-md font-semibold mb-3 flex items-center">
+                                                        <div className="w-6 h-6 mr-2 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center p-1">
+                                                            <img 
+                                                                src={`/icons/agd/${category.toLowerCase().replace('ó', 'o').replace('ą', 'a').replace(' agd', '').replace(' ', '-')}.svg`}
+                                                                alt={category}
+                                                                className="w-4 h-4 object-contain"
+                                                            />
+                                                        </div>
+                                                        {category}
+                                                    </h4>
+                                                    
+                                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                        <div>
+                                                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                                                Marka
+                                                            </label>
+                                                            <div className="relative">
+                                                                <input
+                                                                    type="text"
+                                                                    value={formData.brands[index] || ''}
+                                                                    onChange={(e) => handleDeviceDetailChange(index, 'brand', e.target.value)}
+                                                                    onFocus={() => setShowBrandSuggestions(index)}
+                                                                    onBlur={() => setTimeout(() => setShowBrandSuggestions(null), 200)}
+                                                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                                                    placeholder="np. Samsung, Bosch, LG..."
+                                                                />
+                                                                {showBrandSuggestions === index && (
+                                                                    <div className="absolute z-10 w-full bg-white border border-gray-200 rounded-lg shadow-lg mt-1 max-h-36 overflow-y-auto">
+                                                                        {getFilteredBrands(formData.brands[index] || '').map((brand) => (
+                                                                            <button
+                                                                                key={brand}
+                                                                                type="button"
+                                                                                onClick={() => handleBrandSelect(brand, index)}
+                                                                                className="w-full text-left px-3 py-2 hover:bg-gray-100 focus:bg-gray-100 focus:outline-none text-sm"
+                                                                            >
+                                                                                {brand}
+                                                                            </button>
+                                                                        ))}
+                                                                    </div>
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                        
+                                                        <div>
+                                                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                                                Model (opcjonalnie)
+                                                            </label>
+                                                            <input
+                                                                type="text"
+                                                                value={formData.devices[index] || ''}
+                                                                onChange={(e) => handleDeviceDetailChange(index, 'device', e.target.value)}
+                                                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                                                placeholder="np. WW80T4020EE"
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    <div className="mt-3">
+                                                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                                                            Opis problemu *
+                                                        </label>
+                                                        <textarea
+                                                            value={formData.problems[index] || ''}
+                                                            onChange={(e) => handleDeviceDetailChange(index, 'problem', e.target.value)}
+                                                            rows={3}
+                                                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                                            placeholder="Opisz problem z tym urządzeniem..."
+                                                        />
+                                                    </div>
                                                 </div>
-                                            )}
+                                            ))}
                                         </div>
-                                    </div>
-
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                                            Model urządzenia (opcjonalnie)
-                                        </label>
-                                        <input
-                                            type="text"
-                                            name="device"
-                                            value={formData.device}
-                                            onChange={handleChange}
-                                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                            placeholder="np. WW80T4020EE, KGN39VLDA"
-                                        />
-                                    </div>
-
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                                            Opis problemu *
-                                        </label>
-                                        <textarea
-                                            name="problem"
-                                            value={formData.problem}
-                                            onChange={handleChange}
-                                            required
-                                            rows={4}
-                                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                            placeholder="Opisz dokładnie co się dzieje z urządzeniem - np. nie włącza się, dziwne dźwięki, nie grzeje, wyświetla kod błędu..."
-                                        />
-                                    </div>
+                                    )}
                                 </div>
                             </div>
                         )}
@@ -477,14 +605,33 @@ export default function Rezerwacja() {
                                         <label className="block text-sm font-medium text-gray-700 mb-3">
                                             🕒 W jakich godzinach możemy umówić wizytę? *
                                         </label>
-                                        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-4">
+                                        
+                                        {/* Informacja o priorytetach terminów */}
+                                        <div className="mb-4 p-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border-l-4 border-blue-400">
+                                            <h4 className="font-medium text-gray-800 mb-2">💡 Informacja o terminach:</h4>
+                                            <div className="text-sm space-y-1">
+                                                <div className="text-green-700">✅ <strong>Cały czas dostępny</strong> = najszybszy termin wizyty</div>
+                                                <div className="text-yellow-700">⚠️ <strong>Ograniczona dostępność</strong> = standardowy czas oczekiwania</div>
+                                                <div className="text-red-700">⏰ <strong>Po 15:00 i przed 10:00</strong> = najdłuższy czas oczekiwania</div>
+                                            </div>
+                                        </div>
+
+                                        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-2 mb-4">
                                             {[
-                                                { value: '8:00-12:00', label: '🌅 Rano', desc: '8:00-12:00', color: 'from-orange-400 to-orange-600' },
-                                                { value: '12:00-16:00', label: '☀️ Południe', desc: '12:00-16:00', color: 'from-yellow-400 to-yellow-600' },
-                                                { value: '16:00-20:00', label: '🌆 Popołudnie', desc: '16:00-20:00', color: 'from-blue-400 to-blue-600' },
-                                                { value: 'Weekend', label: '🏠 Weekend', desc: 'Sobota/Niedziela', color: 'from-green-400 to-green-600' },
+                                                { value: 'Cały dzień', label: '⏰', desc: 'Cały dzień', subDesc: '8:00-20:00', color: 'from-green-400 to-green-600', priority: 'high' },
+                                                { value: '8:00-10:00', label: '🌅', desc: '8:00-10:00', subDesc: 'Wcześnie', color: 'from-red-400 to-red-600', priority: 'low' },
+                                                { value: '10:00-12:00', label: '🌤️', desc: '10:00-12:00', subDesc: 'Rano', color: 'from-orange-400 to-orange-600', priority: 'medium' },
+                                                { value: '12:00-14:00', label: '☀️', desc: '12:00-14:00', subDesc: 'Południe', color: 'from-yellow-400 to-yellow-600', priority: 'medium' },
+                                                { value: '14:00-16:00', label: '�', desc: '14:00-16:00', subDesc: 'Popołudnie', color: 'from-amber-400 to-amber-600', priority: 'medium' },
+                                                { value: '16:00-18:00', label: '🌆', desc: '16:00-18:00', subDesc: 'Wieczór', color: 'from-blue-400 to-blue-600', priority: 'medium' },
+                                                { value: '18:00-20:00', label: '🌃', desc: '18:00-20:00', subDesc: 'Późny wieczór', color: 'from-indigo-400 to-indigo-600', priority: 'low' },
+                                                { value: 'Weekend 8:00-12:00', label: '🏠', desc: 'Sobota/Niedziela', subDesc: '8:00-12:00', color: 'from-purple-400 to-purple-600', priority: 'medium' },
+                                                { value: 'Weekend 12:00-16:00', label: '🏡', desc: 'Sobota/Niedziela', subDesc: '12:00-16:00', color: 'from-pink-400 to-pink-600', priority: 'medium' },
+                                                { value: 'Weekend 16:00-20:00', label: '🏘️', desc: 'Sobota/Niedziela', subDesc: '16:00-20:00', color: 'from-rose-400 to-rose-600', priority: 'low' },
+                                                { value: 'Wieczory po 15:00', label: '🌙', desc: 'Tylko wieczory', subDesc: 'Po 15:00', color: 'from-slate-400 to-slate-600', priority: 'low' },
+                                                { value: 'Poranki przed 10:00', label: '🌄', desc: 'Tylko poranki', subDesc: 'Przed 10:00', color: 'from-gray-400 to-gray-600', priority: 'low' }
                                             ].map((option) => (
-                                                <label key={option.value} className={`cursor-pointer border-2 rounded-xl p-4 text-center transition-all duration-300 transform hover:scale-105 ${
+                                                <label key={option.value} className={`cursor-pointer border-2 rounded-lg p-3 text-center transition-all duration-300 transform hover:scale-105 relative group ${
                                                     formData.timeSlot === option.value 
                                                         ? 'border-blue-500 bg-gradient-to-br from-blue-50 to-blue-100 shadow-lg' 
                                                         : 'border-gray-200 hover:border-gray-300 hover:shadow-md bg-white'
@@ -497,11 +644,23 @@ export default function Rezerwacja() {
                                                         onChange={handleChange}
                                                         className="sr-only"
                                                     />
-                                                    <div className={`w-12 h-12 mx-auto mb-2 rounded-full bg-gradient-to-br ${option.color} flex items-center justify-center text-white text-xl font-bold shadow-md`}>
-                                                        {option.label.split(' ')[0]}
+                                                    <div className={`w-8 h-8 mx-auto mb-1 rounded-full bg-gradient-to-br ${option.color} flex items-center justify-center text-white text-lg font-bold shadow-md`}>
+                                                        {option.label}
                                                     </div>
-                                                    <div className="text-sm font-semibold text-gray-800 mb-1">{option.label.split(' ').slice(1).join(' ')}</div>
-                                                    <div className="text-xs text-gray-500">{option.desc}</div>
+                                                    <div className="text-xs font-semibold text-gray-800 mb-1">{option.desc}</div>
+                                                    <div className="text-xs text-gray-500">{option.subDesc}</div>
+                                                    
+                                                    {/* Priority indicator */}
+                                                    <div className={`absolute -top-1 -right-1 w-3 h-3 rounded-full ${
+                                                        option.priority === 'high' ? 'bg-green-500' :
+                                                        option.priority === 'medium' ? 'bg-yellow-500' : 'bg-red-500'
+                                                    }`}></div>
+                                                    
+                                                    {/* Tooltip on hover */}
+                                                    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-black text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-10">
+                                                        {option.priority === 'high' ? 'Najszybszy termin!' : 
+                                                         option.priority === 'medium' ? 'Standardowy termin' : 'Najdłuższe oczekiwanie'}
+                                                    </div>
                                                 </label>
                                             ))}
                                         </div>
@@ -527,17 +686,229 @@ export default function Rezerwacja() {
                                     {/* Podsumowanie */}
                                     <div className="mt-6 p-4 bg-gray-50 rounded-lg">
                                         <h3 className="font-medium text-gray-900 mb-3">📋 Podsumowanie zamówienia:</h3>
-                                        <div className="space-y-2 text-sm">
-                                            <div><strong>Klient:</strong> {formData.name} ({formData.phone})</div>
-                                            <div><strong>Adres:</strong> {formData.street}, {formData.postalCode} {formData.city}</div>
-                                            <div><strong>Serwis:</strong> {formData.category} 
-                                                {(formData.brand || formData.device) && ' - '}
-                                                {formData.brand && `${formData.brand} `}
-                                                {formData.device}
+                                        <div className="space-y-4 text-sm">
+                                            
+                                            {/* Dane klienta - edytowalne */}
+                                            <div className="flex items-center justify-between p-3 bg-white rounded border">
+                                                <div className="flex-1">
+                                                    <strong>Klient:</strong>
+                                                    {editMode.client ? (
+                                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2">
+                                                            <input
+                                                                type="text"
+                                                                value={formData.name}
+                                                                onChange={(e) => setFormData({...formData, name: e.target.value})}
+                                                                className="px-2 py-1 border rounded text-sm"
+                                                                placeholder="Imię i nazwisko"
+                                                            />
+                                                            <input
+                                                                type="tel"
+                                                                value={formData.phone}
+                                                                onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                                                                className="px-2 py-1 border rounded text-sm"
+                                                                placeholder="Telefon"
+                                                            />
+                                                        </div>
+                                                    ) : (
+                                                        <span className="ml-2">{formData.name} ({formData.phone})</span>
+                                                    )}
+                                                </div>
+                                                <div className="flex gap-1 ml-2">
+                                                    {editMode.client ? (
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => saveEdit('client')}
+                                                            className="px-2 py-1 bg-green-500 text-white rounded text-xs hover:bg-green-600"
+                                                        >
+                                                            ✓
+                                                        </button>
+                                                    ) : (
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => toggleEditMode('client')}
+                                                            className="px-2 py-1 bg-blue-500 text-white rounded text-xs hover:bg-blue-600"
+                                                        >
+                                                            ✏️
+                                                        </button>
+                                                    )}
+                                                </div>
                                             </div>
-                                            <div><strong>Problem:</strong> {formData.problem}</div>
-                                            <div><strong>Preferowane godziny:</strong> {formData.timeSlot}</div>
-                                            {formData.additionalNotes && <div><strong>Uwagi:</strong> {formData.additionalNotes}</div>}
+
+                                            {/* Adres - edytowalny */}
+                                            <div className="flex items-center justify-between p-3 bg-white rounded border">
+                                                <div className="flex-1">
+                                                    <strong>Adres:</strong>
+                                                    {editMode.address ? (
+                                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-2 mt-2">
+                                                            <input
+                                                                type="text"
+                                                                value={formData.street}
+                                                                onChange={(e) => setFormData({...formData, street: e.target.value})}
+                                                                className="px-2 py-1 border rounded text-sm"
+                                                                placeholder="Ulica i numer"
+                                                            />
+                                                            <input
+                                                                type="text"
+                                                                value={formData.postalCode}
+                                                                onChange={(e) => {
+                                                                    const newFormData = {...formData, postalCode: e.target.value};
+                                                                    if (getCityByPostalCode) {
+                                                                        const city = getCityByPostalCode(e.target.value);
+                                                                        if (city) newFormData.city = city;
+                                                                    }
+                                                                    setFormData(newFormData);
+                                                                }}
+                                                                className="px-2 py-1 border rounded text-sm"
+                                                                placeholder="Kod pocztowy"
+                                                            />
+                                                            <input
+                                                                type="text"
+                                                                value={formData.city}
+                                                                onChange={(e) => setFormData({...formData, city: e.target.value})}
+                                                                className="px-2 py-1 border rounded text-sm"
+                                                                placeholder="Miasto"
+                                                            />
+                                                        </div>
+                                                    ) : (
+                                                        <span className="ml-2">{formData.street}, {formData.postalCode} {formData.city}</span>
+                                                    )}
+                                                </div>
+                                                <div className="flex gap-1 ml-2">
+                                                    {editMode.address ? (
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => saveEdit('address')}
+                                                            className="px-2 py-1 bg-green-500 text-white rounded text-xs hover:bg-green-600"
+                                                        >
+                                                            ✓
+                                                        </button>
+                                                    ) : (
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => toggleEditMode('address')}
+                                                            className="px-2 py-1 bg-blue-500 text-white rounded text-xs hover:bg-blue-600"
+                                                        >
+                                                            ✏️
+                                                        </button>
+                                                    )}
+                                                </div>
+                                            </div>
+
+                                            {/* Serwis - multi-device */}
+                                            <div className="p-3 bg-white rounded border">
+                                                <div className="mb-3">
+                                                    <strong>Serwis urządzeń ({formData.categories.length}):</strong>
+                                                </div>
+                                                {formData.categories.map((category, index) => (
+                                                    <div key={category} className="mb-2 pl-4 border-l-2 border-blue-200">
+                                                        <div className="flex items-center mb-1">
+                                                            <div className="w-4 h-4 mr-2 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center p-0.5">
+                                                                <img 
+                                                                    src={`/icons/agd/${category.toLowerCase().replace('ó', 'o').replace('ą', 'a').replace(' agd', '').replace(' ', '-')}.svg`}
+                                                                    alt={category}
+                                                                    className="w-3 h-3 object-contain"
+                                                                />
+                                                            </div>
+                                                            <strong>{category}</strong>
+                                                            {(formData.brands[index] || formData.devices[index]) && ' - '}
+                                                            {formData.brands[index] && `${formData.brands[index]} `}
+                                                            {formData.devices[index]}
+                                                        </div>
+                                                        <div className="text-sm text-gray-600">
+                                                            <strong>Problem:</strong> {formData.problems[index] || 'Nie opisano'}
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                                <div className="text-xs text-gray-500 mt-2">
+                                                    💡 Aby zmienić urządzenia, wróć do kroku 1
+                                                </div>
+                                            </div>
+
+                                            {/* Preferowane godziny - edytowalne */}
+                                            <div className="flex items-center justify-between p-3 bg-white rounded border">
+                                                <div className="flex-1">
+                                                    <strong>Preferowane godziny:</strong>
+                                                    {editMode.timeSlot ? (
+                                                        <select
+                                                            value={formData.timeSlot}
+                                                            onChange={(e) => setFormData({...formData, timeSlot: e.target.value})}
+                                                            className="ml-2 px-2 py-1 border rounded text-sm"
+                                                        >
+                                                            <option value="">Wybierz przedział</option>
+                                                            <option value="Cały dzień">⏰ Cały dzień (8:00-20:00)</option>
+                                                            <option value="8:00-10:00">🌅 8:00-10:00 (Wcześnie)</option>
+                                                            <option value="10:00-12:00">🌤️ 10:00-12:00 (Rano)</option>
+                                                            <option value="12:00-14:00">☀️ 12:00-14:00 (Południe)</option>
+                                                            <option value="14:00-16:00">🌞 14:00-16:00 (Popołudnie)</option>
+                                                            <option value="16:00-18:00">🌆 16:00-18:00 (Wieczór)</option>
+                                                            <option value="18:00-20:00">🌃 18:00-20:00 (Późny wieczór)</option>
+                                                            <option value="Weekend 8:00-12:00">🏠 Weekend 8:00-12:00</option>
+                                                            <option value="Weekend 12:00-16:00">🏡 Weekend 12:00-16:00</option>
+                                                            <option value="Weekend 16:00-20:00">🏘️ Weekend 16:00-20:00</option>
+                                                            <option value="Wieczory po 15:00">🌙 Tylko wieczory (Po 15:00)</option>
+                                                            <option value="Poranki przed 10:00">🌄 Tylko poranki (Przed 10:00)</option>
+                                                        </select>
+                                                    ) : (
+                                                        <span className="ml-2">{formData.timeSlot || 'Nie wybrano'}</span>
+                                                    )}
+                                                </div>
+                                                <div className="flex gap-1 ml-2">
+                                                    {editMode.timeSlot ? (
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => saveEdit('timeSlot')}
+                                                            className="px-2 py-1 bg-green-500 text-white rounded text-xs hover:bg-green-600"
+                                                        >
+                                                            ✓
+                                                        </button>
+                                                    ) : (
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => toggleEditMode('timeSlot')}
+                                                            className="px-2 py-1 bg-blue-500 text-white rounded text-xs hover:bg-blue-600"
+                                                        >
+                                                            ✏️
+                                                        </button>
+                                                    )}
+                                                </div>
+                                            </div>
+
+                                            {/* Uwagi - edytowalne */}
+                                            <div className="flex items-start justify-between p-3 bg-white rounded border">
+                                                <div className="flex-1">
+                                                    <strong>Uwagi:</strong>
+                                                    {editMode.notes ? (
+                                                        <textarea
+                                                            value={formData.additionalNotes}
+                                                            onChange={(e) => setFormData({...formData, additionalNotes: e.target.value})}
+                                                            className="w-full mt-2 px-2 py-1 border rounded text-sm"
+                                                            rows="2"
+                                                            placeholder="Dodatkowe uwagi o dostępności..."
+                                                        />
+                                                    ) : (
+                                                        <span className="ml-2">{formData.additionalNotes || 'Brak uwag'}</span>
+                                                    )}
+                                                </div>
+                                                <div className="flex gap-1 ml-2">
+                                                    {editMode.notes ? (
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => saveEdit('notes')}
+                                                            className="px-2 py-1 bg-green-500 text-white rounded text-xs hover:bg-green-600"
+                                                        >
+                                                            ✓
+                                                        </button>
+                                                    ) : (
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => toggleEditMode('notes')}
+                                                            className="px-2 py-1 bg-blue-500 text-white rounded text-xs hover:bg-blue-600"
+                                                        >
+                                                            ✏️
+                                                        </button>
+                                                    )}
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
