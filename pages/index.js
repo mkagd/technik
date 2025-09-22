@@ -83,7 +83,7 @@ export default function Home() {
           <div className="flex justify-between items-center py-2.5">
             {/* Logo/Brand */}
             <div className="flex items-center">
-              <div className="text-sm font-semibold text-gray-900 tracking-wide">TECHSERWIS</div>
+              <div className="text-sm font-semibold text-blue-600 tracking-wide">Technik.pl</div>
             </div>
             
             {/* Navigation Menu */}
