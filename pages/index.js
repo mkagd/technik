@@ -165,11 +165,11 @@ export default function Home() {
           <div className="text-center py-12">
             <h1 className="text-4xl md:text-6xl font-bold text-gray-800 mb-4">
               <span className="bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">
-                Serwis Technik
+                Technik Serwis 🚀
               </span>
             </h1>
             <p className="text-xl text-gray-700 mb-8">
-              Profesjonalne usługi serwisowe na najwyższym poziomie
+              Profesjonalne usługi serwisowe na najwyższym poziomie - Wdrożono z Vercel!
             </p>
             <div className="flex items-center justify-center gap-8 text-sm text-gray-600 mb-12">
               <div className="flex items-center gap-2">
