@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 import { FiUser, FiMapPin, FiTool, FiClock, FiCheck, FiArrowRight, FiArrowLeft, FiChevronDown } from 'react-icons/fi';
+import { getCityByPostalCode } from '../data/postalCodes';
 
 export default function Rezerwacja() {
     const router = useRouter();
@@ -34,21 +35,6 @@ export default function Rezerwacja() {
         'Sharp', 'Siemens', 'Whirlpool', 'Zanussi'
     ];
 
-    // Mapa kodów pocztowych na miasta
-    const postalCodeMap = {
-        '39-200': 'Dębica',
-        '28-133': 'Pacanów', 
-        '39-300': 'Mielec',
-        '30-001': 'Kraków',
-        '00-001': 'Warszawa',
-        '80-001': 'Gdańsk',
-        '50-001': 'Wrocław',
-        '60-001': 'Poznań',
-        '90-001': 'Łódź',
-        '31-001': 'Kraków',
-        '20-001': 'Lublin'
-    };
-
     const totalSteps = 4;
 
     const handleChange = (e) => {
@@ -56,7 +42,7 @@ export default function Rezerwacja() {
         
         // Obsługa kodu pocztowego - automatyczne uzupełnianie miasta
         if (name === 'postalCode') {
-            const city = postalCodeMap[value] || '';
+            const city = getCityByPostalCode(value) || '';
             setFormData({
                 ...formData,
                 [name]: value,
@@ -227,15 +213,15 @@ export default function Rezerwacja() {
                                         </label>
                                         <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                                             {[
-                                                { value: 'Pralka', icon: '🧺', label: 'Pralka', desc: 'Automatyczna', color: 'from-blue-400 to-blue-600' },
-                                                { value: 'Zmywarka', icon: '🫧', label: 'Zmywarka', desc: 'Do naczyń', color: 'from-cyan-400 to-cyan-600' },
-                                                { value: 'Lodówka', icon: '🧊', label: 'Lodówka', desc: 'Chłodzenie', color: 'from-indigo-400 to-indigo-600' },
-                                                { value: 'Piekarnik', icon: '🍞', label: 'Piekarnik', desc: 'Do pieczenia', color: 'from-orange-400 to-orange-600' },
-                                                { value: 'Suszarka', icon: '💨', label: 'Suszarka', desc: 'Do ubrań', color: 'from-purple-400 to-purple-600' },
-                                                { value: 'Kuchenka', icon: '🔥', label: 'Kuchenka', desc: 'Gazowa/elektr.', color: 'from-red-400 to-red-600' },
-                                                { value: 'Mikrofalówka', icon: '⚡', label: 'Mikrofalówka', desc: 'Do podgrzewania', color: 'from-yellow-400 to-yellow-600' },
-                                                { value: 'Okap', icon: '🌪️', label: 'Okap', desc: 'Wyciąg kuchenny', color: 'from-gray-400 to-gray-600' },
-                                                { value: 'Inne AGD', icon: '🏠', label: 'Inne AGD', desc: 'Pozostałe', color: 'from-green-400 to-green-600' },
+                                                { value: 'Pralka', icon: 'https://cdn-icons-png.flaticon.com/512/2235/2235377.png', label: 'Pralka', desc: 'Automatyczna', color: 'from-blue-400 to-blue-600' },
+                                                { value: 'Zmywarka', icon: 'https://cdn-icons-png.flaticon.com/512/2235/2235364.png', label: 'Zmywarka', desc: 'Do naczyń', color: 'from-cyan-400 to-cyan-600' },
+                                                { value: 'Lodówka', icon: 'https://cdn-icons-png.flaticon.com/512/2235/2235371.png', label: 'Lodówka', desc: 'Chłodzenie', color: 'from-indigo-400 to-indigo-600' },
+                                                { value: 'Piekarnik', icon: 'https://cdn-icons-png.flaticon.com/512/2235/2235376.png', label: 'Piekarnik', desc: 'Do pieczenia', color: 'from-orange-400 to-orange-600' },
+                                                { value: 'Suszarka', icon: 'https://cdn-icons-png.flaticon.com/512/2235/2235378.png', label: 'Suszarka', desc: 'Do ubrań', color: 'from-purple-400 to-purple-600' },
+                                                { value: 'Kuchenka', icon: 'https://cdn-icons-png.flaticon.com/512/2235/2235369.png', label: 'Kuchenka', desc: 'Gazowa/elektr.', color: 'from-red-400 to-red-600' },
+                                                { value: 'Mikrofalówka', icon: 'https://cdn-icons-png.flaticon.com/512/2235/2235374.png', label: 'Mikrofalówka', desc: 'Do podgrzewania', color: 'from-yellow-400 to-yellow-600' },
+                                                { value: 'Okap', icon: 'https://cdn-icons-png.flaticon.com/512/2235/2235365.png', label: 'Okap', desc: 'Wyciąg kuchenny', color: 'from-gray-400 to-gray-600' },
+                                                { value: 'Inne AGD', icon: 'https://cdn-icons-png.flaticon.com/512/2235/2235362.png', label: 'Inne AGD', desc: 'Pozostałe', color: 'from-green-400 to-green-600' },
                                             ].map((option) => (
                                                 <label key={option.value} className={`cursor-pointer border-2 rounded-xl p-4 text-center transition-all duration-300 transform hover:scale-105 ${
                                                     formData.category === option.value 
@@ -250,8 +236,12 @@ export default function Rezerwacja() {
                                                         onChange={handleChange}
                                                         className="sr-only"
                                                     />
-                                                    <div className={`w-12 h-12 mx-auto mb-2 rounded-full bg-gradient-to-br ${option.color} flex items-center justify-center text-white text-xl font-bold shadow-md`}>
-                                                        {option.icon}
+                                                    <div className={`w-12 h-12 mx-auto mb-2 rounded-full bg-gradient-to-br ${option.color} flex items-center justify-center text-white text-xl font-bold shadow-md p-2`}>
+                                                        <img 
+                                                            src={option.icon} 
+                                                            alt={option.label}
+                                                            className="w-8 h-8 object-contain filter brightness-0 invert"
+                                                        />
                                                     </div>
                                                     <div className="text-sm font-semibold text-gray-800 mb-1">{option.label}</div>
                                                     <div className="text-xs text-gray-500">{option.desc}</div>
