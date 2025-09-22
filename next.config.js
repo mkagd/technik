@@ -7,14 +7,12 @@ const withPWA = require('next-pwa')({
 });
 
 module.exports = withPWA({
-  reactStrictMode: true,
-  swcMinify: true,
-  experimental: {
-    optimizeCss: true
-  },
-  images: {
-    domains: ['lh3.googleusercontent.com', 'maps.googleapis.com'],
-    formats: ['image/webp', 'image/avif']
-  },
-  compress: true
+  reactStrictMode: false,
+  swcMinify: false,
+  compress: true,
+  exportPathMap: function() {
+    return {
+      '/': { page: '/' }
+    }
+  }
 });
