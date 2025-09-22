@@ -188,16 +188,31 @@ export default function Home() {
 
         {/* Content */}
         <div className="relative z-10">
-          <div className="text-center py-16">
-            <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-4 leading-tight">
+          <div className="text-center py-12">
+            <h1 className="text-5xl md:text-7xl font-extrabold text-gray-900 mb-6 leading-tight">
               <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-800 bg-clip-text text-transparent">
-                Profesjonalny Serwis
+                Technik Serwis
               </span>
             </h1>
-            <p className="text-lg md:text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-              Szybko, sprawnie i profesjonalnie - wszystko czego potrzebujesz w jednym miejscu
+            <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed">
+              Profesjonalne naprawy sprzętu elektronicznego z gwarancją zadowolenia. 
+              Rezerwuj online i śledź status swojego zamówienia.
             </p>
-            
+            <div className="flex items-center justify-center gap-8 text-sm text-gray-600 mb-12">
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                <span>12-miesięczna gwarancja</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+                <span>Fachowcy od ręki</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                <span>Bezpłatne odwołanie</span>
+              </div>
+            </div>
+
             {/* Sekcja logowania/rejestracji dla niezalogowanych */}
             {!currentUser && (
               <div className="max-w-4xl mx-auto mb-12">
