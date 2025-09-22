@@ -1,0 +1,1 @@
+Nowoczesny layout strony głównej w stylu serwisowym z brandingiem 'Technik'. Ikony z lucide-react. Zainstaluj: npm install lucide-react

@@ -1,0 +1,1 @@
+Strona główna inspirowana usterka.pl – 3 kafelki + nagłówek i opis. Ikony: lucide-react.

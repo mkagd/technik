@@ -1,0 +1,1 @@
+Dodano pole wyboru daty (datetime-local) do formularza i zapisu do Supabase.

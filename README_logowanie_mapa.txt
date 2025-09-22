@@ -1,0 +1,1 @@
+Dodano logowanie do admina (hasło z ENV) i widok mapy (losowe lokalizacje testowe). Aby działała mapa, zainstaluj: npm install react-leaflet leaflet

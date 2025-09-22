@@ -1,0 +1,1 @@
+Dodano widok kalendarza + wsparcie dla PWA (ikonki, manifest.json, next-pwa). Zainstaluj next-pwa: npm install next-pwa

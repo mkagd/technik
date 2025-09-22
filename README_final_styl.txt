@@ -1,0 +1,1 @@
+Nowoczesna strona główna z siatką 2x2, estetyczne ikony, CTA i logo Technik. Użyj: npm install lucide-react

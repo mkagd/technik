@@ -1,0 +1,13 @@
+{
+  "maxDistance": 50,
+  "preferredDistance": 25,
+  "travelCostPerKm": 2.5,
+  "minimumTravelCost": 20,
+  "workingRadius": {
+    "center": {
+      "lat": 52.2297,
+      "lng": 21.0122
+    },
+    "radius": 50
+  }
+}
