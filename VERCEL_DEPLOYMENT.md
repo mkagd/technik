@@ -13,13 +13,13 @@
 1. **Jeśli nie masz jeszcze repozytorium GitHub:**
    - Wejdź na [github.com](https://github.com)
    - Kliknij "New repository" 
-   - Nazwij np. "rezerwacja-serwis"
+   - Nazwij np. "technik"
    - **WAŻNE:** Zaznacz "Public" (dla darmowego planu Vercel)
    - Kliknij "Create repository"
 
 2. **Połącz lokalne repozytorium z GitHub:**
    ```bash
-   git remote add origin https://github.com/TWOJA-NAZWA/rezerwacja-serwis.git
+   git remote add origin https://github.com/TWOJA-NAZWA/technik.git
    git branch -M main
    git push -u origin main
    ```
@@ -31,7 +31,7 @@
 1. **Wejdź na [vercel.com](https://vercel.com)**
 2. **Zaloguj się przez GitHub**
 3. **Kliknij "Import Project"**
-4. **Wybierz swoje repozytorium "rezerwacja-serwis"**
+4. **Wybierz swoje repozytorium "technik"**
 5. **Konfiguracja:**
    - Framework: Next.js ✅ (zostanie wykryty automatycznie)
    - Build Command: `npm run build`
@@ -54,7 +54,7 @@
 
 ### **KROK 3: Konfiguracja po wdrożeniu**
 
-1. **Otrzymasz link typu:** `https://rezerwacja-serwis.vercel.app`
+1. **Otrzymasz link typu:** `https://technik.vercel.app`
 2. **Każda zmiana w kodzie = automatyczne wdrożenie!**
 3. **Domena własna (opcjonalnie):**
    - W ustawieniach Vercel możesz dodać własną domenę
@@ -106,7 +106,7 @@ npm install --legacy-peer-deps --force
 ### **🎉 Gotowe!**
 
 Twoja aplikacja jest teraz dostępna na całym świecie pod adresem:
-**https://rezerwacja-serwis-TWOJE-ID.vercel.app**
+**https://technik-TWOJE-ID.vercel.app**
 
 #### **Następne kroki:**
 1. Skonfiguruj Supabase dla pełnej funkcjonalności bazy danych

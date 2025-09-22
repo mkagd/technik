@@ -1,4 +1,4 @@
-# Rezerwacja Serwis - System Rezerwacji Online
+# Technik - System Rezerwacji Serwisu
 
 System rezerwacji serwisu technicznego z kalendarzem, mapą lokalizacji i panelem administracyjnym.
 
@@ -33,7 +33,7 @@ System rezerwacji serwisu technicznego z kalendarzem, mapą lokalizacji i panele
 1. **Klonuj repozytorium**
    ```bash
    git clone [URL_REPOZYTORIUM]
-   cd rezerwacja-serwis
+   cd technik
    ```
 
 2. **Zainstaluj zależności**
