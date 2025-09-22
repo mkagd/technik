@@ -6,7 +6,7 @@ import SimpleBookingForm from '../components/SimpleBookingForm';
 import BookingWizardForm from '../components/BookingWizardForm';
 import IndexNaprawa from '../components/IndexNaprawa';
 import IndexUsterka from '../components/IndexUsterka';
-import { FiUser, FiLogOut, FiArrowLeft } from 'react-icons/fi';
+import { FiUser, FiLogOut, FiArrowLeft, FiChevronDown } from 'react-icons/fi';
 
 export default function Home() {
   const router = useRouter();
@@ -14,6 +14,7 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [bookingType, setBookingType] = useState(null); // 'quick' lub 'reservation'
   const [currentTheme, setCurrentTheme] = useState('default');
+  const [showLoginDropdown, setShowLoginDropdown] = useState(false);
 
   useEffect(() => {
     // Sprawdzenie czy użytkownik jest zalogowany
@@ -32,6 +33,20 @@ export default function Home() {
       setLoading(false);
     }
   }, []);
+
+  // Zamykanie dropdown po kliknięciu poza nim
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (showLoginDropdown && !event.target.closest('.dropdown-container')) {
+        setShowLoginDropdown(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showLoginDropdown]);
 
   const handleLogout = () => {
     if (typeof window !== 'undefined') {
@@ -126,24 +141,45 @@ export default function Home() {
                   >
                     Zarejestruj się
                   </Link>
-                  <Link
-                    href="/logowanie"
-                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-                  >
-                    Zaloguj się
-                  </Link>
-                  <Link
-                    href="/pracownik-logowanie"
-                    className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
-                  >
-                    Panel Pracownika
-                  </Link>
-                  <Link
-                    href="/admin-new"
-                    className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
-                  >
-                    Panel Admin
-                  </Link>
+                  
+                  {/* Rozwijane menu logowania - responsive */}
+                  <div className="relative dropdown-container">
+                    <button
+                      onClick={() => setShowLoginDropdown(!showLoginDropdown)}
+                      className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
+                    >
+                      <FiUser className="h-4 w-4" />
+                      Logowanie
+                      <FiChevronDown className={`h-4 w-4 transition-transform ${showLoginDropdown ? 'rotate-180' : ''}`} />
+                    </button>
+                    
+                    {showLoginDropdown && (
+                      <div className="absolute top-full mt-2 right-0 bg-white rounded-lg shadow-lg border border-gray-200 py-2 min-w-[200px] z-50">
+                        <Link
+                          href="/logowanie"
+                          className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+                          onClick={() => setShowLoginDropdown(false)}
+                        >
+                          <FiUser className="inline h-4 w-4 mr-2" />
+                          Klient
+                        </Link>
+                        <Link
+                          href="/pracownik-logowanie"
+                          className="block px-4 py-2 text-gray-700 hover:bg-green-50 hover:text-green-600 transition-colors"
+                          onClick={() => setShowLoginDropdown(false)}
+                        >
+                          🔧 Pracownik
+                        </Link>
+                        <Link
+                          href="/admin-new"
+                          className="block px-4 py-2 text-gray-700 hover:bg-gray-50 hover:text-gray-600 transition-colors"
+                          onClick={() => setShowLoginDropdown(false)}
+                        >
+                          🛡️ Administrator
+                        </Link>
+                      </div>
+                    )}
+                  </div>
                 </>
               )}
             </div>
@@ -197,30 +233,37 @@ export default function Home() {
                     Zaloguj się, aby mieć dostęp do historii napraw, szybszego składania zamówień i monitorowania statusu
                   </p>
 
-                  <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                  <div className="flex flex-col sm:flex-row gap-3 justify-center items-center">
                     <Link
                       href="/logowanie"
-                      className="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium flex items-center gap-2 min-w-[160px] justify-center"
+                      className="w-full sm:w-auto px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium flex items-center gap-2 justify-center"
                     >
                       <FiUser className="h-4 w-4" />
-                      Zaloguj się
+                      Klient
                     </Link>
 
-                    <span className="text-gray-400 hidden sm:block">lub</span>
+                    <div className="grid grid-cols-2 gap-3 w-full sm:w-auto">
+                      <Link
+                        href="/pracownik-logowanie"
+                        className="px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium flex items-center gap-2 justify-center text-sm"
+                      >
+                        🔧 Pracownik
+                      </Link>
+
+                      <Link
+                        href="/admin"
+                        className="px-4 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors font-medium flex items-center gap-2 justify-center text-sm"
+                      >
+                        🛡️ Admin
+                      </Link>
+                    </div>
 
                     <Link
                       href="/rejestracja"
-                      className="px-8 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium flex items-center gap-2 min-w-[160px] justify-center"
+                      className="w-full sm:w-auto px-6 py-3 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors font-medium flex items-center gap-2 justify-center"
                     >
                       <FiUser className="h-4 w-4" />
-                      Zarejestruj się
-                    </Link>
-
-                    <Link
-                      href="/admin"
-                      className="px-6 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors font-medium flex items-center gap-2 text-sm"
-                    >
-                      🛡️ Panel Admin
+                      Rejestracja
                     </Link>
                   </div>
 
