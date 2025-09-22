@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/router';
-import { FiUser, FiMapPin, FiTool, FiClock, FiCheck, FiArrowRight, FiArrowLeft } from 'react-icons/fi';
+import { FiUser, FiMapPin, FiTool, FiClock, FiCheck, FiArrowRight, FiArrowLeft, FiChevronDown } from 'react-icons/fi';
 
 export default function Rezerwacja() {
     const router = useRouter();
@@ -16,20 +16,51 @@ export default function Rezerwacja() {
         fullAddress: '',
         category: 'Serwis AGD',
         device: '',
+        brand: '',
         problem: '',
         availability: ''
     });
 
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [message, setMessage] = useState('');
+    const [showBrandSuggestions, setShowBrandSuggestions] = useState(false);
+
+    // Lista popularnych marek
+    const brands = [
+        'Amica', 'Apple', 'Asus', 'Beko', 'Bosch', 'Candy', 'Dell', 'Electrolux', 
+        'Gorenje', 'Haier', 'HP', 'Huawei', 'Indesit', 'Lenovo', 'LG', 'MSI', 
+        'Panasonic', 'Philips', 'Samsung', 'Sharp', 'Siemens', 'Sony', 'Toshiba', 
+        'Whirlpool', 'Xiaomi', 'Zanussi'
+    ];
 
     const totalSteps = 4;
 
     const handleChange = (e) => {
+        const { name, value } = e.target;
         setFormData({
             ...formData,
-            [e.target.name]: e.target.value
+            [name]: value
         });
+        
+        // Pokazuj podpowiedzi dla marki
+        if (name === 'brand') {
+            setShowBrandSuggestions(value.length > 0);
+        }
+    };
+
+    const handleBrandSelect = (brand) => {
+        setFormData({
+            ...formData,
+            brand: brand
+        });
+        setShowBrandSuggestions(false);
+    };
+
+    const getFilteredBrands = () => {
+        if (!formData.brand) return brands.slice(0, 8); // Pokaż pierwsze 8 gdy puste
+        return brands.filter(brand => 
+            brand.toLowerCase().includes(formData.brand.toLowerCase())
+        ).slice(0, 6); // Maksymalnie 6 podpowiedzi
     };
 
     const nextStep = () => {
@@ -193,17 +224,19 @@ export default function Rezerwacja() {
 
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                                            Email *
+                                            Email (opcjonalny) 📧
                                         </label>
                                         <input
                                             type="email"
                                             name="email"
                                             value={formData.email}
                                             onChange={handleChange}
-                                            required
                                             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                             placeholder="jan@example.com"
                                         />
+                                        <p className="text-sm text-gray-500 mt-1">
+                                            💡 Podaj email żeby otrzymać potwierdzenie i aktualizacje o statusie naprawy
+                                        </p>
                                     </div>
                                 </div>
                             </div>
@@ -292,11 +325,10 @@ export default function Rezerwacja() {
                                         <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                                             {[
                                                 { value: 'Serwis AGD', label: '🏠 AGD', desc: 'Sprzęt domowy' },
-                                                { value: 'Pralka', label: '🌀 Pralka', desc: 'Automatyczne' },
-                                                { value: 'Lodówka', label: '❄️ Lodówka', desc: 'Chłodzenie' },
-                                                { value: 'Zmywarka', label: '🍽️ Zmywarka', desc: 'Do naczyń' },
-                                                { value: 'Naprawa komputera', label: '💻 Komputer', desc: 'PC/Mac' },
-                                                { value: 'Naprawa telefonu', label: '📱 Telefon', desc: 'Smartfon' },
+                                                { value: 'Naprawa komputera', label: '💻 Komputer', desc: 'PC/Mac/Laptop' },
+                                                { value: 'Naprawa telefonu', label: '📱 Telefon', desc: 'Smartfon/Tablet' },
+                                                { value: 'Elektronika', label: '� Elektronika', desc: 'TV/Audio/RTV' },
+                                                { value: 'Inne', label: '� Inne', desc: 'Pozostałe urządzenia' },
                                             ].map((option) => (
                                                 <label key={option.value} className={`cursor-pointer border-2 rounded-lg p-3 text-center transition-colors ${
                                                     formData.category === option.value 
@@ -321,6 +353,38 @@ export default function Rezerwacja() {
 
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1">
+                                            Marka (opcjonalnie)
+                                        </label>
+                                        <div className="relative">
+                                            <input
+                                                type="text"
+                                                name="brand"
+                                                value={formData.brand}
+                                                onChange={handleChange}
+                                                onFocus={() => setShowBrandSuggestions(true)}
+                                                onBlur={() => setTimeout(() => setShowBrandSuggestions(false), 200)}
+                                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                                placeholder="np. Samsung, Bosch, Apple..."
+                                            />
+                                            {showBrandSuggestions && (
+                                                <div className="absolute z-10 w-full bg-white border border-gray-200 rounded-lg shadow-lg mt-1 max-h-48 overflow-y-auto">
+                                                    {getFilteredBrands().map((brand) => (
+                                                        <button
+                                                            key={brand}
+                                                            type="button"
+                                                            onClick={() => handleBrandSelect(brand)}
+                                                            className="w-full text-left px-4 py-2 hover:bg-gray-100 focus:bg-gray-100 focus:outline-none"
+                                                        >
+                                                            {brand}
+                                                        </button>
+                                                    ))}
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">
                                             Urządzenie/Model *
                                         </label>
                                         <input
@@ -330,7 +394,7 @@ export default function Rezerwacja() {
                                             onChange={handleChange}
                                             required
                                             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                            placeholder="np. Pralka Samsung WW80, Lodówka Bosch, HP Pavilion"
+                                            placeholder="np. Pralka WW80, Lodówka KGN39, Laptop Pavilion"
                                         />
                                     </div>
 
@@ -415,7 +479,7 @@ export default function Rezerwacja() {
                                         <div className="space-y-2 text-sm">
                                             <div><strong>Klient:</strong> {formData.name} ({formData.phone})</div>
                                             <div><strong>Adres:</strong> {formData.fullAddress || `${formData.street}, ${formData.city}`}</div>
-                                            <div><strong>Serwis:</strong> {formData.category} - {formData.device}</div>
+                                            <div><strong>Serwis:</strong> {formData.category} - {formData.brand ? `${formData.brand} ` : ''}{formData.device}</div>
                                             <div><strong>Problem:</strong> {formData.problem}</div>
                                             {formData.availability && <div><strong>Dostępność:</strong> {formData.availability}</div>}
                                         </div>
