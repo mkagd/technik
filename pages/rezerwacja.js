@@ -1,4 +1,4 @@
-// pages/rezerwacja.js - Kreator "Zamów fachowca"
+// pages/rezerwacja.js - Kreator "Zamów fachowca" AGD
 
 import { useState } from 'react';
 import { useRouter } from 'next/router';
@@ -14,7 +14,7 @@ export default function Rezerwacja() {
         city: '',
         street: '',
         fullAddress: '',
-        category: 'Serwis AGD',
+        category: 'Pralka',
         device: '',
         brand: '',
         problem: '',
@@ -25,12 +25,11 @@ export default function Rezerwacja() {
     const [message, setMessage] = useState('');
     const [showBrandSuggestions, setShowBrandSuggestions] = useState(false);
 
-    // Lista popularnych marek
+    // Lista popularnych marek AGD
     const brands = [
-        'Amica', 'Apple', 'Asus', 'Beko', 'Bosch', 'Candy', 'Dell', 'Electrolux', 
-        'Gorenje', 'Haier', 'HP', 'Huawei', 'Indesit', 'Lenovo', 'LG', 'MSI', 
-        'Panasonic', 'Philips', 'Samsung', 'Sharp', 'Siemens', 'Sony', 'Toshiba', 
-        'Whirlpool', 'Xiaomi', 'Zanussi'
+        'Amica', 'Aeg', 'Beko', 'Bosch', 'Candy', 'Electrolux', 'Gorenje', 
+        'Haier', 'Hotpoint', 'Indesit', 'LG', 'Miele', 'Panasonic', 'Samsung', 
+        'Sharp', 'Siemens', 'Whirlpool', 'Zanussi'
     ];
 
     const totalSteps = 4;
@@ -132,7 +131,7 @@ export default function Rezerwacja() {
 
     const isStepValid = (step) => {
         switch (step) {
-            case 1: return formData.category && formData.device && formData.problem; // Co naprawiamy
+            case 1: return formData.category && formData.problem; // Co naprawiamy - tylko kategoria i problem
             case 2: return formData.fullAddress || (formData.city && formData.street); // Gdzie
             case 3: return formData.name && formData.phone; // Dane kontaktowe (email opcjonalny)
             case 4: return true; // availability is optional
@@ -146,10 +145,10 @@ export default function Rezerwacja() {
                 {/* Header */}
                 <div className="text-center mb-8">
                     <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                        🛠️ Kreator zamówienia fachowca
+                        🛠️ Serwis AGD - Zamów fachowca
                     </h1>
                     <p className="text-gray-600">
-                        Szybko i prosto zamów profesjonalny serwis
+                        Profesjonalna naprawa sprzętu AGD w Twoim domu
                     </p>
                 </div>
 
@@ -183,60 +182,111 @@ export default function Rezerwacja() {
                 {/* Form Content */}
                 <div className="bg-white rounded-xl shadow-lg overflow-hidden">
                     <form onSubmit={handleSubmit}>
-                        {/* Step 3: Dane kontaktowe */}
-                        {currentStep === 3 && (
+                        {/* Step 1: Typ urządzenia AGD */}
+                        {currentStep === 1 && (
                             <div className="p-6">
                                 <div className="flex items-center mb-4">
-                                    <FiUser className="w-6 h-6 text-blue-600 mr-3" />
-                                    <h2 className="text-xl font-semibold text-gray-900">Twoje dane kontaktowe</h2>
+                                    <FiTool className="w-6 h-6 text-blue-600 mr-3" />
+                                    <h2 className="text-xl font-semibold text-gray-900">Co naprawiamy?</h2>
                                 </div>
 
                                 <div className="space-y-4">
                                     <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                                            Typ urządzenia AGD *
+                                        </label>
+                                        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                                            {[
+                                                { value: 'Pralka', label: '🌀 Pralka', desc: 'Automatyczna' },
+                                                { value: 'Zmywarka', label: '🍽️ Zmywarka', desc: 'Do naczyń' },
+                                                { value: 'Lodówka', label: '❄️ Lodówka', desc: 'Chłodzenie' },
+                                                { value: 'Piekarnik', label: '🔥 Piekarnik', desc: 'Do pieczenia' },
+                                                { value: 'Suszarka', label: '🌪️ Suszarka', desc: 'Do ubrań' },
+                                                { value: 'Kuchenka', label: '🔥 Kuchenka', desc: 'Gazowa/elektr.' },
+                                                { value: 'Mikrofalówka', label: '📻 Mikrofalówka', desc: 'Do podgrzewania' },
+                                                { value: 'Okap', label: '💨 Okap', desc: 'Wyciąg kuchenny' },
+                                                { value: 'Inne AGD', label: '🏠 Inne AGD', desc: 'Pozostałe' },
+                                            ].map((option) => (
+                                                <label key={option.value} className={`cursor-pointer border-2 rounded-lg p-3 text-center transition-colors ${
+                                                    formData.category === option.value 
+                                                        ? 'border-blue-500 bg-blue-50' 
+                                                        : 'border-gray-200 hover:border-gray-300'
+                                                }`}>
+                                                    <input
+                                                        type="radio"
+                                                        name="category"
+                                                        value={option.value}
+                                                        checked={formData.category === option.value}
+                                                        onChange={handleChange}
+                                                        className="sr-only"
+                                                    />
+                                                    <div className="text-2xl mb-1">{option.label.split(' ')[0]}</div>
+                                                    <div className="text-sm font-medium">{option.label.split(' ').slice(1).join(' ')}</div>
+                                                    <div className="text-xs text-gray-500">{option.desc}</div>
+                                                </label>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                                            Imię i nazwisko *
+                                            Marka (opcjonalnie)
+                                        </label>
+                                        <div className="relative">
+                                            <input
+                                                type="text"
+                                                name="brand"
+                                                value={formData.brand}
+                                                onChange={handleChange}
+                                                onFocus={() => setShowBrandSuggestions(true)}
+                                                onBlur={() => setTimeout(() => setShowBrandSuggestions(false), 200)}
+                                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                                placeholder="np. Samsung, Bosch, LG..."
+                                            />
+                                            {showBrandSuggestions && (
+                                                <div className="absolute z-10 w-full bg-white border border-gray-200 rounded-lg shadow-lg mt-1 max-h-48 overflow-y-auto">
+                                                    {getFilteredBrands().map((brand) => (
+                                                        <button
+                                                            key={brand}
+                                                            type="button"
+                                                            onClick={() => handleBrandSelect(brand)}
+                                                            className="w-full text-left px-4 py-2 hover:bg-gray-100 focus:bg-gray-100 focus:outline-none"
+                                                        >
+                                                            {brand}
+                                                        </button>
+                                                    ))}
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                                            Model urządzenia (opcjonalnie)
                                         </label>
                                         <input
                                             type="text"
-                                            name="name"
-                                            value={formData.name}
+                                            name="device"
+                                            value={formData.device}
                                             onChange={handleChange}
-                                            required
                                             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                            placeholder="Jan Kowalski"
+                                            placeholder="np. WW80T4020EE, KGN39VLDA"
                                         />
                                     </div>
 
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                                            Telefon *
+                                            Opis problemu *
                                         </label>
-                                        <input
-                                            type="tel"
-                                            name="phone"
-                                            value={formData.phone}
+                                        <textarea
+                                            name="problem"
+                                            value={formData.problem}
                                             onChange={handleChange}
                                             required
+                                            rows={4}
                                             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                            placeholder="+48 123 456 789"
+                                            placeholder="Opisz dokładnie co się dzieje z urządzeniem - np. nie włącza się, dziwne dźwięki, nie grzeje, wyświetla kod błędu..."
                                         />
-                                    </div>
-
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                                            Email (opcjonalny) 📧
-                                        </label>
-                                        <input
-                                            type="email"
-                                            name="email"
-                                            value={formData.email}
-                                            onChange={handleChange}
-                                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                            placeholder="jan@example.com"
-                                        />
-                                        <p className="text-sm text-gray-500 mt-1">
-                                            💡 Podaj email żeby otrzymać potwierdzenie i aktualizacje o statusie naprawy
-                                        </p>
                                     </div>
                                 </div>
                             </div>
@@ -309,108 +359,60 @@ export default function Rezerwacja() {
                             </div>
                         )}
 
-                        {/* Step 1: Serwis */}
-                        {currentStep === 1 && (
+                        {/* Step 3: Dane kontaktowe */}
+                        {currentStep === 3 && (
                             <div className="p-6">
                                 <div className="flex items-center mb-4">
-                                    <FiTool className="w-6 h-6 text-blue-600 mr-3" />
-                                    <h2 className="text-xl font-semibold text-gray-900">Co naprawiamy?</h2>
+                                    <FiUser className="w-6 h-6 text-blue-600 mr-3" />
+                                    <h2 className="text-xl font-semibold text-gray-900">Twoje dane kontaktowe</h2>
                                 </div>
 
                                 <div className="space-y-4">
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                                            Kategoria serwisu *
-                                        </label>
-                                        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                                            {[
-                                                { value: 'Serwis AGD', label: '🏠 AGD', desc: 'Sprzęt domowy' },
-                                                { value: 'Naprawa komputera', label: '💻 Komputer', desc: 'PC/Mac/Laptop' },
-                                                { value: 'Naprawa telefonu', label: '📱 Telefon', desc: 'Smartfon/Tablet' },
-                                                { value: 'Elektronika', label: '� Elektronika', desc: 'TV/Audio/RTV' },
-                                                { value: 'Inne', label: '� Inne', desc: 'Pozostałe urządzenia' },
-                                            ].map((option) => (
-                                                <label key={option.value} className={`cursor-pointer border-2 rounded-lg p-3 text-center transition-colors ${
-                                                    formData.category === option.value 
-                                                        ? 'border-blue-500 bg-blue-50' 
-                                                        : 'border-gray-200 hover:border-gray-300'
-                                                }`}>
-                                                    <input
-                                                        type="radio"
-                                                        name="category"
-                                                        value={option.value}
-                                                        checked={formData.category === option.value}
-                                                        onChange={handleChange}
-                                                        className="sr-only"
-                                                    />
-                                                    <div className="text-2xl mb-1">{option.label.split(' ')[0]}</div>
-                                                    <div className="text-sm font-medium">{option.label.split(' ').slice(1).join(' ')}</div>
-                                                    <div className="text-xs text-gray-500">{option.desc}</div>
-                                                </label>
-                                            ))}
-                                        </div>
-                                    </div>
-
-                                    <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                                            Marka (opcjonalnie)
-                                        </label>
-                                        <div className="relative">
-                                            <input
-                                                type="text"
-                                                name="brand"
-                                                value={formData.brand}
-                                                onChange={handleChange}
-                                                onFocus={() => setShowBrandSuggestions(true)}
-                                                onBlur={() => setTimeout(() => setShowBrandSuggestions(false), 200)}
-                                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                                placeholder="np. Samsung, Bosch, Apple..."
-                                            />
-                                            {showBrandSuggestions && (
-                                                <div className="absolute z-10 w-full bg-white border border-gray-200 rounded-lg shadow-lg mt-1 max-h-48 overflow-y-auto">
-                                                    {getFilteredBrands().map((brand) => (
-                                                        <button
-                                                            key={brand}
-                                                            type="button"
-                                                            onClick={() => handleBrandSelect(brand)}
-                                                            className="w-full text-left px-4 py-2 hover:bg-gray-100 focus:bg-gray-100 focus:outline-none"
-                                                        >
-                                                            {brand}
-                                                        </button>
-                                                    ))}
-                                                </div>
-                                            )}
-                                        </div>
-                                    </div>
-
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                                            Urządzenie/Model *
+                                            Imię i nazwisko *
                                         </label>
                                         <input
                                             type="text"
-                                            name="device"
-                                            value={formData.device}
+                                            name="name"
+                                            value={formData.name}
                                             onChange={handleChange}
                                             required
                                             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                            placeholder="np. Pralka WW80, Lodówka KGN39, Laptop Pavilion"
+                                            placeholder="Jan Kowalski"
                                         />
                                     </div>
 
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                                            Opis problemu *
+                                            Telefon *
                                         </label>
-                                        <textarea
-                                            name="problem"
-                                            value={formData.problem}
+                                        <input
+                                            type="tel"
+                                            name="phone"
+                                            value={formData.phone}
                                             onChange={handleChange}
                                             required
-                                            rows={4}
                                             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                            placeholder="Opisz dokładnie co się dzieje z urządzeniem, jakie są objawy awarii..."
+                                            placeholder="+48 123 456 789"
                                         />
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                                            Email (opcjonalny) 📧
+                                        </label>
+                                        <input
+                                            type="email"
+                                            name="email"
+                                            value={formData.email}
+                                            onChange={handleChange}
+                                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                            placeholder="jan@example.com"
+                                        />
+                                        <p className="text-sm text-gray-500 mt-1">
+                                            💡 Podaj email żeby otrzymać potwierdzenie i aktualizacje o statusie naprawy
+                                        </p>
                                     </div>
                                 </div>
                             </div>
@@ -479,7 +481,11 @@ export default function Rezerwacja() {
                                         <div className="space-y-2 text-sm">
                                             <div><strong>Klient:</strong> {formData.name} ({formData.phone})</div>
                                             <div><strong>Adres:</strong> {formData.fullAddress || `${formData.street}, ${formData.city}`}</div>
-                                            <div><strong>Serwis:</strong> {formData.category} - {formData.brand ? `${formData.brand} ` : ''}{formData.device}</div>
+                                            <div><strong>Serwis:</strong> {formData.category} 
+                                                {(formData.brand || formData.device) && ' - '}
+                                                {formData.brand && `${formData.brand} `}
+                                                {formData.device}
+                                            </div>
                                             <div><strong>Problem:</strong> {formData.problem}</div>
                                             {formData.availability && <div><strong>Dostępność:</strong> {formData.availability}</div>}
                                         </div>
