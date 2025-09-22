@@ -135,26 +135,23 @@ export default function Home() {
                   >
                     Moje zamówienie
                   </Link>
-                  <Link
-                    href="/rejestracja"
-                    className="px-4 py-2 text-blue-600 hover:text-blue-800 transition-colors"
-                  >
-                    Zarejestruj się
-                  </Link>
                   
-                  {/* Rozwijane menu logowania - responsive */}
+                  {/* Rozwijane menu konta - responsive */}
                   <div className="relative dropdown-container">
                     <button
                       onClick={() => setShowLoginDropdown(!showLoginDropdown)}
                       className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
                     >
                       <FiUser className="h-4 w-4" />
-                      Logowanie
+                      Konto
                       <FiChevronDown className={`h-4 w-4 transition-transform ${showLoginDropdown ? 'rotate-180' : ''}`} />
                     </button>
                     
                     {showLoginDropdown && (
-                      <div className="absolute top-full mt-2 right-0 bg-white rounded-lg shadow-lg border border-gray-200 py-2 min-w-[200px] z-50">
+                      <div className="absolute top-full mt-2 right-0 bg-white rounded-lg shadow-lg border border-gray-200 py-2 min-w-[220px] z-50">
+                        <div className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wide border-b border-gray-100">
+                          Logowanie
+                        </div>
                         <Link
                           href="/logowanie"
                           className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
@@ -176,6 +173,17 @@ export default function Home() {
                           onClick={() => setShowLoginDropdown(false)}
                         >
                           🛡️ Administrator
+                        </Link>
+                        
+                        <div className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wide border-t border-gray-100 mt-1">
+                          Nowe konto
+                        </div>
+                        <Link
+                          href="/rejestracja"
+                          className="block px-4 py-2 text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors"
+                          onClick={() => setShowLoginDropdown(false)}
+                        >
+                          ✨ Zarejestruj się
                         </Link>
                       </div>
                     )}
