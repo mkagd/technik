@@ -1,13 +1,27 @@
 // pages/rezerwacja.js - Kreator "Zamów fachowca" AGD
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { FiUser, FiMapPin, FiTool, FiClock, FiCheck, FiArrowRight, FiArrowLeft, FiChevronDown } from 'react-icons/fi';
-import { getCityByPostalCode } from '../data/postalCodes';
 
 export default function Rezerwacja() {
     const router = useRouter();
     const [currentStep, setCurrentStep] = useState(1);
+    const [getCityByPostalCode, setGetCityByPostalCode] = useState(null);
+    
+    // Dynamiczne ładowanie funkcji kodów pocztowych
+    useEffect(() => {
+        const loadPostalCodes = async () => {
+            try {
+                const { getCityByPostalCode: getCity } = await import('../data/postalCodes');
+                setGetCityByPostalCode(() => getCity);
+            } catch (error) {
+                console.error('Error loading postal codes:', error);
+            }
+        };
+        loadPostalCodes();
+    }, []);
+    
     const [formData, setFormData] = useState({
         name: '',
         phone: '',
@@ -28,6 +42,90 @@ export default function Rezerwacja() {
     const [message, setMessage] = useState('');
     const [showBrandSuggestions, setShowBrandSuggestions] = useState(false);
 
+    // Komponenty ikon SVG dla AGD
+    const WashingMachineIcon = () => (
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+            <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="1.5" fill="none"/>
+            <circle cx="12" cy="13" r="5" stroke="currentColor" strokeWidth="1.5" fill="none"/>
+            <circle cx="7" cy="7" r="1" fill="currentColor"/>
+            <circle cx="10" cy="7" r="1" fill="currentColor"/>
+            <path d="M10 13c0-1.1.9-2 2-2s2 .9 2 2" stroke="currentColor" strokeWidth="1.5" fill="none"/>
+        </svg>
+    );
+
+    const DishwasherIcon = () => (
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+            <rect x="3" y="3" width="18" height="18" rx="1" stroke="currentColor" strokeWidth="1.5" fill="none"/>
+            <rect x="5" y="9" width="14" height="10" rx="1" stroke="currentColor" strokeWidth="1.5" fill="none"/>
+            <circle cx="7" cy="6" r="0.5" fill="currentColor"/>
+            <circle cx="9" cy="6" r="0.5" fill="currentColor"/>
+            <path d="M7 12h10M7 15h10" stroke="currentColor" strokeWidth="1" opacity="0.7"/>
+        </svg>
+    );
+
+    const RefrigeratorIcon = () => (
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+            <rect x="5" y="2" width="14" height="20" rx="2" stroke="currentColor" strokeWidth="1.5" fill="none"/>
+            <path d="M5 11h14" stroke="currentColor" strokeWidth="1.5"/>
+            <rect x="7" y="5" width="1" height="4" fill="currentColor"/>
+            <rect x="7" y="13" width="1" height="4" fill="currentColor"/>
+        </svg>
+    );
+
+    const OvenIcon = () => (
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+            <rect x="3" y="6" width="18" height="15" rx="2" stroke="currentColor" strokeWidth="1.5" fill="none"/>
+            <rect x="6" y="10" width="12" height="8" rx="1" stroke="currentColor" strokeWidth="1.5" fill="none"/>
+            <circle cx="7" cy="3" r="1" fill="currentColor"/>
+            <circle cx="12" cy="3" r="1" fill="currentColor"/>
+            <circle cx="17" cy="3" r="1" fill="currentColor"/>
+        </svg>
+    );
+
+    const DryerIcon = () => (
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+            <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="1.5" fill="none"/>
+            <circle cx="12" cy="13" r="5" stroke="currentColor" strokeWidth="1.5" fill="none"/>
+            <circle cx="7" cy="7" r="1" fill="currentColor"/>
+            <circle cx="10" cy="7" r="1" fill="currentColor"/>
+            <path d="M9 13l3 3l3-3" stroke="currentColor" strokeWidth="1.5" fill="none"/>
+        </svg>
+    );
+
+    const StoveIcon = () => (
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+            <rect x="4" y="8" width="16" height="12" rx="2" stroke="currentColor" strokeWidth="1.5" fill="none"/>
+            <circle cx="9" cy="13" r="2" stroke="currentColor" strokeWidth="1.5" fill="none"/>
+            <circle cx="15" cy="13" r="2" stroke="currentColor" strokeWidth="1.5" fill="none"/>
+            <rect x="6" y="4" width="2" height="4" fill="currentColor"/>
+            <rect x="16" y="4" width="2" height="4" fill="currentColor"/>
+        </svg>
+    );
+
+    const MicrowaveIcon = () => (
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+            <rect x="2" y="7" width="20" height="12" rx="2" stroke="currentColor" strokeWidth="1.5" fill="none"/>
+            <rect x="5" y="10" width="10" height="6" rx="1" stroke="currentColor" strokeWidth="1.5" fill="none"/>
+            <circle cx="18" cy="11" r="1" fill="currentColor"/>
+            <circle cx="18" cy="15" r="1" fill="currentColor"/>
+        </svg>
+    );
+
+    const HoodIcon = () => (
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M4 8h16v6c0 1.1-.9 2-2 2H6c-1.1 0-2-.9-2-2V8z" stroke="currentColor" strokeWidth="1.5" fill="none"/>
+            <path d="M8 8V6c0-1.1.9-2 2-2h4c1.1 0 2 .9 2 2v2" stroke="currentColor" strokeWidth="1.5" fill="none"/>
+            <path d="M9 17v2M15 17v2" stroke="currentColor" strokeWidth="1.5"/>
+        </svg>
+    );
+
+    const ApplianceIcon = () => (
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+            <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="1.5" fill="none"/>
+            <path d="M8 8h8M8 12h8M8 16h4" stroke="currentColor" strokeWidth="1.5"/>
+        </svg>
+    );
+
     // Lista popularnych marek AGD
     const brands = [
         'Amica', 'Aeg', 'Beko', 'Bosch', 'Candy', 'Electrolux', 'Gorenje', 
@@ -42,7 +140,15 @@ export default function Rezerwacja() {
         
         // Obsługa kodu pocztowego - automatyczne uzupełnianie miasta
         if (name === 'postalCode') {
-            const city = getCityByPostalCode(value) || '';
+            let city = '';
+            try {
+                if (getCityByPostalCode) {
+                    city = getCityByPostalCode(value) || '';
+                }
+            } catch (error) {
+                console.error('Error getting city:', error);
+                city = '';
+            }
             setFormData({
                 ...formData,
                 [name]: value,
@@ -213,15 +319,15 @@ export default function Rezerwacja() {
                                         </label>
                                         <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                                             {[
-                                                { value: 'Pralka', icon: '🧺', label: 'Pralka', desc: 'Automatyczna', color: 'from-blue-400 to-blue-600' },
-                                                { value: 'Zmywarka', icon: '🍽️', label: 'Zmywarka', desc: 'Do naczyń', color: 'from-cyan-400 to-cyan-600' },
-                                                { value: 'Lodówka', icon: '🧊', label: 'Lodówka', desc: 'Chłodzenie', color: 'from-indigo-400 to-indigo-600' },
-                                                { value: 'Piekarnik', icon: '🍞', label: 'Piekarnik', desc: 'Do pieczenia', color: 'from-orange-400 to-orange-600' },
-                                                { value: 'Suszarka', icon: '💨', label: 'Suszarka', desc: 'Do ubrań', color: 'from-purple-400 to-purple-600' },
-                                                { value: 'Kuchenka', icon: '🍳', label: 'Kuchenka', desc: 'Gazowa/elektr.', color: 'from-red-400 to-red-600' },
-                                                { value: 'Mikrofalówka', icon: '⚡', label: 'Mikrofalówka', desc: 'Do podgrzewania', color: 'from-yellow-400 to-yellow-600' },
-                                                { value: 'Okap', icon: '🌪️', label: 'Okap', desc: 'Wyciąg kuchenny', color: 'from-gray-400 to-gray-600' },
-                                                { value: 'Inne AGD', icon: '🏠', label: 'Inne AGD', desc: 'Pozostałe', color: 'from-green-400 to-green-600' },
+                                                { value: 'Pralka', icon: <WashingMachineIcon />, label: 'Pralka', desc: 'Automatyczna', color: 'from-blue-400 to-blue-600' },
+                                                { value: 'Zmywarka', icon: <DishwasherIcon />, label: 'Zmywarka', desc: 'Do naczyń', color: 'from-cyan-400 to-cyan-600' },
+                                                { value: 'Lodówka', icon: <RefrigeratorIcon />, label: 'Lodówka', desc: 'Chłodzenie', color: 'from-indigo-400 to-indigo-600' },
+                                                { value: 'Piekarnik', icon: <OvenIcon />, label: 'Piekarnik', desc: 'Do pieczenia', color: 'from-orange-400 to-orange-600' },
+                                                { value: 'Suszarka', icon: <DryerIcon />, label: 'Suszarka', desc: 'Do ubrań', color: 'from-purple-400 to-purple-600' },
+                                                { value: 'Kuchenka', icon: <StoveIcon />, label: 'Kuchenka', desc: 'Gazowa/elektr.', color: 'from-red-400 to-red-600' },
+                                                { value: 'Mikrofalówka', icon: <MicrowaveIcon />, label: 'Mikrofalówka', desc: 'Do podgrzewania', color: 'from-yellow-400 to-yellow-600' },
+                                                { value: 'Okap', icon: <HoodIcon />, label: 'Okap', desc: 'Wyciąg kuchenny', color: 'from-gray-400 to-gray-600' },
+                                                { value: 'Inne AGD', icon: <ApplianceIcon />, label: 'Inne AGD', desc: 'Pozostałe', color: 'from-green-400 to-green-600' },
                                             ].map((option) => (
                                                 <label key={option.value} className={`cursor-pointer border-2 rounded-xl p-4 text-center transition-all duration-300 transform hover:scale-105 ${
                                                     formData.category === option.value 
