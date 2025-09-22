@@ -11,6 +11,7 @@ export default function Rezerwacja() {
         name: '',
         phone: '',
         email: '',
+        postalCode: '',
         city: '',
         street: '',
         fullAddress: '',
@@ -32,14 +33,40 @@ export default function Rezerwacja() {
         'Sharp', 'Siemens', 'Whirlpool', 'Zanussi'
     ];
 
+    // Mapa kodów pocztowych na miasta
+    const postalCodeMap = {
+        '39-200': 'Dębica',
+        '28-133': 'Pacanów', 
+        '39-300': 'Mielec',
+        '30-001': 'Kraków',
+        '00-001': 'Warszawa',
+        '80-001': 'Gdańsk',
+        '50-001': 'Wrocław',
+        '60-001': 'Poznań',
+        '90-001': 'Łódź',
+        '31-001': 'Kraków',
+        '20-001': 'Lublin'
+    };
+
     const totalSteps = 4;
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setFormData({
-            ...formData,
-            [name]: value
-        });
+        
+        // Obsługa kodu pocztowego - automatyczne uzupełnianie miasta
+        if (name === 'postalCode') {
+            const city = postalCodeMap[value] || '';
+            setFormData({
+                ...formData,
+                [name]: value,
+                city: city
+            });
+        } else {
+            setFormData({
+                ...formData,
+                [name]: value
+            });
+        }
         
         // Pokazuj podpowiedzi dla marki
         if (name === 'brand') {
@@ -79,15 +106,15 @@ export default function Rezerwacja() {
         setIsSubmitting(true);
         setMessage('');
 
-        if (!formData.fullAddress && (!formData.city || !formData.street)) {
-            setMessage('❌ Podaj pełny adres lub wypełnij pola miasto i ulica');
+        if (!formData.postalCode || !formData.city || !formData.street) {
+            setMessage('❌ Uzupełnij wszystkie pola adresu: kod pocztowy, miasto i ulicę');
             setIsSubmitting(false);
             return;
         }
 
         const submitData = {
             ...formData,
-            address: formData.fullAddress || `${formData.street}, ${formData.city}`
+            address: `${formData.street}, ${formData.postalCode} ${formData.city}`
         };
 
         try {
@@ -132,7 +159,7 @@ export default function Rezerwacja() {
     const isStepValid = (step) => {
         switch (step) {
             case 1: return formData.category && formData.problem; // Co naprawiamy - tylko kategoria i problem
-            case 2: return formData.fullAddress || (formData.city && formData.street); // Gdzie
+            case 2: return formData.postalCode && formData.city && formData.street; // Gdzie - kod pocztowy, miasto, ulica
             case 3: return formData.name && formData.phone; // Dane kontaktowe (email opcjonalny)
             case 4: return true; // availability is optional
             default: return false;
@@ -197,20 +224,20 @@ export default function Rezerwacja() {
                                         </label>
                                         <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                                             {[
-                                                { value: 'Pralka', label: '🌀 Pralka', desc: 'Automatyczna' },
-                                                { value: 'Zmywarka', label: '🍽️ Zmywarka', desc: 'Do naczyń' },
-                                                { value: 'Lodówka', label: '❄️ Lodówka', desc: 'Chłodzenie' },
-                                                { value: 'Piekarnik', label: '🔥 Piekarnik', desc: 'Do pieczenia' },
-                                                { value: 'Suszarka', label: '🌪️ Suszarka', desc: 'Do ubrań' },
-                                                { value: 'Kuchenka', label: '🔥 Kuchenka', desc: 'Gazowa/elektr.' },
-                                                { value: 'Mikrofalówka', label: '📻 Mikrofalówka', desc: 'Do podgrzewania' },
-                                                { value: 'Okap', label: '💨 Okap', desc: 'Wyciąg kuchenny' },
-                                                { value: 'Inne AGD', label: '🏠 Inne AGD', desc: 'Pozostałe' },
+                                                { value: 'Pralka', icon: '🧺', label: 'Pralka', desc: 'Automatyczna', color: 'from-blue-400 to-blue-600' },
+                                                { value: 'Zmywarka', icon: '🫧', label: 'Zmywarka', desc: 'Do naczyń', color: 'from-cyan-400 to-cyan-600' },
+                                                { value: 'Lodówka', icon: '🧊', label: 'Lodówka', desc: 'Chłodzenie', color: 'from-indigo-400 to-indigo-600' },
+                                                { value: 'Piekarnik', icon: '🍞', label: 'Piekarnik', desc: 'Do pieczenia', color: 'from-orange-400 to-orange-600' },
+                                                { value: 'Suszarka', icon: '💨', label: 'Suszarka', desc: 'Do ubrań', color: 'from-purple-400 to-purple-600' },
+                                                { value: 'Kuchenka', icon: '🔥', label: 'Kuchenka', desc: 'Gazowa/elektr.', color: 'from-red-400 to-red-600' },
+                                                { value: 'Mikrofalówka', icon: '⚡', label: 'Mikrofalówka', desc: 'Do podgrzewania', color: 'from-yellow-400 to-yellow-600' },
+                                                { value: 'Okap', icon: '🌪️', label: 'Okap', desc: 'Wyciąg kuchenny', color: 'from-gray-400 to-gray-600' },
+                                                { value: 'Inne AGD', icon: '🏠', label: 'Inne AGD', desc: 'Pozostałe', color: 'from-green-400 to-green-600' },
                                             ].map((option) => (
-                                                <label key={option.value} className={`cursor-pointer border-2 rounded-lg p-3 text-center transition-colors ${
+                                                <label key={option.value} className={`cursor-pointer border-2 rounded-xl p-4 text-center transition-all duration-300 transform hover:scale-105 ${
                                                     formData.category === option.value 
-                                                        ? 'border-blue-500 bg-blue-50' 
-                                                        : 'border-gray-200 hover:border-gray-300'
+                                                        ? 'border-blue-500 bg-gradient-to-br from-blue-50 to-blue-100 shadow-lg' 
+                                                        : 'border-gray-200 hover:border-gray-300 hover:shadow-md bg-white'
                                                 }`}>
                                                     <input
                                                         type="radio"
@@ -220,8 +247,10 @@ export default function Rezerwacja() {
                                                         onChange={handleChange}
                                                         className="sr-only"
                                                     />
-                                                    <div className="text-2xl mb-1">{option.label.split(' ')[0]}</div>
-                                                    <div className="text-sm font-medium">{option.label.split(' ').slice(1).join(' ')}</div>
+                                                    <div className={`w-12 h-12 mx-auto mb-2 rounded-full bg-gradient-to-br ${option.color} flex items-center justify-center text-white text-xl font-bold shadow-md`}>
+                                                        {option.icon}
+                                                    </div>
+                                                    <div className="text-sm font-semibold text-gray-800 mb-1">{option.label}</div>
                                                     <div className="text-xs text-gray-500">{option.desc}</div>
                                                 </label>
                                             ))}
@@ -303,34 +332,26 @@ export default function Rezerwacja() {
                                 <div className="space-y-4">
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                                            Pełny adres *
+                                            Kod pocztowy *
                                         </label>
                                         <input
                                             type="text"
-                                            name="fullAddress"
-                                            value={formData.fullAddress || ''}
+                                            name="postalCode"
+                                            value={formData.postalCode}
                                             onChange={handleChange}
-                                            placeholder="ul. Krakowska 123/45, 00-001 Warszawa"
+                                            placeholder="39-200"
+                                            maxLength="6"
                                             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                         />
                                         <p className="text-sm text-gray-500 mt-1">
-                                            💡 Podaj dokładny adres z numerem budynku/mieszkania i kodem pocztowym
+                                            💡 Wpisz kod pocztowy, a miasto wypełni się automatycznie
                                         </p>
-                                    </div>
-
-                                    <div className="relative">
-                                        <div className="absolute inset-0 flex items-center">
-                                            <div className="w-full border-t border-gray-300" />
-                                        </div>
-                                        <div className="relative flex justify-center text-sm">
-                                            <span className="px-2 bg-white text-gray-500">lub wypełnij osobno</span>
-                                        </div>
                                     </div>
 
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         <div>
                                             <label className="block text-sm font-medium text-gray-700 mb-1">
-                                                Miasto
+                                                Miasto *
                                             </label>
                                             <input
                                                 type="text"
@@ -338,12 +359,13 @@ export default function Rezerwacja() {
                                                 value={formData.city}
                                                 onChange={handleChange}
                                                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                                placeholder="Warszawa"
+                                                placeholder="Miasto zostanie wypełnione automatycznie"
+                                                readOnly={postalCodeMap[formData.postalCode]}
                                             />
                                         </div>
                                         <div>
                                             <label className="block text-sm font-medium text-gray-700 mb-1">
-                                                Ulica i numer
+                                                Ulica i numer *
                                             </label>
                                             <input
                                                 type="text"
@@ -351,10 +373,19 @@ export default function Rezerwacja() {
                                                 value={formData.street}
                                                 onChange={handleChange}
                                                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                                placeholder="Główna 123/45"
+                                                placeholder="np. Główna 123/45"
                                             />
                                         </div>
                                     </div>
+
+                                    {/* Podgląd adresu */}
+                                    {formData.postalCode && formData.city && formData.street && (
+                                        <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
+                                            <div className="text-sm text-green-700">
+                                                <strong>📍 Pełny adres:</strong> {formData.street}, {formData.postalCode} {formData.city}
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         )}
@@ -480,7 +511,7 @@ export default function Rezerwacja() {
                                         <h3 className="font-medium text-gray-900 mb-3">📋 Podsumowanie zamówienia:</h3>
                                         <div className="space-y-2 text-sm">
                                             <div><strong>Klient:</strong> {formData.name} ({formData.phone})</div>
-                                            <div><strong>Adres:</strong> {formData.fullAddress || `${formData.street}, ${formData.city}`}</div>
+                                            <div><strong>Adres:</strong> {formData.street}, {formData.postalCode} {formData.city}</div>
                                             <div><strong>Serwis:</strong> {formData.category} 
                                                 {(formData.brand || formData.device) && ' - '}
                                                 {formData.brand && `${formData.brand} `}
