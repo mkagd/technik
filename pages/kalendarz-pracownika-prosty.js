@@ -1,7 +1,4 @@
-// pages/kalendarz-pr  const [showTimeModal, setShowTimeModal] = useState(false);
-  const [editingDay, setEditingDay] = useState('');
-  const [timeInputs, setTimeInputs] = useState({ start: '07:00', end: '15:00' });
-  const [expandedDay, setExpandedDay] = useState('');wnika-prosty.js
+// pages/kalendarz-pracownika-prosty.js
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
