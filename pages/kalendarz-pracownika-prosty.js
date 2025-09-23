@@ -593,6 +593,9 @@ export default function KalendarzPracownikaProsty() {
                   </label>
                   <input
                     type="time"
+                    min="07:00"
+                    max="22:00"
+                    step="1800"
                     value={timeInputs.start}
                     onChange={(e) => setTimeInputs(prev => ({ ...prev, start: e.target.value }))}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
@@ -604,6 +607,9 @@ export default function KalendarzPracownikaProsty() {
                   </label>
                   <input
                     type="time"
+                    min="07:00"
+                    max="22:00"
+                    step="1800"
                     value={timeInputs.end}
                     onChange={(e) => setTimeInputs(prev => ({ ...prev, end: e.target.value }))}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
