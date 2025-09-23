@@ -258,12 +258,40 @@ export default function KalendarzPracownikaProsty() {
 
     // Generuj sloty między start a end
     const newSlots = [];
-    let currentHour = startHour;
-    let currentMinute = startMinute;
+    const partialSlots = {};
+    
+    // Znajdź pierwszy slot (może być częściowy)
+    const startSlotHour = startMinute >= 30 ? startHour : startHour;
+    const startSlotMinute = startMinute >= 30 ? 30 : 0;
+    const startSlotKey = `${startSlotHour}:${startSlotMinute.toString().padStart(2, '0')}`;
+    
+    // Znajdź ostatni slot (może być częściowy)
+    const endSlotHour = endMinute > 30 ? endHour : (endMinute > 0 ? endHour : endHour);
+    const endSlotMinute = endMinute > 30 ? 30 : (endMinute > 0 ? 0 : 0);
+    const endSlotKey = `${endSlotHour}:${endSlotMinute.toString().padStart(2, '0')}`;
 
-    while (currentHour < endHour || (currentHour === endHour && currentMinute < endMinute)) {
+    let currentHour = startSlotHour;
+    let currentMinute = startSlotMinute;
+
+    while (currentHour < endHour || (currentHour === endHour && currentMinute <= endSlotMinute)) {
       const slotKey = `${currentHour}:${currentMinute.toString().padStart(2, '0')}`;
       newSlots.push(slotKey);
+      
+      // Sprawdź czy to slot częściowy
+      const isFirstSlot = slotKey === startSlotKey;
+      const isLastSlot = slotKey === endSlotKey;
+      
+      if (isFirstSlot && startMinute % 30 !== 0) {
+        partialSlots[slotKey] = {
+          type: 'start',
+          percentage: ((30 - (startMinute % 30)) / 30) * 100
+        };
+      } else if (isLastSlot && endMinute % 30 !== 0) {
+        partialSlots[slotKey] = {
+          type: 'end', 
+          percentage: ((endMinute % 30) / 30) * 100
+        };
+      }
       
       currentMinute += 30;
       if (currentMinute >= 60) {
@@ -277,7 +305,8 @@ export default function KalendarzPracownikaProsty() {
       [editingDay]: {
         enabled: true,
         slots: newSlots,
-        breaks: []
+        breaks: [],
+        partialSlots: partialSlots
       }
     }));
 
@@ -287,29 +316,48 @@ export default function KalendarzPracownikaProsty() {
 
   const getSlotStatus = (dayKey, slotKey) => {
     const daySchedule = workSchedule[dayKey];
-    if (!daySchedule || !daySchedule.enabled) return 'disabled';
+    if (!daySchedule || !daySchedule.enabled) return { status: 'disabled', partial: false };
     
     const isWorking = daySchedule.slots && daySchedule.slots.includes(slotKey);
     const isBreak = daySchedule.breaks && daySchedule.breaks.includes(slotKey);
     
-    if (isBreak && isWorking) return 'break';
-    if (isWorking) return 'work';
-    return 'off';
+    // Sprawdź czy to slot częściowy (np. 7:35 w slocie 7:30)
+    const isPartial = daySchedule.partialSlots && daySchedule.partialSlots[slotKey];
+    
+    if (isBreak && isWorking) return { status: 'break', partial: isPartial };
+    if (isWorking) return { status: 'work', partial: isPartial };
+    return { status: 'off', partial: false };
   };
 
-  const getSlotClass = (status) => {
+  const getSlotClass = (statusObj) => {
+    const { status, partial } = statusObj;
+    let baseClass = '';
+    
     switch (status) {
       case 'work':
-        return 'bg-emerald-500 hover:bg-emerald-600 text-white cursor-pointer';
+        baseClass = 'bg-emerald-500 hover:bg-emerald-600 text-white cursor-pointer';
+        break;
       case 'break':
-        return 'bg-amber-400 hover:bg-amber-500 text-white cursor-pointer';
+        baseClass = 'bg-amber-400 hover:bg-amber-500 text-white cursor-pointer';
+        break;
       case 'off':
-        return 'bg-gray-100 hover:bg-gray-200 text-gray-400 cursor-pointer';
+        baseClass = 'bg-gray-100 hover:bg-gray-200 text-gray-400 cursor-pointer';
+        break;
       case 'disabled':
-        return 'bg-gray-50 text-gray-300 cursor-not-allowed';
+        baseClass = 'bg-gray-50 text-gray-300 cursor-not-allowed';
+        break;
       default:
-        return 'bg-gray-100 hover:bg-gray-200 text-gray-400 cursor-pointer';
+        baseClass = 'bg-gray-100 hover:bg-gray-200 text-gray-400 cursor-pointer';
     }
+    
+    // Dodaj gradient dla częściowych slotów
+    if (partial && (status === 'work' || status === 'break')) {
+      const color = status === 'work' ? 'emerald' : 'amber';
+      const colorCode = status === 'work' ? '#10b981' : '#f59e0b';
+      return `${baseClass} relative overflow-hidden`;
+    }
+    
+    return baseClass;
   };
 
   if (isLoading) {
@@ -493,32 +541,47 @@ export default function KalendarzPracownikaProsty() {
                     {/* Sloty czasowe */}
                     {timeSlots.map(slot => {
                       const slotKey = slot.display;
-                      const status = getSlotStatus(day.key, slotKey);
+                      const statusObj = getSlotStatus(day.key, slotKey);
+                      const daySchedule = workSchedule[day.key];
+                      const partialInfo = daySchedule?.partialSlots?.[slotKey];
                       
                       return (
                         <div
                           key={slotKey}
-                          className={`border-l border-gray-200 transition-colors h-12 flex-1 min-w-[40px] cursor-pointer ${
+                          className={`border-l border-gray-200 transition-colors h-12 flex-1 min-w-[40px] cursor-pointer relative ${
                             slot.minute === 0 ? 'border-l-2 border-l-gray-400' : ''
-                          } ${getSlotClass(status)}`}
+                          } ${getSlotClass(statusObj)}`}
                           onClick={() => {
-                            if (status !== 'disabled') {
+                            if (statusObj.status !== 'disabled') {
                               toggleSlot(day.key, slotKey);
                             }
                           }}
                           onContextMenu={(e) => {
                             e.preventDefault();
-                            if (status !== 'disabled') {
+                            if (statusObj.status !== 'disabled') {
                               toggleBreak(day.key, slotKey);
                             }
                           }}
                           title={
-                            status === 'work' ? `${slotKey} - Dyżur` :
-                            status === 'break' ? `${slotKey} - Przerwa` :
-                            status === 'off' ? `${slotKey} - Wolne` :
+                            statusObj.status === 'work' ? `${slotKey} - Dyżur${partialInfo ? ' (częściowy)' : ''}` :
+                            statusObj.status === 'break' ? `${slotKey} - Przerwa` :
+                            statusObj.status === 'off' ? `${slotKey} - Wolne` :
                             `${slotKey} - Wyłączony`
                           }
                         >
+                          {/* Gradient dla częściowych slotów */}
+                          {partialInfo && (statusObj.status === 'work' || statusObj.status === 'break') && (
+                            <div 
+                              className={`absolute inset-0 ${
+                                statusObj.status === 'work' ? 'bg-emerald-500' : 'bg-amber-400'
+                              }`}
+                              style={{
+                                background: partialInfo.type === 'start' 
+                                  ? `linear-gradient(to right, ${statusObj.status === 'work' ? '#10b981' : '#f59e0b'} ${partialInfo.percentage}%, #e5e7eb ${partialInfo.percentage}%)`
+                                  : `linear-gradient(to right, #e5e7eb ${100 - partialInfo.percentage}%, ${statusObj.status === 'work' ? '#10b981' : '#f59e0b'} ${100 - partialInfo.percentage}%)`
+                              }}
+                            />
+                          )}
                         </div>
                       );
                     })}
