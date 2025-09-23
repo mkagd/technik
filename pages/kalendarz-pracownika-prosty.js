@@ -26,6 +26,7 @@ export default function KalendarzPracownikaProsty() {
   const [timeInputs, setTimeInputs] = useState({ start: '07:00', end: '15:00' });
   const [expandedDay, setExpandedDay] = useState('');
   const [isLoading, setIsLoading] = useState(true);
+  const [currentTime, setCurrentTime] = useState(new Date());
 
   const router = useRouter();
 
@@ -74,6 +75,33 @@ export default function KalendarzPracownikaProsty() {
 
   const goToToday = () => {
     setSelectedWeek(new Date());
+  };
+
+  // Funkcja do obliczania pozycji aktualnej godziny
+  const getCurrentTimePosition = () => {
+    const now = new Date();
+    const currentHour = now.getHours();
+    const currentMinute = now.getMinutes();
+    
+    // Sprawdź czy aktualna godzina mieści się w zakresie kalendarza (7:00-22:00)
+    if (currentHour < 7 || currentHour > 22) {
+      return null;
+    }
+    
+    // Oblicz pozycję w procentach
+    // Każdy slot to 30 min, więc mamy 32 sloty (7:00-22:00)
+    const totalSlots = timeSlots.length;
+    const minutesFromStart = (currentHour - 7) * 60 + currentMinute;
+    const totalMinutes = 15 * 60; // 15 godzin * 60 minut
+    const percentage = (minutesFromStart / totalMinutes) * 100;
+    
+    return Math.min(Math.max(percentage, 0), 100);
+  };
+
+  const isCurrentTimeVisible = () => {
+    const now = new Date();
+    const currentHour = now.getHours();
+    return currentHour >= 7 && currentHour <= 22;
   };
 
   const daysOfWeek = [
@@ -171,6 +199,15 @@ export default function KalendarzPracownikaProsty() {
       }
     }
   }, [selectedWeek, employee]);
+
+  // Efekt do odświeżania aktualnego czasu co minutę
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 60000); // Odświeżaj co minutę
+
+    return () => clearInterval(timer);
+  }, []);
 
   const saveSchedule = () => {
     if (employee) {
@@ -604,7 +641,23 @@ export default function KalendarzPracownikaProsty() {
           </div>
 
           <div className="overflow-x-auto">
-            <div className="w-full">
+            <div className="w-full relative">
+              {/* Czerwona linia aktualnego czasu */}
+              {isCurrentTimeVisible() && (
+                <div 
+                  className="absolute top-0 bottom-0 w-0.5 bg-red-500 z-10 pointer-events-none"
+                  style={{
+                    left: `calc(100px + ${getCurrentTimePosition()}%)`
+                  }}
+                >
+                  <div className="absolute -top-2 -left-2 w-4 h-4 bg-red-500 rounded-full flex items-center justify-center">
+                    <div className="w-2 h-2 bg-white rounded-full"></div>
+                  </div>
+                  <div className="absolute -top-6 -left-8 text-xs font-bold text-red-600 bg-white px-1 py-0.5 rounded shadow-sm border">
+                    {currentTime.toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' })}
+                  </div>
+                </div>
+              )}
               {/* Header z godzinami */}
               <div className="flex border-b border-gray-300 bg-white w-full">
                 <div className="p-3 bg-gray-50 font-medium text-gray-900 text-center text-sm border-r border-gray-300 w-[100px] flex-shrink-0">
