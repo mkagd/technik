@@ -88,14 +88,11 @@ export default function KalendarzPracownikaProsty() {
       return null;
     }
     
-    // Oblicz pozycję w procentach
-    // Każdy slot to 30 min, więc mamy 32 sloty (7:00-22:00)
-    const totalSlots = timeSlots.length;
+    // Oblicz pozycję w slotach (każdy slot to 48px wysokości)
     const minutesFromStart = (currentHour - 7) * 60 + currentMinute;
-    const totalMinutes = 15 * 60; // 15 godzin * 60 minut
-    const percentage = (minutesFromStart / totalMinutes) * 100;
+    const slotPosition = minutesFromStart / 30; // Każdy slot to 30 minut
     
-    return Math.min(Math.max(percentage, 0), 100);
+    return slotPosition * 48; // 48px wysokości każdego slotu
   };
 
   const isCurrentTimeVisible = () => {
@@ -643,147 +640,156 @@ export default function KalendarzPracownikaProsty() {
           <div className="overflow-x-auto">
             <div className="w-full relative">
               {/* Czerwona linia aktualnego czasu */}
-              {isCurrentTimeVisible() && (
+              {isCurrentTimeVisible() && getCurrentTimePosition() !== null && (
                 <div 
-                  className="absolute top-0 bottom-0 w-0.5 bg-red-500 z-10 pointer-events-none"
+                  className="absolute left-[100px] right-0 h-0.5 bg-red-500 z-10 pointer-events-none"
                   style={{
-                    left: `calc(100px + ${getCurrentTimePosition()}%)`
+                    top: `${52 + getCurrentTimePosition()}px` // 52px header + pozycja w slotach
                   }}
                 >
                   <div className="absolute -top-2 -left-2 w-4 h-4 bg-red-500 rounded-full flex items-center justify-center">
                     <div className="w-2 h-2 bg-white rounded-full"></div>
                   </div>
-                  <div className="absolute -top-6 -left-8 text-xs font-bold text-red-600 bg-white px-1 py-0.5 rounded shadow-sm border">
+                  <div className="absolute -top-6 -left-16 text-xs font-bold text-red-600 bg-white px-1 py-0.5 rounded shadow-sm border">
                     {currentTime.toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' })}
                   </div>
                 </div>
               )}
-              {/* Header z godzinami */}
-              <div className="flex border-b border-gray-300 bg-white w-full">
-                <div className="p-3 bg-gray-50 font-medium text-gray-900 text-center text-sm border-r border-gray-300 w-[100px] flex-shrink-0">
-                  Dzień
-                </div>
-                {timeSlots.map((slot, index) => (
-                  <div 
-                    key={`${slot.hour}-${slot.minute}`} 
-                    className={`p-2 bg-gray-50 text-center text-xs font-medium text-gray-700 border-l border-gray-200 flex-1 min-w-[40px] ${
-                      slot.minute === 0 ? 'border-l-2 border-l-gray-400' : ''
-                    }`}
-                  >
-                    {slot.minute === 0 ? slot.hour : ''}
+              {/* Główna tabela z pionowymi godzinami */}
+              <div className="flex">
+                {/* Kolumna z godzinami */}
+                <div className="bg-gray-50 border-r border-gray-300">
+                  {/* Header */}
+                  <div className="p-3 font-medium text-gray-900 text-center text-sm border-b border-gray-300 w-[100px] bg-gray-100">
+                    Dzień / Godzina
                   </div>
-                ))}
-              </div>
-
-              {/* Rzędy z dniami */}
-              {daysOfWeek.map((day, index) => {
-                const daySchedule = workSchedule[day.key] || { enabled: false, hours: [], breaks: [] };
-                const currentDate = getCurrentWeekDates()[index];
-                const isCurrentDay = isToday(currentDate);
-                
-                return (
-                  <div key={day.key} className={`flex border-b-2 w-full transition-colors ${
-                    daySchedule.enabled 
-                      ? 'border-emerald-300 bg-emerald-50 hover:bg-emerald-100' 
-                      : 'border-gray-300 bg-white hover:bg-gray-50'
-                  } ${isCurrentDay ? 'ring-2 ring-blue-400 bg-blue-50' : ''}`}>
-                    {/* Nazwa dnia z datą */}
-                    <div className={`p-3 border-r border-gray-300 w-[100px] flex-shrink-0 ${
-                      daySchedule.enabled ? 'bg-emerald-100' : 'bg-gray-100'
-                    } ${isCurrentDay ? 'bg-blue-100' : ''}`}>
-                      <div className="flex flex-col space-y-2">
-                        <div className="text-xs font-medium text-gray-600">
-                          {formatDate(currentDate)}
-                        </div>
-                        <div 
-                          className={`text-sm font-medium cursor-pointer hover:text-emerald-600 transition-colors flex items-center ${
-                            isCurrentDay ? 'text-blue-700 font-bold' : 'text-gray-900'
-                          }`}
-                          onClick={() => toggleExpandDay(day.key)}
-                          title="Kliknij aby zobaczyć wizyty"
-                        >
-                          {day.short} {expandedDay === day.key ? '▼' : '▶'}
-                        </div>
-                        <div className="flex items-center justify-center space-x-1">
-                          <button
-                            onClick={() => toggleDay(day.key)}
-                            className={`w-5 h-5 rounded text-xs font-medium transition-colors ${
-                              daySchedule.enabled 
-                                ? 'bg-emerald-500 text-white hover:bg-emerald-600' 
-                                : 'bg-gray-300 text-gray-600 hover:bg-gray-400'
-                            }`}
-                            title={daySchedule.enabled ? 'Wyłącz dzień' : 'Włącz dzień'}
-                          >
-                            {daySchedule.enabled ? '✓' : '✗'}
-                          </button>
-                          <button
-                            onClick={() => openTimeModal(day.key)}
-                            className="w-5 h-5 rounded text-xs bg-blue-500 text-white hover:bg-blue-600 transition-colors"
-                            title="Ustaw godziny"
-                          >
-                            ⏰
-                          </button>
-                          <button
-                            onClick={() => copyDayToAll(day.key)}
-                            className="w-5 h-5 rounded text-xs text-emerald-600 hover:text-emerald-700 border border-emerald-300 hover:bg-emerald-50 transition-colors"
-                            title="Skopiuj do wszystkich dni"
-                          >
-                            <FiCopy className="h-3 w-3" />
-                          </button>
-                        </div>
-                      </div>
+                  {/* Godziny */}
+                  {timeSlots.map((slot, index) => (
+                    <div 
+                      key={`time-${slot.hour}-${slot.minute}`} 
+                      className={`p-2 text-center text-xs font-medium text-gray-700 border-b border-gray-200 w-[100px] h-12 flex items-center justify-center ${
+                        slot.minute === 0 ? 'bg-gray-100 border-b-2 border-b-gray-400 font-bold' : 'bg-gray-50'
+                      }`}
+                    >
+                      {slot.display}
                     </div>
+                  ))}
+                </div>
 
-                    {/* Sloty czasowe */}
-                    {timeSlots.map(slot => {
-                      const slotKey = slot.display;
-                      const statusObj = getSlotStatus(day.key, slotKey);
-                      const daySchedule = workSchedule[day.key];
-                      const partialInfo = daySchedule?.partialSlots?.[slotKey];
+                {/* Kolumny z dniami */}
+                <div className="flex-1">
+                  {/* Header z nazwami dni */}
+                  <div className="flex border-b border-gray-300 bg-white">
+                    {daysOfWeek.map((day, index) => {
+                      const currentDate = getCurrentWeekDates()[index];
+                      const isCurrentDay = isToday(currentDate);
                       
                       return (
-                        <div
-                          key={slotKey}
-                          className={`border-l border-gray-200 transition-colors h-12 flex-1 min-w-[40px] cursor-pointer relative ${
-                            slot.minute === 0 ? 'border-l-2 border-l-gray-400' : ''
-                          } ${getSlotClass(statusObj)} ${isCurrentDay ? 'ring-1 ring-blue-200' : ''}`}
-                          onClick={() => {
-                            if (statusObj.status !== 'disabled') {
-                              toggleSlot(day.key, slotKey);
-                            }
-                          }}
-                          onContextMenu={(e) => {
-                            e.preventDefault();
-                            if (statusObj.status !== 'disabled') {
-                              toggleBreak(day.key, slotKey);
-                            }
-                          }}
-                          title={
-                            statusObj.status === 'work' ? `${slotKey} - Dyżur${partialInfo ? ' (częściowy)' : ''}` :
-                            statusObj.status === 'break' ? `${slotKey} - Przerwa` :
-                            statusObj.status === 'off' ? `${slotKey} - Wolne` :
-                            `${slotKey} - Wyłączony`
-                          }
+                        <div 
+                          key={`header-${day.key}`} 
+                          className={`p-3 flex-1 min-w-[80px] text-center border-r border-gray-300 ${
+                            isCurrentDay ? 'bg-blue-100' : 'bg-gray-50'
+                          }`}
                         >
-                          {/* Gradient dla częściowych slotów */}
-                          {partialInfo && (statusObj.status === 'work' || statusObj.status === 'break') && (
-                            <div 
-                              className={`absolute inset-0 ${
-                                statusObj.status === 'work' ? 'bg-emerald-500' : 'bg-amber-400'
+                          <div className="text-xs font-medium text-gray-600">
+                            {formatDate(currentDate)}
+                          </div>
+                          <div 
+                            className={`text-sm font-medium cursor-pointer hover:text-emerald-600 transition-colors flex items-center justify-center ${
+                              isCurrentDay ? 'text-blue-700 font-bold' : 'text-gray-900'
+                            }`}
+                            onClick={() => toggleExpandDay(day.key)}
+                            title="Kliknij aby zobaczyć wizyty"
+                          >
+                            {day.short} {expandedDay === day.key ? '▼' : '▶'}
+                          </div>
+                          <div className="flex items-center justify-center space-x-1 mt-1">
+                            <button
+                              onClick={() => toggleDay(day.key)}
+                              className={`w-4 h-4 rounded text-xs font-medium transition-colors ${
+                                (workSchedule[day.key] || {}).enabled 
+                                  ? 'bg-emerald-500 text-white hover:bg-emerald-600' 
+                                  : 'bg-gray-300 text-gray-600 hover:bg-gray-400'
                               }`}
-                              style={{
-                                background: partialInfo.type === 'start' 
-                                  ? `linear-gradient(to right, ${statusObj.status === 'work' ? '#10b981' : '#f59e0b'} ${partialInfo.percentage}%, #e5e7eb ${partialInfo.percentage}%)`
-                                  : `linear-gradient(to right, #e5e7eb ${100 - partialInfo.percentage}%, ${statusObj.status === 'work' ? '#10b981' : '#f59e0b'} ${100 - partialInfo.percentage}%)`
-                              }}
-                            />
-                          )}
+                              title={(workSchedule[day.key] || {}).enabled ? 'Wyłącz dzień' : 'Włącz dzień'}
+                            >
+                              {(workSchedule[day.key] || {}).enabled ? '✓' : '✗'}
+                            </button>
+                            <button
+                              onClick={() => openTimeModal(day.key)}
+                              className="w-4 h-4 rounded text-xs bg-blue-500 text-white hover:bg-blue-600 transition-colors flex items-center justify-center"
+                              title="Ustaw godziny"
+                            >
+                              ⏰
+                            </button>
+                            <button
+                              onClick={() => copyDayToAll(day.key)}
+                              className="w-4 h-4 rounded text-xs text-emerald-600 hover:text-emerald-700 border border-emerald-300 hover:bg-emerald-50 transition-colors flex items-center justify-center"
+                              title="Skopiuj do wszystkich dni"
+                            >
+                              <FiCopy className="h-3 w-3" />
+                            </button>
+                          </div>
                         </div>
                       );
                     })}
                   </div>
-                );
-              })}
+
+                  {/* Rzędy z slotami czasu dla każdego dnia */}
+                  {timeSlots.map(slot => (
+                    <div key={`row-${slot.hour}-${slot.minute}`} className="flex">
+                      {daysOfWeek.map((day, dayIndex) => {
+                        const currentDate = getCurrentWeekDates()[dayIndex];
+                        const isCurrentDay = isToday(currentDate);
+                        const slotKey = slot.display;
+                        const statusObj = getSlotStatus(day.key, slotKey);
+                        const daySchedule = workSchedule[day.key];
+                        const partialInfo = daySchedule?.partialSlots?.[slotKey];
+                        
+                        return (
+                          <div
+                            key={`slot-${day.key}-${slotKey}`}
+                            className={`border-r border-gray-200 border-b border-gray-200 transition-colors h-12 flex-1 min-w-[80px] cursor-pointer relative ${
+                              slot.minute === 0 ? 'border-b-2 border-b-gray-400' : ''
+                            } ${getSlotClass(statusObj)} ${isCurrentDay ? 'ring-1 ring-blue-200' : ''}`}
+                            onClick={() => {
+                              if (statusObj.status !== 'disabled') {
+                                toggleSlot(day.key, slotKey);
+                              }
+                            }}
+                            onContextMenu={(e) => {
+                              e.preventDefault();
+                              if (statusObj.status !== 'disabled') {
+                                toggleBreak(day.key, slotKey);
+                              }
+                            }}
+                            title={
+                              statusObj.status === 'work' ? `${slotKey} - Dyżur${partialInfo ? ' (częściowy)' : ''}` :
+                              statusObj.status === 'break' ? `${slotKey} - Przerwa` :
+                              statusObj.status === 'off' ? `${slotKey} - Wolne` :
+                              `${slotKey} - Wyłączony`
+                            }
+                          >
+                            {/* Gradient dla częściowych slotów */}
+                            {partialInfo && (statusObj.status === 'work' || statusObj.status === 'break') && (
+                              <div 
+                                className={`absolute inset-0 ${
+                                  statusObj.status === 'work' ? 'bg-emerald-500' : 'bg-amber-400'
+                                }`}
+                                style={{
+                                  background: partialInfo.type === 'start' 
+                                    ? `linear-gradient(to right, ${statusObj.status === 'work' ? '#10b981' : '#f59e0b'} ${partialInfo.percentage}%, #e5e7eb ${partialInfo.percentage}%)`
+                                    : `linear-gradient(to right, #e5e7eb ${100 - partialInfo.percentage}%, ${statusObj.status === 'work' ? '#10b981' : '#f59e0b'} ${100 - partialInfo.percentage}%)`
+                                }}
+                              />
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
         </div>
