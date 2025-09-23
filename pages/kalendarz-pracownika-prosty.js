@@ -644,7 +644,7 @@ export default function KalendarzPracownikaProsty() {
                 <div 
                   className="absolute left-[100px] right-0 h-0.5 bg-red-500 z-10 pointer-events-none"
                   style={{
-                    top: `${52 + getCurrentTimePosition()}px` // 52px header + pozycja w slotach
+                    top: `${76 + getCurrentTimePosition()}px` // 76px header + pozycja w slotach
                   }}
                 >
                   <div className="absolute -top-2 -left-2 w-4 h-4 bg-red-500 rounded-full flex items-center justify-center">
@@ -659,15 +659,15 @@ export default function KalendarzPracownikaProsty() {
               <div className="flex">
                 {/* Kolumna z godzinami */}
                 <div className="bg-gray-50 border-r border-gray-300">
-                  {/* Header */}
-                  <div className="p-3 font-medium text-gray-900 text-center text-sm border-b border-gray-300 w-[100px] bg-gray-100">
+                  {/* Header - dopasowana wysokość do headerów dni */}
+                  <div className="font-medium text-gray-900 text-center text-sm border-b border-gray-300 w-[100px] bg-gray-100 flex items-center justify-center" style={{height: '76px'}}>
                     Dzień / Godzina
                   </div>
                   {/* Godziny */}
                   {timeSlots.map((slot, index) => (
                     <div 
                       key={`time-${slot.hour}-${slot.minute}`} 
-                      className={`p-2 text-center text-xs font-medium text-gray-700 border-b border-gray-200 w-[100px] h-12 flex items-center justify-center ${
+                      className={`text-center text-xs font-medium text-gray-700 border-b border-gray-200 w-[100px] h-12 flex items-center justify-center ${
                         slot.minute === 0 ? 'bg-gray-100 border-b-2 border-b-gray-400 font-bold' : 'bg-gray-50'
                       }`}
                     >
@@ -687,48 +687,51 @@ export default function KalendarzPracownikaProsty() {
                       return (
                         <div 
                           key={`header-${day.key}`} 
-                          className={`p-3 flex-1 min-w-[80px] text-center border-r border-gray-300 ${
+                          className={`flex-1 min-w-[80px] text-center border-r border-gray-300 flex flex-col justify-center ${
                             isCurrentDay ? 'bg-blue-100' : 'bg-gray-50'
                           }`}
+                          style={{height: '76px'}}
                         >
-                          <div className="text-xs font-medium text-gray-600">
-                            {formatDate(currentDate)}
-                          </div>
-                          <div 
-                            className={`text-sm font-medium cursor-pointer hover:text-emerald-600 transition-colors flex items-center justify-center ${
-                              isCurrentDay ? 'text-blue-700 font-bold' : 'text-gray-900'
-                            }`}
-                            onClick={() => toggleExpandDay(day.key)}
-                            title="Kliknij aby zobaczyć wizyty"
-                          >
-                            {day.short} {expandedDay === day.key ? '▼' : '▶'}
-                          </div>
-                          <div className="flex items-center justify-center space-x-1 mt-1">
-                            <button
-                              onClick={() => toggleDay(day.key)}
-                              className={`w-4 h-4 rounded text-xs font-medium transition-colors ${
-                                (workSchedule[day.key] || {}).enabled 
-                                  ? 'bg-emerald-500 text-white hover:bg-emerald-600' 
-                                  : 'bg-gray-300 text-gray-600 hover:bg-gray-400'
+                          <div className="px-2 py-1">
+                            <div className="text-xs font-medium text-gray-600">
+                              {formatDate(currentDate)}
+                            </div>
+                            <div 
+                              className={`text-sm font-medium cursor-pointer hover:text-emerald-600 transition-colors flex items-center justify-center ${
+                                isCurrentDay ? 'text-blue-700 font-bold' : 'text-gray-900'
                               }`}
-                              title={(workSchedule[day.key] || {}).enabled ? 'Wyłącz dzień' : 'Włącz dzień'}
+                              onClick={() => toggleExpandDay(day.key)}
+                              title="Kliknij aby zobaczyć wizyty"
                             >
-                              {(workSchedule[day.key] || {}).enabled ? '✓' : '✗'}
-                            </button>
-                            <button
-                              onClick={() => openTimeModal(day.key)}
-                              className="w-4 h-4 rounded text-xs bg-blue-500 text-white hover:bg-blue-600 transition-colors flex items-center justify-center"
-                              title="Ustaw godziny"
-                            >
-                              ⏰
-                            </button>
-                            <button
-                              onClick={() => copyDayToAll(day.key)}
-                              className="w-4 h-4 rounded text-xs text-emerald-600 hover:text-emerald-700 border border-emerald-300 hover:bg-emerald-50 transition-colors flex items-center justify-center"
-                              title="Skopiuj do wszystkich dni"
-                            >
-                              <FiCopy className="h-3 w-3" />
-                            </button>
+                              {day.short} {expandedDay === day.key ? '▼' : '▶'}
+                            </div>
+                            <div className="flex items-center justify-center space-x-1 mt-1">
+                              <button
+                                onClick={() => toggleDay(day.key)}
+                                className={`w-4 h-4 rounded text-xs font-medium transition-colors ${
+                                  (workSchedule[day.key] || {}).enabled 
+                                    ? 'bg-emerald-500 text-white hover:bg-emerald-600' 
+                                    : 'bg-gray-300 text-gray-600 hover:bg-gray-400'
+                                }`}
+                                title={(workSchedule[day.key] || {}).enabled ? 'Wyłącz dzień' : 'Włącz dzień'}
+                              >
+                                {(workSchedule[day.key] || {}).enabled ? '✓' : '✗'}
+                              </button>
+                              <button
+                                onClick={() => openTimeModal(day.key)}
+                                className="w-4 h-4 rounded text-xs bg-blue-500 text-white hover:bg-blue-600 transition-colors flex items-center justify-center"
+                                title="Ustaw godziny"
+                              >
+                                ⏰
+                              </button>
+                              <button
+                                onClick={() => copyDayToAll(day.key)}
+                                className="w-4 h-4 rounded text-xs text-emerald-600 hover:text-emerald-700 border border-emerald-300 hover:bg-emerald-50 transition-colors flex items-center justify-center"
+                                title="Skopiuj do wszystkich dni"
+                              >
+                                <FiCopy className="h-3 w-3" />
+                              </button>
+                            </div>
                           </div>
                         </div>
                       );
