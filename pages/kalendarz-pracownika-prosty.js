@@ -62,13 +62,13 @@ export default function KalendarzPracownikaProsty() {
       if (savedSchedule) {
         setWorkSchedule(JSON.parse(savedSchedule));
       } else {
-        // Domyślny harmonogram (Pon-Pt 8:00-16:00)
+        // Domyślny harmonogram (Pon-Pt 7:00-15:00)
         const defaultSchedule = {};
         daysOfWeek.slice(0, 5).forEach(day => {
-          // Sloty od 8:00 do 16:00 (16 slotów po 30 min)
+          // Sloty od 7:00 do 15:00 (16 slotów po 30 min)
           const workSlots = [];
           const breakSlots = [];
-          for (let hour = 8; hour < 16; hour++) {
+          for (let hour = 7; hour < 15; hour++) {
             workSlots.push(`${hour}:00`);
             workSlots.push(`${hour}:30`);
             // Przerwa obiadowa 12:00-13:00
@@ -189,10 +189,10 @@ export default function KalendarzPracownikaProsty() {
           }
         };
       } else {
-        // Włącz dzień z domyślnymi slotami 8:00-16:00
+        // Włącz dzień z domyślnymi slotami 7:00-15:00
         const defaultSlots = [];
         const defaultBreaks = [];
-        for (let hour = 8; hour < 16; hour++) {
+        for (let hour = 7; hour < 15; hour++) {
           defaultSlots.push(`${hour}:00`);
           defaultSlots.push(`${hour}:30`);
           // Przerwa obiadowa 12:00-13:00
@@ -239,7 +239,7 @@ export default function KalendarzPracownikaProsty() {
       const lastSlot = daySchedule.slots[daySchedule.slots.length - 1];
       setTimeInputs({ start: firstSlot, end: lastSlot });
     } else {
-      // Ustawienie poranych godzin jako domyślne
+      // Domyślna godzina rozpoczęcia pracy: 7:00
       setTimeInputs({ start: '07:00', end: '15:00' });
     }
     setEditingDay(dayKey);
