@@ -449,5 +449,122 @@
     "end": null,
     "id": 1751785539999,
     "dateAdded": "2025-07-06T07:05:39.999Z"
+  },
+  {
+    "clientId": "#0012",
+    "description": "Brak opisu",
+    "scheduledDate": "2025-09-22T21:07:04.587Z",
+    "availability": "Nie określono",
+    "status": "pending",
+    "priority": "normal",
+    "devices": [
+      {
+        "description": "Brak opisu",
+        "builtInParams": {
+          "demontaz": false,
+          "montaz": false,
+          "trudna": false,
+          "wolnostojacy": false,
+          "ograniczony": false,
+          "front": false,
+          "czas": false
+        },
+        "builtInParamsNotes": {}
+      }
+    ],
+    "builtInParams": {
+      "demontaz": false,
+      "montaz": false,
+      "trudna": false,
+      "wolnostojacy": false,
+      "ograniczony": false,
+      "front": false,
+      "czas": false
+    },
+    "dates": [],
+    "hours": null,
+    "end": null,
+    "id": 1758575224590,
+    "dateAdded": "2025-09-22T21:07:04.590Z"
+  },
+  {
+    "clientId": "#0013",
+    "category": "Zmywarka",
+    "serviceType": "",
+    "description": "nie włacza sie",
+    "scheduledDate": "2025-09-23T06:31:06.501Z",
+    "availability": "Nie określono",
+    "status": "pending",
+    "priority": "normal",
+    "devices": [
+      {
+        "name": "",
+        "description": "nie włacza sie",
+        "builtInParams": {
+          "demontaz": false,
+          "montaz": false,
+          "trudna": false,
+          "wolnostojacy": false,
+          "ograniczony": false,
+          "front": false,
+          "czas": false
+        },
+        "builtInParamsNotes": {}
+      }
+    ],
+    "builtInParams": {
+      "demontaz": false,
+      "montaz": false,
+      "trudna": false,
+      "wolnostojacy": false,
+      "ograniczony": false,
+      "front": false,
+      "czas": false
+    },
+    "dates": [],
+    "hours": null,
+    "end": null,
+    "id": 1758609066506,
+    "dateAdded": "2025-09-23T06:31:06.506Z"
+  },
+  {
+    "clientId": "#0014",
+    "category": "Pralka",
+    "serviceType": "",
+    "description": "Nie pobiera wody",
+    "scheduledDate": "2025-09-23T19:20:23.473Z",
+    "availability": "Nie określono",
+    "status": "pending",
+    "priority": "normal",
+    "devices": [
+      {
+        "name": "",
+        "description": "Nie pobiera wody",
+        "builtInParams": {
+          "demontaz": false,
+          "montaz": false,
+          "trudna": false,
+          "wolnostojacy": false,
+          "ograniczony": false,
+          "front": false,
+          "czas": false
+        },
+        "builtInParamsNotes": {}
+      }
+    ],
+    "builtInParams": {
+      "demontaz": false,
+      "montaz": false,
+      "trudna": false,
+      "wolnostojacy": false,
+      "ograniczony": false,
+      "front": false,
+      "czas": false
+    },
+    "dates": [],
+    "hours": null,
+    "end": null,
+    "id": 1758655223475,
+    "dateAdded": "2025-09-23T19:20:23.475Z"
   }
 ]

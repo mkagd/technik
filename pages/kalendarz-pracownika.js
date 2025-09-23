@@ -7,6 +7,7 @@ import {
   FiCalendar,
   FiClock,
   FiUser,
+  FiUsers,
   FiLogOut,
   FiCheckCircle,
   FiXCircle,

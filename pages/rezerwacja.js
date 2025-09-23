@@ -9,6 +9,8 @@ export default function Rezerwacja() {
     const [currentStep, setCurrentStep] = useState(1);
     const [getCityByPostalCode, setGetCityByPostalCode] = useState(null);
     const [postalCodeMap, setPostalCodeMap] = useState({});
+    const [postalCodeSuggestions, setPostalCodeSuggestions] = useState([]);
+    const [showPostalCodeSuggestions, setShowPostalCodeSuggestions] = useState(false);
     
     // Dynamiczne ładowanie funkcji kodów pocztowych
     useEffect(() => {
@@ -43,6 +45,7 @@ export default function Rezerwacja() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [message, setMessage] = useState('');
     const [showBrandSuggestions, setShowBrandSuggestions] = useState(null); // Zmieniamy na index lub null
+    const [showProblemSuggestions, setShowProblemSuggestions] = useState(null); // Dodajemy dla problemów
     const [editMode, setEditMode] = useState({
         client: false,
         address: false,
@@ -57,18 +60,402 @@ export default function Rezerwacja() {
         'Sharp', 'Siemens', 'Whirlpool', 'Zanussi'
     ];
 
+    // Typowe usterki dla każdego typu urządzenia
+    const getCommonProblems = (category) => {
+        const problems = {
+            'Pralka': [
+                'Nie włącza się',
+                'Nie pobiera wody',
+                'Nie odpompowuje wody', 
+                'Nie wiruje',
+                'Wycieka woda',
+                'Głośno pracuje/wibruje',
+                'Nie grzeje wody',
+                'Nie kończy programu',
+                'Błąd na wyświetlaczu',
+                'Nie otwiera się bęben',
+                'Za dużo piany',
+                'Źle płucze/pozostają plamy',
+                'Drzwi się nie otwierają',
+                'Drzwi się nie zamykają',
+                'Nie kręci się bęben',
+                'Woda zostaje w bębnie',
+                'Ubrania mokre po praniu',
+                'Nie reaguje na przyciski',
+                'Pralka skacze podczas wirowania',
+                'Nieprzyjemny zapach',
+                'Plamy po detergencie',
+                'Za mało wody w bębnie',
+                'Za dużo wody w bębnie',
+                'Nie pobiera płynu do płukania',
+                'Gumowa uszczelka uszkodzona',
+                'Filtr zablokowany',
+                'Pompa nie działa',
+                'Zawór elektromagnetyczny uszkodzony',
+                'Czujnik poziomu wody uszkodzony',
+                'Silnik nie pracuje',
+                'Pas klinowy przerwany',
+                'Amortyzatory uszkodzone',
+                'Szczotki silnika zużyte',
+                'Grzałka przepalona',
+                'Termostat uszkodzony',
+                'Wycieka z szuflady na proszek',
+                'Program się zacina',
+                'Nie włącza się wirowanie',
+                'Za krótkie płukanie',
+                'Brudna woda w bębnie',
+                'Rdzawe plamy na ubraniach',
+                'Ubrania bardzo pomarszczone',
+                'Woda wypływa na podłogę',
+                'Uszczelka drzwi czernieje'
+            ],
+            'Zmywarka': [
+                'Nie włącza się',
+                'Nie pobiera wody',
+                'Nie odpompowuje wody',
+                'Nie myje naczyń',
+                'Wycieka woda',
+                'Nie grzeje wody',
+                'Głośno pracuje',
+                'Nie kończy programu',
+                'Błąd na wyświetlaczu',
+                'Nie otwiera się dozownik',
+                'Białe plamy na naczyniach',
+                'Nieprzyjemny zapach',
+                'Drzwi się nie domykają',
+                'Ramiona spryskujące nie obracają się',
+                'Za mało wody',
+                'Za dużo wody',
+                'Naczynia pozostają mokre',
+                'Tabletka nie rozpuszcza się',
+                'Filtry zabrudzone',
+                'Pompa odpływowa nie działa',
+                'Zawór napływowy uszkodzony',
+                'Czujnik mętności uszkodzony',
+                'Grzałka przepalona',
+                'Silnik pompy cyrkulacyjnej uszkodzony',
+                'Uszczelka drzwi przecieka',
+                'Spryskiwacze zatkane',
+                'Nie działa suszenie',
+                'Woda stoi na dnie',
+                'Dziwne odgłosy podczas mycia',
+                'Nie reaguje na panel sterowania',
+                'Kosz na naczynia uszkodzony',
+                'Czujnik temperatury uszkodzony',
+                'Elektrozawór uszkodzony',
+                'Szklanka z resztkami jedzenia',
+                'Żółte plamy na naczyniach',
+                'Naczynia matowe po myciu',
+                'Resztki detergentu na naczyniach',
+                'Kieliszki pokryte kropelkami',
+                'Sztućce mają szare naloty',
+                'Garnki nie są czyste',
+                'Talerze lepkie po myciu',
+                'Woda ma dziwny zapach',
+                'Sól regeneracyjna się nie pobiera',
+                'Błyszczyk nie działa'
+            ],
+            'Lodówka': [
+                'Nie chłodzi',
+                'Za głośno pracuje',
+                'Wycieka woda',
+                'Nie świeci oświetlenie',
+                'Lód w zamrażalniku',
+                'Nie włącza się',
+                'Za dużo hałasu',
+                'Nieprzyjemny zapach',
+                'Drzwi się nie domykają',
+                'Termostat nie działa',
+                'Kompresor nie pracuje',
+                'Zawór wody uszkodzony',
+                'Za ciepło w lodówce',
+                'Za zimno w lodówce',
+                'Zamrażalnik nie zamraża',
+                'Nadmierne oblodzenie',
+                'Woda kapie z lodówki',
+                'Kondensacja na ściankach',
+                'Wentylatora nie słychać',
+                'Drzwi nie trzymają się zamknięte',
+                'Uszczelka drzwi uszkodzona',
+                'Regały się łamią',
+                'Szuflady się nie wysuwają',
+                'Kostkarki do lodu nie działa',
+                'Dyspenser wody nie działa',
+                'Lampka sygnalizacyjna świeci',
+                'Czujnik temperatury uszkodzony',
+                'Defrost nie działa',
+                'Rurki w zamrażalniku zatkane',
+                'Skropliny nie odpływają',
+                'Zbyt częste włączanie kompresora',
+                'Kompresor pracuje bez przerwy',
+                'Płyn chłodniczy ucieka',
+                'Parownik oblodzony',
+                'Jedzenie marzne w lodówce',
+                'Woda pod lodówką',
+                'Drzwi się nie otwierają',
+                'Zamrażalnik za ciepły',
+                'Żarówka często się pali',
+                'Automatyczny odmrażacz nie działa',
+                'Filtr wody zablokowany',
+                'Lód ma dziwny smak',
+                'Kostki lodu zbyt małe'
+            ],
+            'Piekarnik': [
+                'Nie włącza się',
+                'Nie grzeje',
+                'Nierównomiernie piecze',
+                'Nie działa termostat',
+                'Wyświetlacz pokazuje błąd',
+                'Nie świeci oświetlenie',
+                'Drzwi się nie domykają',
+                'Uszkodzona uszczelka',
+                'Nie działa wentylator',
+                'Grzałka nie pracuje',
+                'Timer nie funkcjonuje',
+                'Dym podczas pieczenia'
+            ],
+            'Suszarka': [
+                'Nie włącza się',
+                'Nie suszy',
+                'Za długo suszy',
+                'Głośno pracuje',
+                'Nie grzeje',
+                'Zablokowany bęben',
+                'Błąd na wyświetlaczu',
+                'Przecieka woda',
+                'Nieprzyjemny zapach',
+                'Filtr zablokowany',
+                'Ubrania wrychły na gorąco',
+                'Nie kończy programu'
+            ],
+            'Kuchenka': [
+                'Nie włącza się',
+                'Palniki nie zapalają się',
+                'Nierównomierne płomienie',
+                'Zapach gazu',
+                'Piekarnik nie grzeje',
+                'Nie działa timer',
+                'Uszkodzona płyta grzewcza',
+                'Problemy z zapalnikiem',
+                'Termostat nie pracuje',
+                'Wyświetlacz pokazuje błąd',
+                'Drzwi piekarnika nie domykają',
+                'Kratka palnika uszkodzona'
+            ],
+            'Mikrofalówka': [
+                'Nie włącza się',
+                'Nie grzeje',
+                'Dziwne dźwięki',
+                'Talerz się nie obraca',
+                'Drzwi się nie domykają',
+                'Wyświetlacz nie działa',
+                'Iskry w środku',
+                'Nieprzyjemny zapach',
+                'Nie kończy programu',
+                'Timer nie funkcjonuje',
+                'Oświetlenie nie świeci',
+                'Przegrzewa się z zewnątrz'
+            ],
+            'Okap': [
+                'Nie włącza się',
+                'Słabo wyciąga',
+                'Głośno pracuje',
+                'Nie świeci oświetlenie',
+                'Filtr zanieczyszczony',
+                'Wirnik nie obraca się',
+                'Przewody zatkane',
+                'Silnik przegrzewa się',
+                'Wyświetlacz pokazuje błąd',
+                'Nie działa pilot',
+                'Wentylator nie pracuje',
+                'Tłuste osady na filtrze'
+            ],
+            'Inne AGD': [
+                'Nie włącza się',
+                'Dziwne dźwięki',
+                'Przegrzewa się',
+                'Nie działa zgodnie z przeznaczeniem',
+                'Wyświetlacz pokazuje błąd',
+                'Uszkodzona obudowa',
+                'Problemy elektryczne',
+                'Nieprzyjemny zapach',
+                'Przewody uszkodzone',
+                'Nie reaguje na przyciski'
+            ]
+        };
+        return problems[category] || problems['Inne AGD'];
+    };
+
+    // Funkcja do wyszukiwania kodów pocztowych na podstawie miejscowości
+    const searchPostalCodesByCity = async (cityName) => {
+        if (!cityName || cityName.length < 3) return [];
+        
+        try {
+            // Wyszukiwanie przez OpenStreetMap Nominatim
+            const response = await fetch(
+                `https://nominatim.openstreetmap.org/search?format=json&countrycodes=pl&city=${encodeURIComponent(cityName)}&limit=10&addressdetails=1`
+            );
+            
+            if (response.ok) {
+                const data = await response.json();
+                const results = data
+                    .filter(item => item.address && item.address.postcode)
+                    .map(item => ({
+                        city: item.address.village || item.address.town || item.address.city || cityName,
+                        postcode: item.address.postcode,
+                        display: `${item.address.postcode} ${item.address.village || item.address.town || item.address.city || cityName}`
+                    }))
+                    .filter((item, index, arr) => 
+                        arr.findIndex(x => x.postcode === item.postcode) === index
+                    ) // usuń duplikaty
+                    .slice(0, 5); // maksymalnie 5 wyników
+                
+                return results;
+            }
+        } catch (error) {
+            console.warn('Error searching postal codes:', error);
+        }
+        
+        // Fallback - sprawdź lokalną bazę
+        if (getCityByPostalCode) {
+            const localCodes = Object.keys(postalCodeMap || {})
+                .filter(code => {
+                    const localCity = getCityByPostalCode(code);
+                    return localCity && localCity.toLowerCase().includes(cityName.toLowerCase());
+                })
+                .slice(0, 5)
+                .map(code => ({
+                    city: getCityByPostalCode(code),
+                    postcode: code,
+                    display: `${code} ${getCityByPostalCode(code)}`
+                }));
+            
+            return localCodes;
+        }
+        
+        return [];
+    };
+
+    // Funkcja do wyszukiwania miast dla konkretnego kodu pocztowego
+    const searchCityByPostalCode = async (postalCode) => {
+        console.log('Searching for postal code:', postalCode);
+        
+        try {
+            // Sprawdź czy kod pocztowy ma poprawny format
+            if (postalCode.length === 6 && postalCode.includes('-')) {
+                console.log('Searching online first for:', postalCode);
+                
+                // NAJPIERW szukaj online - dokładniejsze dane
+                try {
+                    const nominatimUrl = `https://nominatim.openstreetmap.org/search?format=json&countrycodes=pl&postalcode=${postalCode}&limit=3&addressdetails=1`;
+                    console.log('Nominatim URL:', nominatimUrl);
+                    
+                    const response = await fetch(nominatimUrl);
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        console.log('Nominatim response:', data);
+                        
+                        if (data.length > 0) {
+                            const place = data[0];
+                            const city = place.address?.village || place.address?.town || place.address?.city || place.address?.municipality || '';
+                            if (city) {
+                                console.log('Found city online:', city);
+                                return city;
+                            }
+                        }
+                    } else {
+                        console.error('Nominatim API error:', response.status, response.statusText);
+                    }
+                } catch (nominatimError) {
+                    console.warn('Nominatim API failed:', nominatimError);
+                }
+                
+                // Backup API - zippopotam.us
+                try {
+                    const backupUrl = `https://api.zippopotam.us/pl/${postalCode.replace('-', '')}`;
+                    console.log('Trying backup API:', backupUrl);
+                    
+                    const backupResponse = await fetch(backupUrl);
+                    if (backupResponse.ok) {
+                        const backupData = await backupResponse.json();
+                        console.log('Backup API response:', backupData);
+                        
+                        if (backupData.places && backupData.places.length > 0) {
+                            const city = backupData.places[0]['place name'];
+                            if (city) {
+                                console.log('Found city via backup API:', city);
+                                return city;
+                            }
+                        }
+                    }
+                } catch (backupError) {
+                    console.warn('Backup API failed:', backupError);
+                }
+            }
+            
+            // DOPIERO TERAZ użyj lokalnej bazy jako ostateczny fallback
+            const localCity = getCityByPostalCode ? getCityByPostalCode(postalCode) : '';
+            if (localCity) {
+                console.log('Found in local database (fallback):', localCity);
+                return localCity;
+            }
+            
+            console.log('No city found for postal code:', postalCode);
+            return '';
+        } catch (error) {
+            console.error('Error fetching city by postal code:', error);
+            // Ostateczny fallback do lokalnej bazy
+            return getCityByPostalCode ? getCityByPostalCode(postalCode) : '';
+        }
+    };
+
+    // Funkcja do wyboru kodu pocztowego z sugestii
+    const handlePostalCodeSelect = (suggestion) => {
+        setFormData({
+            ...formData,
+            city: suggestion.city,
+            postalCode: suggestion.postcode
+        });
+        setShowPostalCodeSuggestions(false);
+        setPostalCodeSuggestions([]);
+    };
+
     const totalSteps = 4;
 
-    const handleChange = (e) => {
+    const handleChange = async (e) => {
         const { name, value } = e.target;
         
+        // Obsługa miasta - wyszukiwanie kodów pocztowych
+        if (name === 'city') {
+            setFormData({
+                ...formData,
+                [name]: value
+            });
+            
+            // Wyszukaj kody pocztowe dla wpisywanego miasta
+            if (value.length >= 3) {
+                try {
+                    const suggestions = await searchPostalCodesByCity(value);
+                    setPostalCodeSuggestions(suggestions);
+                    setShowPostalCodeSuggestions(suggestions.length > 0);
+                } catch (error) {
+                    console.error('Error searching postal codes:', error);
+                    setPostalCodeSuggestions([]);
+                    setShowPostalCodeSuggestions(false);
+                }
+            } else {
+                setPostalCodeSuggestions([]);
+                setShowPostalCodeSuggestions(false);
+            }
+            return;
+        }
+
         // Obsługa kodu pocztowego - automatyczne uzupełnianie miasta
         if (name === 'postalCode') {
             let city = '';
             try {
-                if (getCityByPostalCode) {
-                    city = getCityByPostalCode(value) || '';
-                }
+                city = await searchCityByPostalCode(value);
             } catch (error) {
                 console.error('Error getting city:', error);
                 city = '';
@@ -116,6 +503,46 @@ export default function Rezerwacja() {
         return brands.filter(brand => 
             brand.toLowerCase().includes(term.toLowerCase())
         ).slice(0, 6); // Maksymalnie 6 podpowiedzi
+    };
+
+    // Funkcja do filtrowania problemów dla urządzenia
+    // Funkcja normalizacji polskich znaków
+    const normalizePolishChars = (text) => {
+        return text
+            .replace(/ą/g, 'a').replace(/Ą/g, 'A')
+            .replace(/ć/g, 'c').replace(/Ć/g, 'C')
+            .replace(/ę/g, 'e').replace(/Ę/g, 'E')
+            .replace(/ł/g, 'l').replace(/Ł/g, 'L')
+            .replace(/ń/g, 'n').replace(/Ń/g, 'N')
+            .replace(/ó/g, 'o').replace(/Ó/g, 'O')
+            .replace(/ś/g, 's').replace(/Ś/g, 'S')
+            .replace(/ź/g, 'z').replace(/Ź/g, 'Z')
+            .replace(/ż/g, 'z').replace(/Ż/g, 'Z');
+    };
+
+    const getFilteredProblems = (category, searchTerm = '') => {
+        const commonProblems = getCommonProblems(category);
+        if (!searchTerm.trim()) {
+            return commonProblems.slice(0, 15); // Pokaż pierwsze 15 gdy puste
+        }
+        
+        const normalizedSearchTerm = normalizePolishChars(searchTerm.toLowerCase());
+        
+        return commonProblems.filter(problem => {
+            const normalizedProblem = normalizePolishChars(problem.toLowerCase());
+            return normalizedProblem.includes(normalizedSearchTerm);
+        }).slice(0, 12); // Maksymalnie 12 dopasowań
+    };
+
+    // Funkcja do wyboru problemu
+    const handleProblemSelect = (problem, index) => {
+        const newProblems = [...formData.problems];
+        newProblems[index] = problem;
+        setFormData({
+            ...formData,
+            problems: newProblems
+        });
+        setShowProblemSuggestions(null);
     };
 
     // Nowa funkcja do obsługi wyboru kategorii (multi-select)
@@ -448,13 +875,39 @@ export default function Rezerwacja() {
                                                         <label className="block text-sm font-medium text-gray-700 mb-1">
                                                             Opis problemu *
                                                         </label>
-                                                        <textarea
-                                                            value={formData.problems[index] || ''}
-                                                            onChange={(e) => handleDeviceDetailChange(index, 'problem', e.target.value)}
-                                                            rows={3}
-                                                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                                            placeholder="Opisz problem z tym urządzeniem..."
-                                                        />
+                                                        <div className="relative">
+                                                            <input
+                                                                type="text"
+                                                                value={formData.problems[index] || ''}
+                                                                onChange={(e) => handleDeviceDetailChange(index, 'problem', e.target.value)}
+                                                                onFocus={() => setShowProblemSuggestions(index)}
+                                                                onBlur={() => setTimeout(() => setShowProblemSuggestions(null), 200)}
+                                                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                                                placeholder="Wpisz problem lub wybierz z listy..."
+                                                            />
+                                                            {showProblemSuggestions === index && (
+                                                                <div className="absolute z-10 w-full bg-white border border-gray-200 rounded-lg shadow-lg mt-1 max-h-48 overflow-y-auto">
+                                                                    {getFilteredProblems(category, formData.problems[index] || '').map((problem, problemIndex) => (
+                                                                        <button
+                                                                            key={problemIndex}
+                                                                            type="button"
+                                                                            onClick={() => handleProblemSelect(problem, index)}
+                                                                            className="w-full text-left px-3 py-2 hover:bg-gray-100 focus:bg-gray-100 focus:outline-none text-sm border-b border-gray-100 last:border-b-0"
+                                                                        >
+                                                                            {problem}
+                                                                        </button>
+                                                                    ))}
+                                                                    {getFilteredProblems(category, formData.problems[index] || '').length === 0 && (
+                                                                        <div className="px-3 py-2 text-sm text-gray-500">
+                                                                            Brak dopasowań. Wpisz własny opis problemu.
+                                                                        </div>
+                                                                    )}
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                        <p className="text-xs text-gray-500 mt-1">
+                                                            💡 Zacznij pisać, a pokażemy typowe usterki dla {category.toLowerCase()}
+                                                        </p>
                                                     </div>
                                                 </div>
                                             ))}
@@ -492,7 +945,7 @@ export default function Rezerwacja() {
                                     </div>
 
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <div>
+                                        <div className="relative">
                                             <label className="block text-sm font-medium text-gray-700 mb-1">
                                                 Miasto *
                                             </label>
@@ -501,10 +954,35 @@ export default function Rezerwacja() {
                                                 name="city"
                                                 value={formData.city}
                                                 onChange={handleChange}
+                                                onFocus={() => {
+                                                    if (postalCodeSuggestions.length > 0) {
+                                                        setShowPostalCodeSuggestions(true);
+                                                    }
+                                                }}
+                                                onBlur={() => {
+                                                    // Opóźnienie aby kliknięcie w sugestię zadziałało
+                                                    setTimeout(() => setShowPostalCodeSuggestions(false), 150);
+                                                }}
                                                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                                placeholder="Miasto zostanie wypełnione automatycznie"
-                                                readOnly={postalCodeMap[formData.postalCode]}
+                                                placeholder="Wpisz nazwę miasta..."
                                             />
+                                            
+                                            {/* Sugestie kodów pocztowych */}
+                                            {showPostalCodeSuggestions && postalCodeSuggestions.length > 0 && (
+                                                <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-48 overflow-y-auto">
+                                                    {postalCodeSuggestions.map((suggestion, index) => (
+                                                        <div
+                                                            key={index}
+                                                            onClick={() => handlePostalCodeSelect(suggestion)}
+                                                            className="px-4 py-2 hover:bg-blue-50 cursor-pointer border-b border-gray-100 last:border-b-0"
+                                                        >
+                                                            <div className="font-medium text-gray-900">
+                                                                {suggestion.postcode} {suggestion.city}
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            )}
                                         </div>
                                         <div>
                                             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -738,11 +1216,13 @@ export default function Rezerwacja() {
                                                             <input
                                                                 type="text"
                                                                 value={formData.postalCode}
-                                                                onChange={(e) => {
+                                                                onChange={async (e) => {
                                                                     const newFormData = {...formData, postalCode: e.target.value};
-                                                                    if (getCityByPostalCode) {
-                                                                        const city = getCityByPostalCode(e.target.value);
+                                                                    try {
+                                                                        const city = await searchCityByPostalCode(e.target.value);
                                                                         if (city) newFormData.city = city;
+                                                                    } catch (error) {
+                                                                        console.error('Error getting city:', error);
                                                                     }
                                                                     setFormData(newFormData);
                                                                 }}

@@ -154,5 +154,48 @@
     "availability": "qw",
     "date": "2025-07-06T07:05:39.996Z",
     "created_at": "2025-07-06T07:05:39.996Z"
+  },
+  {
+    "id": 1758575224587,
+    "name": "ad",
+    "phone": "123123123",
+    "email": "",
+    "city": "Mielec",
+    "street": "ad",
+    "address": "ad, 39-300 Mielec",
+    "problem": "Brak opisu",
+    "availability": "Nie określono",
+    "date": "2025-09-22T21:07:04.587Z",
+    "created_at": "2025-09-22T21:07:04.587Z"
+  },
+  {
+    "id": 1758609066501,
+    "name": "MAriusz Bielaszka",
+    "phone": "789456123",
+    "email": "",
+    "city": "Pacanoó",
+    "street": "Krakowksa",
+    "address": "Krakowksa, 28-133 Pacanoó",
+    "category": "Zmywarka",
+    "device": "",
+    "problem": "nie włacza sie",
+    "availability": "Nie określono",
+    "date": "2025-09-23T06:31:06.501Z",
+    "created_at": "2025-09-23T06:31:06.501Z"
+  },
+  {
+    "id": 1758655223473,
+    "name": "MAriusz Bielaszka",
+    "phone": "987654321",
+    "email": "",
+    "city": "Chorzelów",
+    "street": "Malinie 607",
+    "address": "Malinie 607, 39-331 Chorzelów",
+    "category": "Pralka",
+    "device": "",
+    "problem": "Nie pobiera wody",
+    "availability": "Nie określono",
+    "date": "2025-09-23T19:20:23.473Z",
+    "created_at": "2025-09-23T19:20:23.473Z"
   }
 ]

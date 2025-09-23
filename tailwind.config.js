@@ -7,6 +7,10 @@ module.exports = {
   ],
   theme: {
     extend: {
+      gridTemplateColumns: {
+        '17': 'repeat(17, minmax(0, 1fr))',
+        '32': 'auto repeat(31, minmax(0, 1fr))', // 1 kolumna dzień + 31 slotów po 30min
+      },
       colors: {
         orange: {
           50: '#fff7ed',
