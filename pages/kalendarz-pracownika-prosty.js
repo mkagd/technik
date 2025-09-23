@@ -314,6 +314,28 @@ export default function KalendarzPracownikaProsty() {
     setEditingDay('');
   };
 
+  const toggleExpandDay = (dayKey) => {
+    setExpandedDay(expandedDay === dayKey ? '' : dayKey);
+  };
+
+  // Mock danych wizyt
+  const getVisitsForDay = (dayKey) => {
+    const mockVisits = {
+      'monday': [
+        { id: 1, time: '08:30', client: 'Jan Kowalski', address: 'ul. Długa 5, Warszawa', type: 'Naprawa pralki' },
+        { id: 2, time: '10:00', client: 'Anna Nowak', address: 'ul. Krótka 12, Kraków', type: 'Serwis zmywarki' },
+        { id: 3, time: '14:30', client: 'Piotr Wiśniewski', address: 'ul. Główna 8, Gdańsk', type: 'Wymiana części' }
+      ],
+      'tuesday': [
+        { id: 4, time: '09:15', client: 'Maria Kowalczyk', address: 'ul. Nowa 3, Wrocław', type: 'Przegląd lodówki' }
+      ],
+      'wednesday': [
+        { id: 5, time: '11:00', client: 'Tomasz Zając', address: 'ul. Stara 15, Łódź', type: 'Naprawa kuchenki' }
+      ]
+    };
+    return mockVisits[dayKey] || [];
+  };
+
   const getSlotStatus = (dayKey, slotKey) => {
     const daySchedule = workSchedule[dayKey];
     if (!daySchedule || !daySchedule.enabled) return { status: 'disabled', partial: false };
@@ -507,7 +529,13 @@ export default function KalendarzPracownikaProsty() {
                       daySchedule.enabled ? 'bg-emerald-100' : 'bg-gray-100'
                     }`}>
                       <div className="flex flex-col space-y-2">
-                        <div className="text-sm font-medium text-gray-900">{day.short}</div>
+                        <div 
+                          className="text-sm font-medium text-gray-900 cursor-pointer hover:text-emerald-600 transition-colors flex items-center"
+                          onClick={() => toggleExpandDay(day.key)}
+                          title="Kliknij aby zobaczyć wizyty"
+                        >
+                          {day.short} {expandedDay === day.key ? '▼' : '▶'}
+                        </div>
                         <div className="flex items-center justify-center space-x-1">
                           <button
                             onClick={() => toggleDay(day.key)}
@@ -591,6 +619,37 @@ export default function KalendarzPracownikaProsty() {
             </div>
           </div>
         </div>
+
+        {/* Panel z rozwinięteymi wizytami */}
+        {expandedDay && (
+          <div className="bg-white rounded-lg shadow mt-6 overflow-hidden">
+            <div className="bg-blue-600 text-white p-4">
+              <h3 className="text-lg font-semibold flex items-center">
+                <FiCalendar className="h-5 w-5 mr-2" />
+                Wizyty na {daysOfWeek.find(d => d.key === expandedDay)?.name}
+              </h3>
+            </div>
+            <div className="p-6">
+              {getVisitsForDay(expandedDay).length === 0 ? (
+                <p className="text-gray-500 text-center py-8">Brak zaplanowanych wizyt w tym dniu</p>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {getVisitsForDay(expandedDay).map(visit => (
+                    <div key={visit.id} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                      <div className="flex justify-between items-start mb-3">
+                        <div className="text-lg font-semibold text-blue-600">{visit.time}</div>
+                        <div className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">Wizyta</div>
+                      </div>
+                      <div className="text-sm font-medium text-gray-900 mb-2">{visit.client}</div>
+                      <div className="text-sm text-gray-600 mb-2">{visit.address}</div>
+                      <div className="text-sm text-emerald-600 font-medium">{visit.type}</div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
 
         {/* Podsumowanie */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
