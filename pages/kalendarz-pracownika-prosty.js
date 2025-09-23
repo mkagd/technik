@@ -638,7 +638,7 @@ export default function KalendarzPracownikaProsty() {
           <div className="bg-white rounded-lg shadow-xl max-w-md w-full">
             <div className="flex items-center justify-between p-6 border-b">
               <h3 className="text-lg font-semibold text-gray-900">
-                Ustaw godziny dyżuru
+                Ustaw godziny pracy
               </h3>
               <button
                 onClick={() => setShowTimeModal(false)}
@@ -652,7 +652,7 @@ export default function KalendarzPracownikaProsty() {
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Początek dyżuru:
+                    Rozpoczęcie pracy:
                   </label>
                   <input
                     type="time"
@@ -666,7 +666,7 @@ export default function KalendarzPracownikaProsty() {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Koniec dyżuru:
+                    Zakończenie pracy:
                   </label>
                   <input
                     type="time"
@@ -680,7 +680,7 @@ export default function KalendarzPracownikaProsty() {
                 </div>
                 <div className="p-3 bg-emerald-50 rounded-md">
                   <p className="text-sm text-emerald-700">
-                    Dyżur zostanie ustawiony od {timeInputs.start} do {timeInputs.end}
+                    Godziny pracy: {timeInputs.start} - {timeInputs.end}
                   </p>
                 </div>
               </div>
