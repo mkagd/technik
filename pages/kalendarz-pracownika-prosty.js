@@ -430,6 +430,12 @@ export default function KalendarzPracownikaProsty() {
     setExpandedDay(expandedDay === dayKey ? '' : dayKey);
   };
 
+  // Funkcja do przejścia do karty zlecenia
+  const goToOrderDetails = (visitId) => {
+    // Przekieruj do strony szczegółów zlecenia
+    router.push(`/zlecenie-szczegoly?id=${visitId}`);
+  };
+
   // Mock danych wizyt
   const getVisitsForDay = (dayKey) => {
     const mockVisits = {
@@ -439,10 +445,19 @@ export default function KalendarzPracownikaProsty() {
         { id: 3, time: '14:30', client: 'Piotr Wiśniewski', address: 'ul. Główna 8, Gdańsk', type: 'Wymiana części' }
       ],
       'tuesday': [
-        { id: 4, time: '09:15', client: 'Maria Kowalczyk', address: 'ul. Nowa 3, Wrocław', type: 'Przegląd lodówki' }
+        { id: 4, time: '09:15', client: 'Maria Kowalczyk', address: 'ul. Nowa 3, Wrocław', type: 'Przegląd lodówki' },
+        { id: 5, time: '11:30', client: 'Tomasz Zając', address: 'ul. Stara 15, Łódź', type: 'Naprawa kuchenki' }
       ],
       'wednesday': [
-        { id: 5, time: '11:00', client: 'Tomasz Zając', address: 'ul. Stara 15, Łódź', type: 'Naprawa kuchenki' }
+        { id: 6, time: '11:00', client: 'Tomasz Zając', address: 'ul. Stara 15, Łódź', type: 'Naprawa kuchenki' },
+        { id: 7, time: '13:45', client: 'Katarzyna Nowacka', address: 'ul. Polna 22, Poznań', type: 'Serwis mikrofalówki' }
+      ],
+      'thursday': [
+        { id: 8, time: '08:00', client: 'Marek Kowal', address: 'ul. Leśna 7, Szczecin', type: 'Naprawa płyty indukcyjnej' }
+      ],
+      'friday': [
+        { id: 9, time: '10:15', client: 'Agnieszka Dąbrowska', address: 'ul. Ogrodowa 11, Gdynia', type: 'Serwis okapu' },
+        { id: 10, time: '15:00', client: 'Robert Lewandowski', address: 'ul. Sportowa 9, Warszawa', type: 'Naprawa piekarnika' }
       ]
     };
     return mockVisits[dayKey] || [];
@@ -834,14 +849,25 @@ export default function KalendarzPracownikaProsty() {
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {getVisitsForDay(expandedDay).map(visit => (
-                    <div key={visit.id} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                    <div 
+                      key={visit.id} 
+                      className="border border-gray-200 rounded-lg p-4 hover:shadow-lg hover:border-blue-300 transition-all cursor-pointer transform hover:scale-105"
+                      onClick={() => goToOrderDetails(visit.id)}
+                      title="Kliknij aby zobaczyć szczegóły zlecenia"
+                    >
                       <div className="flex justify-between items-start mb-3">
                         <div className="text-lg font-semibold text-blue-600">{visit.time}</div>
                         <div className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">Wizyta</div>
                       </div>
                       <div className="text-sm font-medium text-gray-900 mb-2">{visit.client}</div>
                       <div className="text-sm text-gray-600 mb-2">{visit.address}</div>
-                      <div className="text-sm text-emerald-600 font-medium">{visit.type}</div>
+                      <div className="text-sm text-emerald-600 font-medium mb-3">{visit.type}</div>
+                      
+                      {/* Wskaźnik kliknięcia */}
+                      <div className="flex items-center justify-between pt-2 border-t border-gray-100">
+                        <span className="text-xs text-gray-500">Kliknij dla szczegółów</span>
+                        <span className="text-blue-500 text-sm">→</span>
+                      </div>
                     </div>
                   ))}
                 </div>
