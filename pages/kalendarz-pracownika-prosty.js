@@ -23,8 +23,9 @@ export default function KalendarzPracownikaProsty() {
   const [selectedWeek, setSelectedWeek] = useState(new Date());
   const [workSchedule, setWorkSchedule] = useState({});
   const [showTimeModal, setShowTimeModal] = useState(false);
-  const [editingDay, setEditingDay] = useState(null);
+  const [editingDay, setEditingDay] = useState('');
   const [timeInputs, setTimeInputs] = useState({ start: '07:00', end: '15:00' });
+  const [expandedDay, setExpandedDay] = useState('');
   const [isLoading, setIsLoading] = useState(true);
 
   const router = useRouter();
