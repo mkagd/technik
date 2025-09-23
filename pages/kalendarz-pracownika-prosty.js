@@ -12,7 +12,9 @@ import {
   FiRefreshCw,
   FiPlay,
   FiPause,
-  FiX
+  FiX,
+  FiChevronLeft,
+  FiChevronRight
 } from 'react-icons/fi';
 
 export default function KalendarzPracownikaProsty() {
@@ -26,6 +28,53 @@ export default function KalendarzPracownikaProsty() {
   const [isLoading, setIsLoading] = useState(true);
 
   const router = useRouter();
+
+  // Funkcje do zarządzania tygodniami
+  const getMonday = (date) => {
+    const d = new Date(date);
+    const day = d.getDay();
+    const diff = d.getDate() - day + (day === 0 ? -6 : 1); // Poniedziałek
+    return new Date(d.setDate(diff));
+  };
+
+  const getCurrentWeekDates = () => {
+    const monday = getMonday(selectedWeek);
+    const dates = [];
+    for (let i = 0; i < 7; i++) {
+      const date = new Date(monday);
+      date.setDate(monday.getDate() + i);
+      dates.push(date);
+    }
+    return dates;
+  };
+
+  const formatDate = (date) => {
+    return date.toLocaleDateString('pl-PL', { 
+      day: '2-digit', 
+      month: '2-digit' 
+    });
+  };
+
+  const isToday = (date) => {
+    const today = new Date();
+    return date.toDateString() === today.toDateString();
+  };
+
+  const previousWeek = () => {
+    const newDate = new Date(selectedWeek);
+    newDate.setDate(newDate.getDate() - 7);
+    setSelectedWeek(newDate);
+  };
+
+  const nextWeek = () => {
+    const newDate = new Date(selectedWeek);
+    newDate.setDate(newDate.getDate() + 7);
+    setSelectedWeek(newDate);
+  };
+
+  const goToToday = () => {
+    setSelectedWeek(new Date());
+  };
 
   const daysOfWeek = [
     { key: 'monday', name: 'Poniedziałek', short: 'PON' },
@@ -57,8 +106,16 @@ export default function KalendarzPracownikaProsty() {
       const employeeData = JSON.parse(employeeSession);
       setEmployee(employeeData);
 
-      // Załaduj harmonogram
-      const savedSchedule = localStorage.getItem(`simpleWorkSchedule_${employeeData.id}`);
+      // Załaduj harmonogram dla bieżącego tygodnia
+      const weekKey = getMonday(selectedWeek).toISOString().split('T')[0];
+      const weekScheduleKey = `workSchedule_${employeeData.id}_${weekKey}`;
+      let savedSchedule = localStorage.getItem(weekScheduleKey);
+      
+      // Jeśli nie ma harmonogramu dla tego tygodnia, użyj domyślnego
+      if (!savedSchedule) {
+        savedSchedule = localStorage.getItem(`simpleWorkSchedule_${employeeData.id}`);
+      }
+      
       if (savedSchedule) {
         setWorkSchedule(JSON.parse(savedSchedule));
       } else {
@@ -98,8 +155,29 @@ export default function KalendarzPracownikaProsty() {
     }
   }, [router]);
 
+  // Efekt reagujący na zmianę tygodnia
+  useEffect(() => {
+    if (employee && selectedWeek) {
+      const weekKey = getMonday(selectedWeek).toISOString().split('T')[0];
+      const weekScheduleKey = `workSchedule_${employee.id}_${weekKey}`;
+      let savedSchedule = localStorage.getItem(weekScheduleKey);
+      
+      if (!savedSchedule) {
+        savedSchedule = localStorage.getItem(`simpleWorkSchedule_${employee.id}`);
+      }
+      
+      if (savedSchedule) {
+        setWorkSchedule(JSON.parse(savedSchedule));
+      }
+    }
+  }, [selectedWeek, employee]);
+
   const saveSchedule = () => {
     if (employee) {
+      // Zapisuj harmonogram z datami tygodnia
+      const weekKey = getMonday(selectedWeek).toISOString().split('T')[0];
+      const weekScheduleKey = `workSchedule_${employee.id}_${weekKey}`;
+      localStorage.setItem(weekScheduleKey, JSON.stringify(workSchedule));
       localStorage.setItem(`simpleWorkSchedule_${employee.id}`, JSON.stringify(workSchedule));
       alert('Harmonogram został zapisany!');
     }
@@ -486,6 +564,36 @@ export default function KalendarzPracownikaProsty() {
 
         {/* Mapa godzin */}
         <div className="bg-white rounded-lg shadow overflow-hidden">
+          {/* Nawigacja tygodniowa */}
+          <div className="p-4 border-b border-gray-200 bg-gray-50">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-4">
+                <button
+                  onClick={previousWeek}
+                  className="flex items-center px-3 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+                >
+                  ◀ Poprzedni tydzień
+                </button>
+                <button
+                  onClick={goToToday}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm"
+                >
+                  Dzisiaj
+                </button>
+                <button
+                  onClick={nextWeek}
+                  className="flex items-center px-3 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+                >
+                  Następny tydzień ▶
+                </button>
+              </div>
+              <div className="text-lg font-semibold text-gray-900">
+                {getMonday(selectedWeek).toLocaleDateString('pl-PL', { day: '2-digit', month: 'long', year: 'numeric' })} - 
+                {" " + new Date(getMonday(selectedWeek).getTime() + 6 * 24 * 60 * 60 * 1000).toLocaleDateString('pl-PL', { day: '2-digit', month: 'long', year: 'numeric' })}
+              </div>
+            </div>
+          </div>
+
           <div className="p-6 border-b border-gray-200">
             <h2 className="text-lg font-semibold text-gray-900">
               Tygodniowa Mapa Godzin
@@ -515,22 +623,29 @@ export default function KalendarzPracownikaProsty() {
               </div>
 
               {/* Rzędy z dniami */}
-              {daysOfWeek.map(day => {
+              {daysOfWeek.map((day, index) => {
                 const daySchedule = workSchedule[day.key] || { enabled: false, hours: [], breaks: [] };
+                const currentDate = getCurrentWeekDates()[index];
+                const isCurrentDay = isToday(currentDate);
                 
                 return (
                   <div key={day.key} className={`flex border-b-2 w-full transition-colors ${
                     daySchedule.enabled 
                       ? 'border-emerald-300 bg-emerald-50 hover:bg-emerald-100' 
                       : 'border-gray-300 bg-white hover:bg-gray-50'
-                  }`}>
-                    {/* Nazwa dnia */}
+                  } ${isCurrentDay ? 'ring-2 ring-blue-400 bg-blue-50' : ''}`}>
+                    {/* Nazwa dnia z datą */}
                     <div className={`p-3 border-r border-gray-300 w-[100px] flex-shrink-0 ${
                       daySchedule.enabled ? 'bg-emerald-100' : 'bg-gray-100'
-                    }`}>
+                    } ${isCurrentDay ? 'bg-blue-100' : ''}`}>
                       <div className="flex flex-col space-y-2">
+                        <div className="text-xs font-medium text-gray-600">
+                          {formatDate(currentDate)}
+                        </div>
                         <div 
-                          className="text-sm font-medium text-gray-900 cursor-pointer hover:text-emerald-600 transition-colors flex items-center"
+                          className={`text-sm font-medium cursor-pointer hover:text-emerald-600 transition-colors flex items-center ${
+                            isCurrentDay ? 'text-blue-700 font-bold' : 'text-gray-900'
+                          }`}
                           onClick={() => toggleExpandDay(day.key)}
                           title="Kliknij aby zobaczyć wizyty"
                         >
@@ -578,7 +693,7 @@ export default function KalendarzPracownikaProsty() {
                           key={slotKey}
                           className={`border-l border-gray-200 transition-colors h-12 flex-1 min-w-[40px] cursor-pointer relative ${
                             slot.minute === 0 ? 'border-l-2 border-l-gray-400' : ''
-                          } ${getSlotClass(statusObj)}`}
+                          } ${getSlotClass(statusObj)} ${isCurrentDay ? 'ring-1 ring-blue-200' : ''}`}
                           onClick={() => {
                             if (statusObj.status !== 'disabled') {
                               toggleSlot(day.key, slotKey);
@@ -626,7 +741,7 @@ export default function KalendarzPracownikaProsty() {
             <div className="bg-blue-600 text-white p-4">
               <h3 className="text-lg font-semibold flex items-center">
                 <FiCalendar className="h-5 w-5 mr-2" />
-                Wizyty na {daysOfWeek.find(d => d.key === expandedDay)?.name}
+                Wizyty na {daysOfWeek.find(d => d.key === expandedDay)?.name} - {formatDate(getCurrentWeekDates()[daysOfWeek.findIndex(d => d.key === expandedDay)])}
               </h3>
             </div>
             <div className="p-6">
