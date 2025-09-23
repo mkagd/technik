@@ -616,25 +616,19 @@ export default function Rezerwacja() {
                                             </div>
                                         </div>
 
-                                        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-2 mb-4">
+                                        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-4">
                                             {[
-                                                { value: 'Cały dzień', label: '⏰', desc: 'Cały dzień', subDesc: '8:00-20:00', color: 'from-green-400 to-green-600', priority: 'high' },
-                                                { value: '8:00-10:00', label: '🌅', desc: '8:00-10:00', subDesc: 'Wcześnie', color: 'from-red-400 to-red-600', priority: 'low' },
-                                                { value: '10:00-12:00', label: '🌤️', desc: '10:00-12:00', subDesc: 'Rano', color: 'from-orange-400 to-orange-600', priority: 'medium' },
-                                                { value: '12:00-14:00', label: '☀️', desc: '12:00-14:00', subDesc: 'Południe', color: 'from-yellow-400 to-yellow-600', priority: 'medium' },
-                                                { value: '14:00-16:00', label: '�', desc: '14:00-16:00', subDesc: 'Popołudnie', color: 'from-amber-400 to-amber-600', priority: 'medium' },
-                                                { value: '16:00-18:00', label: '🌆', desc: '16:00-18:00', subDesc: 'Wieczór', color: 'from-blue-400 to-blue-600', priority: 'medium' },
-                                                { value: '18:00-20:00', label: '🌃', desc: '18:00-20:00', subDesc: 'Późny wieczór', color: 'from-indigo-400 to-indigo-600', priority: 'low' },
-                                                { value: 'Weekend 8:00-12:00', label: '🏠', desc: 'Sobota/Niedziela', subDesc: '8:00-12:00', color: 'from-purple-400 to-purple-600', priority: 'medium' },
-                                                { value: 'Weekend 12:00-16:00', label: '🏡', desc: 'Sobota/Niedziela', subDesc: '12:00-16:00', color: 'from-pink-400 to-pink-600', priority: 'medium' },
-                                                { value: 'Weekend 16:00-20:00', label: '🏘️', desc: 'Sobota/Niedziela', subDesc: '16:00-20:00', color: 'from-rose-400 to-rose-600', priority: 'low' },
-                                                { value: 'Wieczory po 15:00', label: '🌙', desc: 'Tylko wieczory', subDesc: 'Po 15:00', color: 'from-slate-400 to-slate-600', priority: 'low' },
-                                                { value: 'Poranki przed 10:00', label: '🌄', desc: 'Tylko poranki', subDesc: 'Przed 10:00', color: 'from-gray-400 to-gray-600', priority: 'low' }
+                                                { value: 'Cały dzień', label: '⏰', desc: 'Cały dzień', subDesc: '8:00-20:00 (najszybszy)', priority: 'high' },
+                                                { value: '8:00-12:00', label: '🌅', desc: 'Rano', subDesc: '8:00-12:00', priority: 'medium' },
+                                                { value: '12:00-16:00', label: '☀️', desc: 'Popołudnie', subDesc: '12:00-16:00', priority: 'medium' },
+                                                { value: '16:00-20:00', label: '🌆', desc: 'Wieczór', subDesc: '16:00-20:00', priority: 'medium' },
+                                                { value: 'Weekend', label: '�', desc: 'Weekend', subDesc: 'Sobota/Niedziela', priority: 'medium' },
+                                                { value: 'Po 15:00', label: '🌙', desc: 'Tylko wieczory', subDesc: 'Po 15:00 (wolniejszy)', priority: 'low' }
                                             ].map((option) => (
-                                                <label key={option.value} className={`cursor-pointer border-2 rounded-lg p-3 text-center transition-all duration-300 transform hover:scale-105 relative group ${
+                                                <label key={option.value} className={`cursor-pointer border-2 rounded-lg p-4 text-center transition-all duration-200 ${
                                                     formData.timeSlot === option.value 
-                                                        ? 'border-blue-500 bg-gradient-to-br from-blue-50 to-blue-100 shadow-lg' 
-                                                        : 'border-gray-200 hover:border-gray-300 hover:shadow-md bg-white'
+                                                        ? 'border-blue-500 bg-blue-50 shadow-md' 
+                                                        : 'border-gray-200 hover:border-gray-300 hover:shadow-sm bg-white'
                                                 }`}>
                                                     <input
                                                         type="radio"
@@ -644,23 +638,17 @@ export default function Rezerwacja() {
                                                         onChange={handleChange}
                                                         className="sr-only"
                                                     />
-                                                    <div className={`w-8 h-8 mx-auto mb-1 rounded-full bg-gradient-to-br ${option.color} flex items-center justify-center text-white text-lg font-bold shadow-md`}>
-                                                        {option.label}
-                                                    </div>
-                                                    <div className="text-xs font-semibold text-gray-800 mb-1">{option.desc}</div>
-                                                    <div className="text-xs text-gray-500">{option.subDesc}</div>
+                                                    <div className="text-2xl mb-2">{option.label}</div>
+                                                    <div className="text-sm font-semibold text-gray-800 mb-1">{option.desc}</div>
+                                                    <div className="text-xs text-gray-600">{option.subDesc}</div>
                                                     
-                                                    {/* Priority indicator */}
-                                                    <div className={`absolute -top-1 -right-1 w-3 h-3 rounded-full ${
-                                                        option.priority === 'high' ? 'bg-green-500' :
-                                                        option.priority === 'medium' ? 'bg-yellow-500' : 'bg-red-500'
-                                                    }`}></div>
-                                                    
-                                                    {/* Tooltip on hover */}
-                                                    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-black text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-10">
-                                                        {option.priority === 'high' ? 'Najszybszy termin!' : 
-                                                         option.priority === 'medium' ? 'Standardowy termin' : 'Najdłuższe oczekiwanie'}
-                                                    </div>
+                                                    {/* Simple priority indicators */}
+                                                    {option.priority === 'high' && (
+                                                        <div className="mt-2 text-xs text-green-600 font-medium">✨ Priorytet</div>
+                                                    )}
+                                                    {option.priority === 'low' && (
+                                                        <div className="mt-2 text-xs text-orange-600">⏳ Wolniejszy</div>
+                                                    )}
                                                 </label>
                                             ))}
                                         </div>
