@@ -14,7 +14,7 @@ import {
   FiCalendar,
   FiClock
 } from 'react-icons/fi';
-import ModelOCRScanner from './ModelOCRScanner';
+import ModelAIScanner from './ModelAIScanner';
 import modelsDatabase from '../data/modelsDatabase.json';
 
 export default function ModelManagerModal({ 
@@ -25,7 +25,7 @@ export default function ModelManagerModal({
   onModelsUpdate 
 }) {
   const [activeTab, setActiveTab] = useState('add'); // 'add', 'list', 'parts'
-  const [showOCRScanner, setShowOCRScanner] = useState(false);
+  const [showAIScanner, setShowAIScanner] = useState(false);
   const [models, setModels] = useState(currentModels);
   const [searchTerm, setSearchTerm] = useState('');
   const [manualModel, setManualModel] = useState({
@@ -69,24 +69,25 @@ export default function ModelManagerModal({
     return results.slice(0, 10); // Limit to 10 results
   };
 
-  // Dodanie modelu z OCR
-  const handleOCRModelDetected = (detectedModel) => {
+  // Dodanie modelu z AI
+  const handleAIModelDetected = (detectedModel) => {
     const newModel = {
       id: Date.now(),
-      brand: detectedModel.brand || detectedModel.clean.substring(0, 3),
-      model: detectedModel.clean,
-      name: detectedModel.name || 'Model rozpoznany z OCR',
+      brand: detectedModel.brand || detectedModel.clean?.substring(0, 3) || 'Unknown',
+      model: detectedModel.model || detectedModel.clean || 'Unknown',
+      name: detectedModel.name || `${detectedModel.brand} ${detectedModel.model}`,
       type: detectedModel.type || 'Nieznany typ',
-      serialNumber: '',
+      serialNumber: detectedModel.serialNumber || '',
       dateAdded: new Date().toISOString(),
-      source: 'ocr',
-      notes: `Automatycznie rozpoznany z tabliczki znamionowej. Wykryty tekst: "${detectedModel.detected}"`,
-      confidence: detectedModel.confidence,
+      source: detectedModel.source || 'ai',
+      notes: `Automatycznie rozpoznany przez AI. ${detectedModel.additionalInfo || ''}`,
+      confidence: detectedModel.confidence || 'medium',
+      capacity: detectedModel.capacity || '',
       parts: detectedModel.common_parts || []
     };
     
     setModels(prev => [...prev, newModel]);
-    setShowOCRScanner(false);
+    setShowAIScanner(false);
   };
 
   // Dodanie modelu ręczne
@@ -278,12 +279,17 @@ export default function ModelManagerModal({
                 {/* Opcje dodawania */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <button
-                    onClick={() => setShowOCRScanner(true)}
-                    className="p-6 border-2 border-dashed border-blue-300 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors text-center"
+                    onClick={() => setShowAIScanner(true)}
+                    className="p-6 border-2 border-dashed border-gradient-to-r from-blue-300 to-purple-300 rounded-lg hover:border-blue-500 hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 transition-colors text-center"
                   >
-                    <FiCamera className="h-12 w-12 mx-auto mb-4 text-blue-500" />
-                    <h3 className="font-semibold text-gray-800 mb-2">Skanuj tabliczkę</h3>
-                    <p className="text-sm text-gray-600">Automatyczne rozpoznawanie OCR</p>
+                    <div className="relative">
+                      <FiCamera className="h-12 w-12 mx-auto mb-4 text-blue-500" />
+                      <div className="absolute -top-1 -right-1 w-6 h-6 bg-gradient-to-r from-green-400 to-blue-500 rounded-full flex items-center justify-center">
+                        <span className="text-white text-xs font-bold">AI</span>
+                      </div>
+                    </div>
+                    <h3 className="font-semibold text-gray-800 mb-2">Skanuj z AI</h3>
+                    <p className="text-sm text-gray-600">Inteligentne rozpoznawanie obrazu</p>
                   </button>
                   
                   <div className="p-6 border-2 border-gray-200 rounded-lg">
@@ -702,11 +708,11 @@ export default function ModelManagerModal({
         </div>
       )}
 
-      {/* OCR Scanner Modal */}
-      <ModelOCRScanner
-        isOpen={showOCRScanner}
-        onClose={() => setShowOCRScanner(false)}
-        onModelDetected={handleOCRModelDetected}
+      {/* AI Scanner Modal */}
+      <ModelAIScanner
+        isOpen={showAIScanner}
+        onClose={() => setShowAIScanner(false)}
+        onModelDetected={handleAIModelDetected}
       />
     </>
   );
