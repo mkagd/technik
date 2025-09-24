@@ -83,7 +83,20 @@ export default function ModelAIScanner({ isOpen, onClose, onModelDetected }) {
     setDetectedModels([]);
 
     try {
-      // ETAP 1: Google Vision API (ekonomiczne, dobre dla tekstu)
+      // ETAP 1: OCR.space API (DARMOWE! 25k/miesiąc)
+      setProcessingStage('🆓 OCR.space - darmowa analiza (25k/miesiąc)...');
+      const ocrSpaceResult = await analyzeWithOCRSpace(imageData);
+      
+      if (ocrSpaceResult.success && ocrSpaceResult.confidence > 0.75) {
+        setAiResult(`[OCR.space FREE] ${ocrSpaceResult.analysis}`);
+        const models = parseOCRSpaceResponse(ocrSpaceResult.analysis);
+        if (models.length > 0) {
+          setDetectedModels(models);
+          return;
+        }
+      }
+
+      // ETAP 2: Google Vision API (tanie, ale płatne)
       setProcessingStage('💰 Google Vision - ekonomiczna analiza...');
       const googleResult = await analyzeWithGoogleVision(imageData);
       
@@ -96,7 +109,7 @@ export default function ModelAIScanner({ isOpen, onClose, onModelDetected }) {
         }
       }
 
-      // ETAP 2: OpenAI Vision API (premium, najinteligentniejsze)
+      // ETAP 3: OpenAI Vision API (premium, najinteligentniejsze)
       setProcessingStage('🧠 OpenAI GPT-4 Vision - premium analiza...');
       const openAiResult = await analyzeWithOpenAI(imageData);
       
@@ -107,10 +120,10 @@ export default function ModelAIScanner({ isOpen, onClose, onModelDetected }) {
         return;
       }
 
-      // ETAP 3: OCR fallback (darmowe, podstawowe)
-      setProcessingStage('🔍 Tesseract OCR - darmowy backup...');
+      // ETAP 4: Tesseract OCR fallback (darmowe, lokalne)
+      setProcessingStage('🔍 Tesseract OCR - lokalny backup...');
       const ocrResult = await fallbackOCR(imageData);
-      setAiResult(`[OCR Backup] ${ocrResult.text}`);
+      setAiResult(`[Tesseract Backup] ${ocrResult.text}`);
       const models = analyzeOCRText(ocrResult.text);
       setDetectedModels(models);
 
@@ -164,6 +177,37 @@ export default function ModelAIScanner({ isOpen, onClose, onModelDetected }) {
       return { success: false, error: 'OpenAI API error' };
     } catch (error) {
       console.error('OpenAI Vision error:', error);
+      return { success: false, error: error.message };
+    }
+  };
+
+  // OCR.space Analysis (DARMOWE!)
+  const analyzeWithOCRSpace = async (imageData) => {
+    try {
+      const base64Image = imageData.replace(/^data:image\/[a-z]+;base64,/, '');
+      
+      const response = await fetch('/api/ocr-space', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          image: base64Image
+        })
+      });
+      
+      if (response.ok) {
+        const result = await response.json();
+        return { 
+          success: result.success, 
+          analysis: result.analysis,
+          confidence: result.confidence 
+        };
+      }
+      
+      return { success: false, error: 'OCR.space API error' };
+    } catch (error) {
+      console.error('OCR.space error:', error);
       return { success: false, error: error.message };
     }
   };
@@ -258,6 +302,11 @@ export default function ModelAIScanner({ isOpen, onClose, onModelDetected }) {
       console.error('Error parsing AI response:', error);
       return [];
     }
+  };
+
+  // Parsowanie odpowiedzi OCR.space
+  const parseOCRSpaceResponse = (text) => {
+    return analyzeOCRText(text);
   };
 
   // Parsowanie odpowiedzi Google Vision
