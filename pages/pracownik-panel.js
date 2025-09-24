@@ -25,7 +25,9 @@ import {
   FiCamera,
   FiFileText,
   FiUsers,
-  FiZap
+  FiZap,
+  FiChevronDown,
+  FiMenu
 } from 'react-icons/fi';
 
 export default function PracownikPanel() {
@@ -36,6 +38,7 @@ export default function PracownikPanel() {
   const [notifications, setNotifications] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [currentTime, setCurrentTime] = useState(new Date());
+  const [showUserMenu, setShowUserMenu] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -163,6 +166,18 @@ export default function PracownikPanel() {
     return () => clearInterval(timer);
   }, []);
 
+  // Zamknij user menu gdy kliknięto poza nim
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (showUserMenu && !event.target.closest('.user-menu')) {
+        setShowUserMenu(false);
+      }
+    };
+
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, [showUserMenu]);
+
   const handleLogout = () => {
     if (typeof window !== 'undefined') {
       localStorage.removeItem('employeeSession');
@@ -238,27 +253,27 @@ export default function PracownikPanel() {
       {/* Header */}
       <header className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-4">
-            <div className="flex items-center">
-              <FiTool className="h-8 w-8 text-blue-600 mr-3" />
-              <div>
-                <h1 className="text-2xl font-bold text-gray-900">
-                  Panel Serwisanta AGD
+          <div className="flex justify-between items-center py-3">
+            <div className="flex items-center min-w-0 flex-1">
+              <FiTool className="h-6 w-6 md:h-8 md:w-8 text-blue-600 mr-2 md:mr-3 flex-shrink-0" />
+              <div className="min-w-0">
+                <h1 className="text-lg md:text-2xl font-bold text-gray-900 truncate">
+                  Panel Serwisanta
                 </h1>
-                <p className="text-sm text-gray-600">
+                <p className="text-xs md:text-sm text-gray-600 hidden sm:block">
                   Dzień dobry, {employee?.firstName} {employee?.lastName}!
                 </p>
               </div>
             </div>
             
-            <div className="flex items-center space-x-4">
-              <div className="text-right">
+            <div className="flex items-center space-x-2 md:space-x-4">
+              {/* Czas - ukryty na małych ekranach */}
+              <div className="text-right hidden lg:block">
                 <p className="text-sm text-gray-600">
                   {currentTime.toLocaleDateString('pl-PL', { 
-                    weekday: 'long', 
-                    year: 'numeric', 
-                    month: 'long', 
-                    day: 'numeric' 
+                    weekday: 'short', 
+                    day: 'numeric',
+                    month: 'short'
                   })}
                 </p>
                 <p className="text-lg font-semibold text-gray-900">
@@ -269,20 +284,81 @@ export default function PracownikPanel() {
                 </p>
               </div>
               
+              {/* Powiadomienia */}
               <div className="relative">
-                <FiBell className="h-6 w-6 text-gray-600" />
+                <FiBell className="h-5 w-5 md:h-6 md:w-6 text-gray-600" />
                 {notifications.some(n => n.urgent) && (
-                  <span className="absolute -top-1 -right-1 h-3 w-3 bg-red-500 rounded-full"></span>
+                  <span className="absolute -top-1 -right-1 h-2 w-2 md:h-3 md:w-3 bg-red-500 rounded-full"></span>
                 )}
               </div>
 
-              <button
-                onClick={handleLogout}
-                className="flex items-center px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-              >
-                <FiLogOut className="h-5 w-5 mr-2" />
-                Wyloguj
-              </button>
+              {/* User Menu */}
+              <div className="relative user-menu">
+                <button
+                  onClick={() => setShowUserMenu(!showUserMenu)}
+                  className="flex items-center p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+                >
+                  <div className="h-8 w-8 bg-blue-600 rounded-full flex items-center justify-center text-white font-medium text-sm">
+                    {employee?.firstName?.charAt(0)}{employee?.lastName?.charAt(0)}
+                  </div>
+                  <FiChevronDown className={`h-4 w-4 ml-1 transition-transform ${showUserMenu ? 'rotate-180' : ''}`} />
+                </button>
+
+                {/* Dropdown Menu */}
+                {showUserMenu && (
+                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
+                    <div className="px-4 py-2 border-b border-gray-100">
+                      <p className="text-sm font-medium text-gray-900">
+                        {employee?.firstName} {employee?.lastName}
+                      </p>
+                      <p className="text-xs text-gray-500">Serwisant AGD</p>
+                    </div>
+                    
+                    <button
+                      onClick={() => {
+                        router.push('/kalendarz-pracownika-prosty');
+                        setShowUserMenu(false);
+                      }}
+                      className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                    >
+                      <FiCalendar className="h-4 w-4 mr-3" />
+                      Kalendarz
+                    </button>
+                    
+                    <button
+                      onClick={() => {
+                        router.push('/');
+                        setShowUserMenu(false);
+                      }}
+                      className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                    >
+                      <FiHome className="h-4 w-4 mr-3" />
+                      Strona główna
+                    </button>
+                    
+                    <button
+                      onClick={() => setShowUserMenu(false)}
+                      className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                    >
+                      <FiSettings className="h-4 w-4 mr-3" />
+                      Ustawienia
+                    </button>
+                    
+                    <div className="border-t border-gray-100 mt-2">
+                      <button
+                        onClick={() => {
+                          handleLogout();
+                          setShowUserMenu(false);
+                        }}
+                        className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50"
+                      >
+                        <FiLogOut className="h-4 w-4 mr-3" />
+                        Wyloguj
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>

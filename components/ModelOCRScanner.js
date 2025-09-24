@@ -73,6 +73,52 @@ export default function ModelOCRScanner({ isOpen, onClose, onModelDetected }) {
     stopCamera();
   };
 
+  // Przetwarzanie obrazu przed OCR
+  const preprocessImage = (imageData) => {
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        // Zwiększ rozmiar dla lepszej jakości
+        const scale = 2;
+        canvas.width = img.width * scale;
+        canvas.height = img.height * scale;
+        
+        // Rysuj obraz w większej skali
+        ctx.scale(scale, scale);
+        ctx.drawImage(img, 0, 0);
+        
+        // Pobierz dane pikseli
+        const imageDataObj = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const data = imageDataObj.data;
+        
+        // Zwiększ kontrast i jasność
+        for (let i = 0; i < data.length; i += 4) {
+          // Konwertuj do skali szarości
+          const gray = data[i] * 0.299 + data[i + 1] * 0.587 + data[i + 2] * 0.114;
+          
+          // Zwiększ kontrast (binaryzacja)
+          const threshold = 128;
+          const newValue = gray > threshold ? 255 : 0;
+          
+          data[i] = newValue;     // R
+          data[i + 1] = newValue; // G
+          data[i + 2] = newValue; // B
+          // Alpha pozostaje bez zmian
+        }
+        
+        // Zastosuj zmiany
+        ctx.putImageData(imageDataObj, 0, 0);
+        
+        // Zwróć przetworzone zdjęcie
+        resolve(canvas.toDataURL('image/jpeg', 0.9));
+      };
+      img.src = imageData;
+    });
+  };
+
   // Przetwarzanie OCR
   const processOCR = async (imageData) => {
     setIsProcessing(true);
@@ -80,20 +126,52 @@ export default function ModelOCRScanner({ isOpen, onClose, onModelDetected }) {
     setDetectedModels([]);
 
     try {
-      const worker = await createWorker('pol+eng', 1, {
+      // Przetwórz obraz przed OCR
+      const processedImage = await preprocessImage(imageData);
+      
+      const worker = await createWorker('eng', 1, {
         logger: m => console.log(m)
       });
 
+      // Zoptymalizowane parametry dla tabliczek znamionowych
       await worker.setParameters({
         tessedit_char_whitelist: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-/().: ',
-        tessedit_pageseg_mode: '6'
+        tessedit_pageseg_mode: '7', // Treat the image as a single text line
+        tessedit_ocr_engine_mode: '1', // LSTM OCR Engine only
+        preserve_interword_spaces: '1',
+        user_defined_dpi: '300'
       });
 
-      const { data: { text } } = await worker.recognize(imageData);
-      setOcrResult(text);
+      // Wielokrotne próby z różnymi parametrami
+      let bestResult = '';
+      let bestConfidence = 0;
+      
+      const configs = [
+        { psm: '7', oem: '1' }, // Single text line
+        { psm: '8', oem: '1' }, // Single word
+        { psm: '6', oem: '1' }, // Uniform block
+        { psm: '13', oem: '1' } // Raw line
+      ];
+      
+      for (const config of configs) {
+        await worker.setParameters({
+          tessedit_pageseg_mode: config.psm,
+          tessedit_ocr_engine_mode: config.oem
+        });
+        
+        const { data: { text, confidence } } = await worker.recognize(processedImage);
+        
+        if (confidence > bestConfidence && text.trim().length > 0) {
+          bestResult = text;
+          bestConfidence = confidence;
+        }
+      }
+      
+      setOcrResult(bestResult);
+      console.log(`Najlepszy wynik OCR (pewność: ${bestConfidence}%):`, bestResult);
 
       // Analiza tekstu i wyszukiwanie modeli
-      const foundModels = analyzeOCRText(text);
+      const foundModels = analyzeOCRText(bestResult);
       setDetectedModels(foundModels);
 
       await worker.terminate();
@@ -108,16 +186,52 @@ export default function ModelOCRScanner({ isOpen, onClose, onModelDetected }) {
   // Analiza tekstu OCR
   const analyzeOCRText = (text) => {
     const foundModels = [];
-    const patterns = modelsDatabase.ocr_patterns;
+    const cleanText = text.toUpperCase().replace(/[^A-Z0-9\s\-\/.():]/g, ' ');
+    
+    console.log('Analizowany tekst:', cleanText);
+    
+    // Rozszerzone wzorce dla lepszego rozpoznawania
+    const enhancedPatterns = [
+      // Standardowe wzorce z bazy
+      ...modelsDatabase.ocr_patterns,
+      
+      // Dodatkowe wzorce dla popularnych formatów
+      {
+        pattern: '([A-Z]{2,4}[0-9]{4,8}[A-Z]{0,4})',
+        description: 'Model AGD standard'
+      },
+      {
+        pattern: '([A-Z]{3}[0-9]{5}[A-Z]{2})',
+        description: 'Format XXX12345XX'
+      },
+      {
+        pattern: '([A-Z]{2}[0-9]{2}[A-Z][0-9]{4}[A-Z]{2})',
+        description: 'Format XX00X0000XX'
+      },
+      {
+        pattern: '(WW[0-9]{2}[A-Z][0-9]{4}[A-Z]{2})',
+        description: 'Samsung washing machine'
+      },
+      {
+        pattern: '(WA[A-Z][0-9]{5}[A-Z]{2})',
+        description: 'Bosch washing machine'
+      },
+      {
+        pattern: '(SMS[0-9]{2}[A-Z][0-9]{2}[A-Z])',
+        description: 'Bosch dishwasher'
+      }
+    ];
 
-    patterns.forEach(patternObj => {
+    // Szukaj wzorców w tekście
+    enhancedPatterns.forEach(patternObj => {
       const regex = new RegExp(patternObj.pattern, 'gi');
-      const matches = text.match(regex);
+      const matches = cleanText.match(regex);
       
       if (matches) {
         matches.forEach(match => {
-          // Sprawdź czy model istnieje w bazie
           const cleanMatch = match.replace(/[^A-Z0-9]/g, '');
+          
+          // Sprawdź w bazie danych
           const modelInfo = findModelInDatabase(cleanMatch);
           
           if (modelInfo) {
@@ -125,23 +239,52 @@ export default function ModelOCRScanner({ isOpen, onClose, onModelDetected }) {
               detected: match,
               clean: cleanMatch,
               ...modelInfo,
-              confidence: 'high'
+              confidence: 'high',
+              source: 'database'
             });
           } else {
-            // Dodaj jako potencjalny model
-            foundModels.push({
-              detected: match,
-              clean: cleanMatch,
-              name: 'Model nieznany',
-              type: 'Nierozpoznany',
-              confidence: 'low'
-            });
+            // Sprawdź podobieństwo z istniejącymi modelami
+            const similarModel = findSimilarModel(cleanMatch);
+            
+            if (similarModel) {
+              foundModels.push({
+                detected: match,
+                clean: cleanMatch,
+                ...similarModel,
+                confidence: 'medium',
+                source: 'similarity',
+                note: 'Podobny model w bazie danych'
+              });
+            } else if (cleanMatch.length >= 6) {
+              // Dodaj jako potencjalny model tylko jeśli ma sensowną długość
+              foundModels.push({
+                detected: match,
+                clean: cleanMatch,
+                name: `Model nieznany: ${cleanMatch}`,
+                type: 'Nierozpoznany typ urządzenia',
+                confidence: 'low',
+                source: 'ocr'
+              });
+            }
           }
         });
       }
     });
 
-    return foundModels;
+    // Usuń duplikaty
+    const uniqueModels = foundModels.filter((model, index, self) => 
+      index === self.findIndex(m => m.clean === model.clean)
+    );
+
+    // Sortuj według pewności
+    uniqueModels.sort((a, b) => {
+      const confidenceOrder = { 'high': 3, 'medium': 2, 'low': 1 };
+      return confidenceOrder[b.confidence] - confidenceOrder[a.confidence];
+    });
+
+    console.log('Znalezione modele:', uniqueModels);
+    
+    return uniqueModels;
   };
 
   // Wyszukiwanie modelu w bazie danych
@@ -159,6 +302,63 @@ export default function ModelOCRScanner({ isOpen, onClose, onModelDetected }) {
       }
     }
     return null;
+  };
+
+  // Wyszukiwanie podobnego modelu (Levenshtein distance)
+  const findSimilarModel = (modelNumber) => {
+    let bestMatch = null;
+    let bestDistance = Infinity;
+    const maxDistance = 2; // Maksymalna różnica w znakach
+    
+    for (const [brandName, brandData] of Object.entries(modelsDatabase.brands)) {
+      for (const [categoryName, categoryData] of Object.entries(brandData)) {
+        for (const [existingModel, modelData] of Object.entries(categoryData)) {
+          const distance = levenshteinDistance(modelNumber, existingModel);
+          
+          if (distance <= maxDistance && distance < bestDistance) {
+            bestDistance = distance;
+            bestMatch = {
+              brand: brandName,
+              category: categoryName,
+              model: existingModel,
+              ...modelData,
+              similarity: Math.round((1 - distance / Math.max(modelNumber.length, existingModel.length)) * 100)
+            };
+          }
+        }
+      }
+    }
+    
+    return bestMatch;
+  };
+
+  // Oblicz odległość Levenshteina między dwoma stringami
+  const levenshteinDistance = (str1, str2) => {
+    const matrix = [];
+    
+    for (let i = 0; i <= str2.length; i++) {
+      matrix[i] = [i];
+    }
+    
+    for (let j = 0; j <= str1.length; j++) {
+      matrix[0][j] = j;
+    }
+    
+    for (let i = 1; i <= str2.length; i++) {
+      for (let j = 1; j <= str1.length; j++) {
+        if (str2.charAt(i - 1) === str1.charAt(j - 1)) {
+          matrix[i][j] = matrix[i - 1][j - 1];
+        } else {
+          matrix[i][j] = Math.min(
+            matrix[i - 1][j - 1] + 1, // substitution
+            matrix[i][j - 1] + 1,     // insertion
+            matrix[i - 1][j] + 1      // deletion
+          );
+        }
+      }
+    }
+    
+    return matrix[str2.length][str1.length];
   };
 
   // Obsługa wyboru pliku
@@ -329,52 +529,95 @@ export default function ModelOCRScanner({ isOpen, onClose, onModelDetected }) {
               {/* Wykryte modele */}
               {detectedModels.length > 0 && (
                 <div className="space-y-3">
-                  <h3 className="font-semibold text-gray-800">Wykryte modele:</h3>
+                  <h3 className="font-semibold text-gray-800">
+                    Wykryte modele ({detectedModels.length}):
+                  </h3>
                   {detectedModels.map((model, index) => (
                     <div
                       key={index}
                       className={`border rounded-lg p-4 cursor-pointer transition-colors ${
                         model.confidence === 'high'
                           ? 'border-green-300 bg-green-50 hover:bg-green-100'
+                          : model.confidence === 'medium'
+                          ? 'border-blue-300 bg-blue-50 hover:bg-blue-100'
                           : 'border-yellow-300 bg-yellow-50 hover:bg-yellow-100'
                       }`}
                       onClick={() => selectModel(model)}
                     >
                       <div className="flex justify-between items-start">
                         <div className="flex-1">
-                          <div className="flex items-center space-x-2">
+                          <div className="flex items-center space-x-2 mb-2">
                             <span className="font-bold text-lg">{model.clean}</span>
+                            
                             {model.confidence === 'high' && (
-                              <span className="px-2 py-1 bg-green-200 text-green-800 text-xs rounded-full">
-                                Rozpoznany
+                              <span className="px-2 py-1 bg-green-200 text-green-800 text-xs rounded-full flex items-center">
+                                <FiCheck className="h-3 w-3 mr-1" />
+                                Dokładne dopasowanie
                               </span>
                             )}
+                            
+                            {model.confidence === 'medium' && (
+                              <span className="px-2 py-1 bg-blue-200 text-blue-800 text-xs rounded-full flex items-center">
+                                <FiSearch className="h-3 w-3 mr-1" />
+                                Podobny model ({model.similarity}%)
+                              </span>
+                            )}
+                            
                             {model.confidence === 'low' && (
                               <span className="px-2 py-1 bg-yellow-200 text-yellow-800 text-xs rounded-full">
-                                Nieznany
+                                Nieznany model
                               </span>
                             )}
                           </div>
                           
                           {model.brand && (
-                            <p className="text-sm text-gray-600 mt-1">
+                            <p className="text-sm font-medium text-gray-700 mb-1">
                               {model.brand} - {model.name}
                             </p>
                           )}
                           
                           {model.type && (
-                            <p className="text-xs text-gray-500">{model.type}</p>
+                            <p className="text-xs text-gray-500 mb-1">{model.type}</p>
                           )}
                           
-                          <p className="text-xs text-gray-400 mt-1">
-                            Wykryto: "{model.detected}"
-                          </p>
+                          {model.note && (
+                            <p className="text-xs text-blue-600 mb-1">{model.note}</p>
+                          )}
+                          
+                          <div className="flex items-center justify-between mt-2">
+                            <p className="text-xs text-gray-400">
+                              Wykryto: "{model.detected}"
+                            </p>
+                            
+                            <div className="flex items-center space-x-1">
+                              {model.source === 'database' && (
+                                <span className="text-xs text-green-600">📚 Baza</span>
+                              )}
+                              {model.source === 'similarity' && (
+                                <span className="text-xs text-blue-600">🔍 Podobny</span>
+                              )}
+                              {model.source === 'ocr' && (
+                                <span className="text-xs text-yellow-600">👁️ OCR</span>
+                              )}
+                            </div>
+                          </div>
                         </div>
                         
-                        <FiCheck className="h-5 w-5 text-green-600" />
+                        <div className="ml-4 flex items-center">
+                          <FiCheck className={`h-5 w-5 ${
+                            model.confidence === 'high' ? 'text-green-600' :
+                            model.confidence === 'medium' ? 'text-blue-600' :
+                            'text-yellow-600'
+                          }`} />
+                        </div>
                       </div>
                     </div>
                   ))}
+                  
+                  <div className="text-xs text-gray-500 mt-4 p-3 bg-gray-50 rounded-lg">
+                    💡 <strong>Wskazówka:</strong> Kliknij na model aby go dodać. 
+                    Modele z zielonym znaczkiem są najpewniejsze.
+                  </div>
                 </div>
               )}
 
