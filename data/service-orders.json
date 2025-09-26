@@ -1,0 +1,92 @@
+[
+  {
+    "id": "ORD1758909200611",
+    "status": "new",
+    "customer": {
+      "name": "",
+      "email": "",
+      "phone": "",
+      "company": ""
+    },
+    "service": {
+      "device": "piekarnik",
+      "brand": "Bosch",
+      "model": "",
+      "urgency": "normalny"
+    },
+    "address": {
+      "street": "mielec, sienkiewicza 4/7",
+      "city": "inne"
+    },
+    "scheduling": {
+      "preferredTime": "jutro popołudniu ",
+      "assignedTechnician": null,
+      "scheduledDate": null
+    },
+    "pricing": {
+      "estimated": null,
+      "final": null,
+      "travelCost": 50
+    }
+  },
+  {
+    "id": "ORD1758909540346",
+    "status": "new",
+    "customer": {
+      "name": "",
+      "email": "",
+      "phone": "",
+      "company": ""
+    },
+    "service": {
+      "device": "lodówka",
+      "brand": "Samsung",
+      "model": "",
+      "urgency": "normalny"
+    },
+    "address": {
+      "street": "dębica, sienkiewicza 4 792392870",
+      "city": "inne"
+    },
+    "scheduling": {
+      "preferredTime": "inny termin",
+      "assignedTechnician": null,
+      "scheduledDate": null
+    },
+    "pricing": {
+      "estimated": null,
+      "final": null,
+      "travelCost": 50
+    }
+  },
+  {
+    "id": "ORD1758910064290",
+    "status": "new",
+    "customer": {
+      "name": "",
+      "email": "",
+      "phone": "",
+      "company": ""
+    },
+    "service": {
+      "device": "suszarka",
+      "brand": "Thomson",
+      "model": "",
+      "urgency": "szybki"
+    },
+    "address": {
+      "street": "dębica, skarżyńskiego 4/2",
+      "city": "inne"
+    },
+    "scheduling": {
+      "preferredTime": "jutro rano",
+      "assignedTechnician": null,
+      "scheduledDate": null
+    },
+    "pricing": {
+      "estimated": null,
+      "final": null,
+      "travelCost": 50
+    }
+  }
+]

@@ -3,9 +3,6 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useTheme } from '../utils/ThemeContext';
-import ThemeToggle from '../components/ThemeToggle';
-import LiveChatAI from '../components/LiveChatAI';
 import { 
   FiZap, 
   FiCpu, 
@@ -27,7 +24,6 @@ import {
 
 export default function Home() {
   const router = useRouter();
-  const { colors, isDarkMode, mounted } = useTheme();
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [animatedStats, setAnimatedStats] = useState({
@@ -95,18 +91,18 @@ export default function Home() {
     }
   };
 
-  if (loading || !mounted) {
+  if (loading) {
     return (
-      <div className={`min-h-screen ${colors.primary} flex items-center justify-center`}>
+      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
         <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-400"></div>
       </div>
     );
   }
 
   return (
-    <div className={`min-h-screen ${colors.primary} ${colors.textPrimary} transition-colors duration-300`}>
+    <div className="min-h-screen bg-slate-900 text-white">
       {/* Professional Navigation */}
-      <nav className={`${colors.secondary}/95 backdrop-blur-sm ${colors.border} border-b sticky top-0 z-50 transition-colors duration-300`}>
+      <nav className="bg-slate-800/95 backdrop-blur-sm border-b border-slate-700 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             {/* Logo */}
@@ -115,37 +111,34 @@ export default function Home() {
                 <FiZap className="h-6 w-6 text-white" />
               </div>
               <div>
-                <div className={`text-xl font-bold ${colors.textPrimary}`}>TECHNIK</div>
-                <div className={`text-xs ${colors.textTertiary}`}>ELECTRONICS & SERVICE</div>
+                <div className="text-xl font-bold text-white">TECHNIK</div>
+                <div className="text-xs text-slate-400">ELECTRONICS & SERVICE</div>
               </div>
             </div>
             
             {/* Navigation Menu */}
             <div className="hidden md:flex items-center space-x-8">
-              <Link href="#elektronika" className={`${colors.textSecondary} hover:text-blue-400 transition-colors`}>
+              <Link href="#elektronika" className="text-slate-300 hover:text-blue-400 transition-colors">
                 Elektronika
               </Link>
-              <Link href="#serwis" className={`${colors.textSecondary} hover:text-blue-400 transition-colors`}>
+              <Link href="#serwis" className="text-slate-300 hover:text-blue-400 transition-colors">
                 Serwis
               </Link>
-              <Link href="#portfolio" className={`${colors.textSecondary} hover:text-blue-400 transition-colors`}>
+              <Link href="#portfolio" className="text-slate-300 hover:text-blue-400 transition-colors">
                 Portfolio
               </Link>
-              <Link href="#kontakt" className={`${colors.textSecondary} hover:text-blue-400 transition-colors`}>
+              <Link href="#kontakt" className="text-slate-300 hover:text-blue-400 transition-colors">
                 Kontakt
               </Link>
               
-              {/* Theme Toggle */}
-              <ThemeToggle />
-              
               {currentUser ? (
                 <div className="flex items-center space-x-4">
-                  <span className={`text-sm ${colors.textTertiary}`}>
+                  <span className="text-sm text-slate-400">
                     {currentUser.firstName} {currentUser.lastName}
                   </span>
                   <button
                     onClick={handleLogout}
-                    className="px-4 py-2 bg-red-600 hover:bg-red-700 rounded-lg text-sm transition-colors text-white"
+                    className="px-4 py-2 bg-red-600 hover:bg-red-700 rounded-lg text-sm transition-colors"
                   >
                     Wyloguj
                   </button>
@@ -153,7 +146,7 @@ export default function Home() {
               ) : (
                 <Link
                   href="/logowanie"
-                  className="px-6 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors font-medium text-white"
+                  className="px-6 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors font-medium"
                 >
                   Logowanie
                 </Link>
@@ -167,7 +160,7 @@ export default function Home() {
       <section className="relative overflow-hidden">
         {/* Background Effects */}
         <div className="absolute inset-0">
-          <div className={`absolute inset-0 ${colors.gradient}`}></div>
+          <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-blue-900/20 to-purple-900/20"></div>
           <div className="absolute top-1/4 left-1/4 w-72 h-72 bg-blue-500/10 rounded-full blur-3xl"></div>
           <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl"></div>
         </div>
@@ -180,13 +173,13 @@ export default function Home() {
                 TECHNIK
               </span>
               <br />
-              <span className={`text-3xl md:text-4xl ${colors.textSecondary} font-normal`}>
+              <span className="text-3xl md:text-4xl text-slate-300 font-normal">
                 Electronics & Service Solutions
               </span>
             </h1>
 
             {/* Subtitle */}
-            <p className={`text-xl ${colors.textTertiary} mb-12 max-w-3xl mx-auto leading-relaxed`}>
+            <p className="text-xl text-slate-400 mb-12 max-w-3xl mx-auto leading-relaxed">
               Profesjonalne rozwiązania elektroniczne i serwisowe dla firm i instytucji. 
               Od projektowania sterowników po kompleksowy serwis urządzeń AGD.
             </p>
@@ -195,7 +188,7 @@ export default function Home() {
             <div className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-16">
               <Link
                 href="#elektronika"
-                className="group px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 rounded-xl font-semibold text-lg transition-all transform hover:scale-105 shadow-lg hover:shadow-blue-500/25 text-white"
+                className="group px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 rounded-xl font-semibold text-lg transition-all transform hover:scale-105 shadow-lg hover:shadow-blue-500/25"
               >
                 <span className="flex items-center gap-3">
                   <FiCpu className="h-6 w-6" />
@@ -206,7 +199,7 @@ export default function Home() {
               
               <Link
                 href="#serwis"
-                className={`group px-8 py-4 ${colors.secondary} hover:${colors.cardHover} ${colors.border} border hover:${colors.borderHover} rounded-xl font-semibold text-lg transition-all transform hover:scale-105 ${colors.textPrimary}`}
+                className="group px-8 py-4 bg-slate-800 hover:bg-slate-700 border border-slate-600 hover:border-slate-500 rounded-xl font-semibold text-lg transition-all transform hover:scale-105"
               >
                 <span className="flex items-center gap-3">
                   <FiTool className="h-6 w-6" />
@@ -222,19 +215,19 @@ export default function Home() {
                 <div className="text-4xl font-bold text-blue-400 mb-2">
                   {animatedStats.years}+
                 </div>
-                <div className={colors.textTertiary}>Lat doświadczenia</div>
+                <div className="text-slate-400">Lat doświadczenia</div>
               </div>
               <div className="text-center">
                 <div className="text-4xl font-bold text-purple-400 mb-2">
                   {animatedStats.projects}+
                 </div>
-                <div className={colors.textTertiary}>Zrealizowanych projektów</div>
+                <div className="text-slate-400">Zrealizowanych projektów</div>
               </div>
               <div className="text-center">
                 <div className="text-4xl font-bold text-green-400 mb-2">
                   {animatedStats.clients}+
                 </div>
-                <div className={colors.textTertiary}>Zadowolonych klientów</div>
+                <div className="text-slate-400">Zadowolonych klientów</div>
               </div>
             </div>
           </div>
@@ -242,11 +235,11 @@ export default function Home() {
       </section>
 
       {/* Działy Firmy */}
-      <section className={`py-24 ${colors.secondary} transition-colors duration-300`}>
+      <section className="py-24 bg-slate-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className={`text-4xl font-bold ${colors.textPrimary} mb-6`}>Nasze Działy</h2>
-            <p className={`text-xl ${colors.textTertiary} max-w-3xl mx-auto`}>
+            <h2 className="text-4xl font-bold text-white mb-6">Nasze Działy</h2>
+            <p className="text-xl text-slate-400 max-w-3xl mx-auto">
               Kompleksowe rozwiązania elektroniczne i serwisowe pod jednym dachem
             </p>
           </div>
@@ -474,9 +467,6 @@ export default function Home() {
           </div>
         </div>
       </footer>
-
-      {/* Live Chat AI */}
-      <LiveChatAI />
     </div>
   );
 }
