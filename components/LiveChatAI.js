@@ -24,6 +24,7 @@ const LiveChatAI = () => {
   const [userInfo, setUserInfo] = useState(null);
   const [showContactForm, setShowContactForm] = useState(true);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [useOpenAI, setUseOpenAI] = useState(true); // Przełącznik GPT-4o mini vs Classical AI
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
 
@@ -40,6 +41,25 @@ const LiveChatAI = () => {
     preferredTime: '', // preferowany termin
     urgency: 'normal', // normal/urgent
     step: 1            // aktualny krok procesu
+  });
+
+  // Stan procesu konta przez chat
+  const [accountSetupInProgress, setAccountSetupInProgress] = useState(false);
+  const [accountSetupStep, setAccountSetupStep] = useState(null);
+
+  // Kreator zakładania konta
+  const [showAccountWizard, setShowAccountWizard] = useState(false);
+  const [accountWizardStep, setAccountWizardStep] = useState(1);
+  const [accountData, setAccountData] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    password: '',
+    confirmPassword: '',
+    address: '',
+    city: '',
+    agreeToTerms: false,
+    newsletter: false
   });
 
   // Formularz kontaktowy
@@ -63,6 +83,7 @@ const LiveChatAI = () => {
   useEffect(() => {
     const savedMessages = localStorage.getItem('chatHistory');
     const savedUserInfo = localStorage.getItem('chatUserInfo');
+    const savedOrderState = localStorage.getItem('chatOrderState');
     
     if (savedMessages) {
       setMessages(JSON.parse(savedMessages));
@@ -73,17 +94,99 @@ const LiveChatAI = () => {
       setShowContactForm(false);
     }
 
+    // Przywróć stan zamówienia
+    if (savedOrderState) {
+      try {
+        const orderState = JSON.parse(savedOrderState);
+        setOrderInProgress(orderState.inProgress || false);
+        setOrderData(orderState.data || {});
+      } catch (error) {
+        console.error('Błąd przywracania stanu zamówienia:', error);
+      }
+    }
+
     // Wiadomość powitalna
     if (!savedMessages) {
       const welcomeMessage = {
         id: Date.now(),
-        text: "Cześć! 👋 Jestem AI asystentem firmy TECHNIK. Pomogę Ci z pytaniami o nasze usługi elektroniczne i serwisowe. O czym chciałbyś porozmawiać?",
+        text: "Cześć! 👋 Jestem AI asystentem firmy TECHNIK. Pomogę Ci z pytaniami o nasze usługi elektroniczne i serwisowe.\n\n💡 **Przedstaw się poniżej** - pomoże mi to lepiej Ci pomagać, ale **możesz też pominąć** ten krok i chatować anonimowo!",
         sender: 'ai',
         timestamp: new Date().toISOString()
       };
       setMessages([welcomeMessage]);
     }
   }, []);
+
+  // Nasłuchiwanie wylogowania z głównej strony
+  useEffect(() => {
+    const handleStorageChange = (e) => {
+      // Jeśli currentUser zostało usunięte (wylogowanie), wyczyść też chat AI
+      if (e.key === 'currentUser' && e.newValue === null) {
+        setUserInfo(null);
+        setShowContactForm(true);
+        setAccountSetupInProgress(false);
+        setAccountSetupStep(null);
+        localStorage.removeItem('chatUserInfo');
+        localStorage.removeItem('chatHistory');
+        localStorage.removeItem('chatOrderState');
+        
+        // Wyczyść wiadomości i pokaż powitalną
+        const welcomeMessage = {
+          id: Date.now(),
+          text: "Zostałeś wylogowany. Cześć! 👋 Jestem AI asystentem firmy TECHNIK. Pomogę Ci z pytaniami o nasze usługi elektroniczne i serwisowe. O czym chciałbyś porozmawiać?",
+          sender: 'ai',
+          timestamp: new Date().toISOString()
+        };
+        setMessages([welcomeMessage]);
+      }
+      
+      // Synchronizacja logowania - jeśli ktoś się zalogował na głównej stronie
+      if (e.key === 'currentUser' && e.newValue) {
+        try {
+          const currentUser = JSON.parse(e.newValue);
+          if (currentUser && !userInfo) {
+            // Stwórz userInfo na podstawie currentUser
+            const chatUserInfo = {
+              name: `${currentUser.firstName} ${currentUser.lastName}`,
+              email: currentUser.email || '',
+              phone: currentUser.phone || '',
+              isLoggedIn: true,
+              loginTime: new Date().toISOString()
+            };
+            setUserInfo(chatUserInfo);
+            setShowContactForm(false);
+          }
+        } catch (error) {
+          console.error('Błąd synchronizacji logowania:', error);
+        }
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    
+    // Sprawdź przy starcie czy użytkownik jest zalogowany na głównej stronie
+    const currentUser = localStorage.getItem('currentUser');
+    if (currentUser && !userInfo) {
+      try {
+        const user = JSON.parse(currentUser);
+        const chatUserInfo = {
+          name: `${user.firstName} ${user.lastName}`,
+          email: user.email || '',
+          phone: user.phone || '',
+          isLoggedIn: true,
+          loginTime: new Date().toISOString()
+        };
+        setUserInfo(chatUserInfo);
+        setShowContactForm(false);
+      } catch (error) {
+        console.error('Błąd odczytu currentUser:', error);
+      }
+    }
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, [userInfo]);
 
   // Zapisywanie do localStorage
   useEffect(() => {
@@ -97,6 +200,15 @@ const LiveChatAI = () => {
       localStorage.setItem('chatUserInfo', JSON.stringify(userInfo));
     }
   }, [userInfo]);
+
+  // Zapis stanu zamówienia do localStorage
+  useEffect(() => {
+    const orderState = {
+      inProgress: orderInProgress,
+      data: orderData
+    };
+    localStorage.setItem('chatOrderState', JSON.stringify(orderState));
+  }, [orderInProgress, orderData]);
 
   // Funkcja korekcji imion z błędami
   const correctName = (inputName) => {
@@ -179,7 +291,9 @@ const LiveChatAI = () => {
           ...orderData,
           userInfo: userInfo,
           timestamp: new Date().toISOString(),
-          status: 'new'
+          status: 'new',
+          source: 'chat', // Źródło: chat AI
+          employeeCode: 'AI' // AI Assistant
         }),
       });
 
@@ -209,22 +323,46 @@ const LiveChatAI = () => {
     setIsTyping(true);
 
     try {
-      // Wywołanie API OpenAI
-      const response = await fetch('/api/chat-ai', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
+      // Wybór API - Gemini, OpenAI GPT-4o mini lub stary system
+      let apiEndpoint, requestBody;
+      
+      if (useOpenAI) {
+        apiEndpoint = '/api/openai-chat';
+        requestBody = {
           message: inputMessage,
           userInfo: userInfo,
           orderInProgress: orderInProgress,
           orderData: orderData,
-          context: 'TECHNIK - firma elektroniczna i serwisowa. Dwa działy: Elektronika (sterowniki, kreator, sklep B2B) i Serwis (AGD, AI rozpoznawanie, naprawy).'
-        }),
+          accountSetup: accountSetupStep,
+          conversationHistory: messages
+        };
+      } else {
+        apiEndpoint = '/api/chat-ai';
+        requestBody = {
+          message: inputMessage,
+          userInfo: userInfo,
+          orderInProgress: orderInProgress,
+          orderData: orderData,
+          accountSetup: accountSetupStep,
+          context: 'TECHNIK - firma elektroniczna i serwisowa.'
+        };
+      }
+
+      const response = await fetch(apiEndpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestBody),
       });
 
       const data = await response.json();
+      
+      // Logowanie kosztów (opcjonalnie, do development)
+      if (data.usage && process.env.NODE_ENV === 'development') {
+        console.log('💰 Koszt zapytania:', data.usage.formatted);
+        console.log('🔤 Tokeny:', data.usage.totalTokens);
+      }
       
       // AKTUALIZACJA STANU ZAMÓWIENIA
       if (data.orderUpdate) {
@@ -266,7 +404,9 @@ const LiveChatAI = () => {
                   city: orderData.city,
                   preferredTime: orderData.preferredTime,
                   urgency: orderData.urgency,
-                  orderId: data.orderUpdate.orderId
+                  orderId: data.orderUpdate.orderId,
+                  source: 'chat', // Źródło: chat AI
+                  employeeCode: 'AI' // AI Assistant
                 })
               });
               
@@ -282,12 +422,69 @@ const LiveChatAI = () => {
           }
         }
       }
+
+      // Obsługa procesu konta przez chat
+      if (data.accountUpdate) {
+        if (data.accountUpdate.step === 'offer') {
+          setAccountSetupInProgress(true);
+          setAccountSetupStep('offer');
+        } else if (data.accountUpdate.step === 'password') {
+          setAccountSetupStep('password');
+        } else if (data.accountUpdate.step === 'ask-login') {
+          setAccountSetupStep('ask-login');
+          // Zapisz dane konta do późniejszego użycia
+          if (data.accountUpdate.accountId) {
+            setUserInfo(prev => ({ 
+              ...prev, 
+              accountId: data.accountUpdate.accountId,
+              tempPassword: data.accountUpdate.password 
+            }));
+          }
+        } else if (data.accountUpdate.step === 'logged-in') {
+          setAccountSetupInProgress(false);
+          setAccountSetupStep(null);
+          // Zaktualizuj userInfo jako zalogowany użytkownik
+          if (data.accountUpdate.isLoggedIn) {
+            setUserInfo(prev => ({ 
+              ...prev, 
+              isLoggedIn: true,
+              loginTime: new Date().toISOString() 
+            }));
+          }
+        } else if (data.accountUpdate.step === 'completed') {
+          setAccountSetupInProgress(false);
+          setAccountSetupStep(null);
+          // Opcjonalnie zaktualizuj userInfo z danymi konta
+          if (data.accountUpdate.accountId) {
+            setUserInfo(prev => ({ ...prev, accountId: data.accountUpdate.accountId }));
+          }
+        } else if (data.accountUpdate.step === null) {
+          setAccountSetupInProgress(false);
+          setAccountSetupStep(null);
+        }
+      }
+
+      // Obsługa otwarcia kreatora konta
+      if (data.openWizard) {
+        setTimeout(() => {
+          openAccountWizard();
+        }, 1000); // Opóźnienie żeby użytkownik przeczytał wiadomość
+      }
+
+      // Obsługa przekierowania do auto-rezerwacji
+      if (data.redirectToAutoReservation) {
+        setTimeout(() => {
+          window.open('/auto-rezerwacja', '_blank');
+        }, 1500);
+      }
       
       const aiMessage = {
         id: Date.now() + 1,
         text: data.response || 'Przepraszam, wystąpił problem z połączeniem. Spróbuj ponownie.',
         sender: 'ai',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
+        showAutoReservationButton: data.showAutoReservationButton || false,
+        redirectToAutoReservation: data.redirectToAutoReservation || false
       };
 
       setMessages(prev => [...prev, aiMessage]);
@@ -348,8 +545,428 @@ const LiveChatAI = () => {
     });
   };
 
+  // Funkcja otwierania kreatora konta
+  const openAccountWizard = () => {
+    setShowAccountWizard(true);
+    setAccountWizardStep(1);
+    // Prefill danych jeśli użytkownik już się zalogował
+    if (userInfo) {
+      setAccountData(prev => ({
+        ...prev,
+        name: userInfo.name || '',
+        email: userInfo.email || '',
+        phone: userInfo.phone || ''
+      }));
+    }
+  };
+
+  // Funkcja zamykania kreatora
+  const closeAccountWizard = () => {
+    setShowAccountWizard(false);
+    setAccountWizardStep(1);
+    setAccountData({
+      name: '',
+      email: '',
+      phone: '',
+      password: '',
+      confirmPassword: '',
+      address: '',
+      city: '',
+      agreeToTerms: false,
+      newsletter: false
+    });
+    
+    // WAŻNE: Resetuj również stan procesu konta przez chat
+    setAccountSetupInProgress(false);
+    setAccountSetupStep(null);
+  };
+
+  // Funkcja przejścia do następnego kroku w kreatorze
+  const nextAccountStep = () => {
+    if (accountWizardStep < 4) {
+      setAccountWizardStep(prev => prev + 1);
+    }
+  };
+
+  // Funkcja powrotu do poprzedniego kroku w kreatorze  
+  const prevAccountStep = () => {
+    if (accountWizardStep > 1) {
+      setAccountWizardStep(prev => prev - 1);
+    }
+  };
+
+  // Funkcja tworzenia konta
+  const handleCreateAccount = async () => {
+    try {
+      // Walidacja danych
+      if (!accountData.name || !accountData.email || !accountData.password) {
+        alert('Wypełnij wszystkie wymagane pola!');
+        return;
+      }
+
+      if (accountData.password !== accountData.confirmPassword) {
+        alert('Hasła nie są identyczne!');
+        return;
+      }
+
+      // Wysłanie do prawdziwego API
+      const response = await fetch('/api/create-account', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: accountData.name,
+          email: accountData.email,
+          phone: accountData.phone,
+          password: accountData.password,
+          address: accountData.address,
+          city: accountData.city,
+          street: accountData.street
+        })
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Błąd tworzenia konta');
+      }
+
+      // Sukces - zapisz dane użytkownika
+      const successMessage = {
+        id: Date.now(),
+        text: `🎉 **KONTO ZAŁOŻONE POMYŚLNIE!**\n\n✅ **Witaj ${result.account.name}!**\n🆔 **ID konta:** ${result.account.id}\n📧 **Email:** ${result.account.email}\n\n🎯 **Twoje konto jest już aktywne!**\n\nMasz teraz dostęp do panelu klienta z historią napraw i rabatami!`,
+        sender: 'ai',
+        timestamp: new Date().toISOString()
+      };
+      
+      setMessages(prev => [...prev, successMessage]);
+      setUserInfo({ 
+        ...result.account, 
+        isLoggedIn: true,
+        loginTime: new Date().toISOString()
+      });
+      closeAccountWizard();
+      
+      // WAŻNE: Resetuj stan procesu konta przez chat
+      setAccountSetupInProgress(false);
+      setAccountSetupStep(null);
+      
+      // Otwórz chat po utworzeniu konta
+      setIsOpen(true);
+      
+      // Dodaj pytanie o panel klienta po chwili
+      setTimeout(() => {
+        const welcomeMessage = {
+          id: Date.now() + 1,
+          text: `Witaj w panelu klienta ${result.account.name}! 🎉\n\n📋 **Co chcesz zrobić?**\n• **"zamów naprawę"** - nowe zlecenie serwisowe\n• **"historia"** - poprzednie naprawy\n• **"ustawienia"** - zarządzanie kontem\n• **"faktury"** - dokumenty i płatności\n\n💡 *Jesteś teraz zalogowany - masz dostęp do wszystkich funkcji!*`,
+          sender: 'ai',
+          timestamp: new Date().toISOString()
+        };
+        setMessages(prev => [...prev, welcomeMessage]);
+      }, 2000);
+      
+    } catch (error) {
+      console.error('Błąd tworzenia konta:', error);
+      alert(error.message || 'Błąd podczas tworzenia konta. Spróbuj ponownie.');
+    }
+  };
+
   return (
     <>
+      {/* Kreator zakładania konta */}
+      {showAccountWizard && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[60] p-4">
+          <div className={`${colors.secondary} rounded-2xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-y-auto`}>
+            {/* Header kreatora */}
+            <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className={`text-xl font-bold ${colors.textPrimary}`}>
+                    👤 Załóż konto TECHNIK
+                  </h2>
+                  <p className={`text-sm ${colors.textSecondary} mt-1`}>
+                    Krok {accountWizardStep} z 4
+                  </p>
+                </div>
+                <button
+                  onClick={closeAccountWizard}
+                  className={`p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 ${colors.textSecondary}`}
+                >
+                  ✕
+                </button>
+              </div>
+              
+              {/* Progress bar */}
+              <div className="mt-4">
+                <div className="flex space-x-1">
+                  {[1,2,3,4].map(step => (
+                    <div
+                      key={step}
+                      className={`flex-1 h-2 rounded-full ${
+                        step <= accountWizardStep 
+                          ? 'bg-blue-500' 
+                          : 'bg-gray-200 dark:bg-gray-600'
+                      }`}
+                    />
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Krok 1: Dane podstawowe */}
+            {accountWizardStep === 1 && (
+              <div className="p-6">
+                <h3 className={`text-lg font-semibold ${colors.textPrimary} mb-4`}>
+                  📝 Dane podstawowe
+                </h3>
+                
+                <div className="space-y-4">
+                  <div>
+                    <label className={`block text-sm font-medium ${colors.textPrimary} mb-2`}>
+                      Imię i nazwisko *
+                    </label>
+                    <input
+                      type="text"
+                      value={accountData.name}
+                      onChange={(e) => setAccountData(prev => ({...prev, name: e.target.value}))}
+                      className={`w-full px-4 py-2 border rounded-lg ${colors.tertiary} ${colors.border} ${colors.textPrimary} focus:ring-2 focus:ring-blue-500`}
+                      placeholder="Jan Kowalski"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className={`block text-sm font-medium ${colors.textPrimary} mb-2`}>
+                      Email *
+                    </label>
+                    <input
+                      type="email"
+                      value={accountData.email}
+                      onChange={(e) => setAccountData(prev => ({...prev, email: e.target.value}))}
+                      className={`w-full px-4 py-2 border rounded-lg ${colors.tertiary} ${colors.border} ${colors.textPrimary} focus:ring-2 focus:ring-blue-500`}
+                      placeholder="jan@example.com"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className={`block text-sm font-medium ${colors.textPrimary} mb-2`}>
+                      Telefon *
+                    </label>
+                    <input
+                      type="tel"
+                      value={accountData.phone}
+                      onChange={(e) => setAccountData(prev => ({...prev, phone: e.target.value}))}
+                      className={`w-full px-4 py-2 border rounded-lg ${colors.tertiary} ${colors.border} ${colors.textPrimary} focus:ring-2 focus:ring-blue-500`}
+                      placeholder="123 456 789"
+                    />
+                  </div>
+                </div>
+                
+                <div className="flex justify-end mt-6">
+                  <button
+                    onClick={nextAccountStep}
+                    disabled={!accountData.name || !accountData.email || !accountData.phone}
+                    className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    Dalej →
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Krok 2: Hasło */}
+            {accountWizardStep === 2 && (
+              <div className="p-6">
+                <h3 className={`text-lg font-semibold ${colors.textPrimary} mb-4`}>
+                  🔐 Bezpieczeństwo
+                </h3>
+                
+                <div className="space-y-4">
+                  <div>
+                    <label className={`block text-sm font-medium ${colors.textPrimary} mb-2`}>
+                      Hasło *
+                    </label>
+                    <input
+                      type="password"
+                      value={accountData.password}
+                      onChange={(e) => setAccountData(prev => ({...prev, password: e.target.value}))}
+                      className={`w-full px-4 py-2 border rounded-lg ${colors.tertiary} ${colors.border} ${colors.textPrimary} focus:ring-2 focus:ring-blue-500`}
+                      placeholder="Minimum 6 znaków"
+                    />
+                    <p className={`text-xs ${colors.textSecondary} mt-1`}>
+                      Hasło powinno zawierać litery i cyfry
+                    </p>
+                  </div>
+                  
+                  <div>
+                    <label className={`block text-sm font-medium ${colors.textPrimary} mb-2`}>
+                      Powtórz hasło *
+                    </label>
+                    <input
+                      type="password"
+                      value={accountData.confirmPassword}
+                      onChange={(e) => setAccountData(prev => ({...prev, confirmPassword: e.target.value}))}
+                      className={`w-full px-4 py-2 border rounded-lg ${colors.tertiary} ${colors.border} ${colors.textPrimary} focus:ring-2 focus:ring-blue-500`}
+                      placeholder="Powtórz hasło"
+                    />
+                    {accountData.password && accountData.confirmPassword && accountData.password !== accountData.confirmPassword && (
+                      <p className="text-xs text-red-500 mt-1">Hasła nie są identyczne</p>
+                    )}
+                  </div>
+                </div>
+                
+                <div className="flex justify-between mt-6">
+                  <button
+                    onClick={prevAccountStep}
+                    className="px-6 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg"
+                  >
+                    ← Wstecz
+                  </button>
+                  <button
+                    onClick={nextAccountStep}
+                    disabled={!accountData.password || accountData.password.length < 6 || accountData.password !== accountData.confirmPassword}
+                    className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    Dalej →
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Krok 3: Adres */}
+            {accountWizardStep === 3 && (
+              <div className="p-6">
+                <h3 className={`text-lg font-semibold ${colors.textPrimary} mb-4`}>
+                  📍 Adres (opcjonalne)
+                </h3>
+                
+                <div className="space-y-4">
+                  <div>
+                    <label className={`block text-sm font-medium ${colors.textPrimary} mb-2`}>
+                      Miasto
+                    </label>
+                    <input
+                      type="text"
+                      value={accountData.city}
+                      onChange={(e) => setAccountData(prev => ({...prev, city: e.target.value}))}
+                      className={`w-full px-4 py-2 border rounded-lg ${colors.tertiary} ${colors.border} ${colors.textPrimary} focus:ring-2 focus:ring-blue-500`}
+                      placeholder="Rzeszów"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className={`block text-sm font-medium ${colors.textPrimary} mb-2`}>
+                      Ulica i numer
+                    </label>
+                    <input
+                      type="text"
+                      value={accountData.address}
+                      onChange={(e) => setAccountData(prev => ({...prev, address: e.target.value}))}
+                      className={`w-full px-4 py-2 border rounded-lg ${colors.tertiary} ${colors.border} ${colors.textPrimary} focus:ring-2 focus:ring-blue-500`}
+                      placeholder="Mickiewicza 15/3"
+                    />
+                    <p className={`text-xs ${colors.textSecondary} mt-1`}>
+                      Przyspieszy to zamawianie napraw
+                    </p>
+                  </div>
+                </div>
+                
+                <div className="flex justify-between mt-6">
+                  <button
+                    onClick={prevAccountStep}
+                    className="px-6 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg"
+                  >
+                    ← Wstecz
+                  </button>
+                  <button
+                    onClick={nextAccountStep}
+                    className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg"
+                  >
+                    Dalej →
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Krok 4: Podsumowanie i zgodz */}
+            {accountWizardStep === 4 && (
+              <div className="p-6">
+                <h3 className={`text-lg font-semibold ${colors.textPrimary} mb-4`}>
+                  ✅ Podsumowanie
+                </h3>
+                
+                {/* Podsumowanie danych */}
+                <div className={`${colors.tertiary} rounded-lg p-4 mb-4`}>
+                  <h4 className={`font-medium ${colors.textPrimary} mb-2`}>Twoje dane:</h4>
+                  <ul className={`text-sm ${colors.textSecondary} space-y-1`}>
+                    <li>👤 <strong>Imię:</strong> {accountData.name}</li>
+                    <li>📧 <strong>Email:</strong> {accountData.email}</li>
+                    <li>📞 <strong>Telefon:</strong> {accountData.phone}</li>
+                    {accountData.city && <li>🏙️ <strong>Miasto:</strong> {accountData.city}</li>}
+                    {accountData.address && <li>📍 <strong>Adres:</strong> {accountData.address}</li>}
+                  </ul>
+                </div>
+
+                {/* Korzyści z konta */}
+                <div className={`bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-700 rounded-lg p-4 mb-4`}>
+                  <h4 className="font-medium text-green-800 dark:text-green-300 mb-2">🎁 Korzyści konta:</h4>
+                  <ul className="text-sm text-green-700 dark:text-green-400 space-y-1">
+                    <li>📋 Historia wszystkich napraw</li>
+                    <li>⚡ Szybsze zamawianie serwisu</li>
+                    <li>💰 Rabaty dla stałych klientów</li>
+                    <li>🔔 Powiadomienia SMS</li>
+                    <li>📊 Panel zarządzania zleceniami</li>
+                  </ul>
+                </div>
+                
+                {/* Checkboxy */}
+                <div className="space-y-3 mb-6">
+                  <label className="flex items-start space-x-3">
+                    <input
+                      type="checkbox"
+                      checked={accountData.agreeToTerms}
+                      onChange={(e) => setAccountData(prev => ({...prev, agreeToTerms: e.target.checked}))}
+                      className="mt-1"
+                    />
+                    <span className={`text-sm ${colors.textPrimary}`}>
+                      Akceptuję <strong>regulamin</strong> i <strong>politykę prywatności</strong> *
+                    </span>
+                  </label>
+                  
+                  <label className="flex items-start space-x-3">
+                    <input
+                      type="checkbox"
+                      checked={accountData.newsletter}
+                      onChange={(e) => setAccountData(prev => ({...prev, newsletter: e.target.checked}))}
+                      className="mt-1"
+                    />
+                    <span className={`text-sm ${colors.textPrimary}`}>
+                      Chcę otrzymywać newsletter z promocjami i nowościami
+                    </span>
+                  </label>
+                </div>
+                
+                <div className="flex justify-between">
+                  <button
+                    onClick={prevAccountStep}
+                    className="px-6 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg"
+                  >
+                    ← Wstecz
+                  </button>
+                  <button
+                    onClick={handleCreateAccount}
+                    disabled={!accountData.agreeToTerms}
+                    className="px-8 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    🎉 Załóż konto!
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* Przycisk Chat (zawsze widoczny) */}
       {!isOpen && (
         <button
@@ -387,19 +1004,97 @@ const LiveChatAI = () => {
             flex items-center justify-between p-4 ${colors.border} border-b rounded-t-2xl
             ${isDarkMode ? 'bg-slate-700' : 'bg-gray-50'}
           `}>
-            <div className="flex items-center space-x-3">
+            <div 
+              className={`flex items-center space-x-3 ${isMinimized ? 'cursor-pointer hover:opacity-70' : ''} flex-1`}
+              onClick={isMinimized ? () => setIsMinimized(false) : undefined}
+              title={isMinimized ? 'Kliknij aby rozwinąć chat' : ''}
+            >
               <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center">
                 <FiCpu className="h-6 w-6 text-white" />
               </div>
               <div>
-                <h3 className={`font-bold ${colors.textPrimary}`}>TECHNIK AI</h3>
+                <div className="flex items-center space-x-2">
+                  <h3 className={`font-bold ${colors.textPrimary}`}>TECHNIK AI</h3>
+                  {userInfo?.isLoggedIn && (
+                    <span className="px-2 py-0.5 text-xs bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300 rounded-full font-medium">
+                      🔐 Zalogowany
+                    </span>
+                  )}
+                </div>
                 <p className={`text-xs ${colors.textTertiary}`}>
-                  {isTyping ? 'AI pisze...' : 'Online 24/7'}
+                  {isTyping ? 'AI pisze...' : userInfo?.isLoggedIn ? `Witaj ${userInfo.name?.split(' ')[0]}!` : 'Online 24/7'}
+                  {isMinimized && <span className="ml-2 text-blue-500">▲ Kliknij aby rozwinąć</span>}
+                  {!isMinimized && (
+                    <span className="ml-2">
+                      {useOpenAI ? '🤖 GPT-4o mini' : '🔧 Klasyczny'}
+                    </span>
+                  )}
                 </p>
               </div>
             </div>
             
             <div className="flex items-center space-x-2">
+              {/* Przełączniki AI - tylko 2 opcje */}
+              {process.env.NODE_ENV === 'development' && (
+                <>
+                  <button
+                    onClick={() => {
+                      setUseOpenAI(true);
+                    }}
+                    className={`p-2 rounded-lg transition-colors ${
+                      useOpenAI
+                        ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' 
+                        : 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400'
+                    }`}
+                    title="Przełącz na GPT-4o mini (GŁÓWNE AI)"
+                  >
+                    🤖
+                  </button>
+                  <button
+                    onClick={() => {
+                      setUseOpenAI(false);
+                    }}
+                    className={`p-2 rounded-lg transition-colors ${
+                      !useOpenAI
+                        ? 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-300' 
+                        : 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400'
+                    }`}
+                    title="Przełącz na Classical AI (BACKUP)"
+                  >
+                    🔧
+                  </button>
+                </>
+              )}
+              
+              {userInfo?.isLoggedIn && (
+                <button
+                  onClick={() => {
+                    // Wyloguj z chat AI i synchronizuj z główną stroną
+                    setUserInfo(null);
+                    setShowContactForm(true);
+                    setAccountSetupInProgress(false);
+                    setAccountSetupStep(null);
+                    localStorage.removeItem('chatUserInfo');
+                    localStorage.removeItem('chatHistory');
+                    localStorage.removeItem('chatOrderState');
+                    localStorage.removeItem('currentUser');
+                    localStorage.removeItem('rememberUser');
+                    
+                    // Wyczyść wiadomości i pokaż powitalną
+                    const welcomeMessage = {
+                      id: Date.now(),
+                      text: "Zostałeś wylogowany. Cześć! 👋 Jestem AI asystentem firmy TECHNIK. Pomogę Ci z pytaniami o nasze usługi elektroniczne i serwisowe. O czym chciałbyś porozmawiać?",
+                      sender: 'ai',
+                      timestamp: new Date().toISOString()
+                    };
+                    setMessages([welcomeMessage]);
+                  }}
+                  className={`p-2 rounded-lg ${colors.textSecondary} hover:${colors.cardHover} transition-colors`}
+                  title="Wyloguj się"
+                >
+                  <FiUser className="h-4 w-4" />
+                </button>
+              )}
               <button
                 onClick={minimizeChat}
                 className={`p-2 rounded-lg ${colors.textSecondary} hover:${colors.cardHover} transition-colors`}
@@ -452,12 +1147,39 @@ const LiveChatAI = () => {
                       value={contactForm.company}
                       onChange={(e) => setContactForm(prev => ({...prev, company: e.target.value}))}
                     />
-                    <button
-                      type="submit"
-                      className="w-full py-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-lg font-medium transition-all transform hover:scale-105"
-                    >
-                      Rozpocznij chat
-                    </button>
+                    <div className="flex space-x-2">
+                      <button
+                        type="submit"
+                        className="flex-1 py-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-lg font-medium transition-all transform hover:scale-105"
+                      >
+                        Rozpocznij chat
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setShowContactForm(false);
+                          setUserInfo({
+                            name: 'Anonim',
+                            email: '',
+                            phone: '',
+                            company: '',
+                            isLoggedIn: false
+                          });
+                          // Dodaj wiadomość informacyjną
+                          const skipMessage = {
+                            id: Date.now(),
+                            text: "Ok, możesz chatować anonimowo! 😊 Pamiętaj, że podanie danych ułatwi mi lepszą pomoc, ale nie jest wymagane. O czym chciałbyś porozmawiać?",
+                            sender: 'ai',
+                            timestamp: new Date().toISOString()
+                          };
+                          setMessages(prev => [...prev, skipMessage]);
+                        }}
+                        className="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg font-medium transition-colors"
+                        title="Kontynuuj bez podawania danych"
+                      >
+                        Pomiń
+                      </button>
+                    </div>
                   </form>
                 </div>
               )}
@@ -481,7 +1203,24 @@ const LiveChatAI = () => {
                           <FiCpu className="h-4 w-4 mt-0.5 text-blue-500 flex-shrink-0" />
                         )}
                         <div className="flex-1">
-                          <p className="text-sm leading-relaxed">{message.text}</p>
+                          <p className="text-sm leading-relaxed whitespace-pre-line">{message.text}</p>
+                          
+                          {/* Przycisk Auto-Rezerwacji */}
+                          {message.sender === 'ai' && message.showAutoReservationButton && (
+                            <div className="mt-3 space-y-2">
+                              <button
+                                onClick={() => window.open('/auto-rezerwacja', '_blank')}
+                                className="w-full flex items-center justify-center px-4 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-lg hover:from-purple-700 hover:to-indigo-700 transition-all duration-200 font-medium"
+                              >
+                                <FiCpu className="w-4 h-4 mr-2" />
+                                🤖 Auto-Rezerwacja z AI
+                              </button>
+                              <p className="text-xs text-gray-500 text-center">
+                                Inteligentna diagnoza i automatyczne tworzenie zlecenia
+                              </p>
+                            </div>
+                          )}
+                          
                           <span className={`text-xs mt-1 block ${
                             message.sender === 'user' 
                               ? 'text-blue-100' 
@@ -565,6 +1304,24 @@ const LiveChatAI = () => {
                     >
                       📍 Lokalizacje
                     </button>
+                    {/* Przycisk "Przedstaw się" tylko dla użytkowników anonimowych */}
+                    {userInfo?.name === 'Anonim' && (
+                      <button
+                        onClick={() => {
+                          setShowContactForm(true);
+                          const askMessage = {
+                            id: Date.now(),
+                            text: "Świetnie! 😊 Teraz możesz podać swoje dane, co pomoże mi lepiej Ci pomagać:",
+                            sender: 'ai',
+                            timestamp: new Date().toISOString()
+                          };
+                          setMessages(prev => [...prev, askMessage]);
+                        }}
+                        className="px-3 py-1.5 text-xs bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white rounded-full transition-all transform hover:scale-105"
+                      >
+                        👤 Przedstaw się
+                      </button>
+                    )}
                     <button
                       onClick={() => {
                         setInputMessage('Jakie masz godziny pracy?');
@@ -584,10 +1341,7 @@ const LiveChatAI = () => {
                       💰 Cennik
                     </button>
                     <button
-                      onClick={() => {
-                        setInputMessage('załóż konto');
-                        setTimeout(() => sendMessage(), 100);
-                      }}
+                      onClick={openAccountWizard}
                       className="px-3 py-1.5 text-xs bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700 text-white rounded-full transition-all transform hover:scale-105"
                     >
                       👤 Załóż konto
@@ -677,6 +1431,78 @@ const LiveChatAI = () => {
                       >
                         ✖ Anuluj
                       </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {accountSetupInProgress && (
+                <div className="px-4 pb-2">
+                  <div className={`p-3 rounded-lg ${isDarkMode ? 'bg-indigo-900/20 border-indigo-700' : 'bg-indigo-50 border-indigo-200'} border`}>
+                    <div className="flex items-center justify-between">
+                      <span className={`text-sm font-medium ${isDarkMode ? 'text-indigo-300' : 'text-indigo-800'}`}>
+                        👤 Zakładanie konta - {
+                          accountSetupStep === 'offer' ? 'Potwierdzenie' : 
+                          accountSetupStep === 'password' ? 'Hasło' :
+                          accountSetupStep === 'ask-login' ? 'Logowanie' : 'Proces'
+                        }
+                      </span>
+                      <div className="flex space-x-1">
+                        {['offer', 'password', 'ask-login'].map((step, index) => (
+                          <div
+                            key={step}
+                            className={`w-2 h-2 rounded-full ${
+                              step === accountSetupStep || 
+                              (accountSetupStep === 'password' && step === 'offer') ||
+                              (accountSetupStep === 'ask-login' && (step === 'offer' || step === 'password'))
+                                ? 'bg-indigo-500' 
+                                : isDarkMode ? 'bg-gray-600' : 'bg-gray-300'
+                            }`}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                    {/* Przyciski szybkich akcji podczas zakładania konta */}
+                    <div className="flex flex-wrap gap-2 mt-3">
+                      {accountSetupStep === 'ask-login' && (
+                        <button
+                          onClick={() => {
+                            setInputMessage('zaloguj');
+                            setTimeout(() => sendMessage(), 100);
+                          }}
+                          className="px-3 py-1.5 text-xs bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-full transition-all transform hover:scale-105"
+                        >
+                          🔐 Zaloguj
+                        </button>
+                      )}
+                      {accountSetupStep === 'ask-login' && (
+                        <button
+                          onClick={() => {
+                            setInputMessage('później');
+                            setTimeout(() => sendMessage(), 100);
+                          }}
+                          className="px-3 py-1.5 text-xs bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white rounded-full transition-all transform hover:scale-105"
+                        >
+                          ⏰ Później
+                        </button>
+                      )}
+                      <button
+                        onClick={() => {
+                          setInputMessage('anuluj');
+                          setTimeout(() => sendMessage(), 100);
+                        }}
+                        className="px-3 py-1.5 text-xs bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white rounded-full transition-all transform hover:scale-105"
+                      >
+                        ✖ Anuluj
+                      </button>
+                      {accountSetupStep !== 'ask-login' && (
+                        <button
+                          onClick={openAccountWizard}
+                          className="px-3 py-1.5 text-xs bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700 text-white rounded-full transition-all transform hover:scale-105"
+                        >
+                          🧙‍♂️ Kreator
+                        </button>
+                      )}
                     </div>
                   </div>
                 </div>

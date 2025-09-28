@@ -1,4 +1,4 @@
-// components/ModelAIScanner.js
+ // components/ModelAIScanner.js
 
 import { useState, useRef, useEffect } from 'react';
 import {
@@ -11,7 +11,7 @@ import {
   FiSearch,
   FiZap,
   FiEye,
-  FiBrain
+  FiCpu
 } from 'react-icons/fi';
 import modelsDatabase from '../data/modelsDatabase.json';
 
@@ -33,21 +33,56 @@ export default function ModelAIScanner({ isOpen, onClose, onModelDetected }) {
   const initCamera = async () => {
     try {
       setCameraError(null);
-      const mediaStream = await navigator.mediaDevices.getUserMedia({
+      
+      // Sprawdź czy przeglądarka obsługuje getUserMedia
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        throw new Error('Przeglądarka nie obsługuje kamery');
+      }
+
+      // Poproś o uprawnienia z różnymi opcjami fallback
+      let constraints = {
         video: {
-          width: { ideal: 1920 },
-          height: { ideal: 1080 },
+          width: { ideal: 1920, min: 640 },
+          height: { ideal: 1080, min: 480 },
           facingMode: 'environment' // Kamera tylna na telefonie
         }
-      });
-      
-      if (videoRef.current) {
-        videoRef.current.srcObject = mediaStream;
-        setStream(mediaStream);
+      };
+
+      try {
+        const mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
+        
+        if (videoRef.current) {
+          videoRef.current.srcObject = mediaStream;
+          setStream(mediaStream);
+        }
+      } catch (envError) {
+        // Jeśli kamera tylna nie działa, spróbuj dowolną kamerę
+        console.warn('Nie można użyć kamery tylnej, próbuję dowolną kamerę');
+        constraints.video.facingMode = 'user';
+        
+        const mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
+        
+        if (videoRef.current) {
+          videoRef.current.srcObject = mediaStream;
+          setStream(mediaStream);
+        }
       }
     } catch (error) {
       console.error('Błąd dostępu do kamery:', error);
-      setCameraError('Nie można uzyskać dostępu do kamery. Sprawdź uprawnienia.');
+      
+      let errorMessage = 'Nie można uzyskać dostępu do kamery.';
+      
+      if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
+        errorMessage = 'Dostęp do kamery został zablokowany. Sprawdź uprawnienia w ustawieniach przeglądarki.';
+      } else if (error.name === 'NotFoundError' || error.name === 'DevicesNotFoundError') {
+        errorMessage = 'Nie znaleziono kamery. Sprawdź czy kamera jest podłączona.';
+      } else if (error.name === 'NotReadableError' || error.name === 'TrackStartError') {
+        errorMessage = 'Kamera jest używana przez inną aplikację.';
+      } else if (error.name === 'OverconstrainedError' || error.name === 'ConstraintNotSatisfiedError') {
+        errorMessage = 'Kamera nie spełnia wymagań. Spróbuj z inną kamerą.';
+      }
+      
+      setCameraError(errorMessage);
     }
   };
 
@@ -57,6 +92,40 @@ export default function ModelAIScanner({ isOpen, onClose, onModelDetected }) {
       stream.getTracks().forEach(track => track.stop());
       setStream(null);
     }
+  };
+
+  // Kompresja obrazu
+  const compressImage = (canvas, quality = 0.6, maxWidth = 600) => {
+    const context = canvas.getContext('2d');
+    const originalWidth = canvas.width;
+    const originalHeight = canvas.height;
+    
+    // Oblicz nowe wymiary zachowując proporcje
+    let newWidth = originalWidth;
+    let newHeight = originalHeight;
+    
+    if (originalWidth > maxWidth) {
+      newWidth = maxWidth;
+      newHeight = (originalHeight * maxWidth) / originalWidth;
+    }
+    
+    // Stwórz nowy canvas o docelowych wymiarach
+    const compressedCanvas = document.createElement('canvas');
+    compressedCanvas.width = newWidth;
+    compressedCanvas.height = newHeight;
+    const compressedContext = compressedCanvas.getContext('2d');
+    
+    // Narysuj skalowany obraz
+    compressedContext.drawImage(canvas, 0, 0, newWidth, newHeight);
+    
+    const compressedDataUrl = compressedCanvas.toDataURL('image/jpeg', quality);
+    const originalSize = (originalWidth * originalHeight * 4) / 1024; // Rough estimate in KB
+    const compressedSize = compressedDataUrl.length / 1024; // Rough estimate in KB
+    
+    console.log(`🖼️ Image compression: ${originalWidth}x${originalHeight} -> ${newWidth}x${newHeight}`);
+    console.log(`📦 Size: ~${originalSize.toFixed(0)}KB -> ~${compressedSize.toFixed(0)}KB`);
+    
+    return compressedDataUrl;
   };
 
   // Przechwycenie zdjęcia
@@ -71,61 +140,38 @@ export default function ModelAIScanner({ isOpen, onClose, onModelDetected }) {
     canvas.height = video.videoHeight;
     
     context.drawImage(video, 0, 0);
-    const imageDataUrl = canvas.toDataURL('image/jpeg', 0.9);
-    setCapturedImage(imageDataUrl);
+    const compressedImageDataUrl = compressImage(canvas, 0.6, 600);
+    setCapturedImage(compressedImageDataUrl);
     stopCamera();
   };
 
-  // Analiza AI z wieloma źródłami
+  // Analiza AI - TYLKO GPT-4o Mini (bez fallback APIs)
   const processAI = async (imageData) => {
     setIsProcessing(true);
     setAiResult('');
     setDetectedModels([]);
 
     try {
-      // ETAP 1: OCR.space API (DARMOWE! 25k/miesiąc)
-      setProcessingStage('🆓 OCR.space - darmowa analiza (25k/miesiąc)...');
-      const ocrSpaceResult = await analyzeWithOCRSpace(imageData);
-      
-      if (ocrSpaceResult.success && ocrSpaceResult.confidence > 0.75) {
-        setAiResult(`[OCR.space FREE] ${ocrSpaceResult.analysis}`);
-        const models = parseOCRSpaceResponse(ocrSpaceResult.analysis);
-        if (models.length > 0) {
-          setDetectedModels(models);
-          return;
-        }
-      }
-
-      // ETAP 2: Google Vision API (tanie, ale płatne)
-      setProcessingStage('💰 Google Vision - ekonomiczna analiza...');
-      const googleResult = await analyzeWithGoogleVision(imageData);
-      
-      if (googleResult.success) {
-        setAiResult(`[Google Vision] ${googleResult.analysis}`);
-        const models = parseGoogleResponse(googleResult.analysis);
-        if (models.length > 0) {
-          setDetectedModels(models);
-          return;
-        }
-      }
-
-      // ETAP 3: OpenAI Vision API (premium, najinteligentniejsze)
-      setProcessingStage('🧠 OpenAI GPT-4 Vision - premium analiza...');
+      // TYLKO OpenAI GPT-4o Mini - bez fallback APIs
+      setProcessingStage('📋 Analizowanie tabliczki znamionowej...');
       const openAiResult = await analyzeWithOpenAI(imageData);
       
       if (openAiResult.success) {
-        setAiResult(`[OpenAI GPT-4] ${openAiResult.analysis}`);
+        console.log('🤖 OpenAI success, raw response:', openAiResult.analysis);
+        setAiResult(`✅ Rozpoznano dane z tabliczki: ${openAiResult.analysis}`);
         const models = parseAIResponse(openAiResult.analysis);
-        setDetectedModels(models);
-        return;
+        console.log('🔍 Parsed models:', models);
+        if (models.length > 0) {
+          setDetectedModels(models);
+          return;
+        } else {
+          setAiResult('❌ Nie udało się rozpoznać modelu na zdjęciu. Spróbuj z lepszym oświetleniem.');
+          console.log('❌ No models detected from AI response');
+        }
+      } else {
+        setAiResult(`❌ Skaner niedostępny: ${openAiResult.error}`);
+        console.error('❌ GPT-4o Mini error:', openAiResult.error);
       }
-
-      // ETAP 4: Tesseract OCR fallback (darmowe, lokalne)
-      setProcessingStage('🔍 Tesseract OCR - lokalny backup...');
-      const ocrResult = await fallbackOCR(imageData);
-      setAiResult(`[Tesseract Backup] ${ocrResult.text}`);
-      const models = analyzeOCRText(ocrResult.text);
-      setDetectedModels(models);
 
     } catch (error) {
       console.error('Błąd analizy AI:', error);
@@ -156,6 +202,8 @@ export default function ModelAIScanner({ isOpen, onClose, onModelDetected }) {
           5. Numer seryjny jeśli widoczny
           6. Inne ważne informacje techniczne
           
+          WAŻNE: W polu "additionalInfo" umieść CAŁY ORYGINALNY TEKST z tabliczki, włączając wszystkie napisy jak "Typ:", "Model:", "S/N:" itp.
+          
           Odpowiedź w formacie JSON:
           {
             "brand": "MARKA",
@@ -164,7 +212,7 @@ export default function ModelAIScanner({ isOpen, onClose, onModelDetected }) {
             "capacity": "POJEMNOSC",
             "serialNumber": "NUMER_SERYJNY",
             "confidence": "high/medium/low",
-            "additionalInfo": "DODATKOWE_INFO"
+            "additionalInfo": "CAŁY_ORYGINALNY_TEKST_Z_TABLICZKI_WRAZ_Z_OPISAMI"
           }`
         })
       });
@@ -172,9 +220,11 @@ export default function ModelAIScanner({ isOpen, onClose, onModelDetected }) {
       if (response.ok) {
         const result = await response.json();
         return { success: true, analysis: result.analysis };
+      } else {
+        const errorText = await response.text();
+        console.error('OpenAI API HTTP Error:', response.status, errorText);
+        return { success: false, error: `OpenAI API error (${response.status}): ${errorText}` };
       }
-      
-      return { success: false, error: 'OpenAI API error' };
     } catch (error) {
       console.error('OpenAI Vision error:', error);
       return { success: false, error: error.message };
@@ -258,22 +308,169 @@ export default function ModelAIScanner({ isOpen, onClose, onModelDetected }) {
     return { text, confidence };
   };
 
+  // Funkcja do inteligentnego parsowania modelu i typu
+  const smartParseModelAndType = (parsed) => {
+    let finalModel = parsed.model;
+    let finalType = parsed.type;
+    let finalName = parsed.name || `${parsed.brand} ${parsed.model}`;
+    
+    console.log('🔍 Smart parsing input:', { brand: parsed.brand, model: parsed.model, type: parsed.type });
+    
+    // Lista marek które często mają model w polu "type"
+    const brandsWithModelInType = ['AMICA', 'WHIRLPOOL', 'CANDY', 'HOOVER'];
+    
+    if (brandsWithModelInType.includes(parsed.brand?.toUpperCase())) {
+      
+      // WARUNEK 1: Jeśli typ wygląda jak kod modelu (zawiera cyfry i litery w formacie modelu)
+      const typeAsModelPattern = /^[A-Z]{2,}[0-9]{3,}[A-Z]*$/i;
+      const isTypeAModel = parsed.type && typeAsModelPattern.test(parsed.type.replace(/\s+/g, ''));
+      
+      // WARUNEK 2: Jeśli model to słowo opisowe bez cyfr (jak "Płyta indukcyjna")
+      const isModelDescriptive = parsed.model && !parsed.model.match(/[0-9]/) && parsed.model.length > 8;
+      
+      // WARUNEK 3: Dla Amica - sprawdź czy w tekście jest "TYPE/TYP:" i to jest model (dla WSZYSTKICH urządzeń Amica)
+      let isAmicaWithTypeAsModel = false;
+      let extractedAmicaModel = null;
+      let allText = '';
+      
+      if (parsed.brand?.toUpperCase() === 'AMICA') {
+        // Sprawdź w różnych polach czy jest "TYPE/TYP:" - to będzie model dla WSZYSTKICH urządzeń Amica
+        allText = `${parsed.model || ''} ${parsed.type || ''} ${parsed.additionalInfo || ''} ${parsed.serialNumber || ''} ${parsed.capacity || ''}`;
+        console.log(`🔍 Amica detected! Full parsed object:`, parsed);
+        console.log(`🔍 Searching for "TYPE/TYP:" in Amica text: "${allText}"`);
+        
+        // Szukaj różnych wariantów TYPE/TYP - uwzględnij również bez dwukropka
+        let typMatch = allText.match(/(?:TYPE\s*\/\s*TYP|Typ|Type|TYP):\s*([A-Z0-9+\-\/\(\)\.\s]+)/i);
+        
+        // Jeśli nie znaleziono z dwukropkiem, spróbuj bez dwukropka (czasem OpenAI może pominąć)
+        if (!typMatch) {
+          typMatch = allText.match(/(?:TYPE\s*\/\s*TYP|TYPE|TYP)\s+([A-Z0-9+\-\/\(\)\.\s]{8,})/i);
+        }
+        
+        // Jeśli nie znaleziono w allText, sprawdź każde pole osobno
+        if (!typMatch) {
+          for (const field of ['model', 'type', 'additionalInfo', 'serialNumber', 'capacity']) {
+            const fieldValue = parsed[field];
+            if (fieldValue && typeof fieldValue === 'string') {
+              typMatch = fieldValue.match(/(?:TYPE\s*\/\s*TYP|Typ|Type|TYP):\s*([A-Z0-9+\-\/\(\)\.\s]+)/i);
+              if (!typMatch) {
+                typMatch = fieldValue.match(/(?:TYPE\s*\/\s*TYP|TYPE|TYP)\s+([A-Z0-9+\-\/\(\)\.\s]{8,})/i);
+              }
+              if (typMatch) {
+                console.log(`🔧 Found "TYPE/TYP:" in field "${field}": "${fieldValue}"`);
+                break;
+              }
+            }
+          }
+        }
+        
+        if (typMatch) {
+          extractedAmicaModel = typMatch[1].trim(); // Usuń białe znaki
+          isAmicaWithTypeAsModel = true;
+          console.log(`🔧 Found Amica "TYPE/TYP:" pattern: "${extractedAmicaModel}"`);
+        } else {
+          console.log(`❌ No "TYPE/TYP:" pattern found for Amica. Trying direct type field...`);
+          // Fallback - dla Amica często TYPE to właściwy model, nawet bez etykiety
+          if (parsed.type && parsed.type.length >= 8 && parsed.type.match(/[0-9]/)) {
+            extractedAmicaModel = parsed.type;
+            isAmicaWithTypeAsModel = true;
+            console.log(`🔧 Using Amica type field as model: "${parsed.type}"`);
+          }
+        }
+      }
+      
+      if (isTypeAModel || isModelDescriptive || isAmicaWithTypeAsModel) {
+        console.log(`🔧 Detected model in type field for ${parsed.brand}: "${parsed.type}" (pattern match: ${isTypeAModel}, descriptive model: ${isModelDescriptive}, Amica special: ${isAmicaWithTypeAsModel})`);
+        
+        // Dla Amica z "Typ:" użyj wyciągniętego modelu
+        if (isAmicaWithTypeAsModel && extractedAmicaModel) {
+          finalModel = extractedAmicaModel;
+        } else {
+          // Zamień miejscami: typ staje się modelem
+          finalModel = parsed.type;
+        }
+        
+        // Określ właściwy typ na podstawie marki i wzorca modelu
+        if (parsed.brand?.toUpperCase() === 'AMICA') {
+          if (finalModel.startsWith('PI') || allText.toLowerCase().includes('indukcyj')) {
+            finalType = 'Płyta indukcyjna';
+          } else if (finalModel.startsWith('PC') || allText.toLowerCase().includes('ceramiczn')) {
+            finalType = 'Płyta ceramiczna';
+          } else if (finalModel.startsWith('PG') || allText.toLowerCase().includes('gazow')) {
+            finalType = 'Płyta gazowa';
+          } else if (finalModel.includes('OKA') || finalModel.includes('OKC') || allText.toLowerCase().includes('okap')) {
+            finalType = 'Okap kuchenny';
+          } else if (allText.toLowerCase().includes('piekarnik') || allText.toLowerCase().includes('oven')) {
+            finalType = 'Piekarnik';
+          } else {
+            finalType = isModelDescriptive ? parsed.model : 'Urządzenie AGD';
+          }
+        } else {
+          finalType = isModelDescriptive ? parsed.model : 'Urządzenie AGD';
+        }
+        
+        finalName = `${parsed.brand} ${finalModel}`;
+        console.log(`✅ After swap - Model: "${finalModel}", Type: "${finalType}"`);
+      }
+    }
+    
+    // Jeśli model i typ są nadal takie same, ostateczna korekta
+    if (finalModel === finalType) {
+      if (parsed.brand?.toUpperCase() === 'AMICA') {
+        finalType = 'Urządzenie AGD Amica';
+      } else {
+        finalType = 'Urządzenie AGD';
+      }
+    }
+    
+    console.log('✅ Smart parsing result:', { finalModel, finalType, finalName });
+    return { finalModel, finalType, finalName };
+  };
+
   // Parsowanie odpowiedzi OpenAI
   const parseAIResponse = (analysis) => {
     try {
-      const parsed = JSON.parse(analysis);
+      console.log('🔍 Parsing AI response:', analysis);
+      
+      // Spróbuj najpierw czysty JSON parse
+      let parsed;
+      try {
+        parsed = JSON.parse(analysis);
+      } catch (jsonError) {
+        // Jeśli nie można sparsować jako JSON, spróbuj wyciągnąć JSON z tekstu
+        console.log('⚠️ Direct JSON parse failed, trying to extract JSON from text');
+        const jsonMatch = analysis.match(/\{[\s\S]*\}/);
+        if (jsonMatch) {
+          parsed = JSON.parse(jsonMatch[0]);
+        } else {
+          throw new Error('No JSON found in response');
+        }
+      }
+      
+      console.log('✅ Parsed JSON:', parsed);
+      
+      // Sprawdź czy mamy podstawowe dane
+      if (!parsed.brand && !parsed.model) {
+        console.log('❌ No brand or model found in parsed data');
+        return [];
+      }
+      
+      // Inteligentne parsowanie modelu i typu
+      const { finalModel, finalType, finalName } = smartParseModelAndType(parsed);
+      console.log('🧠 Smart parsing result:', { finalModel, finalType, finalName });
       
       // Sprawdź w bazie danych
-      const dbModel = findModelInDatabase(parsed.model);
+      const dbModel = findModelInDatabase(finalModel);
       
       if (dbModel) {
+        console.log('✅ Found in database:', dbModel);
         return [{
-          detected: parsed.model,
-          clean: parsed.model,
+          detected: finalModel,
+          clean: finalModel,
           brand: parsed.brand,
-          model: parsed.model,
-          name: dbModel.name,
-          type: parsed.type,
+          model: finalModel,
+          name: dbModel.name || finalName,
+          type: dbModel.type || finalType,
           confidence: 'high',
           source: 'ai_database',
           capacity: parsed.capacity,
@@ -283,14 +480,15 @@ export default function ModelAIScanner({ isOpen, onClose, onModelDetected }) {
         }];
       } else {
         // Model nie w bazie, ale AI go rozpoznało
+        console.log('ℹ️ Not in database, creating new model entry');
         return [{
-          detected: parsed.model,
-          clean: parsed.model,
+          detected: finalModel,
+          clean: finalModel,
           brand: parsed.brand,
-          model: parsed.model,
-          name: `${parsed.brand} ${parsed.model}`,
-          type: parsed.type,
-          confidence: parsed.confidence,
+          model: finalModel,
+          name: finalName,
+          type: finalType,
+          confidence: parsed.confidence || 'medium',
           source: 'ai_new',
           capacity: parsed.capacity,
           serialNumber: parsed.serialNumber,
@@ -299,7 +497,8 @@ export default function ModelAIScanner({ isOpen, onClose, onModelDetected }) {
         }];
       }
     } catch (error) {
-      console.error('Error parsing AI response:', error);
+      console.error('❌ Error parsing AI response:', error);
+      console.error('❌ Original analysis text:', analysis);
       return [];
     }
   };
@@ -386,8 +585,20 @@ export default function ModelAIScanner({ isOpen, onClose, onModelDetected }) {
     if (file) {
       const reader = new FileReader();
       reader.onload = (e) => {
-        setCapturedImage(e.target.result);
-        stopCamera();
+        // Skompresuj obraz z galerii
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const context = canvas.getContext('2d');
+          canvas.width = img.width;
+          canvas.height = img.height;
+          context.drawImage(img, 0, 0);
+          
+          const compressedImageDataUrl = compressImage(canvas, 0.6, 600);
+          setCapturedImage(compressedImageDataUrl);
+          stopCamera();
+        };
+        img.src = e.target.result;
       };
       reader.readAsDataURL(file);
     }
@@ -425,8 +636,8 @@ export default function ModelAIScanner({ isOpen, onClose, onModelDetected }) {
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
           <h2 className="text-xl font-bold">
-            <FiBrain className="inline mr-2" />
-            AI Scanner - Analiza tabliczki
+            <FiCpu className="inline mr-2" />
+            Skaner tabliczek znamionowych
           </h2>
           <button
             onClick={onClose}
@@ -446,12 +657,31 @@ export default function ModelAIScanner({ isOpen, onClose, onModelDetected }) {
                     <div>
                       <FiCamera className="h-12 w-12 mx-auto mb-4 opacity-50" />
                       <p className="text-red-300 mb-4">{cameraError}</p>
-                      <button
-                        onClick={() => fileInputRef.current?.click()}
-                        className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-white font-medium"
-                      >
-                        Wybierz zdjęcie z galerii
-                      </button>
+                      
+                      {/* Instrukcje dla użytkownika */}
+                      <div className="text-xs text-gray-300 mb-4 max-w-md">
+                        <p className="mb-2"><strong>💡 Jak włączyć kamerę:</strong></p>
+                        <ul className="text-left space-y-1">
+                          <li>📱 <strong>Na telefonie:</strong> Odśwież stronę i zezwól na dostęp</li>
+                          <li>🔒 <strong>Chrome:</strong> Kliknij ikonę kłódki obok adresu</li>
+                          <li>🔧 <strong>Inne:</strong> Sprawdź ustawienia przeglądarki</li>
+                        </ul>
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <button
+                          onClick={() => window.location.reload()}
+                          className="px-4 py-2 bg-green-600 hover:bg-green-700 rounded-lg text-white font-medium mr-2"
+                        >
+                          Odśwież stronę
+                        </button>
+                        <button
+                          onClick={() => fileInputRef.current?.click()}
+                          className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-white font-medium"
+                        >
+                          Wybierz z galerii
+                        </button>
+                      </div>
                     </div>
                   </div>
                 ) : (
@@ -476,16 +706,14 @@ export default function ModelAIScanner({ isOpen, onClose, onModelDetected }) {
 
               {/* Przyciski kontrolne */}
               <div className="flex justify-center space-x-4">
-                <button
-                  onClick={capturePhoto}
-                  disabled={!!cameraError || !stream}
-                  className="flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 disabled:bg-gray-400 text-white rounded-lg font-medium transition-colors"
-                >
-                  <FiCamera className="h-5 w-5 mr-2" />
-                  Zrób zdjęcie AI
-                </button>
-                
-                <button
+                  <button
+                    onClick={capturePhoto}
+                    disabled={!!cameraError || !stream}
+                    className="flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 disabled:bg-gray-400 text-white rounded-lg font-medium transition-colors"
+                  >
+                    <FiCamera className="h-5 w-5 mr-2" />
+                    Zrób zdjęcie
+                  </button>                <button
                   onClick={() => fileInputRef.current?.click()}
                   className="flex items-center px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white rounded-lg font-medium transition-colors"
                 >
@@ -523,20 +751,18 @@ export default function ModelAIScanner({ isOpen, onClose, onModelDetected }) {
 
               {/* Przyciski akcji */}
               <div className="flex justify-center space-x-4">
-                <button
-                  onClick={() => processAI(capturedImage)}
-                  disabled={isProcessing}
-                  className="flex items-center px-6 py-3 bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 disabled:bg-gray-400 text-white rounded-lg font-medium transition-colors"
-                >
-                  {isProcessing ? (
-                    <FiLoader className="h-5 w-5 mr-2 animate-spin" />
-                  ) : (
-                    <FiBrain className="h-5 w-5 mr-2" />
-                  )}
-                  {isProcessing ? 'Analizuję AI...' : 'Analizuj z AI'}
-                </button>
-
-                <button
+                  <button
+                    onClick={() => processAI(capturedImage)}
+                    disabled={isProcessing}
+                    className="flex items-center px-6 py-3 bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 disabled:bg-gray-400 text-white rounded-lg font-medium transition-colors"
+                  >
+                    {isProcessing ? (
+                      <FiLoader className="h-5 w-5 mr-2 animate-spin" />
+                    ) : (
+                      <FiCpu className="h-5 w-5 mr-2" />
+                    )}
+                    {isProcessing ? 'Analizuję...' : 'Analizuj tabliczkę'}
+                  </button>                <button
                   onClick={restartCamera}
                   className="flex items-center px-4 py-3 bg-gray-600 hover:bg-gray-700 text-white rounded-lg font-medium transition-colors"
                 >
@@ -550,7 +776,7 @@ export default function ModelAIScanner({ isOpen, onClose, onModelDetected }) {
                 <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg p-4 border border-blue-200">
                   <h3 className="font-semibold text-gray-800 mb-2 flex items-center">
                     <FiEye className="mr-2" />
-                    Analiza AI:
+                    Wyniki analizy:
                   </h3>
                   <div className="text-sm text-gray-700 bg-white p-3 rounded border max-h-32 overflow-y-auto">
                     {aiResult}
@@ -584,7 +810,7 @@ export default function ModelAIScanner({ isOpen, onClose, onModelDetected }) {
                             
                             {model.source?.includes('ai') && (
                               <span className="px-2 py-1 bg-gradient-to-r from-green-200 to-blue-200 text-green-800 text-xs rounded-full flex items-center">
-                                <FiBrain className="h-3 w-3 mr-1" />
+                                <FiCpu className="h-3 w-3 mr-1" />
                                 AI Recognition
                               </span>
                             )}
@@ -641,16 +867,16 @@ export default function ModelAIScanner({ isOpen, onClose, onModelDetected }) {
                   ))}
                   
                   <div className="text-xs text-gray-500 mt-4 p-3 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg border border-blue-200">
-                    🤖 <strong>AI Scanner:</strong> Zaawansowana analiza obrazu z rozpoznawaniem kontekstu, 
-                    marki i modelu urządzenia. Znacznie dokładniejszy niż tradycyjny OCR!
+                    📋 <strong>Inteligentny skaner:</strong> Zaawansowana analiza obrazu z automatycznym rozpoznawaniem 
+                    marki i modelu urządzenia z tabliczki znamionowej.
                   </div>
                 </div>
               )}
 
               {aiResult && detectedModels.length === 0 && (
                 <div className="text-center py-8 text-gray-500">
-                  <FiBrain className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                  <p>AI nie rozpoznało modelu na zdjęciu.</p>
+                  <FiCpu className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                  <p>Nie rozpoznano modelu na zdjęciu.</p>
                   <p className="text-sm">Spróbuj z lepszym oświetleniem lub kątem.</p>
                 </div>
               )}

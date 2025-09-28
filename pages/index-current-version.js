@@ -3,6 +3,11 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { useTheme } from '../utils/ThemeContext';
+import ThemeToggle from '../components/ThemeToggle';
+import LiveChatAI from '../components/LiveChatAI';
+import AccountButton from '../components/AccountButton';
+import RoleTester from '../components/RoleTester';
 import { 
   FiZap, 
   FiCpu, 
@@ -24,8 +29,66 @@ import {
 
 export default function Home() {
   const router = useRouter();
-  const [currentUser, setCurrentUser] = useState(null);
+  const { colors, isDarkMode, mounted } = useTheme();
   const [loading, setLoading] = useState(true);
+  const [titleColorIndex, setTitleColorIndex] = useState(0); // Indeks aktualnego koloru (0 = gradient)
+  
+  // Paleta 50 różnych kolorów + gradient na początku (dodano 20 odcieni niebieskiego)
+  const titleColors = [
+    "bg-gradient-to-r from-blue-400 via-purple-400 to-blue-600 bg-clip-text text-transparent", // 0 - gradient
+    "text-blue-500",     // 1
+    "text-red-500",      // 2
+    "text-green-500",    // 3
+    "text-purple-500",   // 4
+    "text-pink-500",     // 5
+    "text-indigo-500",   // 6
+    "text-yellow-500",   // 7
+    "text-orange-500",   // 8
+    "text-teal-500",     // 9
+    "text-cyan-500",     // 10
+    "text-emerald-500",  // 11
+    "text-rose-500",     // 12
+    "text-violet-500",   // 13
+    "text-sky-500",      // 14
+    "text-amber-500",    // 15
+    "text-lime-500",     // 16
+    "text-blue-600",     // 17
+    "text-red-600",      // 18
+    "text-green-600",    // 19
+    "text-purple-600",   // 20
+    "text-pink-600",     // 21
+    "text-indigo-600",   // 22
+    "text-yellow-600",   // 23
+    "text-orange-600",   // 24
+    "text-teal-600",     // 25
+    "text-cyan-600",     // 26
+    "text-emerald-600",  // 27
+    "text-rose-600",     // 28
+    "text-violet-600",   // 29
+    "text-sky-600",      // 30
+    // 20 dodatkowych odcieni niebieskiego
+    "text-blue-50",      // 31 - bardzo jasny niebieski
+    "text-blue-100",     // 32
+    "text-blue-200",     // 33
+    "text-blue-300",     // 34
+    "text-blue-400",     // 35
+    "text-blue-700",     // 36
+    "text-blue-800",     // 37
+    "text-blue-900",     // 38
+    "text-blue-950",     // 39 - bardzo ciemny niebieski
+    "text-sky-50",       // 40
+    "text-sky-100",      // 41
+    "text-sky-200",      // 42
+    "text-sky-300",      // 43
+    "text-sky-400",      // 44
+    "text-sky-700",      // 45
+    "text-sky-800",      // 46
+    "text-sky-900",      // 47
+    "text-indigo-400",   // 48
+    "text-indigo-700",   // 49
+    "text-indigo-800"    // 50
+  ];
+  
   const [animatedStats, setAnimatedStats] = useState({
     years: 0,
     projects: 0,
@@ -33,12 +96,8 @@ export default function Home() {
   });
 
   useEffect(() => {
-    // Sprawdzenie użytkownika
+    // Sprawdzenie czy komponent jest gotowy
     if (typeof window !== 'undefined') {
-      const userData = localStorage.getItem('currentUser');
-      if (userData) {
-        setCurrentUser(JSON.parse(userData));
-      }
       setLoading(false);
     }
 
@@ -82,76 +141,107 @@ export default function Home() {
     return () => clearTimeout(timeout);
   }, []);
 
-  const handleLogout = () => {
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem('currentUser');
-      localStorage.removeItem('rememberUser');
-      setCurrentUser(null);
-      router.push('/');
-    }
-  };
 
-  if (loading) {
+
+  if (loading || !mounted) {
     return (
-      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
+      <div className={`min-h-screen ${colors.primary} flex items-center justify-center`}>
         <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-400"></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-900 text-white">
+    <div className={`min-h-screen ${colors.primary} ${colors.textPrimary} transition-colors duration-300`}>
       {/* Professional Navigation */}
-      <nav className="bg-slate-800/95 backdrop-blur-sm border-b border-slate-700 sticky top-0 z-50">
+      <nav className={`${colors.secondary}/95 backdrop-blur-sm ${colors.border} border-b sticky top-0 z-50 transition-colors duration-300`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
-            {/* Logo */}
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-purple-600 rounded-lg flex items-center justify-center">
-                <FiZap className="h-6 w-6 text-white" />
+            {/* Logo i Mobile Controls */}
+            <div className="flex items-center justify-between w-full">
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-purple-600 rounded-lg flex items-center justify-center">
+                  <FiZap className="h-6 w-6 text-white" />
+                </div>
+                <div>
+                  <div className={`text-xl font-bold ${colors.textPrimary}`}>TECHNIK</div>
+                  <div className={`text-xs ${colors.textTertiary}`}>ELECTRONICS & SERVICE</div>
+                </div>
               </div>
-              <div>
-                <div className="text-xl font-bold text-white">TECHNIK</div>
-                <div className="text-xs text-slate-400">ELECTRONICS & SERVICE</div>
+
+              {/* Mobile Controls - kompaktowe i responsive */}
+              <div className="flex md:hidden items-center space-x-1 flex-shrink-0">
+                {/* Theme Toggle dla mobile */}
+                <div className="flex-shrink-0">
+                  <ThemeToggle />
+                </div>
+                
+                {/* Title Color Toggle dla mobile - kompaktowy */}
+                <div className="flex items-center space-x-1 flex-shrink-0">
+                  <button
+                    onClick={() => setTitleColorIndex((prev) => (prev + 1) % titleColors.length)}
+                    className={`p-2 rounded-lg transition-colors border ${
+                      titleColorIndex === 0 
+                        ? `${colors.secondary} ${colors.textSecondary} border-blue-400/30 hover:bg-blue-500/10` 
+                        : 'bg-blue-500 text-white border-blue-500'
+                    }`}
+                    title={`Kolor ${titleColorIndex + 1}/${titleColors.length} - Kliknij dla następnego`}
+                  >
+                    <FiZap className="h-4 w-4" />
+                  </button>
+                  <span className={`text-xs ${colors.textTertiary} font-semibold whitespace-nowrap`}>
+                    {titleColorIndex + 1}/{titleColors.length}
+                  </span>
+                </div>
+                
+                {/* Zunifikowany przycisk Moje Konto dla mobile */}
+                <div className="flex-shrink-0">
+                  <AccountButton />
+                </div>
               </div>
             </div>
             
             {/* Navigation Menu */}
             <div className="hidden md:flex items-center space-x-8">
-              <Link href="#elektronika" className="text-slate-300 hover:text-blue-400 transition-colors">
+              <Link href="#elektronika" className={`${colors.textSecondary} hover:text-blue-400 transition-colors`}>
                 Elektronika
               </Link>
-              <Link href="#serwis" className="text-slate-300 hover:text-blue-400 transition-colors">
+              <Link href="#serwis" className={`${colors.textSecondary} hover:text-blue-400 transition-colors`}>
                 Serwis
               </Link>
-              <Link href="#portfolio" className="text-slate-300 hover:text-blue-400 transition-colors">
+              <Link href="#portfolio" className={`${colors.textSecondary} hover:text-blue-400 transition-colors`}>
                 Portfolio
               </Link>
-              <Link href="#kontakt" className="text-slate-300 hover:text-blue-400 transition-colors">
+              <Link href="#kontakt" className={`${colors.textSecondary} hover:text-blue-400 transition-colors`}>
                 Kontakt
               </Link>
               
-              {currentUser ? (
-                <div className="flex items-center space-x-4">
-                  <span className="text-sm text-slate-400">
-                    {currentUser.firstName} {currentUser.lastName}
-                  </span>
-                  <button
-                    onClick={handleLogout}
-                    className="px-4 py-2 bg-red-600 hover:bg-red-700 rounded-lg text-sm transition-colors"
-                  >
-                    Wyloguj
-                  </button>
-                </div>
-              ) : (
-                <Link
-                  href="/logowanie"
-                  className="px-6 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors font-medium"
+              {/* Theme Toggle */}
+              <ThemeToggle />
+              
+              {/* Title Color Toggle */}
+              <div className="flex items-center space-x-2">
+                <button
+                  onClick={() => setTitleColorIndex((prev) => (prev + 1) % titleColors.length)}
+                  className={`p-2 rounded-lg transition-colors ${
+                    titleColorIndex === 0 
+                      ? `${colors.secondary} ${colors.textSecondary} hover:bg-blue-500/10` 
+                      : 'bg-blue-500 text-white'
+                  }`}
+                  title={`Kolor ${titleColorIndex + 1}/${titleColors.length} - Kliknij dla następnego`}
                 >
-                  Logowanie
-                </Link>
-              )}
+                  <FiZap className="h-4 w-4" />
+                </button>
+                <span className={`text-xs ${colors.textTertiary}`}>
+                  {titleColorIndex + 1}/{titleColors.length}
+                </span>
+              </div>
+              
+              {/* Zunifikowany przycisk Moje Konto */}
+              <AccountButton />
             </div>
+
+
           </div>
         </div>
       </nav>
@@ -160,7 +250,7 @@ export default function Home() {
       <section className="relative overflow-hidden">
         {/* Background Effects */}
         <div className="absolute inset-0">
-          <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-blue-900/20 to-purple-900/20"></div>
+          <div className={`absolute inset-0 ${colors.gradient}`}></div>
           <div className="absolute top-1/4 left-1/4 w-72 h-72 bg-blue-500/10 rounded-full blur-3xl"></div>
           <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl"></div>
         </div>
@@ -169,17 +259,17 @@ export default function Home() {
           <div className="text-center">
             {/* Main Heading */}
             <h1 className="text-6xl md:text-8xl font-bold mb-8 leading-tight">
-              <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-blue-600 bg-clip-text text-transparent">
+              <span className={titleColors[titleColorIndex]}>
                 TECHNIK
               </span>
               <br />
-              <span className="text-3xl md:text-4xl text-slate-300 font-normal">
+              <span className={`text-3xl md:text-4xl ${colors.textSecondary} font-normal`}>
                 Electronics & Service Solutions
               </span>
             </h1>
 
             {/* Subtitle */}
-            <p className="text-xl text-slate-400 mb-12 max-w-3xl mx-auto leading-relaxed">
+            <p className={`text-xl ${colors.textTertiary} mb-12 max-w-3xl mx-auto leading-relaxed`}>
               Profesjonalne rozwiązania elektroniczne i serwisowe dla firm i instytucji. 
               Od projektowania sterowników po kompleksowy serwis urządzeń AGD.
             </p>
@@ -188,7 +278,7 @@ export default function Home() {
             <div className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-16">
               <Link
                 href="#elektronika"
-                className="group px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 rounded-xl font-semibold text-lg transition-all transform hover:scale-105 shadow-lg hover:shadow-blue-500/25"
+                className="group px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 rounded-xl font-semibold text-lg transition-all transform hover:scale-105 shadow-lg hover:shadow-blue-500/25 text-white"
               >
                 <span className="flex items-center gap-3">
                   <FiCpu className="h-6 w-6" />
@@ -199,7 +289,7 @@ export default function Home() {
               
               <Link
                 href="#serwis"
-                className="group px-8 py-4 bg-slate-800 hover:bg-slate-700 border border-slate-600 hover:border-slate-500 rounded-xl font-semibold text-lg transition-all transform hover:scale-105"
+                className={`group px-8 py-4 ${colors.secondary} hover:${colors.cardHover} ${colors.border} border hover:${colors.borderHover} rounded-xl font-semibold text-lg transition-all transform hover:scale-105 ${colors.textPrimary}`}
               >
                 <span className="flex items-center gap-3">
                   <FiTool className="h-6 w-6" />
@@ -215,19 +305,19 @@ export default function Home() {
                 <div className="text-4xl font-bold text-blue-400 mb-2">
                   {animatedStats.years}+
                 </div>
-                <div className="text-slate-400">Lat doświadczenia</div>
+                <div className={colors.textTertiary}>Lat doświadczenia</div>
               </div>
               <div className="text-center">
                 <div className="text-4xl font-bold text-purple-400 mb-2">
                   {animatedStats.projects}+
                 </div>
-                <div className="text-slate-400">Zrealizowanych projektów</div>
+                <div className={colors.textTertiary}>Zrealizowanych projektów</div>
               </div>
               <div className="text-center">
                 <div className="text-4xl font-bold text-green-400 mb-2">
                   {animatedStats.clients}+
                 </div>
-                <div className="text-slate-400">Zadowolonych klientów</div>
+                <div className={colors.textTertiary}>Zadowolonych klientów</div>
               </div>
             </div>
           </div>
@@ -235,11 +325,11 @@ export default function Home() {
       </section>
 
       {/* Działy Firmy */}
-      <section className="py-24 bg-slate-800">
+      <section className={`py-24 ${colors.secondary} transition-colors duration-300`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-white mb-6">Nasze Działy</h2>
-            <p className="text-xl text-slate-400 max-w-3xl mx-auto">
+            <h2 className={`text-4xl font-bold ${colors.textPrimary} mb-6`}>Nasze Działy</h2>
+            <p className={`text-xl ${colors.textTertiary} max-w-3xl mx-auto`}>
               Kompleksowe rozwiązania elektroniczne i serwisowe pod jednym dachem
             </p>
           </div>
@@ -436,7 +526,7 @@ export default function Home() {
             <Link
               href="/kontakt"
               className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 rounded-xl font-semibold text-lg transition-all transform hover:scale-105"
-            >
+            >  
               <FiMail className="h-6 w-6 mr-3" />
               Formularz Kontaktowy
             </Link>
@@ -467,6 +557,12 @@ export default function Home() {
           </div>
         </div>
       </footer>
+
+      {/* Live Chat AI */}
+      <LiveChatAI />
+
+      {/* Role Tester - tylko w trybie development */}
+      <RoleTester />
     </div>
   );
 }

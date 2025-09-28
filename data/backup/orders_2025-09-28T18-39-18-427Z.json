@@ -1,6 +1,6 @@
 [
   {
-    "clientId": "OLD0001",
+    "clientId": "#0001",
     "category": "Naprawa laptopa",
     "serviceType": "qwqw",
     "description": "qwe",
@@ -37,16 +37,11 @@
     ],
     "hours": null,
     "end": null,
-    "id": "ORDW252710001",
-    "dateAdded": "2025-07-05T06:14:59.051Z",
-    "newId": "ORDW252710001",
-    "source": "W",
-    "migrated": true,
-    "migrationDate": "2025-09-28T18:43:39.035Z",
-    "migrationSource": "data-migrator"
+    "id": 1751696099051,
+    "dateAdded": "2025-07-05T06:14:59.051Z"
   },
   {
-    "clientId": "OLD0002",
+    "clientId": "#0002",
     "category": "Naprawa telefonu",
     "serviceType": "sc",
     "description": "sdv",
@@ -83,16 +78,11 @@
     ],
     "hours": null,
     "end": null,
-    "id": "ORDW252710001",
-    "dateAdded": "2025-07-05T06:15:27.520Z",
-    "newId": "ORDW252710001",
-    "source": "W",
-    "migrated": true,
-    "migrationDate": "2025-09-28T18:43:39.035Z",
-    "migrationSource": "data-migrator"
+    "id": 1751696127520,
+    "dateAdded": "2025-07-05T06:15:27.520Z"
   },
   {
-    "clientId": "OLD0003",
+    "clientId": "#0003",
     "category": "serwis",
     "serviceType": "Nie określono",
     "description": "Brak opisu",
@@ -129,16 +119,11 @@
     ],
     "hours": null,
     "end": null,
-    "id": "ORDW252710001",
-    "dateAdded": "2025-07-05T06:58:51.243Z",
-    "newId": "ORDW252710001",
-    "source": "W",
-    "migrated": true,
-    "migrationDate": "2025-09-28T18:43:39.035Z",
-    "migrationSource": "data-migrator"
+    "id": 1751698731243,
+    "dateAdded": "2025-07-05T06:58:51.243Z"
   },
   {
-    "clientId": "OLD0004",
+    "clientId": "#0004",
     "category": "instalacja",
     "serviceType": "qda",
     "description": "Brak opisu",
@@ -175,16 +160,11 @@
     ],
     "hours": null,
     "end": null,
-    "id": "ORDW252710001",
-    "dateAdded": "2025-07-05T07:14:57.774Z",
-    "newId": "ORDW252710001",
-    "source": "W",
-    "migrated": true,
-    "migrationDate": "2025-09-28T18:43:39.035Z",
-    "migrationSource": "data-migrator"
+    "id": 1751699697774,
+    "dateAdded": "2025-07-05T07:14:57.774Z"
   },
   {
-    "clientId": "OLD0005",
+    "clientId": "#0005",
     "category": "serwis",
     "serviceType": "qr",
     "description": "Brak opisu",
@@ -221,16 +201,11 @@
     ],
     "hours": null,
     "end": null,
-    "id": "ORDW252710001",
-    "dateAdded": "2025-07-05T10:40:10.123Z",
-    "newId": "ORDW252710001",
-    "source": "W",
-    "migrated": true,
-    "migrationDate": "2025-09-28T18:43:39.035Z",
-    "migrationSource": "data-migrator"
+    "id": 1751712010123,
+    "dateAdded": "2025-07-05T10:40:10.123Z"
   },
   {
-    "clientId": "OLD0006",
+    "clientId": "#0006",
     "category": "serwis",
     "serviceType": "21",
     "description": "21",
@@ -267,16 +242,11 @@
     ],
     "hours": null,
     "end": null,
-    "id": "ORDW252710001",
-    "dateAdded": "2025-07-05T10:40:37.701Z",
-    "newId": "ORDW252710001",
-    "source": "W",
-    "migrated": true,
-    "migrationDate": "2025-09-28T18:43:39.035Z",
-    "migrationSource": "data-migrator"
+    "id": 1751712037701,
+    "dateAdded": "2025-07-05T10:40:37.701Z"
   },
   {
-    "clientId": "OLD0007",
+    "clientId": "#0007",
     "category": "serwis",
     "serviceType": "af",
     "description": "af",
@@ -313,16 +283,11 @@
     ],
     "hours": null,
     "end": null,
-    "id": "ORDW252710001",
-    "dateAdded": "2025-07-05T20:32:32.618Z",
-    "newId": "ORDW252710001",
-    "source": "W",
-    "migrated": true,
-    "migrationDate": "2025-09-28T18:43:39.035Z",
-    "migrationSource": "data-migrator"
+    "id": 1751747552618,
+    "dateAdded": "2025-07-05T20:32:32.618Z"
   },
   {
-    "clientId": "OLD0008",
+    "clientId": "#0008",
     "category": "instalacja",
     "serviceType": "24",
     "description": "24",
@@ -359,16 +324,11 @@
     ],
     "hours": null,
     "end": null,
-    "id": "ORDW252710001",
-    "dateAdded": "2025-07-05T20:35:12.488Z",
-    "newId": "ORDW252710001",
-    "source": "W",
-    "migrated": true,
-    "migrationDate": "2025-09-28T18:43:39.035Z",
-    "migrationSource": "data-migrator"
+    "id": 1751747712488,
+    "dateAdded": "2025-07-05T20:35:12.488Z"
   },
   {
-    "clientId": "OLD0009",
+    "clientId": "#0009",
     "category": "Naprawa laptopa",
     "serviceType": "23r",
     "description": "23r",
@@ -405,16 +365,11 @@
     ],
     "hours": null,
     "end": null,
-    "id": "ORDW252710001",
-    "dateAdded": "2025-07-05T20:35:55.078Z",
-    "newId": "ORDW252710001",
-    "source": "W",
-    "migrated": true,
-    "migrationDate": "2025-09-28T18:43:39.035Z",
-    "migrationSource": "data-migrator"
+    "id": 1751747755078,
+    "dateAdded": "2025-07-05T20:35:55.078Z"
   },
   {
-    "clientId": "OLD0010",
+    "clientId": "#0010",
     "category": "konsultacja",
     "serviceType": "ad",
     "description": "ad",
@@ -452,16 +407,11 @@
     ],
     "hours": null,
     "end": null,
-    "id": "ORDW252710001",
-    "dateAdded": "2025-07-06T07:01:50.524Z",
-    "newId": "ORDW252710001",
-    "source": "W",
-    "migrated": true,
-    "migrationDate": "2025-09-28T18:43:39.035Z",
-    "migrationSource": "data-migrator"
+    "id": 1751785310524,
+    "dateAdded": "2025-07-06T07:01:50.524Z"
   },
   {
-    "clientId": "OLD0011",
+    "clientId": "#0011",
     "category": "Serwis AGD",
     "serviceType": "Bosch",
     "description": "qw",
@@ -497,16 +447,11 @@
     "dates": [],
     "hours": null,
     "end": null,
-    "id": "ORDW252710001",
-    "dateAdded": "2025-07-06T07:05:39.999Z",
-    "newId": "ORDW252710001",
-    "source": "W",
-    "migrated": true,
-    "migrationDate": "2025-09-28T18:43:39.035Z",
-    "migrationSource": "data-migrator"
+    "id": 1751785539999,
+    "dateAdded": "2025-07-06T07:05:39.999Z"
   },
   {
-    "clientId": "OLD0012",
+    "clientId": "#0012",
     "description": "Brak opisu",
     "scheduledDate": "2025-09-22T21:07:04.587Z",
     "availability": "Nie określono",
@@ -539,16 +484,11 @@
     "dates": [],
     "hours": null,
     "end": null,
-    "id": "ORDW252710001",
-    "dateAdded": "2025-09-22T21:07:04.590Z",
-    "newId": "ORDW252710001",
-    "source": "W",
-    "migrated": true,
-    "migrationDate": "2025-09-28T18:43:39.035Z",
-    "migrationSource": "data-migrator"
+    "id": 1758575224590,
+    "dateAdded": "2025-09-22T21:07:04.590Z"
   },
   {
-    "clientId": "OLD0013",
+    "clientId": "#0013",
     "category": "Zmywarka",
     "serviceType": "",
     "description": "nie włacza sie",
@@ -584,16 +524,11 @@
     "dates": [],
     "hours": null,
     "end": null,
-    "id": "ORDW252710001",
-    "dateAdded": "2025-09-23T06:31:06.506Z",
-    "newId": "ORDW252710001",
-    "source": "W",
-    "migrated": true,
-    "migrationDate": "2025-09-28T18:43:39.035Z",
-    "migrationSource": "data-migrator"
+    "id": 1758609066506,
+    "dateAdded": "2025-09-23T06:31:06.506Z"
   },
   {
-    "clientId": "OLD0014",
+    "clientId": "#0014",
     "category": "Pralka",
     "serviceType": "",
     "description": "Nie pobiera wody",
@@ -629,12 +564,7 @@
     "dates": [],
     "hours": null,
     "end": null,
-    "id": "ORDW252710001",
-    "dateAdded": "2025-09-23T19:20:23.475Z",
-    "newId": "ORDW252710001",
-    "source": "W",
-    "migrated": true,
-    "migrationDate": "2025-09-28T18:43:39.035Z",
-    "migrationSource": "data-migrator"
+    "id": 1758655223475,
+    "dateAdded": "2025-09-23T19:20:23.475Z"
   }
 ]

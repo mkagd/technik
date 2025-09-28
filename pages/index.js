@@ -6,6 +6,8 @@ import { useRouter } from 'next/router';
 import { useTheme } from '../utils/ThemeContext';
 import ThemeToggle from '../components/ThemeToggle';
 import LiveChatAI from '../components/LiveChatAI';
+import AccountButton from '../components/AccountButton';
+import RoleTester from '../components/RoleTester';
 import { 
   FiZap, 
   FiCpu, 
@@ -28,8 +30,65 @@ import {
 export default function Home() {
   const router = useRouter();
   const { colors, isDarkMode, mounted } = useTheme();
-  const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [titleColorIndex, setTitleColorIndex] = useState(0); // Indeks aktualnego koloru (0 = gradient)
+  
+  // Paleta 50 różnych kolorów + gradient na początku (dodano 20 odcieni niebieskiego)
+  const titleColors = [
+    "bg-gradient-to-r from-blue-400 via-purple-400 to-blue-600 bg-clip-text text-transparent", // 0 - gradient
+    "text-blue-500",     // 1
+    "text-red-500",      // 2
+    "text-green-500",    // 3
+    "text-purple-500",   // 4
+    "text-pink-500",     // 5
+    "text-indigo-500",   // 6
+    "text-yellow-500",   // 7
+    "text-orange-500",   // 8
+    "text-teal-500",     // 9
+    "text-cyan-500",     // 10
+    "text-emerald-500",  // 11
+    "text-rose-500",     // 12
+    "text-violet-500",   // 13
+    "text-sky-500",      // 14
+    "text-amber-500",    // 15
+    "text-lime-500",     // 16
+    "text-blue-600",     // 17
+    "text-red-600",      // 18
+    "text-green-600",    // 19
+    "text-purple-600",   // 20
+    "text-pink-600",     // 21
+    "text-indigo-600",   // 22
+    "text-yellow-600",   // 23
+    "text-orange-600",   // 24
+    "text-teal-600",     // 25
+    "text-cyan-600",     // 26
+    "text-emerald-600",  // 27
+    "text-rose-600",     // 28
+    "text-violet-600",   // 29
+    "text-sky-600",      // 30
+    // 20 dodatkowych odcieni niebieskiego
+    "text-blue-50",      // 31 - bardzo jasny niebieski
+    "text-blue-100",     // 32
+    "text-blue-200",     // 33
+    "text-blue-300",     // 34
+    "text-blue-400",     // 35
+    "text-blue-700",     // 36
+    "text-blue-800",     // 37
+    "text-blue-900",     // 38
+    "text-blue-950",     // 39 - bardzo ciemny niebieski
+    "text-sky-50",       // 40
+    "text-sky-100",      // 41
+    "text-sky-200",      // 42
+    "text-sky-300",      // 43
+    "text-sky-400",      // 44
+    "text-sky-700",      // 45
+    "text-sky-800",      // 46
+    "text-sky-900",      // 47
+    "text-indigo-400",   // 48
+    "text-indigo-700",   // 49
+    "text-indigo-800"    // 50
+  ];
+  
   const [animatedStats, setAnimatedStats] = useState({
     years: 0,
     projects: 0,
@@ -37,12 +96,8 @@ export default function Home() {
   });
 
   useEffect(() => {
-    // Sprawdzenie użytkownika
+    // Sprawdzenie czy komponent jest gotowy
     if (typeof window !== 'undefined') {
-      const userData = localStorage.getItem('currentUser');
-      if (userData) {
-        setCurrentUser(JSON.parse(userData));
-      }
       setLoading(false);
     }
 
@@ -86,14 +141,7 @@ export default function Home() {
     return () => clearTimeout(timeout);
   }, []);
 
-  const handleLogout = () => {
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem('currentUser');
-      localStorage.removeItem('rememberUser');
-      setCurrentUser(null);
-      router.push('/');
-    }
-  };
+
 
   if (loading || !mounted) {
     return (
@@ -109,14 +157,47 @@ export default function Home() {
       <nav className={`${colors.secondary}/95 backdrop-blur-sm ${colors.border} border-b sticky top-0 z-50 transition-colors duration-300`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
-            {/* Logo */}
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-purple-600 rounded-lg flex items-center justify-center">
-                <FiZap className="h-6 w-6 text-white" />
+            {/* Logo i Mobile Controls */}
+            <div className="flex items-center justify-between w-full">
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-purple-600 rounded-lg flex items-center justify-center">
+                  <FiZap className="h-6 w-6 text-white" />
+                </div>
+                <div>
+                  <div className={`text-xl font-bold ${colors.textPrimary}`}>TECHNIK</div>
+                  <div className={`text-xs ${colors.textTertiary}`}>ELECTRONICS & SERVICE</div>
+                </div>
               </div>
-              <div>
-                <div className={`text-xl font-bold ${colors.textPrimary}`}>TECHNIK</div>
-                <div className={`text-xs ${colors.textTertiary}`}>ELECTRONICS & SERVICE</div>
+
+              {/* Mobile Controls - kompaktowe i responsive */}
+              <div className="flex md:hidden items-center space-x-1 flex-shrink-0">
+                {/* Theme Toggle dla mobile */}
+                <div className="flex-shrink-0">
+                  <ThemeToggle />
+                </div>
+                
+                {/* Title Color Toggle dla mobile - kompaktowy */}
+                <div className="flex items-center space-x-1 flex-shrink-0">
+                  <button
+                    onClick={() => setTitleColorIndex((prev) => (prev + 1) % titleColors.length)}
+                    className={`p-2 rounded-lg transition-colors border ${
+                      titleColorIndex === 0 
+                        ? `${colors.secondary} ${colors.textSecondary} border-blue-400/30 hover:bg-blue-500/10` 
+                        : 'bg-blue-500 text-white border-blue-500'
+                    }`}
+                    title={`Kolor ${titleColorIndex + 1}/${titleColors.length} - Kliknij dla następnego`}
+                  >
+                    <FiZap className="h-4 w-4" />
+                  </button>
+                  <span className={`text-xs ${colors.textTertiary} font-semibold whitespace-nowrap`}>
+                    {titleColorIndex + 1}/{titleColors.length}
+                  </span>
+                </div>
+                
+                {/* Zunifikowany przycisk Moje Konto dla mobile */}
+                <div className="flex-shrink-0">
+                  <AccountButton />
+                </div>
               </div>
             </div>
             
@@ -138,27 +219,29 @@ export default function Home() {
               {/* Theme Toggle */}
               <ThemeToggle />
               
-              {currentUser ? (
-                <div className="flex items-center space-x-4">
-                  <span className={`text-sm ${colors.textTertiary}`}>
-                    {currentUser.firstName} {currentUser.lastName}
-                  </span>
-                  <button
-                    onClick={handleLogout}
-                    className="px-4 py-2 bg-red-600 hover:bg-red-700 rounded-lg text-sm transition-colors text-white"
-                  >
-                    Wyloguj
-                  </button>
-                </div>
-              ) : (
-                <Link
-                  href="/logowanie"
-                  className="px-6 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors font-medium text-white"
+              {/* Title Color Toggle */}
+              <div className="flex items-center space-x-2">
+                <button
+                  onClick={() => setTitleColorIndex((prev) => (prev + 1) % titleColors.length)}
+                  className={`p-2 rounded-lg transition-colors ${
+                    titleColorIndex === 0 
+                      ? `${colors.secondary} ${colors.textSecondary} hover:bg-blue-500/10` 
+                      : 'bg-blue-500 text-white'
+                  }`}
+                  title={`Kolor ${titleColorIndex + 1}/${titleColors.length} - Kliknij dla następnego`}
                 >
-                  Logowanie
-                </Link>
-              )}
+                  <FiZap className="h-4 w-4" />
+                </button>
+                <span className={`text-xs ${colors.textTertiary}`}>
+                  {titleColorIndex + 1}/{titleColors.length}
+                </span>
+              </div>
+              
+              {/* Zunifikowany przycisk Moje Konto */}
+              <AccountButton />
             </div>
+
+
           </div>
         </div>
       </nav>
@@ -176,7 +259,7 @@ export default function Home() {
           <div className="text-center">
             {/* Main Heading */}
             <h1 className="text-6xl md:text-8xl font-bold mb-8 leading-tight">
-              <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-blue-600 bg-clip-text text-transparent">
+              <span className={titleColors[titleColorIndex]}>
                 TECHNIK
               </span>
               <br />
@@ -212,6 +295,16 @@ export default function Home() {
                   <FiTool className="h-6 w-6" />
                   Dział Serwis
                   <FiArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                </span>
+              </Link>
+
+              <Link
+                href="/cennik"
+                className="group px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 rounded-xl font-semibold transition-all transform hover:scale-105 shadow-lg hover:shadow-green-500/25 text-white"
+              >
+                <span className="flex items-center gap-2">
+                  💰 Cennik
+                  <FiArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
                 </span>
               </Link>
             </div>
@@ -433,8 +526,8 @@ export default function Home() {
               <h3 className="text-xl font-bold text-white mb-2">Adres</h3>
               <p className="text-slate-400 mb-4">Siedziba firmy</p>
               <p className="text-green-400 font-semibold">
-                ul. Elektroniczna 1<br />
-                35-123 Rzeszów
+                ul. Lipowa 17<br />
+                39-200 Dębica
               </p>
             </div>
           </div>
@@ -443,7 +536,7 @@ export default function Home() {
             <Link
               href="/kontakt"
               className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 rounded-xl font-semibold text-lg transition-all transform hover:scale-105"
-            >
+            >  
               <FiMail className="h-6 w-6 mr-3" />
               Formularz Kontaktowy
             </Link>
@@ -477,6 +570,31 @@ export default function Home() {
 
       {/* Live Chat AI */}
       <LiveChatAI />
+
+      {/* Role Tester - tylko w trybie development */}
+      <RoleTester />
+
+      {/* Przełącznik wersji - tylko dla testów */}  
+      <div className="fixed bottom-4 left-4 z-50 flex flex-col gap-2">
+        <Link
+          href="/index-modern-minimal"
+          className="px-4 py-2 bg-white hover:bg-gray-50 text-blue-900 border-2 border-blue-900 rounded-lg text-sm shadow-lg transition-all font-medium"
+        >
+          ✨ Wersja Minimalistyczna
+        </Link>
+        <Link
+          href="/index-professional-subtle"
+          className="px-4 py-2 bg-slate-600 hover:bg-slate-700 text-white rounded-lg text-sm shadow-lg transition-all"
+        >
+          🎯 Wersja Stonowana
+        </Link>
+        <Link
+          href="/index-elegant-version"
+          className="px-4 py-2 bg-rose-500 hover:bg-rose-600 text-white rounded-full text-sm font-light shadow-lg transition-all"
+        >
+          💝 Wersja Elegancka
+        </Link>
+      </div>
     </div>
   );
 }

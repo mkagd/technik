@@ -39,6 +39,7 @@ export default function ModelManagerModal({
   const [selectedModelForParts, setSelectedModelForParts] = useState(null);
   const [cart, setCart] = useState([]);
   const [showPartsModal, setShowPartsModal] = useState(false);
+  const [isAIFilled, setIsAIFilled] = useState(false);
 
   // Wyszukiwanie modeli w bazie danych
   const searchModels = () => {
@@ -69,25 +70,31 @@ export default function ModelManagerModal({
     return results.slice(0, 10); // Limit to 10 results
   };
 
-  // Dodanie modelu z AI
+  // Dodanie modelu ze skanera - uzupełnia formularz ręczny
   const handleAIModelDetected = (detectedModel) => {
-    const newModel = {
-      id: Date.now(),
-      brand: detectedModel.brand || detectedModel.clean?.substring(0, 3) || 'Unknown',
-      model: detectedModel.model || detectedModel.clean || 'Unknown',
-      name: detectedModel.name || `${detectedModel.brand} ${detectedModel.model}`,
-      type: detectedModel.type || 'Nieznany typ',
+    // Uzupełnij formularz ręczny danymi z skanera
+    setManualModel({
+      brand: detectedModel.brand || detectedModel.clean?.substring(0, 3) || '',
+      model: detectedModel.model || detectedModel.clean || '',
+      name: detectedModel.name || `${detectedModel.brand} ${detectedModel.model}` || '',
+      type: detectedModel.type || '',
       serialNumber: detectedModel.serialNumber || '',
-      dateAdded: new Date().toISOString(),
-      source: detectedModel.source || 'ai',
-      notes: `Automatycznie rozpoznany przez AI. ${detectedModel.additionalInfo || ''}`,
-      confidence: detectedModel.confidence || 'medium',
-      capacity: detectedModel.capacity || '',
-      parts: detectedModel.common_parts || []
-    };
+      notes: `Rozpoznane ze zdjęcia tabliczki. ${detectedModel.additionalInfo || ''}${detectedModel.capacity ? ` Pojemność: ${detectedModel.capacity}` : ''}`
+    });
     
-    setModels(prev => [...prev, newModel]);
+    // Oznacz, że formularz jest uzupełniony przez AI
+    setIsAIFilled(true);
+    
+    // Zamknij AI Scanner i pokaż uzupełniony formularz
     setShowAIScanner(false);
+    
+    // Opcjonalnie przewiń do formularza (jeśli potrzeba)
+    setTimeout(() => {
+      const formElement = document.querySelector('.manual-form');
+      if (formElement) {
+        formElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }, 100);
   };
 
   // Dodanie modelu ręczne
@@ -98,7 +105,7 @@ export default function ModelManagerModal({
       id: Date.now(),
       ...manualModel,
       dateAdded: new Date().toISOString(),
-      source: 'manual',
+      source: isAIFilled ? 'scanner' : 'manual',
       parts: []
     };
     
@@ -111,6 +118,7 @@ export default function ModelManagerModal({
       serialNumber: '',
       notes: ''
     });
+    setIsAIFilled(false);
   };
 
   // Dodanie modelu z wyszukiwania
@@ -285,10 +293,10 @@ export default function ModelManagerModal({
                     <div className="relative">
                       <FiCamera className="h-12 w-12 mx-auto mb-4 text-blue-500" />
                       <div className="absolute -top-1 -right-1 w-6 h-6 bg-gradient-to-r from-green-400 to-blue-500 rounded-full flex items-center justify-center">
-                        <span className="text-white text-xs font-bold">AI</span>
+                        <span className="text-white text-xs font-bold">📷</span>
                       </div>
                     </div>
-                    <h3 className="font-semibold text-gray-800 mb-2">Skanuj z AI</h3>
+                    <h3 className="font-semibold text-gray-800 mb-2">Skanuj tabliczkę</h3>
                     <p className="text-sm text-gray-600">Inteligentne rozpoznawanie obrazu</p>
                   </button>
                   
@@ -338,7 +346,40 @@ export default function ModelManagerModal({
                 )}
 
                 {/* Formularz ręczny */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-gray-50 rounded-lg">
+                {isAIFilled && (
+                  <div className="bg-gradient-to-r from-green-50 to-blue-50 border border-green-200 rounded-lg p-3 mb-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-2">
+                        <FiCamera className="h-5 w-5 text-green-600" />
+                        <div>
+                          <span className="text-sm font-medium text-green-800">
+                            ✅ Formularz uzupełniony automatycznie
+                          </span>
+                          <p className="text-xs text-green-600 mt-1">
+                            Sprawdź i zweryfikuj dane przed dodaniem modelu
+                          </p>
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => {
+                          setManualModel({
+                            brand: '',
+                            model: '',
+                            name: '',
+                            type: '',
+                            serialNumber: '',
+                            notes: ''
+                          });
+                          setIsAIFilled(false);
+                        }}
+                        className="px-3 py-1 bg-white border border-green-300 text-green-700 rounded-lg text-xs hover:bg-green-50"
+                      >
+                        Wyczyść
+                      </button>
+                    </div>
+                  </div>
+                )}
+                <div className="manual-form grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-gray-50 rounded-lg">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Marka</label>
                     <input
@@ -431,10 +472,12 @@ export default function ModelManagerModal({
                             <span className="font-bold text-lg">{model.brand} {model.model}</span>
                             <span className={`px-2 py-1 text-xs rounded-full ${
                               model.source === 'ocr' ? 'bg-blue-100 text-blue-800' :
+                              model.source === 'scanner' ? 'bg-purple-100 text-purple-800' :
                               model.source === 'database' ? 'bg-green-100 text-green-800' :
                               'bg-gray-100 text-gray-800'
                             }`}>
                               {model.source === 'ocr' ? 'OCR' :
+                               model.source === 'scanner' ? 'Skaner' :
                                model.source === 'database' ? 'Baza' : 'Ręczny'}
                             </span>
                           </div>

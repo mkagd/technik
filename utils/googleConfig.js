@@ -1,7 +1,7 @@
 // utils/googleConfig.js
 export const googleConfig = {
     // Google OAuth 2.0 Configuration
-    CLIENT_ID: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || 'your-google-client-id.apps.googleusercontent.com',
+    CLIENT_ID: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || '109241638469-crsdg95vv895ajdq5b8sci7loe21goa7.apps.googleusercontent.com',
 
     // Google API Scopes
     SCOPES: [

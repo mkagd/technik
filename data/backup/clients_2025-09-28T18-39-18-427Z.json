@@ -8,12 +8,7 @@
     "street": "Nie podano",
     "dateAdded": "2025-07-05T06:14:59.048Z",
     "history": [],
-    "id": "OLD0001",
-    "legacyId": "#0001",
-    "newId": "OLD0001",
-    "migrated": true,
-    "migrationDate": "2025-09-28T18:43:39.033Z",
-    "migrationSource": "data-migrator"
+    "id": "#0001"
   },
   {
     "name": "Kręgielnia Laguna",
@@ -24,12 +19,7 @@
     "street": "Nie podano",
     "dateAdded": "2025-07-05T06:15:27.519Z",
     "history": [],
-    "id": "OLD0002",
-    "legacyId": "#0002",
-    "newId": "OLD0002",
-    "migrated": true,
-    "migrationDate": "2025-09-28T18:43:39.033Z",
-    "migrationSource": "data-migrator"
+    "id": "#0002"
   },
   {
     "name": "Marisz",
@@ -40,12 +30,7 @@
     "street": "Nie podano",
     "dateAdded": "2025-07-05T06:58:51.239Z",
     "history": [],
-    "id": "OLD0003",
-    "legacyId": "#0003",
-    "newId": "OLD0003",
-    "migrated": true,
-    "migrationDate": "2025-09-28T18:43:39.033Z",
-    "migrationSource": "data-migrator"
+    "id": "#0003"
   },
   {
     "name": "123",
@@ -56,12 +41,7 @@
     "street": "123",
     "dateAdded": "2025-07-05T07:14:57.772Z",
     "history": [],
-    "id": "OLD0004",
-    "legacyId": "#0004",
-    "newId": "OLD0004",
-    "migrated": true,
-    "migrationDate": "2025-09-28T18:43:39.033Z",
-    "migrationSource": "data-migrator"
+    "id": "#0004"
   },
   {
     "name": "Mariusz",
@@ -72,12 +52,7 @@
     "street": "Nie podano",
     "dateAdded": "2025-07-05T10:40:10.120Z",
     "history": [],
-    "id": "OLD0005",
-    "legacyId": "#0005",
-    "newId": "OLD0005",
-    "migrated": true,
-    "migrationDate": "2025-09-28T18:43:39.033Z",
-    "migrationSource": "data-migrator"
+    "id": "#0005"
   },
   {
     "name": "acsasc",
@@ -88,12 +63,7 @@
     "street": "124",
     "dateAdded": "2025-07-05T10:40:37.700Z",
     "history": [],
-    "id": "OLD0006",
-    "legacyId": "#0006",
-    "newId": "OLD0006",
-    "migrated": true,
-    "migrationDate": "2025-09-28T18:43:39.033Z",
-    "migrationSource": "data-migrator"
+    "id": "#0006"
   },
   {
     "name": "ada",
@@ -104,12 +74,7 @@
     "street": "Nie podano",
     "dateAdded": "2025-07-05T20:32:32.616Z",
     "history": [],
-    "id": "OLD0007",
-    "legacyId": "#0007",
-    "newId": "OLD0007",
-    "migrated": true,
-    "migrationDate": "2025-09-28T18:43:39.033Z",
-    "migrationSource": "data-migrator"
+    "id": "#0007"
   },
   {
     "name": "qwe",
@@ -120,12 +85,7 @@
     "street": "Nie podano",
     "dateAdded": "2025-07-05T20:35:12.486Z",
     "history": [],
-    "id": "OLD0008",
-    "legacyId": "#0008",
-    "newId": "OLD0008",
-    "migrated": true,
-    "migrationDate": "2025-09-28T18:43:39.033Z",
-    "migrationSource": "data-migrator"
+    "id": "#0008"
   },
   {
     "name": "Mariusz Bielaszka",
@@ -136,12 +96,7 @@
     "street": "Nie podano",
     "dateAdded": "2025-07-05T20:35:55.076Z",
     "history": [],
-    "id": "OLD0009",
-    "legacyId": "#0009",
-    "newId": "OLD0009",
-    "migrated": true,
-    "migrationDate": "2025-09-28T18:43:39.033Z",
-    "migrationSource": "data-migrator"
+    "id": "#0009"
   },
   {
     "name": "124",
@@ -152,12 +107,7 @@
     "street": "123",
     "dateAdded": "2025-07-06T07:01:50.523Z",
     "history": [],
-    "id": "OLD0010",
-    "legacyId": "#0010",
-    "newId": "OLD0010",
-    "migrated": true,
-    "migrationDate": "2025-09-28T18:43:39.033Z",
-    "migrationSource": "data-migrator"
+    "id": "#0010"
   },
   {
     "name": "Mariusz Bielaszka",
@@ -168,12 +118,7 @@
     "street": "Nie podano",
     "dateAdded": "2025-07-06T07:05:39.997Z",
     "history": [],
-    "id": "OLD0011",
-    "legacyId": "#0011",
-    "newId": "OLD0011",
-    "migrated": true,
-    "migrationDate": "2025-09-28T18:43:39.033Z",
-    "migrationSource": "data-migrator"
+    "id": "#0011"
   },
   {
     "name": "ad",
@@ -184,12 +129,7 @@
     "street": "ad",
     "dateAdded": "2025-09-22T21:07:04.588Z",
     "history": [],
-    "id": "OLD0012",
-    "legacyId": "#0012",
-    "newId": "OLD0012",
-    "migrated": true,
-    "migrationDate": "2025-09-28T18:43:39.033Z",
-    "migrationSource": "data-migrator"
+    "id": "#0012"
   },
   {
     "name": "MAriusz Bielaszka",
@@ -200,12 +140,7 @@
     "street": "Krakowksa",
     "dateAdded": "2025-09-23T06:31:06.503Z",
     "history": [],
-    "id": "OLD0013",
-    "legacyId": "#0013",
-    "newId": "OLD0013",
-    "migrated": true,
-    "migrationDate": "2025-09-28T18:43:39.033Z",
-    "migrationSource": "data-migrator"
+    "id": "#0013"
   },
   {
     "name": "MAriusz Bielaszka",
@@ -216,11 +151,6 @@
     "street": "Malinie 607",
     "dateAdded": "2025-09-23T19:20:23.474Z",
     "history": [],
-    "id": "OLD0014",
-    "legacyId": "#0014",
-    "newId": "OLD0014",
-    "migrated": true,
-    "migrationDate": "2025-09-28T18:43:39.033Z",
-    "migrationSource": "data-migrator"
+    "id": "#0014"
   }
 ]

@@ -14,9 +14,18 @@ class DataManager {
     // SYSTEM NUMERACJI
     // ===============================
 
-    // Generowanie unikalnego ID
+    // Generowanie unikalnego ID - ZASTĄPIONE NOWYM SYSTEMEM
     generateId() {
-        return Date.now().toString() + Math.random().toString(36).substr(2, 9);
+        // Import nowego systemu ID
+        const { generateGenericId } = require('../id-system-library');
+        
+        // Użyj nowego systemu dla różnych typów
+        try {
+            return generateGenericId('reports'); // Domyślnie dla raportów
+        } catch (error) {
+            // Fallback do starego systemu jeśli błąd
+            return Date.now().toString() + Math.random().toString(36).substr(2, 9);
+        }
     }
 
     // Pobierz następny numer zgłoszenia

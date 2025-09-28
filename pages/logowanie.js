@@ -63,45 +63,41 @@ export default function Logowanie() {
     setLoading(true);
 
     try {
-      // Symulacja logowania - w rzeczywistej aplikacji to byłby request do API
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Wywołanie prawdziwego API
+      const response = await fetch('/api/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password
+        })
+      });
 
-      // Sprawdzenie danych logowania
-      if (typeof window === 'undefined') {
-        setErrors({ general: 'Błąd: localStorage niedostępny podczas renderowania po stronie serwera' });
-        setLoading(false);
-        return;
-      }
+      const result = await response.json();
 
-      const users = JSON.parse(localStorage.getItem('users') || '[]');
-      const user = users.find(u => u.email === formData.email && u.password === formData.password);
-
-      if (!user) {
-        setErrors({ general: 'Nieprawidłowy email lub hasło' });
-        setLoading(false);
-        return;
-      }
-
-      if (!user.isActive) {
-        setErrors({ general: 'Konto zostało zablokowane. Skontaktuj się z administratorem.' });
-        setLoading(false);
-        return;
+      if (!response.ok) {
+        throw new Error(result.error || 'Błąd logowania');
       }
 
       // Zapisanie danych użytkownika w sesji
       const userData = {
-        id: user.id,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        email: user.email,
-        phone: user.phone,
-        city: user.city,
-        address: user.address,
-        loginTime: new Date().toISOString()
+        id: result.user.id,
+        firstName: result.user.name.split(' ')[0],
+        lastName: result.user.name.split(' ').slice(1).join(' ') || '',
+        name: result.user.name,
+        email: result.user.email,
+        phone: result.user.phone,
+        city: result.user.city,
+        address: result.user.address,
+        loginTime: result.user.lastLogin,
+        isLoggedIn: true
       };
 
       if (typeof window !== 'undefined') {
         localStorage.setItem('currentUser', JSON.stringify(userData));
+        localStorage.setItem('chatUserInfo', JSON.stringify(userData));
 
         if (formData.rememberMe) {
           localStorage.setItem('rememberUser', JSON.stringify({
@@ -113,10 +109,10 @@ export default function Logowanie() {
         }
       }
 
-      // Pokazanie komunikatu sukcesu bez alertu
+      // Pokazanie komunikatu sukcesu
       setErrors({ success: `Witaj ponownie, ${userData.firstName}! Zostałeś pomyślnie zalogowany.` });
 
-      // Przekierowanie na stronę główną lub dashboard po krótkiej chwili
+      // Przekierowanie na stronę główną po krótkiej chwili
       setTimeout(() => {
         const returnUrl = router.query.returnUrl || '/';
         router.push(returnUrl);
@@ -124,7 +120,7 @@ export default function Logowanie() {
 
     } catch (error) {
       console.error('Błąd podczas logowania:', error);
-      setErrors({ general: 'Wystąpił błąd podczas logowania. Spróbuj ponownie.' });
+      setErrors({ general: error.message || 'Wystąpił błąd podczas logowania. Spróbuj ponownie.' });
     } finally {
       setLoading(false);
     }
