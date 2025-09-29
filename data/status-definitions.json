@@ -1,0 +1,120 @@
+{
+  "orders": {
+    "new": {
+      "label": "Nowe",
+      "description": "Nowo utworzone zamówienie, oczekuje na weryfikację",
+      "nextStates": [
+        "assigned",
+        "cancelled"
+      ],
+      "priority": 1
+    },
+    "assigned": {
+      "label": "Przypisane",
+      "description": "Zamówienie przypisane do technika",
+      "nextStates": [
+        "in-progress",
+        "on-hold",
+        "cancelled"
+      ],
+      "priority": 2
+    },
+    "in-progress": {
+      "label": "W realizacji",
+      "description": "Zamówienie jest obecnie realizowane",
+      "nextStates": [
+        "completed",
+        "on-hold",
+        "cancelled"
+      ],
+      "priority": 3
+    },
+    "on-hold": {
+      "label": "Wstrzymane",
+      "description": "Zamówienie tymczasowo wstrzymane",
+      "nextStates": [
+        "assigned",
+        "in-progress",
+        "cancelled"
+      ],
+      "priority": 2
+    },
+    "completed": {
+      "label": "Ukończone",
+      "description": "Zamówienie zostało ukończone",
+      "nextStates": [],
+      "priority": 5,
+      "final": true
+    },
+    "cancelled": {
+      "label": "Anulowane",
+      "description": "Zamówienie zostało anulowane",
+      "nextStates": [],
+      "priority": 0,
+      "final": true
+    }
+  },
+  "visits": {
+    "scheduled": {
+      "label": "Zaplanowane",
+      "description": "Wizyta została zaplanowana",
+      "nextStates": [
+        "confirmed",
+        "rescheduled",
+        "cancelled"
+      ],
+      "priority": 1
+    },
+    "confirmed": {
+      "label": "Potwierdzone",
+      "description": "Wizyta potwierdzona przez klienta",
+      "nextStates": [
+        "in-progress",
+        "rescheduled",
+        "cancelled"
+      ],
+      "priority": 2
+    },
+    "in-progress": {
+      "label": "W trakcie",
+      "description": "Wizyta trwa",
+      "nextStates": [
+        "completed",
+        "postponed"
+      ],
+      "priority": 3
+    },
+    "completed": {
+      "label": "Ukończone",
+      "description": "Wizyta została ukończona",
+      "nextStates": [],
+      "priority": 5,
+      "final": true
+    },
+    "rescheduled": {
+      "label": "Przełożone",
+      "description": "Wizyta została przełożona",
+      "nextStates": [
+        "scheduled",
+        "cancelled"
+      ],
+      "priority": 1
+    },
+    "postponed": {
+      "label": "Odroczone",
+      "description": "Wizyta została odroczona w trakcie realizacji",
+      "nextStates": [
+        "scheduled",
+        "cancelled"
+      ],
+      "priority": 1
+    },
+    "cancelled": {
+      "label": "Anulowane",
+      "description": "Wizyta została anulowana",
+      "nextStates": [],
+      "priority": 0,
+      "final": true
+    }
+  }
+}

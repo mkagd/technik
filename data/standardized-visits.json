@@ -1,0 +1,618 @@
+[
+  {
+    "id": "VIS25186001",
+    "clientId": "CLI25186001",
+    "service": {
+      "category": "Naprawa laptopa",
+      "device": "qwqw",
+      "problem": "qwe"
+    },
+    "scheduledDate": "2025-07-20T08:14",
+    "createdAt": "2025-07-05T06:14:59.047Z",
+    "status": "scheduled",
+    "assignedEmployeeId": "EMP25189001",
+    "assignedAt": "2025-09-29T20:21:10.259Z",
+    "assignmentDetails": {
+      "reason": "auto-assigned based on service category",
+      "assignedBy": "system",
+      "specialization": "Naprawa laptopa"
+    },
+    "statusInfo": {
+      "current": "scheduled",
+      "label": "Zaplanowane",
+      "description": "Wizyta została zaplanowana",
+      "priority": 1,
+      "isFinal": false,
+      "possibleTransitions": [
+        "confirmed",
+        "rescheduled",
+        "cancelled"
+      ]
+    },
+    "tracking": {
+      "createdAt": "2025-07-05T06:14:59.047Z",
+      "updatedAt": "2025-09-29T20:28:22.007Z",
+      "statusHistory": [
+        {
+          "status": "scheduled",
+          "timestamp": "2025-09-29T20:28:22.007Z",
+          "employeeId": "EMP25189001",
+          "notes": "Status standaryzowany",
+          "source": "status-standardization"
+        }
+      ]
+    }
+  },
+  {
+    "id": "VIS25186002",
+    "clientId": "CLI25186002",
+    "service": {
+      "category": "Naprawa telefonu",
+      "device": "sc",
+      "problem": "sdv"
+    },
+    "scheduledDate": "2025-07-18T08:19",
+    "createdAt": "2025-07-05T06:15:27.518Z",
+    "status": "scheduled",
+    "assignedEmployeeId": "EMP25189001",
+    "assignedAt": "2025-09-29T20:21:10.259Z",
+    "assignmentDetails": {
+      "reason": "auto-assigned based on service category",
+      "assignedBy": "system",
+      "specialization": "Naprawa telefonu"
+    },
+    "statusInfo": {
+      "current": "scheduled",
+      "label": "Zaplanowane",
+      "description": "Wizyta została zaplanowana",
+      "priority": 1,
+      "isFinal": false,
+      "possibleTransitions": [
+        "confirmed",
+        "rescheduled",
+        "cancelled"
+      ]
+    },
+    "tracking": {
+      "createdAt": "2025-07-05T06:15:27.518Z",
+      "updatedAt": "2025-09-29T20:28:22.007Z",
+      "statusHistory": [
+        {
+          "status": "scheduled",
+          "timestamp": "2025-09-29T20:28:22.007Z",
+          "employeeId": "EMP25189001",
+          "notes": "Status standaryzowany",
+          "source": "status-standardization"
+        }
+      ]
+    }
+  },
+  {
+    "id": "VIS25186003",
+    "clientId": "CLI25186001",
+    "service": {
+      "category": "serwis",
+      "device": "Nie określono",
+      "problem": "Brak opisu"
+    },
+    "scheduledDate": "2025-07-05T06:58:51.228Z",
+    "createdAt": "2025-07-05T06:58:51.238Z",
+    "status": "scheduled",
+    "assignedEmployeeId": "EMP25189001",
+    "assignedAt": "2025-09-29T20:21:10.259Z",
+    "assignmentDetails": {
+      "reason": "auto-assigned based on service category",
+      "assignedBy": "system",
+      "specialization": "serwis"
+    },
+    "statusInfo": {
+      "current": "scheduled",
+      "label": "Zaplanowane",
+      "description": "Wizyta została zaplanowana",
+      "priority": 1,
+      "isFinal": false,
+      "possibleTransitions": [
+        "confirmed",
+        "rescheduled",
+        "cancelled"
+      ]
+    },
+    "tracking": {
+      "createdAt": "2025-07-05T06:58:51.238Z",
+      "updatedAt": "2025-09-29T20:28:22.007Z",
+      "statusHistory": [
+        {
+          "status": "scheduled",
+          "timestamp": "2025-09-29T20:28:22.007Z",
+          "employeeId": "EMP25189001",
+          "notes": "Status standaryzowany",
+          "source": "status-standardization"
+        }
+      ]
+    }
+  },
+  {
+    "id": "VIS25186004",
+    "clientId": "CLI25186004",
+    "service": {
+      "category": "instalacja",
+      "device": "qda",
+      "problem": "Brak opisu"
+    },
+    "scheduledDate": "2025-07-05T07:14:57.763Z",
+    "createdAt": "2025-07-05T07:14:57.771Z",
+    "status": "scheduled",
+    "assignedEmployeeId": "EMP25189001",
+    "assignedAt": "2025-09-29T20:21:10.259Z",
+    "assignmentDetails": {
+      "reason": "auto-assigned based on service category",
+      "assignedBy": "system",
+      "specialization": "instalacja"
+    },
+    "statusInfo": {
+      "current": "scheduled",
+      "label": "Zaplanowane",
+      "description": "Wizyta została zaplanowana",
+      "priority": 1,
+      "isFinal": false,
+      "possibleTransitions": [
+        "confirmed",
+        "rescheduled",
+        "cancelled"
+      ]
+    },
+    "tracking": {
+      "createdAt": "2025-07-05T07:14:57.771Z",
+      "updatedAt": "2025-09-29T20:28:22.007Z",
+      "statusHistory": [
+        {
+          "status": "scheduled",
+          "timestamp": "2025-09-29T20:28:22.007Z",
+          "employeeId": "EMP25189001",
+          "notes": "Status standaryzowany",
+          "source": "status-standardization"
+        }
+      ]
+    }
+  },
+  {
+    "id": "VIS25186005",
+    "clientId": "CLI25186005",
+    "service": {
+      "category": "serwis",
+      "device": "qr",
+      "problem": "Brak opisu"
+    },
+    "scheduledDate": "2025-07-05T10:40:10.109Z",
+    "createdAt": "2025-07-05T10:40:10.119Z",
+    "status": "scheduled",
+    "assignedEmployeeId": "EMP25189001",
+    "assignedAt": "2025-09-29T20:21:10.259Z",
+    "assignmentDetails": {
+      "reason": "auto-assigned based on service category",
+      "assignedBy": "system",
+      "specialization": "serwis"
+    },
+    "statusInfo": {
+      "current": "scheduled",
+      "label": "Zaplanowane",
+      "description": "Wizyta została zaplanowana",
+      "priority": 1,
+      "isFinal": false,
+      "possibleTransitions": [
+        "confirmed",
+        "rescheduled",
+        "cancelled"
+      ]
+    },
+    "tracking": {
+      "createdAt": "2025-07-05T10:40:10.119Z",
+      "updatedAt": "2025-09-29T20:28:22.007Z",
+      "statusHistory": [
+        {
+          "status": "scheduled",
+          "timestamp": "2025-09-29T20:28:22.007Z",
+          "employeeId": "EMP25189001",
+          "notes": "Status standaryzowany",
+          "source": "status-standardization"
+        }
+      ]
+    }
+  },
+  {
+    "id": "VIS25186006",
+    "clientId": "CLI25186006",
+    "service": {
+      "category": "serwis",
+      "device": "21",
+      "problem": "21"
+    },
+    "scheduledDate": "2025-07-05T10:40:37.689Z",
+    "createdAt": "2025-07-05T10:40:37.699Z",
+    "status": "scheduled",
+    "assignedEmployeeId": "EMP25189002",
+    "assignedAt": "2025-09-29T20:21:10.259Z",
+    "assignmentDetails": {
+      "reason": "auto-assigned based on service category",
+      "assignedBy": "system",
+      "specialization": "serwis"
+    },
+    "statusInfo": {
+      "current": "scheduled",
+      "label": "Zaplanowane",
+      "description": "Wizyta została zaplanowana",
+      "priority": 1,
+      "isFinal": false,
+      "possibleTransitions": [
+        "confirmed",
+        "rescheduled",
+        "cancelled"
+      ]
+    },
+    "tracking": {
+      "createdAt": "2025-07-05T10:40:37.699Z",
+      "updatedAt": "2025-09-29T20:28:22.007Z",
+      "statusHistory": [
+        {
+          "status": "scheduled",
+          "timestamp": "2025-09-29T20:28:22.007Z",
+          "employeeId": "EMP25189002",
+          "notes": "Status standaryzowany",
+          "source": "status-standardization"
+        }
+      ]
+    }
+  },
+  {
+    "id": "VIS25186007",
+    "clientId": "CLI25186001",
+    "service": {
+      "category": "serwis",
+      "device": "af",
+      "problem": "af"
+    },
+    "scheduledDate": "2025-07-05T20:32:32.607Z",
+    "createdAt": "2025-07-05T20:32:32.615Z",
+    "status": "scheduled",
+    "assignedEmployeeId": "EMP25189001",
+    "assignedAt": "2025-09-29T20:21:10.259Z",
+    "assignmentDetails": {
+      "reason": "auto-assigned based on service category",
+      "assignedBy": "system",
+      "specialization": "serwis"
+    },
+    "statusInfo": {
+      "current": "scheduled",
+      "label": "Zaplanowane",
+      "description": "Wizyta została zaplanowana",
+      "priority": 1,
+      "isFinal": false,
+      "possibleTransitions": [
+        "confirmed",
+        "rescheduled",
+        "cancelled"
+      ]
+    },
+    "tracking": {
+      "createdAt": "2025-07-05T20:32:32.615Z",
+      "updatedAt": "2025-09-29T20:28:22.007Z",
+      "statusHistory": [
+        {
+          "status": "scheduled",
+          "timestamp": "2025-09-29T20:28:22.007Z",
+          "employeeId": "EMP25189001",
+          "notes": "Status standaryzowany",
+          "source": "status-standardization"
+        }
+      ]
+    }
+  },
+  {
+    "id": "VIS25186008",
+    "clientId": "CLI25186001",
+    "service": {
+      "category": "instalacja",
+      "device": "24",
+      "problem": "24"
+    },
+    "scheduledDate": "2025-07-05T20:35:12.477Z",
+    "createdAt": "2025-07-05T20:35:12.485Z",
+    "status": "scheduled",
+    "assignedEmployeeId": "EMP25189001",
+    "assignedAt": "2025-09-29T20:21:10.260Z",
+    "assignmentDetails": {
+      "reason": "auto-assigned based on service category",
+      "assignedBy": "system",
+      "specialization": "instalacja"
+    },
+    "statusInfo": {
+      "current": "scheduled",
+      "label": "Zaplanowane",
+      "description": "Wizyta została zaplanowana",
+      "priority": 1,
+      "isFinal": false,
+      "possibleTransitions": [
+        "confirmed",
+        "rescheduled",
+        "cancelled"
+      ]
+    },
+    "tracking": {
+      "createdAt": "2025-07-05T20:35:12.485Z",
+      "updatedAt": "2025-09-29T20:28:22.007Z",
+      "statusHistory": [
+        {
+          "status": "scheduled",
+          "timestamp": "2025-09-29T20:28:22.007Z",
+          "employeeId": "EMP25189001",
+          "notes": "Status standaryzowany",
+          "source": "status-standardization"
+        }
+      ]
+    }
+  },
+  {
+    "id": "VIS25186009",
+    "clientId": "CLI25186009",
+    "service": {
+      "category": "Naprawa laptopa",
+      "device": "23r",
+      "problem": "23r"
+    },
+    "scheduledDate": "2025-08-02T22:35",
+    "createdAt": "2025-07-05T20:35:55.075Z",
+    "status": "scheduled",
+    "assignedEmployeeId": "EMP25189001",
+    "assignedAt": "2025-09-29T20:21:10.260Z",
+    "assignmentDetails": {
+      "reason": "auto-assigned based on service category",
+      "assignedBy": "system",
+      "specialization": "Naprawa laptopa"
+    },
+    "statusInfo": {
+      "current": "scheduled",
+      "label": "Zaplanowane",
+      "description": "Wizyta została zaplanowana",
+      "priority": 1,
+      "isFinal": false,
+      "possibleTransitions": [
+        "confirmed",
+        "rescheduled",
+        "cancelled"
+      ]
+    },
+    "tracking": {
+      "createdAt": "2025-07-05T20:35:55.075Z",
+      "updatedAt": "2025-09-29T20:28:22.007Z",
+      "statusHistory": [
+        {
+          "status": "scheduled",
+          "timestamp": "2025-09-29T20:28:22.007Z",
+          "employeeId": "EMP25189001",
+          "notes": "Status standaryzowany",
+          "source": "status-standardization"
+        }
+      ]
+    }
+  },
+  {
+    "id": "VIS25187010",
+    "clientId": "CLI25186001",
+    "service": {
+      "category": "konsultacja",
+      "device": "ad",
+      "problem": "ad"
+    },
+    "scheduledDate": "2025-07-06T07:01:50.515Z",
+    "createdAt": "2025-07-06T07:01:50.522Z",
+    "status": "scheduled",
+    "assignedEmployeeId": "EMP25189002",
+    "assignedAt": "2025-09-29T20:21:10.260Z",
+    "assignmentDetails": {
+      "reason": "auto-assigned based on service category",
+      "assignedBy": "system",
+      "specialization": "konsultacja"
+    },
+    "statusInfo": {
+      "current": "scheduled",
+      "label": "Zaplanowane",
+      "description": "Wizyta została zaplanowana",
+      "priority": 1,
+      "isFinal": false,
+      "possibleTransitions": [
+        "confirmed",
+        "rescheduled",
+        "cancelled"
+      ]
+    },
+    "tracking": {
+      "createdAt": "2025-07-06T07:01:50.522Z",
+      "updatedAt": "2025-09-29T20:28:22.007Z",
+      "statusHistory": [
+        {
+          "status": "scheduled",
+          "timestamp": "2025-09-29T20:28:22.007Z",
+          "employeeId": "EMP25189002",
+          "notes": "Status standaryzowany",
+          "source": "status-standardization"
+        }
+      ]
+    }
+  },
+  {
+    "id": "VIS25187011",
+    "clientId": "CLI25186001",
+    "service": {
+      "category": "Serwis AGD",
+      "device": "Bosch",
+      "problem": "qw"
+    },
+    "scheduledDate": "2025-07-06T07:05:39.996Z",
+    "createdAt": "2025-07-06T07:05:39.996Z",
+    "status": "scheduled",
+    "assignedEmployeeId": "EMP25189001",
+    "assignedAt": "2025-09-29T20:21:10.260Z",
+    "assignmentDetails": {
+      "reason": "auto-assigned based on service category",
+      "assignedBy": "system",
+      "specialization": "Serwis AGD"
+    },
+    "statusInfo": {
+      "current": "scheduled",
+      "label": "Zaplanowane",
+      "description": "Wizyta została zaplanowana",
+      "priority": 1,
+      "isFinal": false,
+      "possibleTransitions": [
+        "confirmed",
+        "rescheduled",
+        "cancelled"
+      ]
+    },
+    "tracking": {
+      "createdAt": "2025-07-06T07:05:39.996Z",
+      "updatedAt": "2025-09-29T20:28:22.007Z",
+      "statusHistory": [
+        {
+          "status": "scheduled",
+          "timestamp": "2025-09-29T20:28:22.007Z",
+          "employeeId": "EMP25189001",
+          "notes": "Status standaryzowany",
+          "source": "status-standardization"
+        }
+      ]
+    }
+  },
+  {
+    "id": "VIS25265012",
+    "clientId": "CLI25186001",
+    "service": {
+      "category": "Inne usługi",
+      "device": "Niespecyfikowane",
+      "problem": "Brak opisu"
+    },
+    "scheduledDate": "2025-09-22T21:07:04.587Z",
+    "createdAt": "2025-09-22T21:07:04.587Z",
+    "status": "scheduled",
+    "assignedEmployeeId": "EMP25189003",
+    "assignedAt": "2025-09-29T20:21:10.260Z",
+    "assignmentDetails": {
+      "reason": "auto-assigned based on service category",
+      "assignedBy": "system",
+      "specialization": "Inne usługi"
+    },
+    "statusInfo": {
+      "current": "scheduled",
+      "label": "Zaplanowane",
+      "description": "Wizyta została zaplanowana",
+      "priority": 1,
+      "isFinal": false,
+      "possibleTransitions": [
+        "confirmed",
+        "rescheduled",
+        "cancelled"
+      ]
+    },
+    "tracking": {
+      "createdAt": "2025-09-22T21:07:04.587Z",
+      "updatedAt": "2025-09-29T20:28:22.007Z",
+      "statusHistory": [
+        {
+          "status": "scheduled",
+          "timestamp": "2025-09-29T20:28:22.007Z",
+          "employeeId": "EMP25189003",
+          "notes": "Status standaryzowany",
+          "source": "status-standardization"
+        }
+      ]
+    }
+  },
+  {
+    "id": "VIS25266013",
+    "clientId": "CLI25266013",
+    "service": {
+      "category": "Zmywarka",
+      "device": "Niespecyfikowane",
+      "problem": "nie włacza sie"
+    },
+    "scheduledDate": "2025-09-23T06:31:06.501Z",
+    "createdAt": "2025-09-23T06:31:06.501Z",
+    "status": "scheduled",
+    "assignedEmployeeId": "EMP25189002",
+    "assignedAt": "2025-09-29T20:21:10.260Z",
+    "assignmentDetails": {
+      "reason": "auto-assigned based on service category",
+      "assignedBy": "system",
+      "specialization": "Zmywarka"
+    },
+    "statusInfo": {
+      "current": "scheduled",
+      "label": "Zaplanowane",
+      "description": "Wizyta została zaplanowana",
+      "priority": 1,
+      "isFinal": false,
+      "possibleTransitions": [
+        "confirmed",
+        "rescheduled",
+        "cancelled"
+      ]
+    },
+    "tracking": {
+      "createdAt": "2025-09-23T06:31:06.501Z",
+      "updatedAt": "2025-09-29T20:28:22.007Z",
+      "statusHistory": [
+        {
+          "status": "scheduled",
+          "timestamp": "2025-09-29T20:28:22.007Z",
+          "employeeId": "EMP25189002",
+          "notes": "Status standaryzowany",
+          "source": "status-standardization"
+        }
+      ]
+    }
+  },
+  {
+    "id": "VIS25266014",
+    "clientId": "CLI25266014",
+    "service": {
+      "category": "Pralka",
+      "device": "Niespecyfikowane",
+      "problem": "Nie pobiera wody"
+    },
+    "scheduledDate": "2025-09-23T19:20:23.473Z",
+    "createdAt": "2025-09-23T19:20:23.473Z",
+    "status": "scheduled",
+    "assignedEmployeeId": "EMP25189001",
+    "assignedAt": "2025-09-29T20:21:10.260Z",
+    "assignmentDetails": {
+      "reason": "auto-assigned based on service category",
+      "assignedBy": "system",
+      "specialization": "Pralka"
+    },
+    "statusInfo": {
+      "current": "scheduled",
+      "label": "Zaplanowane",
+      "description": "Wizyta została zaplanowana",
+      "priority": 1,
+      "isFinal": false,
+      "possibleTransitions": [
+        "confirmed",
+        "rescheduled",
+        "cancelled"
+      ]
+    },
+    "tracking": {
+      "createdAt": "2025-09-23T19:20:23.473Z",
+      "updatedAt": "2025-09-29T20:28:22.007Z",
+      "statusHistory": [
+        {
+          "status": "scheduled",
+          "timestamp": "2025-09-29T20:28:22.007Z",
+          "employeeId": "EMP25189001",
+          "notes": "Status standaryzowany",
+          "source": "status-standardization"
+        }
+      ]
+    }
+  }
+]

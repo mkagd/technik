@@ -1,0 +1,128 @@
+{
+  "categories": {
+    "AGD": {
+      "types": [
+        "piekarnik",
+        "lodówka",
+        "pralka",
+        "zmywarka",
+        "mikrofalówka",
+        "płyta grzewcza"
+      ],
+      "commonCharacteristics": {
+        "powerSource": "electric",
+        "installationType": "built-in",
+        "accessLevel": "standard",
+        "serviceComplexity": "medium"
+      }
+    },
+    "Elektronika": {
+      "types": [
+        "laptop",
+        "komputer",
+        "telefon",
+        "tablet",
+        "monitor",
+        "drukarka"
+      ],
+      "commonCharacteristics": {
+        "portability": "portable",
+        "accessLevel": "easy",
+        "serviceComplexity": "medium",
+        "requiresDataBackup": true
+      }
+    },
+    "Instalacje": {
+      "types": [
+        "klimatyzacja",
+        "ogrzewanie",
+        "wentylacja",
+        "instalacja wodna"
+      ],
+      "commonCharacteristics": {
+        "installationType": "fixed",
+        "accessLevel": "difficult",
+        "serviceComplexity": "high",
+        "requiresSpecialist": true
+      }
+    }
+  },
+  "typeMapping": {
+    "piekarnik": {
+      "category": "AGD",
+      "standardName": "Piekarnik",
+      "installationType": "built-in"
+    },
+    "lodówka": {
+      "category": "AGD",
+      "standardName": "Lodówka",
+      "installationType": "freestanding"
+    },
+    "pralka": {
+      "category": "AGD",
+      "standardName": "Pralka",
+      "installationType": "freestanding"
+    },
+    "zmywarka": {
+      "category": "AGD",
+      "standardName": "Zmywarka",
+      "installationType": "built-in"
+    },
+    "mikrofalówka": {
+      "category": "AGD",
+      "standardName": "Mikrofalówka",
+      "installationType": "countertop"
+    },
+    "płyta": {
+      "category": "AGD",
+      "standardName": "Płyta grzewcza",
+      "installationType": "built-in"
+    },
+    "płyta grzewcza": {
+      "category": "AGD",
+      "standardName": "Płyta grzewcza",
+      "installationType": "built-in"
+    },
+    "laptop": {
+      "category": "Elektronika",
+      "standardName": "Laptop",
+      "portability": "portable"
+    },
+    "komputer": {
+      "category": "Elektronika",
+      "standardName": "Komputer",
+      "portability": "desktop"
+    },
+    "telefon": {
+      "category": "Elektronika",
+      "standardName": "Telefon",
+      "portability": "portable"
+    },
+    "tablet": {
+      "category": "Elektronika",
+      "standardName": "Tablet",
+      "portability": "portable"
+    },
+    "monitor": {
+      "category": "Elektronika",
+      "standardName": "Monitor",
+      "portability": "desktop"
+    },
+    "drukarka": {
+      "category": "Elektronika",
+      "standardName": "Drukarka",
+      "portability": "desktop"
+    },
+    "qwqw": {
+      "category": "Nieznane",
+      "standardName": "Nieokreślone urządzenie",
+      "requiresClassification": true
+    },
+    "sc": {
+      "category": "Nieznane",
+      "standardName": "Nieokreślone urządzenie",
+      "requiresClassification": true
+    }
+  },
+  "lastUpdated": "2025-09-29T20:41:05.346Z"
+}
