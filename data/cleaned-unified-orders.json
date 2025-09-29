@@ -1,0 +1,2147 @@
+[
+  {
+    "id": "ORD1759176259704000",
+    "status": "new",
+    "clientId": "CLI25186001",
+    "service": {
+      "category": "Naprawa laptopa",
+      "type": "qwqw",
+      "description": "qwe",
+      "priority": "normal",
+      "urgency": "normalny"
+    },
+    "devices": [
+      {
+        "name": "qwqw",
+        "brand": "",
+        "model": "",
+        "description": "qwe",
+        "characteristics": {
+          "type": "built-in",
+          "access": "easy",
+          "requiresDisassembly": false,
+          "requiresAssembly": false
+        }
+      }
+    ],
+    "address": {
+      "street": "",
+      "city": "",
+      "zipCode": "",
+      "notes": ""
+    },
+    "scheduling": {
+      "preferredTime": "",
+      "preferredDate": null,
+      "scheduledDate": "2025-07-20T08:14",
+      "assignedEmployeeId": null,
+      "estimatedDuration": 120,
+      "actualDuration": null
+    },
+    "pricing": {
+      "estimatedCost": null,
+      "finalCost": null,
+      "travelCost": 50,
+      "partsUsed": [],
+      "laborHours": 0
+    },
+    "timeline": {
+      "createdAt": "2025-09-29T20:04:19.704Z",
+      "updatedAt": "2025-09-29T20:04:19.704Z",
+      "completedAt": null,
+      "statusHistory": [
+        {
+          "status": "new",
+          "timestamp": "2025-09-29T20:04:19.704Z",
+          "employeeId": null,
+          "notes": "Zamówienie zmigrowane z orders.json"
+        }
+      ]
+    },
+    "notes": {
+      "internal": "",
+      "customer": "",
+      "technical": ""
+    }
+  },
+  {
+    "id": "ORD1759176259704001",
+    "status": "new",
+    "clientId": "CLI25186002",
+    "service": {
+      "category": "Naprawa telefonu",
+      "type": "sc",
+      "description": "sdv",
+      "priority": "normal",
+      "urgency": "normalny"
+    },
+    "devices": [
+      {
+        "name": "sc",
+        "brand": "",
+        "model": "",
+        "description": "sdv",
+        "characteristics": {
+          "type": "built-in",
+          "access": "easy",
+          "requiresDisassembly": false,
+          "requiresAssembly": false
+        }
+      }
+    ],
+    "address": {
+      "street": "",
+      "city": "",
+      "zipCode": "",
+      "notes": ""
+    },
+    "scheduling": {
+      "preferredTime": "",
+      "preferredDate": null,
+      "scheduledDate": "2025-07-18T08:19",
+      "assignedEmployeeId": null,
+      "estimatedDuration": 120,
+      "actualDuration": null
+    },
+    "pricing": {
+      "estimatedCost": null,
+      "finalCost": null,
+      "travelCost": 50,
+      "partsUsed": [],
+      "laborHours": 0
+    },
+    "timeline": {
+      "createdAt": "2025-09-29T20:04:19.704Z",
+      "updatedAt": "2025-09-29T20:04:19.704Z",
+      "completedAt": null,
+      "statusHistory": [
+        {
+          "status": "new",
+          "timestamp": "2025-09-29T20:04:19.704Z",
+          "employeeId": null,
+          "notes": "Zamówienie zmigrowane z orders.json"
+        }
+      ]
+    },
+    "notes": {
+      "internal": "",
+      "customer": "",
+      "technical": ""
+    }
+  },
+  {
+    "id": "ORD1759176259704002",
+    "status": "new",
+    "clientId": "CLI25186003",
+    "service": {
+      "category": "serwis",
+      "type": "Nie określono",
+      "description": "Brak opisu",
+      "priority": "normal",
+      "urgency": "normalny"
+    },
+    "devices": [
+      {
+        "name": "Nie określono",
+        "brand": "",
+        "model": "",
+        "description": "Brak opisu",
+        "characteristics": {
+          "type": "built-in",
+          "access": "easy",
+          "requiresDisassembly": false,
+          "requiresAssembly": false
+        }
+      }
+    ],
+    "address": {
+      "street": "",
+      "city": "",
+      "zipCode": "",
+      "notes": ""
+    },
+    "scheduling": {
+      "preferredTime": "",
+      "preferredDate": null,
+      "scheduledDate": "2025-07-05T06:58:51.228Z",
+      "assignedEmployeeId": null,
+      "estimatedDuration": 120,
+      "actualDuration": null
+    },
+    "pricing": {
+      "estimatedCost": null,
+      "finalCost": null,
+      "travelCost": 50,
+      "partsUsed": [],
+      "laborHours": 0
+    },
+    "timeline": {
+      "createdAt": "2025-09-29T20:04:19.704Z",
+      "updatedAt": "2025-09-29T20:04:19.704Z",
+      "completedAt": null,
+      "statusHistory": [
+        {
+          "status": "new",
+          "timestamp": "2025-09-29T20:04:19.704Z",
+          "employeeId": null,
+          "notes": "Zamówienie zmigrowane z orders.json"
+        }
+      ]
+    },
+    "notes": {
+      "internal": "",
+      "customer": "",
+      "technical": ""
+    }
+  },
+  {
+    "id": "ORD1759176259704003",
+    "status": "new",
+    "clientId": "CLI25186004",
+    "service": {
+      "category": "instalacja",
+      "type": "qda",
+      "description": "Brak opisu",
+      "priority": "normal",
+      "urgency": "normalny"
+    },
+    "devices": [
+      {
+        "name": "qda",
+        "brand": "",
+        "model": "",
+        "description": "Brak opisu",
+        "characteristics": {
+          "type": "built-in",
+          "access": "easy",
+          "requiresDisassembly": false,
+          "requiresAssembly": false
+        }
+      }
+    ],
+    "address": {
+      "street": "",
+      "city": "",
+      "zipCode": "",
+      "notes": ""
+    },
+    "scheduling": {
+      "preferredTime": "",
+      "preferredDate": null,
+      "scheduledDate": "2025-07-05T07:14:57.763Z",
+      "assignedEmployeeId": null,
+      "estimatedDuration": 120,
+      "actualDuration": null
+    },
+    "pricing": {
+      "estimatedCost": null,
+      "finalCost": null,
+      "travelCost": 50,
+      "partsUsed": [],
+      "laborHours": 0
+    },
+    "timeline": {
+      "createdAt": "2025-09-29T20:04:19.704Z",
+      "updatedAt": "2025-09-29T20:04:19.704Z",
+      "completedAt": null,
+      "statusHistory": [
+        {
+          "status": "new",
+          "timestamp": "2025-09-29T20:04:19.704Z",
+          "employeeId": null,
+          "notes": "Zamówienie zmigrowane z orders.json"
+        }
+      ]
+    },
+    "notes": {
+      "internal": "",
+      "customer": "",
+      "technical": ""
+    }
+  },
+  {
+    "id": "ORD1759176259704004",
+    "status": "new",
+    "clientId": "CLI25186005",
+    "service": {
+      "category": "serwis",
+      "type": "qr",
+      "description": "Brak opisu",
+      "priority": "normal",
+      "urgency": "normalny"
+    },
+    "devices": [
+      {
+        "name": "qr",
+        "brand": "",
+        "model": "",
+        "description": "Brak opisu",
+        "characteristics": {
+          "type": "built-in",
+          "access": "easy",
+          "requiresDisassembly": false,
+          "requiresAssembly": false
+        }
+      }
+    ],
+    "address": {
+      "street": "",
+      "city": "",
+      "zipCode": "",
+      "notes": ""
+    },
+    "scheduling": {
+      "preferredTime": "",
+      "preferredDate": null,
+      "scheduledDate": "2025-07-05T10:40:10.109Z",
+      "assignedEmployeeId": null,
+      "estimatedDuration": 120,
+      "actualDuration": null
+    },
+    "pricing": {
+      "estimatedCost": null,
+      "finalCost": null,
+      "travelCost": 50,
+      "partsUsed": [],
+      "laborHours": 0
+    },
+    "timeline": {
+      "createdAt": "2025-09-29T20:04:19.704Z",
+      "updatedAt": "2025-09-29T20:04:19.704Z",
+      "completedAt": null,
+      "statusHistory": [
+        {
+          "status": "new",
+          "timestamp": "2025-09-29T20:04:19.704Z",
+          "employeeId": null,
+          "notes": "Zamówienie zmigrowane z orders.json"
+        }
+      ]
+    },
+    "notes": {
+      "internal": "",
+      "customer": "",
+      "technical": ""
+    }
+  },
+  {
+    "id": "ORD1759176259704005",
+    "status": "new",
+    "clientId": "CLI25186006",
+    "service": {
+      "category": "serwis",
+      "type": "21",
+      "description": "21",
+      "priority": "normal",
+      "urgency": "normalny"
+    },
+    "devices": [
+      {
+        "name": "21",
+        "brand": "",
+        "model": "",
+        "description": "21",
+        "characteristics": {
+          "type": "built-in",
+          "access": "easy",
+          "requiresDisassembly": false,
+          "requiresAssembly": false
+        }
+      }
+    ],
+    "address": {
+      "street": "",
+      "city": "",
+      "zipCode": "",
+      "notes": ""
+    },
+    "scheduling": {
+      "preferredTime": "",
+      "preferredDate": null,
+      "scheduledDate": "2025-07-05T10:40:37.689Z",
+      "assignedEmployeeId": null,
+      "estimatedDuration": 120,
+      "actualDuration": null
+    },
+    "pricing": {
+      "estimatedCost": null,
+      "finalCost": null,
+      "travelCost": 50,
+      "partsUsed": [],
+      "laborHours": 0
+    },
+    "timeline": {
+      "createdAt": "2025-09-29T20:04:19.704Z",
+      "updatedAt": "2025-09-29T20:04:19.704Z",
+      "completedAt": null,
+      "statusHistory": [
+        {
+          "status": "new",
+          "timestamp": "2025-09-29T20:04:19.704Z",
+          "employeeId": null,
+          "notes": "Zamówienie zmigrowane z orders.json"
+        }
+      ]
+    },
+    "notes": {
+      "internal": "",
+      "customer": "",
+      "technical": ""
+    }
+  },
+  {
+    "id": "ORD1759176259704006",
+    "status": "new",
+    "clientId": "CLI25186007",
+    "service": {
+      "category": "serwis",
+      "type": "af",
+      "description": "af",
+      "priority": "normal",
+      "urgency": "normalny"
+    },
+    "devices": [
+      {
+        "name": "af",
+        "brand": "",
+        "model": "",
+        "description": "af",
+        "characteristics": {
+          "type": "built-in",
+          "access": "easy",
+          "requiresDisassembly": false,
+          "requiresAssembly": false
+        }
+      }
+    ],
+    "address": {
+      "street": "",
+      "city": "",
+      "zipCode": "",
+      "notes": ""
+    },
+    "scheduling": {
+      "preferredTime": "",
+      "preferredDate": null,
+      "scheduledDate": "2025-07-05T20:32:32.607Z",
+      "assignedEmployeeId": null,
+      "estimatedDuration": 120,
+      "actualDuration": null
+    },
+    "pricing": {
+      "estimatedCost": null,
+      "finalCost": null,
+      "travelCost": 50,
+      "partsUsed": [],
+      "laborHours": 0
+    },
+    "timeline": {
+      "createdAt": "2025-09-29T20:04:19.704Z",
+      "updatedAt": "2025-09-29T20:04:19.704Z",
+      "completedAt": null,
+      "statusHistory": [
+        {
+          "status": "new",
+          "timestamp": "2025-09-29T20:04:19.704Z",
+          "employeeId": null,
+          "notes": "Zamówienie zmigrowane z orders.json"
+        }
+      ]
+    },
+    "notes": {
+      "internal": "",
+      "customer": "",
+      "technical": ""
+    }
+  },
+  {
+    "id": "ORD1759176259704007",
+    "status": "new",
+    "clientId": "CLI25186008",
+    "service": {
+      "category": "instalacja",
+      "type": "24",
+      "description": "24",
+      "priority": "normal",
+      "urgency": "normalny"
+    },
+    "devices": [
+      {
+        "name": "24",
+        "brand": "",
+        "model": "",
+        "description": "24",
+        "characteristics": {
+          "type": "built-in",
+          "access": "easy",
+          "requiresDisassembly": false,
+          "requiresAssembly": false
+        }
+      }
+    ],
+    "address": {
+      "street": "",
+      "city": "",
+      "zipCode": "",
+      "notes": ""
+    },
+    "scheduling": {
+      "preferredTime": "",
+      "preferredDate": null,
+      "scheduledDate": "2025-07-05T20:35:12.477Z",
+      "assignedEmployeeId": null,
+      "estimatedDuration": 120,
+      "actualDuration": null
+    },
+    "pricing": {
+      "estimatedCost": null,
+      "finalCost": null,
+      "travelCost": 50,
+      "partsUsed": [],
+      "laborHours": 0
+    },
+    "timeline": {
+      "createdAt": "2025-09-29T20:04:19.704Z",
+      "updatedAt": "2025-09-29T20:04:19.704Z",
+      "completedAt": null,
+      "statusHistory": [
+        {
+          "status": "new",
+          "timestamp": "2025-09-29T20:04:19.704Z",
+          "employeeId": null,
+          "notes": "Zamówienie zmigrowane z orders.json"
+        }
+      ]
+    },
+    "notes": {
+      "internal": "",
+      "customer": "",
+      "technical": ""
+    }
+  },
+  {
+    "id": "ORD1759176259704008",
+    "status": "new",
+    "clientId": "CLI25186009",
+    "service": {
+      "category": "Naprawa laptopa",
+      "type": "23r",
+      "description": "23r",
+      "priority": "normal",
+      "urgency": "normalny"
+    },
+    "devices": [
+      {
+        "name": "23r",
+        "brand": "",
+        "model": "",
+        "description": "23r",
+        "characteristics": {
+          "type": "built-in",
+          "access": "easy",
+          "requiresDisassembly": false,
+          "requiresAssembly": false
+        }
+      }
+    ],
+    "address": {
+      "street": "",
+      "city": "",
+      "zipCode": "",
+      "notes": ""
+    },
+    "scheduling": {
+      "preferredTime": "",
+      "preferredDate": null,
+      "scheduledDate": "2025-08-02T22:35",
+      "assignedEmployeeId": null,
+      "estimatedDuration": 120,
+      "actualDuration": null
+    },
+    "pricing": {
+      "estimatedCost": null,
+      "finalCost": null,
+      "travelCost": 50,
+      "partsUsed": [],
+      "laborHours": 0
+    },
+    "timeline": {
+      "createdAt": "2025-09-29T20:04:19.704Z",
+      "updatedAt": "2025-09-29T20:04:19.704Z",
+      "completedAt": null,
+      "statusHistory": [
+        {
+          "status": "new",
+          "timestamp": "2025-09-29T20:04:19.704Z",
+          "employeeId": null,
+          "notes": "Zamówienie zmigrowane z orders.json"
+        }
+      ]
+    },
+    "notes": {
+      "internal": "",
+      "customer": "",
+      "technical": ""
+    }
+  },
+  {
+    "id": "ORD1759176259704009",
+    "status": "new",
+    "clientId": "CLI25187010",
+    "service": {
+      "category": "konsultacja",
+      "type": "ad",
+      "description": "ad",
+      "priority": "normal",
+      "urgency": "normalny"
+    },
+    "devices": [
+      {
+        "name": "ad",
+        "brand": "",
+        "model": "",
+        "description": "ad",
+        "characteristics": {
+          "type": "built-in",
+          "access": "easy",
+          "requiresDisassembly": false,
+          "requiresAssembly": false
+        }
+      }
+    ],
+    "address": {
+      "street": "",
+      "city": "",
+      "zipCode": "",
+      "notes": ""
+    },
+    "scheduling": {
+      "preferredTime": "",
+      "preferredDate": null,
+      "scheduledDate": "2025-07-06T07:01:50.515Z",
+      "assignedEmployeeId": null,
+      "estimatedDuration": 120,
+      "actualDuration": null
+    },
+    "pricing": {
+      "estimatedCost": null,
+      "finalCost": null,
+      "travelCost": 50,
+      "partsUsed": [],
+      "laborHours": 0
+    },
+    "timeline": {
+      "createdAt": "2025-09-29T20:04:19.704Z",
+      "updatedAt": "2025-09-29T20:04:19.704Z",
+      "completedAt": null,
+      "statusHistory": [
+        {
+          "status": "new",
+          "timestamp": "2025-09-29T20:04:19.704Z",
+          "employeeId": null,
+          "notes": "Zamówienie zmigrowane z orders.json"
+        }
+      ]
+    },
+    "notes": {
+      "internal": "",
+      "customer": "",
+      "technical": ""
+    }
+  },
+  {
+    "id": "ORD1759176259704010",
+    "status": "new",
+    "clientId": "CLI25187011",
+    "service": {
+      "category": "Serwis AGD",
+      "type": "Bosch",
+      "description": "qw",
+      "priority": "normal",
+      "urgency": "normalny"
+    },
+    "devices": [
+      {
+        "name": "Bosch",
+        "brand": "",
+        "model": "",
+        "description": "qw",
+        "characteristics": {
+          "type": "built-in",
+          "access": "easy",
+          "requiresDisassembly": false,
+          "requiresAssembly": false
+        }
+      }
+    ],
+    "address": {
+      "street": "",
+      "city": "",
+      "zipCode": "",
+      "notes": ""
+    },
+    "scheduling": {
+      "preferredTime": "",
+      "preferredDate": null,
+      "scheduledDate": "2025-07-06T07:05:39.996Z",
+      "assignedEmployeeId": null,
+      "estimatedDuration": 120,
+      "actualDuration": null
+    },
+    "pricing": {
+      "estimatedCost": null,
+      "finalCost": null,
+      "travelCost": 50,
+      "partsUsed": [],
+      "laborHours": 0
+    },
+    "timeline": {
+      "createdAt": "2025-09-29T20:04:19.704Z",
+      "updatedAt": "2025-09-29T20:04:19.704Z",
+      "completedAt": null,
+      "statusHistory": [
+        {
+          "status": "new",
+          "timestamp": "2025-09-29T20:04:19.704Z",
+          "employeeId": null,
+          "notes": "Zamówienie zmigrowane z orders.json"
+        }
+      ]
+    },
+    "notes": {
+      "internal": "",
+      "customer": "",
+      "technical": ""
+    }
+  },
+  {
+    "id": "ORD1759176259704011",
+    "status": "new",
+    "clientId": "CLI25265012",
+    "service": {
+      "category": "Inne usługi",
+      "type": "Niespecyfikowane",
+      "description": "Brak opisu",
+      "priority": "normal",
+      "urgency": "normalny"
+    },
+    "devices": [
+      {
+        "name": "Nieznane urządzenie",
+        "brand": "",
+        "model": "",
+        "description": "Brak opisu",
+        "characteristics": {
+          "type": "built-in",
+          "access": "easy",
+          "requiresDisassembly": false,
+          "requiresAssembly": false
+        }
+      }
+    ],
+    "address": {
+      "street": "",
+      "city": "",
+      "zipCode": "",
+      "notes": ""
+    },
+    "scheduling": {
+      "preferredTime": "",
+      "preferredDate": null,
+      "scheduledDate": "2025-09-22T21:07:04.587Z",
+      "assignedEmployeeId": null,
+      "estimatedDuration": 120,
+      "actualDuration": null
+    },
+    "pricing": {
+      "estimatedCost": null,
+      "finalCost": null,
+      "travelCost": 50,
+      "partsUsed": [],
+      "laborHours": 0
+    },
+    "timeline": {
+      "createdAt": "2025-09-29T20:04:19.704Z",
+      "updatedAt": "2025-09-29T20:04:19.704Z",
+      "completedAt": null,
+      "statusHistory": [
+        {
+          "status": "new",
+          "timestamp": "2025-09-29T20:04:19.704Z",
+          "employeeId": null,
+          "notes": "Zamówienie zmigrowane z orders.json"
+        }
+      ]
+    },
+    "notes": {
+      "internal": "",
+      "customer": "",
+      "technical": ""
+    }
+  },
+  {
+    "id": "ORD1759176259704012",
+    "status": "new",
+    "clientId": "CLI25266013",
+    "service": {
+      "category": "Zmywarka",
+      "type": "Niespecyfikowane",
+      "description": "nie włacza sie",
+      "priority": "normal",
+      "urgency": "normalny"
+    },
+    "devices": [
+      {
+        "name": "Nieznane urządzenie",
+        "brand": "",
+        "model": "",
+        "description": "nie włacza sie",
+        "characteristics": {
+          "type": "built-in",
+          "access": "easy",
+          "requiresDisassembly": false,
+          "requiresAssembly": false
+        }
+      }
+    ],
+    "address": {
+      "street": "",
+      "city": "",
+      "zipCode": "",
+      "notes": ""
+    },
+    "scheduling": {
+      "preferredTime": "",
+      "preferredDate": null,
+      "scheduledDate": "2025-09-23T06:31:06.501Z",
+      "assignedEmployeeId": null,
+      "estimatedDuration": 120,
+      "actualDuration": null
+    },
+    "pricing": {
+      "estimatedCost": null,
+      "finalCost": null,
+      "travelCost": 50,
+      "partsUsed": [],
+      "laborHours": 0
+    },
+    "timeline": {
+      "createdAt": "2025-09-29T20:04:19.704Z",
+      "updatedAt": "2025-09-29T20:04:19.704Z",
+      "completedAt": null,
+      "statusHistory": [
+        {
+          "status": "new",
+          "timestamp": "2025-09-29T20:04:19.704Z",
+          "employeeId": null,
+          "notes": "Zamówienie zmigrowane z orders.json"
+        }
+      ]
+    },
+    "notes": {
+      "internal": "",
+      "customer": "",
+      "technical": ""
+    }
+  },
+  {
+    "id": "ORD1759176259704013",
+    "status": "new",
+    "clientId": "CLI25266014",
+    "service": {
+      "category": "Pralka",
+      "type": "Niespecyfikowane",
+      "description": "Nie pobiera wody",
+      "priority": "normal",
+      "urgency": "normalny"
+    },
+    "devices": [
+      {
+        "name": "Nieznane urządzenie",
+        "brand": "",
+        "model": "",
+        "description": "Nie pobiera wody",
+        "characteristics": {
+          "type": "built-in",
+          "access": "easy",
+          "requiresDisassembly": false,
+          "requiresAssembly": false
+        }
+      }
+    ],
+    "address": {
+      "street": "",
+      "city": "",
+      "zipCode": "",
+      "notes": ""
+    },
+    "scheduling": {
+      "preferredTime": "",
+      "preferredDate": null,
+      "scheduledDate": "2025-09-23T19:20:23.473Z",
+      "assignedEmployeeId": null,
+      "estimatedDuration": 120,
+      "actualDuration": null
+    },
+    "pricing": {
+      "estimatedCost": null,
+      "finalCost": null,
+      "travelCost": 50,
+      "partsUsed": [],
+      "laborHours": 0
+    },
+    "timeline": {
+      "createdAt": "2025-09-29T20:04:19.704Z",
+      "updatedAt": "2025-09-29T20:04:19.704Z",
+      "completedAt": null,
+      "statusHistory": [
+        {
+          "status": "new",
+          "timestamp": "2025-09-29T20:04:19.704Z",
+          "employeeId": null,
+          "notes": "Zamówienie zmigrowane z orders.json"
+        }
+      ]
+    },
+    "notes": {
+      "internal": "",
+      "customer": "",
+      "technical": ""
+    }
+  },
+  {
+    "id": "SRV25271002",
+    "status": "new",
+    "clientId": "CLI_TEMP_1949",
+    "service": {
+      "category": "Naprawa piekarników",
+      "type": "piekarnik",
+      "description": "",
+      "priority": "normal",
+      "urgency": "normalny"
+    },
+    "devices": [
+      {
+        "name": "Bosch piekarnik",
+        "brand": "Bosch",
+        "model": "",
+        "description": "",
+        "characteristics": {
+          "type": "unknown",
+          "access": "easy",
+          "requiresDisassembly": false,
+          "requiresAssembly": false
+        }
+      }
+    ],
+    "address": {
+      "street": "mielec, sienkiewicza 4/7",
+      "city": "inne",
+      "zipCode": "",
+      "notes": ""
+    },
+    "scheduling": {
+      "preferredTime": "jutro popołudniu ",
+      "preferredDate": null,
+      "scheduledDate": null,
+      "assignedEmployeeId": null,
+      "estimatedDuration": 120,
+      "actualDuration": null
+    },
+    "pricing": {
+      "estimatedCost": null,
+      "finalCost": null,
+      "travelCost": 50,
+      "partsUsed": [],
+      "laborHours": 0
+    },
+    "timeline": {
+      "createdAt": "2025-09-28T22:13:14.011Z",
+      "updatedAt": "2025-09-29T20:04:19.705Z",
+      "completedAt": null,
+      "statusHistory": [
+        {
+          "status": "new",
+          "timestamp": "2025-09-28T22:13:14.011Z",
+          "employeeId": null,
+          "notes": "Zamówienie zmigrowane z service-orders.json"
+        }
+      ]
+    },
+    "notes": {
+      "internal": "",
+      "customer": "",
+      "technical": ""
+    }
+  },
+  {
+    "id": "SRV25271003",
+    "status": "new",
+    "clientId": "CLI_TEMP_31581",
+    "service": {
+      "category": "Naprawa lodówek",
+      "type": "lodówka",
+      "description": "",
+      "priority": "normal",
+      "urgency": "normalny"
+    },
+    "devices": [
+      {
+        "name": "Samsung lodówka",
+        "brand": "Samsung",
+        "model": "",
+        "description": "",
+        "characteristics": {
+          "type": "unknown",
+          "access": "easy",
+          "requiresDisassembly": false,
+          "requiresAssembly": false
+        }
+      }
+    ],
+    "address": {
+      "street": "dębica, sienkiewicza 4 792392870",
+      "city": "inne",
+      "zipCode": "",
+      "notes": ""
+    },
+    "scheduling": {
+      "preferredTime": "inny termin",
+      "preferredDate": null,
+      "scheduledDate": null,
+      "assignedEmployeeId": null,
+      "estimatedDuration": 120,
+      "actualDuration": null
+    },
+    "pricing": {
+      "estimatedCost": null,
+      "finalCost": null,
+      "travelCost": 50,
+      "partsUsed": [],
+      "laborHours": 0
+    },
+    "timeline": {
+      "createdAt": "2025-09-28T22:13:14.012Z",
+      "updatedAt": "2025-09-29T20:04:19.705Z",
+      "completedAt": null,
+      "statusHistory": [
+        {
+          "status": "new",
+          "timestamp": "2025-09-28T22:13:14.012Z",
+          "employeeId": null,
+          "notes": "Zamówienie zmigrowane z service-orders.json"
+        }
+      ]
+    },
+    "notes": {
+      "internal": "",
+      "customer": "",
+      "technical": ""
+    }
+  },
+  {
+    "id": "SRV25271004",
+    "status": "new",
+    "clientId": "CLI_TEMP_36062",
+    "service": {
+      "category": "Inne usługi",
+      "type": "suszarka",
+      "description": "",
+      "priority": "normal",
+      "urgency": "szybki"
+    },
+    "devices": [
+      {
+        "name": "Thomson suszarka",
+        "brand": "Thomson",
+        "model": "",
+        "description": "",
+        "characteristics": {
+          "type": "unknown",
+          "access": "easy",
+          "requiresDisassembly": false,
+          "requiresAssembly": false
+        }
+      }
+    ],
+    "address": {
+      "street": "dębica, skarżyńskiego 4/2",
+      "city": "inne",
+      "zipCode": "",
+      "notes": ""
+    },
+    "scheduling": {
+      "preferredTime": "jutro rano",
+      "preferredDate": null,
+      "scheduledDate": null,
+      "assignedEmployeeId": null,
+      "estimatedDuration": 120,
+      "actualDuration": null
+    },
+    "pricing": {
+      "estimatedCost": null,
+      "finalCost": null,
+      "travelCost": 50,
+      "partsUsed": [],
+      "laborHours": 0
+    },
+    "timeline": {
+      "createdAt": "2025-09-28T22:13:14.012Z",
+      "updatedAt": "2025-09-29T20:04:19.705Z",
+      "completedAt": null,
+      "statusHistory": [
+        {
+          "status": "new",
+          "timestamp": "2025-09-28T22:13:14.012Z",
+          "employeeId": null,
+          "notes": "Zamówienie zmigrowane z service-orders.json"
+        }
+      ]
+    },
+    "notes": {
+      "internal": "",
+      "customer": "",
+      "technical": ""
+    }
+  },
+  {
+    "id": "SRV25271005",
+    "status": "new",
+    "clientId": "CLI_TEMP_3634",
+    "service": {
+      "category": "Inne usługi",
+      "type": "suszarka",
+      "description": "",
+      "priority": "normal",
+      "urgency": "normalny"
+    },
+    "devices": [
+      {
+        "name": "Indesit suszarka",
+        "brand": "Indesit",
+        "model": "",
+        "description": "",
+        "characteristics": {
+          "type": "unknown",
+          "access": "easy",
+          "requiresDisassembly": false,
+          "requiresAssembly": false
+        }
+      }
+    ],
+    "address": {
+      "street": "dębica sienkiewicza4/5",
+      "city": "inne",
+      "zipCode": "",
+      "notes": ""
+    },
+    "scheduling": {
+      "preferredTime": "cały tydzien ",
+      "preferredDate": null,
+      "scheduledDate": null,
+      "assignedEmployeeId": null,
+      "estimatedDuration": 120,
+      "actualDuration": null
+    },
+    "pricing": {
+      "estimatedCost": null,
+      "finalCost": null,
+      "travelCost": 50,
+      "partsUsed": [],
+      "laborHours": 0
+    },
+    "timeline": {
+      "createdAt": "2025-09-28T22:13:14.013Z",
+      "updatedAt": "2025-09-29T20:04:19.705Z",
+      "completedAt": null,
+      "statusHistory": [
+        {
+          "status": "new",
+          "timestamp": "2025-09-28T22:13:14.013Z",
+          "employeeId": null,
+          "notes": "Zamówienie zmigrowane z service-orders.json"
+        }
+      ]
+    },
+    "notes": {
+      "internal": "",
+      "customer": "",
+      "technical": ""
+    }
+  },
+  {
+    "id": "SRV25271006",
+    "status": "new",
+    "clientId": "CLI_TEMP_14634",
+    "service": {
+      "category": "Naprawa pralek",
+      "type": "pralka",
+      "description": "",
+      "priority": "normal",
+      "urgency": "normal"
+    },
+    "devices": [
+      {
+        "name": "Samsung pralka",
+        "brand": "Samsung",
+        "model": "",
+        "description": "",
+        "characteristics": {
+          "type": "unknown",
+          "access": "easy",
+          "requiresDisassembly": false,
+          "requiresAssembly": false
+        }
+      }
+    ],
+    "address": {
+      "street": "",
+      "city": "Rzesz�w",
+      "zipCode": "",
+      "notes": ""
+    },
+    "scheduling": {
+      "preferredTime": "",
+      "preferredDate": null,
+      "scheduledDate": null,
+      "assignedEmployeeId": null,
+      "estimatedDuration": 120,
+      "actualDuration": null
+    },
+    "pricing": {
+      "estimatedCost": null,
+      "finalCost": null,
+      "travelCost": 50,
+      "partsUsed": [],
+      "laborHours": 0
+    },
+    "timeline": {
+      "createdAt": "2025-09-28T22:13:14.013Z",
+      "updatedAt": "2025-09-29T20:04:19.705Z",
+      "completedAt": null,
+      "statusHistory": [
+        {
+          "status": "new",
+          "timestamp": "2025-09-28T22:13:14.013Z",
+          "employeeId": null,
+          "notes": "Zamówienie zmigrowane z service-orders.json"
+        }
+      ]
+    },
+    "notes": {
+      "internal": "",
+      "customer": "",
+      "technical": ""
+    }
+  },
+  {
+    "id": "SRV25271007",
+    "status": "new",
+    "clientId": "CLI_TEMP_38334",
+    "service": {
+      "category": "Inne usługi",
+      "type": "lod�wka",
+      "description": "",
+      "priority": "normal",
+      "urgency": "normal"
+    },
+    "devices": [
+      {
+        "name": "LG lod�wka",
+        "brand": "LG",
+        "model": "",
+        "description": "",
+        "characteristics": {
+          "type": "unknown",
+          "access": "easy",
+          "requiresDisassembly": false,
+          "requiresAssembly": false
+        }
+      }
+    ],
+    "address": {
+      "street": "",
+      "city": "Krak�w",
+      "zipCode": "",
+      "notes": ""
+    },
+    "scheduling": {
+      "preferredTime": "",
+      "preferredDate": null,
+      "scheduledDate": null,
+      "assignedEmployeeId": null,
+      "estimatedDuration": 120,
+      "actualDuration": null
+    },
+    "pricing": {
+      "estimatedCost": null,
+      "finalCost": null,
+      "travelCost": 50,
+      "partsUsed": [],
+      "laborHours": 0
+    },
+    "timeline": {
+      "createdAt": "2025-09-28T22:13:14.014Z",
+      "updatedAt": "2025-09-29T20:04:19.705Z",
+      "completedAt": null,
+      "statusHistory": [
+        {
+          "status": "new",
+          "timestamp": "2025-09-28T22:13:14.014Z",
+          "employeeId": null,
+          "notes": "Zamówienie zmigrowane z service-orders.json"
+        }
+      ]
+    },
+    "notes": {
+      "internal": "",
+      "customer": "",
+      "technical": ""
+    }
+  },
+  {
+    "id": "SRV25271008",
+    "status": "new",
+    "clientId": "CLI_TEMP_3433",
+    "service": {
+      "category": "Naprawa zmywarek",
+      "type": "zmywarka",
+      "description": "",
+      "priority": "normal",
+      "urgency": "normal"
+    },
+    "devices": [
+      {
+        "name": "Bosch zmywarka",
+        "brand": "Bosch",
+        "model": "",
+        "description": "",
+        "characteristics": {
+          "type": "unknown",
+          "access": "easy",
+          "requiresDisassembly": false,
+          "requiresAssembly": false
+        }
+      }
+    ],
+    "address": {
+      "street": "",
+      "city": "Warszawa",
+      "zipCode": "",
+      "notes": ""
+    },
+    "scheduling": {
+      "preferredTime": "",
+      "preferredDate": null,
+      "scheduledDate": null,
+      "assignedEmployeeId": null,
+      "estimatedDuration": 120,
+      "actualDuration": null
+    },
+    "pricing": {
+      "estimatedCost": null,
+      "finalCost": null,
+      "travelCost": 50,
+      "partsUsed": [],
+      "laborHours": 0
+    },
+    "timeline": {
+      "createdAt": "2025-09-28T22:13:14.014Z",
+      "updatedAt": "2025-09-29T20:04:19.705Z",
+      "completedAt": null,
+      "statusHistory": [
+        {
+          "status": "new",
+          "timestamp": "2025-09-28T22:13:14.014Z",
+          "employeeId": null,
+          "notes": "Zamówienie zmigrowane z service-orders.json"
+        }
+      ]
+    },
+    "notes": {
+      "internal": "",
+      "customer": "",
+      "technical": ""
+    }
+  },
+  {
+    "id": "SRV25271009",
+    "status": "new",
+    "clientId": "CLI_TEMP_68015",
+    "service": {
+      "category": "Naprawa piekarników",
+      "type": "piekarnik",
+      "description": "",
+      "priority": "normal",
+      "urgency": "normal"
+    },
+    "devices": [
+      {
+        "name": "Electrolux piekarnik",
+        "brand": "Electrolux",
+        "model": "",
+        "description": "",
+        "characteristics": {
+          "type": "unknown",
+          "access": "easy",
+          "requiresDisassembly": false,
+          "requiresAssembly": false
+        }
+      }
+    ],
+    "address": {
+      "street": "",
+      "city": "Gdansk",
+      "zipCode": "",
+      "notes": ""
+    },
+    "scheduling": {
+      "preferredTime": "",
+      "preferredDate": null,
+      "scheduledDate": null,
+      "assignedEmployeeId": null,
+      "estimatedDuration": 120,
+      "actualDuration": null
+    },
+    "pricing": {
+      "estimatedCost": null,
+      "finalCost": null,
+      "travelCost": 50,
+      "partsUsed": [],
+      "laborHours": 0
+    },
+    "timeline": {
+      "createdAt": "2025-09-28T22:13:14.015Z",
+      "updatedAt": "2025-09-29T20:04:19.705Z",
+      "completedAt": null,
+      "statusHistory": [
+        {
+          "status": "new",
+          "timestamp": "2025-09-28T22:13:14.015Z",
+          "employeeId": null,
+          "notes": "Zamówienie zmigrowane z service-orders.json"
+        }
+      ]
+    },
+    "notes": {
+      "internal": "",
+      "customer": "",
+      "technical": ""
+    }
+  },
+  {
+    "id": "SRV25271010",
+    "status": "new",
+    "clientId": "CLI_TEMP_88631",
+    "service": {
+      "category": "Naprawa piekarników",
+      "type": "piekarnik",
+      "description": "",
+      "priority": "normal",
+      "urgency": "normal"
+    },
+    "devices": [
+      {
+        "name": "Electrolux piekarnik",
+        "brand": "Electrolux",
+        "model": "",
+        "description": "",
+        "characteristics": {
+          "type": "unknown",
+          "access": "easy",
+          "requiresDisassembly": false,
+          "requiresAssembly": false
+        }
+      }
+    ],
+    "address": {
+      "street": "",
+      "city": "Gdansk",
+      "zipCode": "",
+      "notes": ""
+    },
+    "scheduling": {
+      "preferredTime": "",
+      "preferredDate": null,
+      "scheduledDate": null,
+      "assignedEmployeeId": null,
+      "estimatedDuration": 120,
+      "actualDuration": null
+    },
+    "pricing": {
+      "estimatedCost": null,
+      "finalCost": null,
+      "travelCost": 50,
+      "partsUsed": [],
+      "laborHours": 0
+    },
+    "timeline": {
+      "createdAt": "2025-09-28T22:13:14.015Z",
+      "updatedAt": "2025-09-29T20:04:19.705Z",
+      "completedAt": null,
+      "statusHistory": [
+        {
+          "status": "new",
+          "timestamp": "2025-09-28T22:13:14.015Z",
+          "employeeId": null,
+          "notes": "Zamówienie zmigrowane z service-orders.json"
+        }
+      ]
+    },
+    "notes": {
+      "internal": "",
+      "customer": "",
+      "technical": ""
+    }
+  },
+  {
+    "id": "SRV25271011",
+    "status": "new",
+    "clientId": "CLI_TEMP_88097",
+    "service": {
+      "category": "Naprawa piekarników",
+      "type": "piekarnik",
+      "description": "",
+      "priority": "normal",
+      "urgency": "normal"
+    },
+    "devices": [
+      {
+        "name": "Electrolux piekarnik",
+        "brand": "Electrolux",
+        "model": "",
+        "description": "",
+        "characteristics": {
+          "type": "unknown",
+          "access": "easy",
+          "requiresDisassembly": false,
+          "requiresAssembly": false
+        }
+      }
+    ],
+    "address": {
+      "street": "",
+      "city": "Gdansk",
+      "zipCode": "",
+      "notes": ""
+    },
+    "scheduling": {
+      "preferredTime": "",
+      "preferredDate": null,
+      "scheduledDate": null,
+      "assignedEmployeeId": null,
+      "estimatedDuration": 120,
+      "actualDuration": null
+    },
+    "pricing": {
+      "estimatedCost": null,
+      "finalCost": null,
+      "travelCost": 50,
+      "partsUsed": [],
+      "laborHours": 0
+    },
+    "timeline": {
+      "createdAt": "2025-09-28T22:13:14.016Z",
+      "updatedAt": "2025-09-29T20:04:19.705Z",
+      "completedAt": null,
+      "statusHistory": [
+        {
+          "status": "new",
+          "timestamp": "2025-09-28T22:13:14.016Z",
+          "employeeId": null,
+          "notes": "Zamówienie zmigrowane z service-orders.json"
+        }
+      ]
+    },
+    "notes": {
+      "internal": "",
+      "customer": "",
+      "technical": ""
+    }
+  },
+  {
+    "id": "SRV25271012",
+    "status": "new",
+    "clientId": "CLI_TEMP_25035",
+    "service": {
+      "category": "Naprawa piekarników",
+      "type": "piekarnik",
+      "description": "",
+      "priority": "normal",
+      "urgency": "normal"
+    },
+    "devices": [
+      {
+        "name": "Electrolux piekarnik",
+        "brand": "Electrolux",
+        "model": "",
+        "description": "",
+        "characteristics": {
+          "type": "unknown",
+          "access": "easy",
+          "requiresDisassembly": false,
+          "requiresAssembly": false
+        }
+      }
+    ],
+    "address": {
+      "street": "",
+      "city": "Gdansk",
+      "zipCode": "",
+      "notes": ""
+    },
+    "scheduling": {
+      "preferredTime": "",
+      "preferredDate": null,
+      "scheduledDate": null,
+      "assignedEmployeeId": null,
+      "estimatedDuration": 120,
+      "actualDuration": null
+    },
+    "pricing": {
+      "estimatedCost": null,
+      "finalCost": null,
+      "travelCost": 50,
+      "partsUsed": [],
+      "laborHours": 0
+    },
+    "timeline": {
+      "createdAt": "2025-09-28T22:13:14.016Z",
+      "updatedAt": "2025-09-29T20:04:19.705Z",
+      "completedAt": null,
+      "statusHistory": [
+        {
+          "status": "new",
+          "timestamp": "2025-09-28T22:13:14.016Z",
+          "employeeId": null,
+          "notes": "Zamówienie zmigrowane z service-orders.json"
+        }
+      ]
+    },
+    "notes": {
+      "internal": "",
+      "customer": "",
+      "technical": ""
+    }
+  },
+  {
+    "id": "SRV25271013",
+    "status": "new",
+    "clientId": "CLI_TEMP_91751",
+    "service": {
+      "category": "Naprawa piekarników",
+      "type": "piekarnik",
+      "description": "",
+      "priority": "normal",
+      "urgency": "normal"
+    },
+    "devices": [
+      {
+        "name": "Electrolux piekarnik",
+        "brand": "Electrolux",
+        "model": "",
+        "description": "",
+        "characteristics": {
+          "type": "unknown",
+          "access": "easy",
+          "requiresDisassembly": false,
+          "requiresAssembly": false
+        }
+      }
+    ],
+    "address": {
+      "street": "",
+      "city": "Gdansk",
+      "zipCode": "",
+      "notes": ""
+    },
+    "scheduling": {
+      "preferredTime": "",
+      "preferredDate": null,
+      "scheduledDate": null,
+      "assignedEmployeeId": null,
+      "estimatedDuration": 120,
+      "actualDuration": null
+    },
+    "pricing": {
+      "estimatedCost": null,
+      "finalCost": null,
+      "travelCost": 50,
+      "partsUsed": [],
+      "laborHours": 0
+    },
+    "timeline": {
+      "createdAt": "2025-09-28T22:13:14.016Z",
+      "updatedAt": "2025-09-29T20:04:19.705Z",
+      "completedAt": null,
+      "statusHistory": [
+        {
+          "status": "new",
+          "timestamp": "2025-09-28T22:13:14.016Z",
+          "employeeId": null,
+          "notes": "Zamówienie zmigrowane z service-orders.json"
+        }
+      ]
+    },
+    "notes": {
+      "internal": "",
+      "customer": "",
+      "technical": ""
+    }
+  },
+  {
+    "id": "SRV25271014",
+    "status": "new",
+    "clientId": "CLI_TEMP_76807",
+    "service": {
+      "category": "Naprawa piekarników",
+      "type": "piekarnik",
+      "description": "",
+      "priority": "normal",
+      "urgency": "normal"
+    },
+    "devices": [
+      {
+        "name": "Electrolux piekarnik",
+        "brand": "Electrolux",
+        "model": "",
+        "description": "",
+        "characteristics": {
+          "type": "unknown",
+          "access": "easy",
+          "requiresDisassembly": false,
+          "requiresAssembly": false
+        }
+      }
+    ],
+    "address": {
+      "street": "",
+      "city": "Gdansk",
+      "zipCode": "",
+      "notes": ""
+    },
+    "scheduling": {
+      "preferredTime": "",
+      "preferredDate": null,
+      "scheduledDate": null,
+      "assignedEmployeeId": null,
+      "estimatedDuration": 120,
+      "actualDuration": null
+    },
+    "pricing": {
+      "estimatedCost": null,
+      "finalCost": null,
+      "travelCost": 50,
+      "partsUsed": [],
+      "laborHours": 0
+    },
+    "timeline": {
+      "createdAt": "2025-09-28T22:13:14.017Z",
+      "updatedAt": "2025-09-29T20:04:19.705Z",
+      "completedAt": null,
+      "statusHistory": [
+        {
+          "status": "new",
+          "timestamp": "2025-09-28T22:13:14.017Z",
+          "employeeId": null,
+          "notes": "Zamówienie zmigrowane z service-orders.json"
+        }
+      ]
+    },
+    "notes": {
+      "internal": "",
+      "customer": "",
+      "technical": ""
+    }
+  },
+  {
+    "id": "SRV25271015",
+    "status": "new",
+    "clientId": "CLI_TEMP_15917",
+    "service": {
+      "category": "Naprawa piekarników",
+      "type": "piekarnik",
+      "description": "",
+      "priority": "normal",
+      "urgency": "normal"
+    },
+    "devices": [
+      {
+        "name": "Electrolux piekarnik",
+        "brand": "Electrolux",
+        "model": "",
+        "description": "",
+        "characteristics": {
+          "type": "unknown",
+          "access": "easy",
+          "requiresDisassembly": false,
+          "requiresAssembly": false
+        }
+      }
+    ],
+    "address": {
+      "street": "",
+      "city": "Gdansk",
+      "zipCode": "",
+      "notes": ""
+    },
+    "scheduling": {
+      "preferredTime": "",
+      "preferredDate": null,
+      "scheduledDate": null,
+      "assignedEmployeeId": null,
+      "estimatedDuration": 120,
+      "actualDuration": null
+    },
+    "pricing": {
+      "estimatedCost": null,
+      "finalCost": null,
+      "travelCost": 50,
+      "partsUsed": [],
+      "laborHours": 0
+    },
+    "timeline": {
+      "createdAt": "2025-09-28T22:13:14.017Z",
+      "updatedAt": "2025-09-29T20:04:19.705Z",
+      "completedAt": null,
+      "statusHistory": [
+        {
+          "status": "new",
+          "timestamp": "2025-09-28T22:13:14.017Z",
+          "employeeId": null,
+          "notes": "Zamówienie zmigrowane z service-orders.json"
+        }
+      ]
+    },
+    "notes": {
+      "internal": "",
+      "customer": "",
+      "technical": ""
+    }
+  },
+  {
+    "id": "SRV25271016",
+    "status": "new",
+    "clientId": "CLI_TEMP_99150",
+    "service": {
+      "category": "Naprawa piekarników",
+      "type": "piekarnik",
+      "description": "",
+      "priority": "normal",
+      "urgency": "normal"
+    },
+    "devices": [
+      {
+        "name": "Electrolux piekarnik",
+        "brand": "Electrolux",
+        "model": "",
+        "description": "",
+        "characteristics": {
+          "type": "unknown",
+          "access": "easy",
+          "requiresDisassembly": false,
+          "requiresAssembly": false
+        }
+      }
+    ],
+    "address": {
+      "street": "",
+      "city": "Gdansk",
+      "zipCode": "",
+      "notes": ""
+    },
+    "scheduling": {
+      "preferredTime": "",
+      "preferredDate": null,
+      "scheduledDate": null,
+      "assignedEmployeeId": null,
+      "estimatedDuration": 120,
+      "actualDuration": null
+    },
+    "pricing": {
+      "estimatedCost": null,
+      "finalCost": null,
+      "travelCost": 50,
+      "partsUsed": [],
+      "laborHours": 0
+    },
+    "timeline": {
+      "createdAt": "2025-09-28T22:13:14.018Z",
+      "updatedAt": "2025-09-29T20:04:19.705Z",
+      "completedAt": null,
+      "statusHistory": [
+        {
+          "status": "new",
+          "timestamp": "2025-09-28T22:13:14.018Z",
+          "employeeId": null,
+          "notes": "Zamówienie zmigrowane z service-orders.json"
+        }
+      ]
+    },
+    "notes": {
+      "internal": "",
+      "customer": "",
+      "technical": ""
+    }
+  },
+  {
+    "id": "SRV25271017",
+    "status": "new",
+    "clientId": "CLI_TEMP_48647",
+    "service": {
+      "category": "Naprawa piekarników",
+      "type": "piekarnik",
+      "description": "",
+      "priority": "normal",
+      "urgency": "normal"
+    },
+    "devices": [
+      {
+        "name": "Electrolux piekarnik",
+        "brand": "Electrolux",
+        "model": "",
+        "description": "",
+        "characteristics": {
+          "type": "unknown",
+          "access": "easy",
+          "requiresDisassembly": false,
+          "requiresAssembly": false
+        }
+      }
+    ],
+    "address": {
+      "street": "",
+      "city": "Gdansk",
+      "zipCode": "",
+      "notes": ""
+    },
+    "scheduling": {
+      "preferredTime": "",
+      "preferredDate": null,
+      "scheduledDate": null,
+      "assignedEmployeeId": null,
+      "estimatedDuration": 120,
+      "actualDuration": null
+    },
+    "pricing": {
+      "estimatedCost": null,
+      "finalCost": null,
+      "travelCost": 50,
+      "partsUsed": [],
+      "laborHours": 0
+    },
+    "timeline": {
+      "createdAt": "2025-09-28T22:13:14.018Z",
+      "updatedAt": "2025-09-29T20:04:19.705Z",
+      "completedAt": null,
+      "statusHistory": [
+        {
+          "status": "new",
+          "timestamp": "2025-09-28T22:13:14.018Z",
+          "employeeId": null,
+          "notes": "Zamówienie zmigrowane z service-orders.json"
+        }
+      ]
+    },
+    "notes": {
+      "internal": "",
+      "customer": "",
+      "technical": ""
+    }
+  },
+  {
+    "id": "SRV25271018",
+    "status": "new",
+    "clientId": "CLI_TEMP_95313",
+    "service": {
+      "category": "Naprawa piekarników",
+      "type": "piekarnik",
+      "description": "",
+      "priority": "normal",
+      "urgency": "normal"
+    },
+    "devices": [
+      {
+        "name": "Electrolux piekarnik",
+        "brand": "Electrolux",
+        "model": "",
+        "description": "",
+        "characteristics": {
+          "type": "unknown",
+          "access": "easy",
+          "requiresDisassembly": false,
+          "requiresAssembly": false
+        }
+      }
+    ],
+    "address": {
+      "street": "",
+      "city": "Gdansk",
+      "zipCode": "",
+      "notes": ""
+    },
+    "scheduling": {
+      "preferredTime": "",
+      "preferredDate": null,
+      "scheduledDate": null,
+      "assignedEmployeeId": null,
+      "estimatedDuration": 120,
+      "actualDuration": null
+    },
+    "pricing": {
+      "estimatedCost": null,
+      "finalCost": null,
+      "travelCost": 50,
+      "partsUsed": [],
+      "laborHours": 0
+    },
+    "timeline": {
+      "createdAt": "2025-09-28T22:13:14.019Z",
+      "updatedAt": "2025-09-29T20:04:19.705Z",
+      "completedAt": null,
+      "statusHistory": [
+        {
+          "status": "new",
+          "timestamp": "2025-09-28T22:13:14.019Z",
+          "employeeId": null,
+          "notes": "Zamówienie zmigrowane z service-orders.json"
+        }
+      ]
+    },
+    "notes": {
+      "internal": "",
+      "customer": "",
+      "technical": ""
+    }
+  },
+  {
+    "id": "SRV25271019",
+    "status": "new",
+    "clientId": "CLI_TEMP_21376",
+    "service": {
+      "category": "Naprawa piekarników",
+      "type": "piekarnik",
+      "description": "",
+      "priority": "normal",
+      "urgency": "normal"
+    },
+    "devices": [
+      {
+        "name": "Electrolux piekarnik",
+        "brand": "Electrolux",
+        "model": "",
+        "description": "",
+        "characteristics": {
+          "type": "unknown",
+          "access": "easy",
+          "requiresDisassembly": false,
+          "requiresAssembly": false
+        }
+      }
+    ],
+    "address": {
+      "street": "",
+      "city": "Gdansk",
+      "zipCode": "",
+      "notes": ""
+    },
+    "scheduling": {
+      "preferredTime": "",
+      "preferredDate": null,
+      "scheduledDate": null,
+      "assignedEmployeeId": null,
+      "estimatedDuration": 120,
+      "actualDuration": null
+    },
+    "pricing": {
+      "estimatedCost": null,
+      "finalCost": null,
+      "travelCost": 50,
+      "partsUsed": [],
+      "laborHours": 0
+    },
+    "timeline": {
+      "createdAt": "2025-09-28T22:13:14.019Z",
+      "updatedAt": "2025-09-29T20:04:19.705Z",
+      "completedAt": null,
+      "statusHistory": [
+        {
+          "status": "new",
+          "timestamp": "2025-09-28T22:13:14.019Z",
+          "employeeId": null,
+          "notes": "Zamówienie zmigrowane z service-orders.json"
+        }
+      ]
+    },
+    "notes": {
+      "internal": "",
+      "customer": "",
+      "technical": ""
+    }
+  },
+  {
+    "id": "SRV25271020",
+    "status": "new",
+    "clientId": "CLI_TEMP_79910",
+    "service": {
+      "category": "Naprawa piekarników",
+      "type": "piekarnik",
+      "description": "",
+      "priority": "normal",
+      "urgency": "normal"
+    },
+    "devices": [
+      {
+        "name": "Electrolux piekarnik",
+        "brand": "Electrolux",
+        "model": "",
+        "description": "",
+        "characteristics": {
+          "type": "unknown",
+          "access": "easy",
+          "requiresDisassembly": false,
+          "requiresAssembly": false
+        }
+      }
+    ],
+    "address": {
+      "street": "",
+      "city": "Gdansk",
+      "zipCode": "",
+      "notes": ""
+    },
+    "scheduling": {
+      "preferredTime": "",
+      "preferredDate": null,
+      "scheduledDate": null,
+      "assignedEmployeeId": null,
+      "estimatedDuration": 120,
+      "actualDuration": null
+    },
+    "pricing": {
+      "estimatedCost": null,
+      "finalCost": null,
+      "travelCost": 50,
+      "partsUsed": [],
+      "laborHours": 0
+    },
+    "timeline": {
+      "createdAt": "2025-09-28T22:13:14.019Z",
+      "updatedAt": "2025-09-29T20:04:19.705Z",
+      "completedAt": null,
+      "statusHistory": [
+        {
+          "status": "new",
+          "timestamp": "2025-09-28T22:13:14.019Z",
+          "employeeId": null,
+          "notes": "Zamówienie zmigrowane z service-orders.json"
+        }
+      ]
+    },
+    "notes": {
+      "internal": "",
+      "customer": "",
+      "technical": ""
+    }
+  }
+]

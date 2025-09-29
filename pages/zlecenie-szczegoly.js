@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import jsPDF from 'jspdf';
+import { getNextInvoiceNumber, getNextProtocolNumber } from '../utils/documentNumbers';
 import {
   FiArrowLeft,
   FiCalendar,
@@ -103,7 +104,7 @@ export default function ZlecenieSzczegoly() {
   const [workStatus, setWorkStatus] = useState('in_progress');
 
   // Funkcja generowania protokołu naprawy w PDF
-  const generateServiceReport = () => {
+  const generateServiceReport = async () => {
     const doc = new jsPDF('p', 'mm', 'a4');
     
     const pageWidth = doc.internal.pageSize.width;
@@ -146,7 +147,8 @@ export default function ZlecenieSzczegoly() {
     
     doc.setFontSize(16);
     doc.setFont(undefined, 'bold');
-    doc.text(convertPolishChars('PROTOKÓŁ NAPRAWY AGD'), pageWidth / 2, yPosition + 5, { align: 'center' });
+    const protocolNumber = await getNextProtocolNumber();
+    doc.text(convertPolishChars(`PROTOKÓŁ NAPRAWY AGD Nr ${protocolNumber}`), pageWidth / 2, yPosition + 5, { align: 'center' });
     yPosition += 20;
 
     doc.setFontSize(12);
@@ -384,12 +386,12 @@ export default function ZlecenieSzczegoly() {
     doc.text(convertPolishChars(`Data: ${new Date().toLocaleDateString('pl-PL')}`), 20, bottomY + 35);
     doc.text(convertPolishChars(`Data: ${new Date().toLocaleDateString('pl-PL')}`), pageWidth - 90, bottomY + 35);
 
-    // Zapisz PDF
-    doc.save(`protokol_naprawy_${orderDetails.orderNumber}_${new Date().getTime()}.pdf`);
+    // Zapisz PDF z automatyczną numeracją
+    doc.save(`protokol_${protocolNumber.replace(/\//g, '_')}_${new Date().getTime()}.pdf`);
   };
 
   // Funkcja generowania faktury VAT
-  const generateInvoice = () => {
+  const generateInvoice = async () => {
     const doc = new jsPDF('p', 'mm', 'a4');
     
     const pageWidth = doc.internal.pageSize.width;
@@ -497,8 +499,8 @@ export default function ZlecenieSzczegoly() {
     
     yPosition += 18;
 
-    // NUMER FAKTURY
-    const invoiceNumber = `S/0008/09/25`;
+    // NUMER FAKTURY - automatyczna numeracja (tylko raz na początku)
+    const invoiceNumber = await getNextInvoiceNumber();
     doc.setFontSize(16);
     doc.setFont(undefined, 'bold');
     doc.text(convertPolishChars(`Faktura ${invoiceNumber}`), pageWidth / 2, yPosition, { align: 'center' });
@@ -659,9 +661,8 @@ export default function ZlecenieSzczegoly() {
     // Dodatkowy tekst w lewym dolnym rogu
     doc.text('KonektoSmart. Nowoczesne wsparcie dla biur księgowych konektosmart.pl', 10, bottomY + 5);
 
-    // Zapisz PDF
-    const finalInvoiceNumber = `S/0008/09/25`;
-    doc.save(`faktura_${finalInvoiceNumber.replace(/\//g, '_')}_${new Date().getTime()}.pdf`);
+    // Zapisz PDF używając tego samego numeru
+    doc.save(`faktura_${invoiceNumber.replace(/\//g, '_')}_${new Date().getTime()}.pdf`);
   };
 
   // Funkcja mapowania typu urządzenia na kategorię cenową

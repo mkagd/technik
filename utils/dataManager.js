@@ -16,14 +16,13 @@ class DataManager {
 
     // Generowanie unikalnego ID - NOWY SYSTEM UNIFIED
     generateId(entityType = 'GENERIC') {
-        try {
-            const { generateUnifiedID } = require('../scripts/unified-id-system');
-            return generateUnifiedID(entityType);
-        } catch (error) {
-            console.warn('Nie można wczytać unified-id-system:', error.message);
-            // Fallback - timestamp z losowymi znakami
-            return `${entityType}${Date.now()}${Math.random().toString(36).substr(2, 3).toUpperCase()}`;
-        }
+        // Prosta kliencka implementacja generowania ID
+        const timestamp = Date.now();
+        const random = Math.random().toString(36).substr(2, 3).toUpperCase();
+        const counter = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+        
+        // Format: ENTITYTYPE_TIMESTAMP_RANDOM_COUNTER
+        return `${entityType}_${timestamp}_${random}_${counter}`;
     }
 
     // Pobierz następny numer zgłoszenia

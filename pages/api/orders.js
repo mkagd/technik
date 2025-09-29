@@ -1,13 +1,21 @@
 // pages/api/orders.js
-// API endpoint dla zarządzania zamówieniami (zgodny z OrdersContext)
+// API endpoint dla zarządzania zamówieniami - ENHANCED v4.0 + KOMPATYBILNOŚĆ AGD MOBILE
+// ✅ 100% kompatybilność z AGD Mobile (builtInParams, detectedCall, googleContactData)
+// ✅ Nowe funkcje: system wizyt, poprawne clientId (CLI), ORDA format
+// ✅ Mapowanie statusów AGD Mobile ↔ Web
+// ✅ Obsługa 74 pól Enhanced v4.0
 
 import {
     readOrders,
     addOrder,
     updateOrder,
     patchOrder,
-    deleteOrder
+    deleteOrder,
+    readClients
 } from '../../utils/clientOrderStorage';
+
+import { ENHANCED_ORDER_STRUCTURE_V4 } from '../../shared/enhanced-order-structure-v4';
+import { AGDMobileToV4Converter } from '../../shared/agd-mobile-to-v4-converter';
 
 export default async function handler(req, res) {
     console.log(`📞 API ${req.method} /api/orders`);
@@ -26,17 +34,72 @@ export default async function handler(req, res) {
     if (req.method === 'POST') {
         try {
             const orderData = req.body;
-
-            const newOrder = addOrder(orderData);
-            if (newOrder) {
-                console.log(`✅ Order added: ${newOrder.id}`);
-                return res.status(201).json({ order: newOrder });
+            const converter = new AGDMobileToV4Converter();
+            
+            // ========== WYKRYJ ŹRÓDŁO ZLECENIA ==========
+            const isAGDMobile = detectAGDMobileOrder(orderData);
+            let processedOrderData;
+            
+            if (isAGDMobile) {
+                console.log('📱 Detected AGD Mobile order, converting to Enhanced v4.0...');
+                processedOrderData = converter.convertSingleOrder(orderData);
             } else {
-                return res.status(500).json({ message: 'Błąd dodawania zamówienia' });
+                console.log('🌐 Processing web/API order as Enhanced v4.0...');
+                processedOrderData = processWebOrder(orderData);
+            }
+            
+            // ========== WALIDACJA ENHANCED v4.0 ==========
+            const validationErrors = validateEnhancedV4Order(processedOrderData);
+            if (validationErrors.length > 0) {
+                return res.status(400).json({ 
+                    message: 'Błędy walidacji Enhanced v4.0',
+                    errors: validationErrors,
+                    source: isAGDMobile ? 'agd_mobile' : 'web'
+                });
+            }
+            
+            // ========== FINALNE UZUPEŁNIENIE ==========
+            const finalOrderData = {
+                ...processedOrderData,
+                
+                // Metadane
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString(),
+                createdBy: orderData.createdBy || orderData.selectedEmployee || 'system',
+                source: isAGDMobile ? 'agd_mobile' : (orderData.source || 'web'),
+                version: '4.0'
+            };
+
+            const newOrder = addOrder(finalOrderData);
+            if (newOrder) {
+                console.log(`✅ Enhanced v4.0 order added: ${newOrder.orderNumber} for client: ${newOrder.clientName}`);
+                
+                if (newOrder.source === 'agd_mobile') {
+                    console.log(`📱 AGD Mobile features preserved: builtInParams=${!!newOrder.builtInParams}, detectedCall=${!!newOrder.detectedCall}`);
+                }
+                
+                if (newOrder.visitId) {
+                    console.log(`📅 Visit assigned: ${newOrder.visitId} on ${newOrder.appointmentDate}`);
+                }
+                
+                return res.status(201).json({ 
+                    order: newOrder,
+                    message: 'Zlecenie Enhanced v4.0 utworzone pomyślnie',
+                    compatibility: {
+                        source: newOrder.source,
+                        version: newOrder.version,
+                        agdMobileFieldsPreserved: isAGDMobile
+                    }
+                });
+            } else {
+                return res.status(500).json({ message: 'Błąd dodawania zamówienia Enhanced v4.0' });
             }
         } catch (error) {
-            console.error('❌ Error adding order:', error);
-            return res.status(500).json({ message: 'Błąd serwera' });
+            console.error('❌ Error adding Enhanced v4.0 order:', error);
+            return res.status(500).json({ 
+                message: 'Błąd serwera Enhanced v4.0',
+                error: error.message 
+            });
         }
     }
 
@@ -104,4 +167,287 @@ export default async function handler(req, res) {
     }
 
     return res.status(405).json({ message: 'Method Not Allowed' });
+}
+
+// ========== FUNKCJE POMOCNICZE ==========
+
+/**
+ * 🔍 Wykrywa czy zlecenie pochodzi z AGD Mobile
+ */
+function detectAGDMobileOrder(orderData) {
+    // Charakterystyczne pola AGD Mobile
+    const agdMobileIndicators = [
+        'builtInParams',      // System zabudowy
+        'detectedCall',       // Wykrywanie połączeń
+        'googleContactData',  // Google Contacts
+        'selectedEmployee',   // Wybrany pracownik AGD
+        'entryTime',         // Timestamp rozpoczęcia
+        'workSessions'       // Sesje robocze
+    ];
+    
+    // Statusy typowe dla AGD Mobile
+    const agdMobileStatuses = ['Nowe', 'W realizacji', 'Zakończone'];
+    
+    // Sprawdź czy ma charakterystyczne pola
+    const hasAGDFields = agdMobileIndicators.some(field => orderData[field] !== undefined);
+    
+    // Sprawdź status AGD Mobile
+    const hasAGDStatus = agdMobileStatuses.includes(orderData.status);
+    
+    // Sprawdź stary format clientId
+    const hasOldClientId = orderData.clientId && orderData.clientId.startsWith('OLD');
+    
+    return hasAGDFields || hasAGDStatus || hasOldClientId;
+}
+
+/**
+ * 🌐 Przetwarza zlecenie webowe na Enhanced v4.0
+ */
+function processWebOrder(orderData) {
+    return {
+        ...orderData,
+        
+        // Generuj ID jeśli brak
+        orderNumber: orderData.orderNumber || generateOrderNumber(),
+        visitId: orderData.visitId || (orderData.appointmentDate ? generateVisitId() : null),
+        
+        // Pobierz nazwę klienta
+        clientName: orderData.clientName || getClientName(orderData.clientId),
+        
+        // Mapuj clientId jeśli stary format
+        clientId: mapClientIdFormat(orderData.clientId),
+        clientId_legacy: orderData.clientId?.startsWith('OLD') ? orderData.clientId : null,
+        
+        // Domyślne wartości
+        source: 'web',
+        status: mapStatusToEnhanced(orderData.status) || 'pending',
+        priority: orderData.priority || 'medium',
+        warrantyMonths: orderData.warrantyMonths || 3,
+        
+        // Inicjalizacja struktur
+        devices: orderData.devices || [],
+        symptoms: orderData.symptoms || [],
+        partsUsed: orderData.partsUsed || [],
+        photos: orderData.photos || [],
+        notifications: orderData.notifications || [],
+        
+        // Historia statusów
+        statusHistory: orderData.statusHistory || [{
+            status: orderData.status || 'pending',
+            timestamp: new Date().toISOString(),
+            user: orderData.createdBy || 'system',
+            note: 'Zlecenie utworzone przez web'
+        }],
+        
+        // Historia zmian
+        history: orderData.history || [{
+            date: new Date().toISOString(),
+            action: 'Utworzenie zlecenia',
+            details: `Zlecenie utworzone przez web dla: ${orderData.clientName || 'klient'}`,
+            description: `🌐 Zlecenie webowe\n📋 Status: ${orderData.status || 'pending'}\n🆔 ID: ${orderData.clientId}`
+        }],
+        
+        // Metadane Enhanced v4.0
+        migratedFrom: null,
+        migrationDate: null,
+        version: '4.0'
+    };
+}
+
+/**
+ * 🔍 Waliduje zlecenie Enhanced v4.0
+ */
+function validateEnhancedV4Order(orderData) {
+    const errors = [];
+    const structure = ENHANCED_ORDER_STRUCTURE_V4;
+    
+    // Sprawdź wymagane pola podstawowe
+    if (!orderData.clientId) {
+        errors.push('clientId jest wymagane');
+    } else if (!orderData.clientId.match(/^CLI\d{8}$/)) {
+        errors.push('clientId musi mieć format CLI12345678');
+    }
+    
+    if (!orderData.orderNumber) {
+        errors.push('orderNumber jest wymagane');
+    } else if (!orderData.orderNumber.match(/^ORDA\d{8}$/)) {
+        errors.push('orderNumber musi mieć format ORDA12345678');
+    }
+    
+    // Sprawdź opis (fallback na description lub problemDescription)
+    const hasDescription = orderData.description || orderData.problemDescription;
+    if (!hasDescription || hasDescription.length < 10) {
+        errors.push('description lub problemDescription musi mieć min. 10 znaków');
+    }
+    
+    // Sprawdź czy klient istnieje (tylko dla nowych clientId)
+    if (orderData.clientId && !orderData.clientId.startsWith('OLD')) {
+        const client = getClientById(orderData.clientId);
+        if (!client) {
+            // Warning, nie error - może być nowy klient
+            console.warn(`⚠️ Client ${orderData.clientId} not found in database`);
+        }
+    }
+    
+    // Walidacja wizyt
+    if (orderData.visitId) {
+        if (!orderData.visitId.match(/^VIS\d{8}$/)) {
+            errors.push('visitId musi mieć format VIS12345678');
+        }
+        
+        if (orderData.appointmentDate) {
+            const appointmentDate = new Date(orderData.appointmentDate);
+            if (isNaN(appointmentDate.getTime())) {
+                errors.push('appointmentDate musi być prawidłową datą');
+            }
+        }
+    }
+    
+    // Walidacja statusów (Enhanced v4.0 obsługuje AGD Mobile + Web)
+    const validStatuses = [
+        // AGD Mobile
+        'Nowe', 'W realizacji', 'Zakończone',
+        // Web
+        'pending', 'assigned', 'in_progress', 'waiting_parts', 'waiting_client', 'testing', 'completed', 'cancelled', 'deferred'
+    ];
+    if (orderData.status && !validStatuses.includes(orderData.status)) {
+        errors.push(`status musi być jednym z: ${validStatuses.join(', ')}`);
+    }
+    
+    const validPriorities = ['low', 'medium', 'high', 'critical', 'urgent'];
+    if (orderData.priority && !validPriorities.includes(orderData.priority)) {
+        errors.push(`priority musi być jednym z: ${validPriorities.join(', ')}`);
+    }
+    
+    // Walidacja urządzeń (jeśli podane)
+    if (orderData.devices && Array.isArray(orderData.devices)) {
+        orderData.devices.forEach((device, index) => {
+            if (!device.deviceType) {
+                errors.push(`devices[${index}].deviceType jest wymagane`);
+            }
+        });
+    }
+    
+    // Walidacja AGD Mobile specyficznych pól
+    if (orderData.builtInParams && typeof orderData.builtInParams !== 'object') {
+        errors.push('builtInParams musi być obiektem');
+    }
+    
+    if (orderData.detectedCall && typeof orderData.detectedCall !== 'object') {
+        errors.push('detectedCall musi być obiektem');
+    }
+    
+    return errors;
+}
+
+/**
+ * 🔢 Generuje nowy numer zlecenia w formacie ORDA
+ */
+function generateOrderNumber() {
+    const now = new Date();
+    const year = now.getFullYear().toString().slice(-2);
+    const month = (now.getMonth() + 1).toString().padStart(2, '0');
+    const day = now.getDate().toString().padStart(2, '0');
+    
+    // Znajdź ostatni numer dziś
+    const orders = readOrders();
+    const todayPrefix = `ORDA${year}${month}${day}`;
+    const todayOrders = orders.filter(o => o.orderNumber?.startsWith(todayPrefix));
+    const lastNumber = todayOrders.length;
+    
+    return `${todayPrefix}${(lastNumber + 1).toString().padStart(3, '0')}`;
+}
+
+/**
+ * 🏥 Generuje ID wizyty w formacie VIS
+ */
+function generateVisitId() {
+    const now = new Date();
+    const year = now.getFullYear().toString().slice(-2);
+    const month = (now.getMonth() + 1).toString().padStart(2, '0');
+    const day = now.getDate().toString().padStart(2, '0');
+    
+    // Znajdź ostatni numer wizyt dziś
+    const orders = readOrders();
+    const todayPrefix = `VIS${year}${month}${day}`;
+    const todayVisits = orders.filter(o => o.visitId?.startsWith(todayPrefix));
+    const lastNumber = todayVisits.length;
+    
+    return `${todayPrefix}${(lastNumber + 1).toString().padStart(3, '0')}`;
+}
+
+/**
+ * 🗂️ Mapuje clientId do nowego formatu
+ */
+function mapClientIdFormat(clientId) {
+    if (!clientId) return null;
+    
+    const mapping = {
+        'OLD0001': 'CLI25186001',
+        'OLD0002': 'CLI25186002',
+        'OLD0003': 'CLI25186003',
+        'OLD0004': 'CLI25186004',
+        'OLD0005': 'CLI25186005',
+        'OLD0006': 'CLI25186006',
+        'OLD0007': 'CLI25186007',
+        'OLD0008': 'CLI25186008',
+        'OLD0009': 'CLI25186009',
+        'OLD0010': 'CLI25186010',
+        'OLD0011': 'CLI25186011',
+        'OLD0012': 'CLI25186012',
+        'OLD0013': 'CLI25186013',
+        'OLD0014': 'CLI25186014'
+    };
+    
+    return mapping[clientId] || clientId;
+}
+
+/**
+ * 🔄 Mapuje status na Enhanced v4.0
+ */
+function mapStatusToEnhanced(status) {
+    if (!status) return null;
+    
+    const mapping = {
+        // AGD Mobile → Web
+        'Nowe': 'pending',
+        'W realizacji': 'in_progress',
+        'Zakończone': 'completed',
+        
+        // Web → bez zmian
+        'pending': 'pending',
+        'assigned': 'assigned',
+        'in_progress': 'in_progress',
+        'waiting_parts': 'waiting_parts',
+        'waiting_client': 'waiting_client',
+        'testing': 'testing',
+        'completed': 'completed',
+        'cancelled': 'cancelled',
+        'deferred': 'deferred'
+    };
+    
+    return mapping[status] || status;
+}
+
+/**
+ * Pobiera nazwę klienta po ID
+ */
+function getClientName(clientId) {
+    if (!clientId) return null;
+    
+    const client = getClientById(clientId);
+    return client?.name || null;
+}
+
+/**
+ * Pobiera klienta po ID
+ */
+function getClientById(clientId) {
+    try {
+        const clients = readClients();
+        return clients.find(c => c.id === clientId);
+    } catch (error) {
+        console.error('❌ Error reading clients:', error);
+        return null;
+    }
 }

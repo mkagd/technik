@@ -11,7 +11,10 @@ import {
   FiSearch,
   FiZap,
   FiEye,
-  FiCpu
+  FiCpu,
+  FiImage,
+  FiGrid,
+  FiTrash2
 } from 'react-icons/fi';
 import modelsDatabase from '../data/modelsDatabase.json';
 
@@ -24,6 +27,9 @@ export default function ModelAIScanner({ isOpen, onClose, onModelDetected }) {
   const [stream, setStream] = useState(null);
   const [cameraError, setCameraError] = useState(null);
   const [processingStage, setProcessingStage] = useState('');
+  const [flashlightOn, setFlashlightOn] = useState(false);
+  const [savedImages, setSavedImages] = useState([]);
+  const [showSavedImages, setShowSavedImages] = useState(false);
   
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
@@ -94,6 +100,80 @@ export default function ModelAIScanner({ isOpen, onClose, onModelDetected }) {
     }
   };
 
+  // Funkcjonalność latarki
+  const toggleFlashlight = async () => {
+    if (!stream) return;
+    
+    try {
+      const videoTrack = stream.getVideoTracks()[0];
+      const capabilities = videoTrack.getCapabilities();
+      
+      if (capabilities.torch) {
+        await videoTrack.applyConstraints({
+          advanced: [{ torch: !flashlightOn }]
+        });
+        setFlashlightOn(!flashlightOn);
+      } else {
+        alert('Latarka nie jest dostępna na tym urządzeniu');
+      }
+    } catch (error) {
+      console.error('Błąd obsługi latarki:', error);
+      alert('Nie można włączyć latarki');
+    }
+  };
+
+  // Zapisywanie zdjęcia lokalnie
+  const saveImageLocally = (imageData, metadata = {}) => {
+    const imageInfo = {
+      id: Date.now(),
+      imageData: imageData,
+      timestamp: new Date().toISOString(),
+      metadata: {
+        ...metadata,
+        size: Math.round(imageData.length / 1024) + ' KB'
+      }
+    };
+    
+    try {
+      const existingImages = JSON.parse(localStorage.getItem('scannerImages') || '[]');
+      const updatedImages = [imageInfo, ...existingImages.slice(0, 9)]; // Zachowaj max 10 zdjęć
+      localStorage.setItem('scannerImages', JSON.stringify(updatedImages));
+      setSavedImages(updatedImages);
+      console.log('💾 Zdjęcie zapisane lokalnie:', imageInfo.id);
+    } catch (error) {
+      console.error('Błąd zapisywania zdjęcia:', error);
+    }
+  };
+
+  // Wczytywanie zapisanych zdjęć
+  const loadSavedImages = () => {
+    try {
+      const existingImages = JSON.parse(localStorage.getItem('scannerImages') || '[]');
+      setSavedImages(existingImages);
+    } catch (error) {
+      console.error('Błąd wczytywania zdjęć:', error);
+      setSavedImages([]);
+    }
+  };
+
+  // Usuwanie zapisanego zdjęcia
+  const deleteSavedImage = (imageId) => {
+    try {
+      const updatedImages = savedImages.filter(img => img.id !== imageId);
+      localStorage.setItem('scannerImages', JSON.stringify(updatedImages));
+      setSavedImages(updatedImages);
+    } catch (error) {
+      console.error('Błąd usuwania zdjęcia:', error);
+    }
+  };
+
+  // Wybór zapisanego zdjęcia
+  const selectSavedImage = (imageInfo) => {
+    setCapturedImage(imageInfo.imageData);
+    setShowSavedImages(false);
+    stopCamera();
+  };
+
   // Kompresja obrazu
   const compressImage = (canvas, quality = 0.6, maxWidth = 600) => {
     const context = canvas.getContext('2d');
@@ -141,7 +221,21 @@ export default function ModelAIScanner({ isOpen, onClose, onModelDetected }) {
     
     context.drawImage(video, 0, 0);
     const compressedImageDataUrl = compressImage(canvas, 0.6, 600);
+    
+    // Zapisz zdjęcie lokalnie z metadanymi
+    saveImageLocally(compressedImageDataUrl, {
+      resolution: `${canvas.width}x${canvas.height}`,
+      flashlight: flashlightOn ? 'Tak' : 'Nie',
+      source: 'Kamera AI'
+    });
+    
     setCapturedImage(compressedImageDataUrl);
+    
+    // Wyłącz latarkę po zrobieniu zdjęcia
+    if (flashlightOn) {
+      toggleFlashlight();
+    }
+    
     stopCamera();
   };
 
@@ -595,6 +689,15 @@ export default function ModelAIScanner({ isOpen, onClose, onModelDetected }) {
           context.drawImage(img, 0, 0);
           
           const compressedImageDataUrl = compressImage(canvas, 0.6, 600);
+          
+          // Zapisz zdjęcie z galerii lokalnie
+          saveImageLocally(compressedImageDataUrl, {
+            fileName: file.name,
+            size: Math.round(file.size / 1024) + ' KB',
+            source: 'Galeria AI',
+            resolution: `${img.width}x${img.height}`
+          });
+          
           setCapturedImage(compressedImageDataUrl);
           stopCamera();
         };
@@ -621,6 +724,7 @@ export default function ModelAIScanner({ isOpen, onClose, onModelDetected }) {
   useEffect(() => {
     if (isOpen && !capturedImage) {
       initCamera();
+      loadSavedImages(); // Wczytaj zapisane zdjęcia
     }
 
     return () => {
@@ -705,7 +809,9 @@ export default function ModelAIScanner({ isOpen, onClose, onModelDetected }) {
               </div>
 
               {/* Przyciski kontrolne */}
-              <div className="flex justify-center space-x-4">
+              <div className="space-y-4">
+                {/* Główne przyciski */}
+                <div className="flex justify-center space-x-4">
                   <button
                     onClick={capturePhoto}
                     disabled={!!cameraError || !stream}
@@ -713,13 +819,43 @@ export default function ModelAIScanner({ isOpen, onClose, onModelDetected }) {
                   >
                     <FiCamera className="h-5 w-5 mr-2" />
                     Zrób zdjęcie
-                  </button>                <button
-                  onClick={() => fileInputRef.current?.click()}
-                  className="flex items-center px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white rounded-lg font-medium transition-colors"
-                >
-                  <FiCamera className="h-5 w-5 mr-2" />
-                  Z galerii
-                </button>
+                  </button>
+                  
+                  <button
+                    onClick={() => fileInputRef.current?.click()}
+                    className="flex items-center px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white rounded-lg font-medium transition-colors"
+                  >
+                    <FiImage className="h-5 w-5 mr-2" />
+                    Z galerii
+                  </button>
+                </div>
+                
+                {/* Dodatkowe opcje */}
+                <div className="flex justify-center space-x-2">
+                  {!cameraError && stream && (
+                    <button
+                      onClick={toggleFlashlight}
+                      className={`flex items-center px-4 py-2 rounded-lg font-medium transition-colors ${
+                        flashlightOn 
+                          ? 'bg-yellow-500 hover:bg-yellow-600 text-white' 
+                          : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
+                      }`}
+                    >
+                      <FiZap className="h-4 w-4 mr-1" />
+                      {flashlightOn ? 'Wyłącz latarkę' : 'Włącz latarkę'}
+                    </button>
+                  )}
+                  
+                  {savedImages.length > 0 && (
+                    <button
+                      onClick={() => setShowSavedImages(!showSavedImages)}
+                      className="flex items-center px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-medium transition-colors"
+                    >
+                      <FiGrid className="h-4 w-4 mr-1" />
+                      Zapisane ({savedImages.length})
+                    </button>
+                  )}
+                </div>
               </div>
 
               <input
@@ -729,6 +865,63 @@ export default function ModelAIScanner({ isOpen, onClose, onModelDetected }) {
                 onChange={handleFileSelect}
                 className="hidden"
               />
+              
+              {/* Galeria zapisanych zdjęć */}
+              {showSavedImages && savedImages.length > 0 && (
+                <div className="border rounded-lg p-4 bg-purple-50">
+                  <div className="flex justify-between items-center mb-3">
+                    <h3 className="font-semibold text-gray-800">
+                      <FiGrid className="inline mr-2" />
+                      Ostatnio zrobione zdjęcia ({savedImages.length}/10)
+                    </h3>
+                    <button
+                      onClick={() => setShowSavedImages(false)}
+                      className="text-gray-500 hover:text-gray-700"
+                    >
+                      <FiX className="h-4 w-4" />
+                    </button>
+                  </div>
+                  
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 max-h-60 overflow-y-auto">
+                    {savedImages.map((imageInfo) => (
+                      <div key={imageInfo.id} className="relative group border rounded-lg overflow-hidden">
+                        <img
+                          src={imageInfo.imageData}
+                          alt={`Zapisane zdjęcie ${new Date(imageInfo.timestamp).toLocaleString()}`}
+                          className="w-full h-20 object-cover cursor-pointer hover:opacity-75 transition-opacity"
+                          onClick={() => selectSavedImage(imageInfo)}
+                        />
+                        
+                        {/* Overlay z informacjami */}
+                        <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-opacity flex items-center justify-center">
+                          <div className="text-white text-xs text-center opacity-0 group-hover:opacity-100 transition-opacity">
+                            <div>{new Date(imageInfo.timestamp).toLocaleDateString()}</div>
+                            <div>{new Date(imageInfo.timestamp).toLocaleTimeString().slice(0, 5)}</div>
+                            {imageInfo.metadata?.source && (
+                              <div className="text-xs opacity-75">{imageInfo.metadata.source}</div>
+                            )}
+                          </div>
+                        </div>
+                        
+                        {/* Przycisk usuwania */}
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            deleteSavedImage(imageInfo.id);
+                          }}
+                          className="absolute top-1 right-1 bg-red-500 hover:bg-red-600 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                        >
+                          <FiTrash2 className="h-3 w-3" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                  
+                  <div className="text-xs text-gray-500 mt-2 text-center">
+                    💾 Kliknij na zdjęcie aby je wybrać • Zdjęcia są zapisane lokalnie w przeglądarce
+                  </div>
+                </div>
+              )}
             </div>
           ) : (
             <div className="space-y-4">

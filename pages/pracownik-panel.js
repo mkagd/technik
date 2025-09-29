@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
+import EmployeeTodoPanel from '../components/EmployeeTodoPanel';
 import { 
   FiCalendar, 
   FiClock, 
@@ -27,7 +28,8 @@ import {
   FiUsers,
   FiZap,
   FiChevronDown,
-  FiMenu
+  FiMenu,
+  FiList
 } from 'react-icons/fi';
 
 export default function PracownikPanel() {
@@ -39,6 +41,7 @@ export default function PracownikPanel() {
   const [isLoading, setIsLoading] = useState(true);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const [activeTab, setActiveTab] = useState('dashboard');
   const router = useRouter();
 
   useEffect(() => {
@@ -376,11 +379,44 @@ export default function PracownikPanel() {
         </div>
       </header>
 
+      {/* Navigation Tabs */}
+      <div className="bg-white border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <nav className="flex space-x-8">
+            <button
+              onClick={() => setActiveTab('dashboard')}
+              className={`py-4 px-1 border-b-2 font-medium text-sm ${
+                activeTab === 'dashboard'
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              <FiHome className="inline-block w-4 h-4 mr-2" />
+              Dashboard
+            </button>
+            <button
+              onClick={() => setActiveTab('todos')}
+              className={`py-4 px-1 border-b-2 font-medium text-sm ${
+                activeTab === 'todos'
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              <FiList className="inline-block w-4 h-4 mr-2" />
+              Moje TODO
+            </button>
+          </nav>
+        </div>
+      </div>
+
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         
-        {/* Quick Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
+        {/* Dashboard Content */}
+        {activeTab === 'dashboard' && (
+          <>
+            {/* Quick Stats */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
           <div className="bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg shadow p-6 text-white">
             <div className="flex items-center">
               <FiCheckCircle className="h-8 w-8 mr-3" />
@@ -669,6 +705,16 @@ export default function PracownikPanel() {
             </div>
           </div>
         </div>
+        </>
+        )}
+
+        {/* TODO Content */}
+        {activeTab === 'todos' && employee && (
+          <EmployeeTodoPanel 
+            employeeId={employee.id}
+            employeeName={employee.name}
+          />
+        )}
       </main>
     </div>
   );

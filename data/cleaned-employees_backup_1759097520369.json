@@ -1,0 +1,52 @@
+[
+  {
+    "id": "EMP25189001",
+    "name": "Jan Kowalski",
+    "email": "jan.kowalski@techserwis.pl",
+    "phone": "+48 123 456 789",
+    "specializations": [
+      "Serwis AGD",
+      "Naprawa pralek"
+    ],
+    "isActive": true,
+    "dateAdded": "2025-07-08T22:25:15.180Z",
+    "address": "Warszawa",
+    "workingHours": "8:00-16:00",
+    "experience": "5 lat",
+    "rating": 4.8,
+    "completedJobs": 245
+  },
+  {
+    "id": "EMP25189002",
+    "name": "Anna Nowak",
+    "email": "anna.nowak@techserwis.pl",
+    "phone": "+48 987 654 321",
+    "specializations": [
+      "Serwis komputerowy",
+      "Naprawa laptopów"
+    ],
+    "isActive": true,
+    "dateAdded": "2025-07-08T22:25:15.180Z",
+    "address": "Kraków",
+    "workingHours": "9:00-17:00",
+    "experience": "3 lata",
+    "rating": 4.9,
+    "completedJobs": 189
+  },
+  {
+    "id": "EMP25189003",
+    "name": "asf",
+    "email": "bielaszkm2@gmail.com",
+    "phone": "123123123",
+    "specializations": [
+      "123"
+    ],
+    "isActive": true,
+    "dateAdded": "2025-07-08T22:25:15.182Z",
+    "address": "12",
+    "workingHours": "123",
+    "experience": "123",
+    "rating": 5,
+    "completedJobs": 0
+  }
+]
