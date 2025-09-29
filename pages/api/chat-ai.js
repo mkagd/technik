@@ -5,17 +5,18 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Tylko POST dozwolone' });
   }
 
-  const { message, userInfo, orderInProgress, orderData } = req.body;
+  const { message, userInfo, orderInProgress, orderData, accountSetup } = req.body;
 
   if (!message) {
     return res.status(400).json({ error: 'Wiadomość jest wymagana' });
   }
 
   try {
-    const response = getBotResponse(message.toLowerCase(), userInfo, orderInProgress, orderData);
+    const response = getBotResponse(message.toLowerCase(), userInfo, orderInProgress, orderData, accountSetup);
     return res.status(200).json({ 
       response: response.message,
-      orderUpdate: response.orderUpdate || null
+      orderUpdate: response.orderUpdate || null,
+      accountUpdate: response.accountUpdate || null
     });
   } catch (error) {
     console.error('Błąd chat:', error);
@@ -26,8 +27,13 @@ export default async function handler(req, res) {
 }
 
 // PROSTY BOT - jak rozmawiałby normalny człowiek
-function getBotResponse(message, userInfo, orderInProgress, orderData) {
+function getBotResponse(message, userInfo, orderInProgress, orderData, accountSetup) {
   const name = userInfo?.name ? userInfo.name.split(' ')[0] : '';
+  
+  // PROCES ZAKŁADANIA KONTA
+  if (accountSetup) {
+    return handleAccountProcess(message, name, userInfo, accountSetup);
+  }
   
   // PROCES ZAMÓWIENIA SERWISU
   if (orderInProgress && orderData) {
@@ -39,27 +45,9 @@ function getBotResponse(message, userInfo, orderInProgress, orderData) {
       message.toLowerCase().includes('konto') || message.toLowerCase().includes('rejestracja') ||
       message.toLowerCase().includes('zarejestruj')) {
     return { 
-      message: `Świetnie ${name}! 🎉 Założenie konta daje Ci wiele korzyści:\n\n✅ **KORZYŚCI KONTA:**\n📋 **Historia napraw** - dostęp do wszystkich wcześniejszych zleceń\n⚡ **Szybsze zamawianie** - zapisane dane kontaktowe\n🔔 **Powiadomienia** - SMS o statusie naprawy\n💰 **Rabaty stałego klienta** - zniżki na kolejne naprawy\n📊 **Panel klienta** - podgląd kosztów i terminów\n\n🔐 **ZAŁOŻENIE KONTA:**\n1️⃣ **Twoje dane:** ${userInfo?.name || 'Imię'}, ${userInfo?.email || 'email@przykład.pl'}\n2️⃣ **Hasło:** Wymyśl bezpieczne hasło\n3️⃣ **Potwierdzenie:** SMS lub email\n\n**Chcesz założyć konto teraz?** 📱\n• Napisz **"TAK"** żeby kontynuować\n• **"PÓŹNIEJ"** żeby założyć po naprawie\n\n💡 *Możesz też założyć konto na stronie: www.technik-serwis.pl/konto*`,
-      accountSetup: true
-    };
-  }
-
-  // KONTYNUACJA ZAKŁADANIA KONTA
-  if (userInfo && (message.toLowerCase().includes('tak') && message.includes('konto'))) {
-    return {
-      message: `Świetnie ${name}! 🎯 Zakładam Twoje konto...\n\n📝 **DANE DO KONTA:**\n• **Imię:** ${userInfo.name}\n• **Email:** ${userInfo.email}\n• **Telefon:** ${userInfo.phone || 'Podaj numer telefonu'}\n\n🔐 **OSTATNI KROK:**\nWymyśl hasło (minimum 6 znaków):\n\n**Napisz swoje hasło:** 🔒\n\n💡 *Bezpieczne hasło powinno zawierać litery i cyfry*`,
-      accountSetup: 'password'
-    };
-  }
-
-  // FINALIZACJA ZAKŁADANIA KONTA
-  if (userInfo && message.length >= 6 && !message.includes(' ') && 
-      (message.toLowerCase().includes('hasło') || message.match(/^[a-zA-Z0-9!@#$%^&*]{6,}$/))) {
-    const accountId = `ACC${Date.now()}`;
-    return {
-      message: `🎉 **KONTO ZAŁOŻONE POMYŚLNIE!** 🎉\n\n✅ **Twoje dane:**\n👤 **Nazwa użytkownika:** ${userInfo.name.toLowerCase().replace(' ', '.')}\n📧 **Email:** ${userInfo.email}\n🆔 **ID konta:** ${accountId}\n\n📱 **CO DALEJ:**\n• Na email wysłałem link aktywacyjny\n• Kliknij link żeby aktywować konto\n• Zaloguj się na: www.technik-serwis.pl/login\n\n✨ **GRATULACJE ${name.toUpperCase()}!**\nTeraz masz dostęp do panelu klienta! 🎯\n\n💬 **Mogę jeszcze w czymś pomóc?**\n• Zamówić naprawę\n• Sprawdzić cennik\n• Odpowiedzieć na pytania`,
-      accountCreated: true,
-      accountId: accountId
+      message: `Świetnie ${name}! 🎉 Założenie konta daje Ci wiele korzyści:\n\n✅ **KORZYŚCI KONTA:**\n📋 **Historia napraw** - dostęp do wszystkich wcześniejszych zleceń\n⚡ **Szybsze zamawianie** - zapisane dane kontaktowe\n🔔 **Powiadomienia** - SMS o statusie naprawy\n💰 **Rabaty stałego klienta** - zniżki na kolejne naprawy\n📊 **Panel klienta** - podgląd kosztów i terminów\n\n🎯 **KREATOR KONTA:**\n**Kliknij przycisk "👤 Załóż konto"** poniżej czatu - otworzy się wygodny kreator!\n\n🔐 **SZYBKI SPOSÓB (tutaj w czacie):**\n• Napisz **"TAK"** żeby założyć przez chat\n• **"PÓŹNIEJ"** żeby założyć po naprawie\n\n💡 *Kreator jest wygodniejszy - polecam!* 😊`,
+      accountUpdate: { step: 'offer' },
+      openWizard: true
     };
   }
   
@@ -72,12 +60,47 @@ function getBotResponse(message, userInfo, orderInProgress, orderData) {
     return { message: `${name}, koszt zależy od usterki:\n\n💰 **Dojazd:** GRATIS (w promocji!)\n💰 **Diagnoza:** GRATIS\n💰 **Naprawa:** zazwyczaj 100-250zł\n\n🔧 Dopiero po obejrzeniu powiem dokładną cenę. Czy to OK?\n📞 Tel: +48 123 456 789` };
   }
 
-  // ZAMÓWIENIE NAPRAWY - START PROCESU
+  // ZAMÓWIENIE NAPRAWY - START PROCESU Z OPCJĄ AUTO-REZERWACJI
   if (message.includes('chcę') || message.includes('potrzebuję') || message.includes('zamów')) {
-    return {
-      message: `Super ${name}! 🎯 Rozpoczynam proces zamówienia naprawy!\n\n🔧 **Co się zepsuło?**\n\n• Pralka 🔧\n• Lodówka ❄️\n• Zmywarka 🍽️\n• Piekarnik 🔥\n• Kuchenka/Płyta 🔥\n• Mikrofalówka ⚡\n• Suszarka 🌪️\n• Okap 💨\n• Ekspres ☕\n\n**Napisz nazwę urządzenia** - nie przejmuj się literówkami! 😊`,
-      orderUpdate: { step: 1 }
-    };
+    // Sprawdź czy użytkownik jest zalogowany
+    const isLoggedIn = userInfo && userInfo.isLoggedIn;
+    
+    if (isLoggedIn) {
+      // Wiadomość dla zalogowanych użytkowników z opcją AI
+      return {
+        message: `📋 **NOWE ZLECENIE SERWISOWE**\n\n🤖 **NOWA OPCJA: AUTO-REZERWACJA Z AI!**\n✨ **Sztuczna inteligencja przeanalizuje problem i wyceni naprawę**\n🚀 **Automatyczne tworzenie zlecenia w 4 krokach**\n\n**WYBIERZ SPOSÓB ZAMÓWIENIA:**\n\n🤖 **[AUTO-REZERWACJA]** - **POLECANE!**\n• AI analizuje problem\n• Automatyczna wycena\n• Inteligentne planowanie\n• Szybsza obsługa\n\n� **[CHAT TRADYCYJNY]**\n• Rozmowa krok po kroku\n• Ręczne wypełnianie\n• Standardowy proces\n\n**Napisz:**\n• **"AUTO"** lub **"AI"** dla auto-rezerwacji 🤖\n• **"CHAT"** dla tradycyjnego formularza 💬\n\n✅ **Twoje dane są już w systemie - oba sposoby będą szybkie!**`,
+        orderUpdate: { step: 'choose-method' },
+        showAutoReservationButton: true
+      };
+    } else {
+      // Wiadomość dla niezalogowanych użytkowników
+      return {
+        message: `Super ${name}! 🎯 Mamy dla Ciebie dwie opcje zamówienia:\n\n🤖 **AUTO-REZERWACJA Z AI** - **NOWOŚĆ!**\n✨ **Sztuczna inteligencja przeanalizuje problem**\n🎯 **Automatyczna diagnoza i wycena**\n⚡ **Szybsze i dokładniejsze zamówienie**\n\n💬 **TRADYCYJNY CHAT**\n👨‍💼 **Rozmowa ze mną krok po kroku**\n📝 **Ręczne wypełnianie formularza**\n\n**WYBIERZ:**\n• **"AUTO"** lub **"AI"** - auto-rezerwacja 🤖\n• **"CHAT"** - tradycyjny sposób 💬\n\n💡 **Polecam AUTO-REZERWACJĘ** - szybsza i dokładniejsza! 😊`,
+        orderUpdate: { step: 'choose-method' },
+        showAutoReservationButton: true
+      };
+    }
+  }
+
+  // OBSŁUGA WYBORU METODY ZAMÓWIENIA
+  if (orderInProgress && orderData?.step === 'choose-method') {
+    if (message.toLowerCase().includes('auto') || message.toLowerCase().includes('ai')) {
+      return {
+        message: `Świetny wybór ${name}! 🤖\n\n🚀 **PRZEKIEROWUJĘ DO AUTO-REZERWACJI**\n\n✨ **Co Cię czeka:**\n• Inteligentna analiza problemu\n• Automatyczna diagnoza AI\n• Precyzyjna wycena kosztów\n• Szybkie utworzenie zlecenia\n\n**Kliknij przycisk "🤖 Auto-Rezerwacja"** poniżej lub przejdź na stronę auto-rezerwacji!\n\n📱 **Link:** /auto-rezerwacja\n\n💡 *System wypełni dane automatycznie jeśli jesteś zalogowany*`,
+        orderUpdate: { step: null },
+        redirectToAutoReservation: true
+      };
+    } else if (message.toLowerCase().includes('chat') || message.toLowerCase().includes('tradycyjny')) {
+      return {
+        message: `OK ${name}! Robimy to w tradycyjny sposób 💬\n\n🔧 **Co się zepsuło?**\n\n• Pralka 🔧\n• Lodówka ❄️\n• Zmywarka 🍽️\n• Piekarnik 🔥\n• Kuchenka/Płyta 🔥\n• Mikrofalówka ⚡\n• Suszarka 🌪️\n• Okap 💨\n• Ekspres ☕\n\n**Napisz nazwę urządzenia** - nie przejmuj się literówkami! 😊`,
+        orderUpdate: { step: 1 }
+      };
+    } else {
+      return {
+        message: `${name}, wybierz jedną z opcji:\n\n🤖 **"AUTO"** - auto-rezerwacja z AI (POLECANE!)\n💬 **"CHAT"** - tradycyjny formularz\n\n💡 *Auto-rezerwacja jest szybsza i dokładniejsza dzięki AI!*`,
+        orderUpdate: { step: 'choose-method' }
+      };
+    }
   }
 
   // ROZPOZNAWANIE URZĄDZEŃ Z OBSŁUGĄ LITERÓWEK
@@ -167,13 +190,89 @@ function getBotResponse(message, userInfo, orderInProgress, orderData) {
   }
 
   // DOMYŚLNE ODPOWIEDZI
-  const defaults = [
-    `Cześć ${name}! 😊 Jestem serwisantem AGD. Co się zepsuło?\n\n🔧 Naprawiam: pralki, lodówki, zmywarki\n📞 Telefon: +48 123 456 789`,
-    `Hej ${name}! Masz problem z AGD? 🛠️\n\nPowiedz mi:\n• Co się zepsuło?\n• Gdzie mieszkasz?\n• Kiedy Ci pasuje?\n\nI od razu się umówimy! 😊`,
-    `${name}, potrzebujesz naprawy? 🎯\n\n✅ Szybko, uczciwie, tanio\n✅ Gwarancja na naprawę\n✅ Dojazd GRATIS w promocji\n\n📞 Zadzwoń: +48 123 456 789`
-  ];
+  const isLoggedIn = userInfo && userInfo.isLoggedIn;
   
-  return { message: defaults[Math.floor(Math.random() * defaults.length)] };
+  if (isLoggedIn) {
+    // Odpowiedzi dla zalogowanych użytkowników
+    const loggedDefaults = [
+      `🔧 **W czym mogę Ci pomóc, ${name}?**\n\n📋 **Dostępne opcje:**\n• **"zamów naprawę"** - nowe zlecenie serwisowe\n• **"historia"** - poprzednie naprawy\n• **"cennik"** - aktualne ceny usług\n• **"kontakt"** - informacje kontaktowe\n\n💡 *Twoje dane są już w systemie - zamówienie będzie szybsze!*`,
+      `Dzień dobry ${name}! 👋\n\n🎯 **Panel klienta jest aktywny**\n\n📞 **Szybkie akcje:**\n• Napisz **"naprawa"** - zamów serwis\n• **"faktury"** - dokumenty księgowe\n• **"ustawienia"** - zarządzanie kontem\n\n✅ **Jako zalogowany klient masz priorytet w obsłudze!**`,
+      `Witaj ${name}! 😊\n\n💼 **Panel klienta dostępny**\n\n🔧 **Co dzisiaj potrzebujesz?**\n• Nowe zlecenie serwisowe\n• Sprawdzenie statusu naprawy\n• Informacje o cenach\n• Zarządzanie kontem\n\n⚡ **Zalogowani klienci mają szybszą obsługę!**`
+    ];
+    return { message: loggedDefaults[Math.floor(Math.random() * loggedDefaults.length)] };
+  } else {
+    // Odpowiedzi dla niezalogowanych użytkowników
+    const defaults = [
+      `Cześć ${name}! 😊 Jestem serwisantem AGD. Co się zepsuło?\n\n🔧 Naprawiam: pralki, lodówki, zmywarki\n📞 Telefon: +48 123 456 789`,
+      `Hej ${name}! Masz problem z AGD? 🛠️\n\nPowiedz mi:\n• Co się zepsuło?\n• Gdzie mieszkasz?\n• Kiedy Ci pasuje?\n\nI od razu się umówimy! 😊`,
+      `${name}, potrzebujesz naprawy? 🎯\n\n✅ Szybko, uczciwie, tanio\n✅ Gwarancja na naprawę\n✅ Dojazd GRATIS w promocji\n\n📞 Zadzwoń: +48 123 456 789`
+    ];
+    return { message: defaults[Math.floor(Math.random() * defaults.length)] };
+  }
+}
+
+// OBSŁUGA PROCESU ZAKŁADANIA KONTA
+function handleAccountProcess(message, name, userInfo, accountSetup) {
+  // Krok 1: Potwierdzenie chęci założenia konta
+  if (accountSetup === 'offer' && message.toLowerCase().includes('tak')) {
+    return {
+      message: `Świetnie ${name}! 🎯 Zakładam Twoje konto...\n\n📝 **DANE DO KONTA:**\n• **Imię:** ${userInfo?.name || 'Potrzebuję Twoje imię'}\n• **Email:** ${userInfo?.email || 'Potrzebuję Twój email'}\n• **Telefon:** ${userInfo?.phone || 'Podaj numer telefonu'}\n\n🔐 **OSTATNI KROK:**\nWymyśl hasło (minimum 6 znaków):\n\n**Napisz swoje hasło:** 🔒\n\n💡 *Bezpieczne hasło powinno zawierać litery i cyfry*`,
+      accountUpdate: { step: 'password' }
+    };
+  }
+  
+  // Krok 2: Wpisanie hasła
+  if (accountSetup === 'password' && message.length >= 6 && !message.includes(' ')) {
+    const accountId = `ACC${Date.now()}`;
+    return {
+      message: `🎉 **KONTO ZAŁOŻONE POMYŚLNIE!** 🎉\n\n✅ **Twoje dane:**\n👤 **Nazwa użytkownika:** ${userInfo?.name?.toLowerCase().replace(' ', '.') || 'user'}\n📧 **Email:** ${userInfo?.email || 'email@example.com'}\n🆔 **ID konta:** ${accountId}\n\n📱 **CO DALEJ:**\n• Na email wysłałem link aktywacyjny\n• Kliknij link żeby aktywować konto\n\n✨ **GRATULACJE ${name.toUpperCase()}!**\n\n🔐 **CHCESZ SIĘ TERAZ ZALOGOWAĆ?**\n• Napisz **"ZALOGUJ"** żeby się zalogować\n• **"PÓŹNIEJ"** żeby zalogować się później\n\n💡 *Po zalogowaniu będziesz mieć dostęp do panelu klienta!*`,
+      accountUpdate: { step: 'ask-login', accountId: accountId, password: message }
+    };
+  }
+
+  // Krok 3: Pytanie o logowanie po założeniu konta
+  if (accountSetup === 'ask-login') {
+    if (message.toLowerCase().includes('zaloguj') || message.toLowerCase().includes('tak')) {
+      return {
+        message: `Świetnie ${name}! 🎯 Loguję Cię do systemu...\n\n🔐 **LOGOWANIE W TOKU:**\n• Sprawdzam dane logowania...\n• Aktywuję sesję użytkownika...\n• Ładuję panel klienta...\n\n✅ **ZALOGOWANO POMYŚLNIE!**\n\n🎉 **Witaj w panelu klienta!**\n📋 **Dostępne opcje:**\n• Historia napraw\n• Nowe zamówienie serwisu\n• Ustawienia konta\n• Faktury i płatności\n\n💬 **Co chcesz zrobić?**\n• "zamów naprawę" - nowe zlecenie\n• "historia" - poprzednie naprawy\n• "ustawienia" - zarządzanie kontem`,
+        accountUpdate: { step: 'logged-in', isLoggedIn: true }
+      };
+    }
+    
+    if (message.toLowerCase().includes('później') || message.toLowerCase().includes('nie')) {
+      return {
+        message: `Rozumiem ${name}! 😊\n\n✅ **Konto utworzone** - możesz się zalogować później\n📧 **Link aktywacyjny** wysłany na email\n� **Logowanie:** www.technik-serwis.pl/login\n\n💬 **W czym mogę Ci jeszcze pomóc?**\n• Zamówić naprawę\n• Sprawdzić cennik\n• Odpowiedzieć na pytania\n• Wyjaśnić jak działa panel klienta`,
+        accountUpdate: { step: 'completed' }
+      };
+    }
+    
+    return {
+      message: `${name}, nie rozumiem. 🤔\n\n**Chcesz się zalogować do nowego konta?**\n• Napisz **"ZALOGUJ"** żeby się zalogować teraz\n• **"PÓŹNIEJ"** żeby zalogować się później\n\n💡 *Po zalogowaniu będziesz mieć dostęp do panelu klienta!*`,
+      accountUpdate: { step: 'ask-login' }
+    };
+  }
+  
+  // Jeśli hasło za krótkie
+  if (accountSetup === 'password' && message.length < 6) {
+    return {
+      message: `${name}, hasło jest za krótkie! 🔒\n\n❌ **Twoje hasło:** "${message}" (${message.length} znaków)\n✅ **Wymagane:** minimum 6 znaków\n\n💡 **Przykłady dobrych haseł:**\n• "technik123"\n• "naprawa2024"\n• "serwis456"\n\n**Spróbuj ponownie - napisz hasło:**`,
+      accountUpdate: { step: 'password' }
+    };
+  }
+  
+  // Anulowanie procesu
+  if (message.toLowerCase().includes('anuluj') || message.toLowerCase().includes('później')) {
+    return {
+      message: `Rozumiem ${name}! 😊\n\nProces zakładania konta został przerwany.\n\n💡 **Możesz założyć konto później:**\n• Napisz "załóż konto"\n• Kliknij przycisk "👤 Załóż konto"\n\n💬 **W czym mogę Ci jeszcze pomóc?**`,
+      accountUpdate: { step: null }
+    };
+  }
+  
+  // Domyślna odpowiedź
+  return {
+    message: `${name}, nie rozumiem. 🤔\n\n**Proces zakładania konta:**\n• Napisz **"TAK"** żeby kontynuować\n• **"ANULUJ"** żeby przerwać\n• **"PÓŹNIEJ"** żeby założyć konto później`,
+    accountUpdate: { step: accountSetup }
+  };
 }
 
 // OBSŁUGA PROCESU ZAMÓWIENIA KROK PO KROKU

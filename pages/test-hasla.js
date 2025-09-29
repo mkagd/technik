@@ -21,7 +21,7 @@ export default function TestHasla() {
                 const exists = existingUsers.find(existing => existing.email === user.email);
                 if (!exists) {
                     existingUsers.push({
-                        id: dataManager.generateId(),
+                        id: dataManager.generateId('USER'),
                         ...user,
                         role: user.email.includes('admin') ? 'admin' : 'customer',
                         isActive: true,

@@ -1,0 +1,392 @@
+{
+  "enhancedClientStructure": {
+    "version": "2.0.0",
+    "updateDate": "2025-09-28",
+    "description": "Rozszerzona struktura klienta z multiple kontaktami, notatkami, tagami i dostępnością",
+    "compatibility": "Pełna kompatybilność wsteczna z wersją 1.0.0",
+    "baseFields": {
+      "id": {
+        "type": "string",
+        "required": true,
+        "format": "OLD{NUMBER} lub CLI{DATE}{NUMBER}",
+        "description": "Unikalny identyfikator klienta"
+      },
+      "name": {
+        "type": "string", 
+        "required": true,
+        "description": "Pełna nazwa klienta lub firmy"
+      },
+      "phone": {
+        "type": "string",
+        "required": true,
+        "description": "Główny numer telefonu (dla kompatybilności)"
+      },
+      "email": {
+        "type": "string",
+        "required": false,
+        "description": "Główny adres email"
+      },
+      "address": {
+        "type": "string",
+        "required": true, 
+        "description": "Główny adres (dla kompatybilności)"
+      },
+      "city": {
+        "type": "string",
+        "required": false,
+        "description": "Miasto (dla kompatybilności)"
+      },
+      "street": {
+        "type": "string",
+        "required": false,
+        "description": "Ulica (dla kompatybilności)"
+      },
+      "dateAdded": {
+        "type": "string",
+        "format": "ISO 8601",
+        "required": true,
+        "description": "Data dodania klienta"
+      }
+    },
+    "enhancedFields": {
+      "phones": {
+        "type": "array",
+        "description": "Lista numerów telefonów z dodatkowymi informacjami",
+        "items": {
+          "number": {
+            "type": "string",
+            "required": true,
+            "description": "Numer telefonu"
+          },
+          "label": {
+            "type": "string", 
+            "required": true,
+            "examples": ["Komórka", "Domowy", "Praca", "Fax"],
+            "description": "Etykieta opisująca typ numeru"
+          },
+          "isPrimary": {
+            "type": "boolean",
+            "default": false,
+            "description": "Czy to główny numer kontaktowy"
+          },
+          "notes": {
+            "type": "string",
+            "required": false,
+            "description": "Dodatkowe notatki o numerze"
+          }
+        },
+        "example": [
+          {
+            "number": "123456789",
+            "label": "Komórka",
+            "isPrimary": true,
+            "notes": "Najlepszy kontakt po 16:00"
+          }
+        ]
+      },
+      "addresses": {
+        "type": "array",
+        "description": "Lista adresów z dodatkowymi informacjami",
+        "items": {
+          "address": {
+            "type": "string",
+            "required": true,
+            "description": "Pełny adres"
+          },
+          "label": {
+            "type": "string",
+            "required": true, 
+            "examples": ["Dom", "Praca", "Magazyn", "Biuro"],
+            "description": "Etykieta opisująca typ adresu"
+          },
+          "isPrimary": {
+            "type": "boolean",
+            "default": false,
+            "description": "Czy to główny adres"
+          },
+          "coordinates": {
+            "type": "object",
+            "properties": {
+              "lat": {"type": "number"},
+              "lng": {"type": "number"}
+            },
+            "required": false,
+            "description": "Współrzędne geograficzne"
+          },
+          "notes": {
+            "type": "string",
+            "required": false,
+            "description": "Dodatkowe informacje o adresie"
+          }
+        }
+      },
+      "notes": {
+        "type": "array",
+        "description": "Lista notatek z metadanymi",
+        "items": {
+          "id": {
+            "type": "string",
+            "required": true,
+            "description": "Unikalny identyfikator notatki"
+          },
+          "content": {
+            "type": "string",
+            "required": true,
+            "description": "Treść notatki"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["general", "contact", "technical", "payment", "complaint"],
+            "description": "Typ notatki"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "ISO 8601",
+            "required": true,
+            "description": "Data utworzenia notatki"
+          },
+          "createdBy": {
+            "type": "string",
+            "required": true,
+            "description": "Kto utworzył notatkę"
+          }
+        }
+      },
+      "tags": {
+        "type": "array",
+        "items": {"type": "string"},
+        "description": "Lista tagów kategoryzujących klienta",
+        "examples": ["VIP", "Stały klient", "Firma", "Problematyczny", "Płatność gotówką"]
+      },
+      "availability": {
+        "type": "object",
+        "description": "Harmonogram dostępności klienta",
+        "properties": {
+          "workingHours": {
+            "type": "array",
+            "description": "Standardowe godziny dostępności w tygodniu",
+            "items": {
+              "dayOfWeek": {
+                "type": "string",
+                "enum": ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
+              },
+              "periods": {
+                "type": "array",
+                "items": {
+                  "from": {"type": "string", "format": "HH:MM"},
+                  "to": {"type": "string", "format": "HH:MM"},
+                  "label": {"type": "string", "examples": ["Rano", "Po pracy", "Weekend"]}
+                }
+              }
+            }
+          },
+          "specialAvailability": {
+            "type": "array",
+            "description": "Specjalne terminy dostępności",
+            "items": {
+              "date": {"type": "string", "format": "YYYY-MM-DD"},
+              "periods": {"type": "array"},
+              "note": {"type": "string"}
+            }
+          },
+          "unavailableDates": {
+            "type": "array",
+            "items": {"type": "string", "format": "YYYY-MM-DD"},
+            "description": "Daty niedostępności"
+          },
+          "preferredContactTime": {
+            "type": "string",
+            "description": "Preferowany czas kontaktu"
+          },
+          "notes": {
+            "type": "string",
+            "description": "Dodatkowe uwagi o dostępności"
+          }
+        }
+      },
+      "companyInfo": {
+        "type": "object",
+        "description": "Informacje o firmie (jeśli klient to firma)",
+        "properties": {
+          "isCompany": {"type": "boolean"},
+          "companyName": {"type": "string"},
+          "nip": {"type": "string"},
+          "regon": {"type": "string"},
+          "krs": {"type": "string"}
+        }
+      },
+      "preferences": {
+        "type": "object",
+        "description": "Preferencje klienta",
+        "properties": {
+          "preferredPaymentMethod": {
+            "type": "string",
+            "enum": ["cash", "transfer", "card", "invoice"],
+            "description": "Preferowany sposób płatności"
+          },
+          "invoiceRequired": {
+            "type": "boolean",
+            "description": "Czy klient wymaga faktury"
+          },
+          "preferredCommunication": {
+            "type": "string",
+            "enum": ["phone", "email", "sms"],
+            "description": "Preferowany sposób komunikacji"
+          },
+          "language": {
+            "type": "string",
+            "default": "pl",
+            "description": "Preferowany język komunikacji"
+          }
+        }
+      },
+      "stats": {
+        "type": "object",
+        "description": "Statystyki klienta",
+        "properties": {
+          "totalOrders": {"type": "number", "description": "Łączna liczba zamówień"},
+          "completedOrders": {"type": "number", "description": "Liczba zakończonych zamówień"},
+          "cancelledOrders": {"type": "number", "description": "Liczba anulowanych zamówień"},
+          "averageOrderValue": {"type": "number", "description": "Średnia wartość zamówienia"},
+          "lastOrderDate": {"type": "string", "format": "ISO 8601", "description": "Data ostatniego zamówienia"},
+          "customerSince": {"type": "string", "format": "ISO 8601", "description": "Klient od kiedy"}
+        }
+      },
+      "contactHistory": {
+        "type": "array",
+        "description": "Historia kontaktów z klientem",
+        "items": {
+          "id": {"type": "string", "required": true},
+          "date": {"type": "string", "format": "ISO 8601", "required": true},
+          "type": {
+            "type": "string", 
+            "enum": ["phone_call", "email", "sms", "meeting", "note"],
+            "required": true
+          },
+          "direction": {
+            "type": "string",
+            "enum": ["incoming", "outgoing", "system"],
+            "required": false
+          },
+          "duration": {"type": "number", "description": "Czas trwania w sekundach"},
+          "notes": {"type": "string", "description": "Notatki z kontaktu"},
+          "result": {
+            "type": "string",
+            "examples": ["appointment_scheduled", "information_provided", "problem_resolved", "logged"]
+          }
+        }
+      }
+    },
+    "migrationFields": {
+      "enhanced": {
+        "type": "boolean",
+        "default": false,
+        "description": "Czy klient został już rozszerzony"
+      },
+      "enhancedDate": {
+        "type": "string",
+        "format": "ISO 8601",
+        "description": "Data rozszerzenia struktury"
+      },
+      "enhancedVersion": {
+        "type": "string",
+        "description": "Wersja rozszerzenia"
+      }
+    },
+    "compatibilityNotes": [
+      "Wszystkie oryginalne pola (name, phone, email, address, city, street) zostają niezmienione",
+      "Pole 'phone' duplikuje się w phones[0].number z isPrimary: true",
+      "Pole 'address' duplikuje się w addresses[0].address z isPrimary: true",
+      "Istniejące aplikacje działają bez zmian",
+      "Nowe funkcje są opcjonalne i dodawane stopniowo"
+    ],
+    "exampleEnhancedClient": {
+      "name": "Jan Kowalski",
+      "phone": "123456789",
+      "email": "jan@example.com", 
+      "address": "Kraków, ul. Główna 1",
+      "city": "Kraków",
+      "street": "Główna 1",
+      "dateAdded": "2025-01-15T10:00:00.000Z",
+      "id": "CLI252710001",
+      "phones": [
+        {
+          "number": "123456789",
+          "label": "Komórka",
+          "isPrimary": true,
+          "notes": "Najlepszy kontakt po 16:00"
+        },
+        {
+          "number": "987654321",
+          "label": "Domowy",
+          "isPrimary": false,
+          "notes": "Tylko weekendy"  
+        }
+      ],
+      "addresses": [
+        {
+          "address": "Kraków, ul. Główna 1",
+          "label": "Dom",
+          "isPrimary": true,
+          "coordinates": {"lat": 50.0647, "lng": 19.9450},
+          "notes": "Główne miejsce zamieszkania"
+        }
+      ],
+      "notes": [
+        {
+          "id": "note1",
+          "content": "Stały klient, zawsze punktualny",
+          "type": "general",
+          "createdAt": "2025-01-15T10:00:00.000Z",
+          "createdBy": "system"
+        }
+      ],
+      "tags": ["VIP", "Stały klient", "Kraków"],
+      "availability": {
+        "workingHours": [
+          {
+            "dayOfWeek": "monday",
+            "periods": [{"from": "17:00", "to": "19:00", "label": "Po pracy"}]
+          }
+        ],
+        "preferredContactTime": "Po 17:00",
+        "notes": "Najlepiej dzwonić wieczorem"
+      },
+      "companyInfo": {
+        "isCompany": false,
+        "companyName": "",
+        "nip": "",
+        "regon": "",
+        "krs": ""
+      },
+      "preferences": {
+        "preferredPaymentMethod": "cash",
+        "invoiceRequired": false,
+        "preferredCommunication": "phone",
+        "language": "pl"
+      },
+      "stats": {
+        "totalOrders": 5,
+        "completedOrders": 4,
+        "cancelledOrders": 0,
+        "averageOrderValue": 250,
+        "lastOrderDate": "2025-01-10T00:00:00.000Z",
+        "customerSince": "2025-01-15T10:00:00.000Z"
+      },
+      "contactHistory": [
+        {
+          "id": "contact1",
+          "date": "2025-01-15T14:30:00.000Z",
+          "type": "phone_call",
+          "direction": "outgoing",
+          "duration": 180,
+          "notes": "Umówiono wizytę na piątek",
+          "result": "appointment_scheduled"
+        }
+      ],
+      "enhanced": true,
+      "enhancedDate": "2025-09-28T20:00:00.000Z",
+      "enhancedVersion": "2.0.0"
+    }
+  }
+}

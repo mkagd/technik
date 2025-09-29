@@ -14,17 +14,15 @@ class DataManager {
     // SYSTEM NUMERACJI
     // ===============================
 
-    // Generowanie unikalnego ID - ZASTĄPIONE NOWYM SYSTEMEM
-    generateId() {
-        // Import nowego systemu ID
-        const { generateGenericId } = require('../id-system-library');
-        
-        // Użyj nowego systemu dla różnych typów
+    // Generowanie unikalnego ID - NOWY SYSTEM UNIFIED
+    generateId(entityType = 'GENERIC') {
         try {
-            return generateGenericId('reports'); // Domyślnie dla raportów
+            const { generateUnifiedID } = require('../scripts/unified-id-system');
+            return generateUnifiedID(entityType);
         } catch (error) {
-            // Fallback do starego systemu jeśli błąd
-            return Date.now().toString() + Math.random().toString(36).substr(2, 9);
+            console.warn('Nie można wczytać unified-id-system:', error.message);
+            // Fallback - timestamp z losowymi znakami
+            return `${entityType}${Date.now()}${Math.random().toString(36).substr(2, 3).toUpperCase()}`;
         }
     }
 

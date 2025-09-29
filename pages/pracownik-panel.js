@@ -327,6 +327,18 @@ export default function PracownikPanel() {
                     
                     <button
                       onClick={() => {
+                        router.push('/ai-scanner');
+                        setShowUserMenu(false);
+                      }}
+                      className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 relative"
+                    >
+                      <FiCamera className="h-4 w-4 mr-3" />
+                      Skanuj z AI
+                      <span className="ml-auto bg-gradient-to-r from-blue-500 to-purple-500 text-white text-xs px-1 py-0.5 rounded">🤖</span>
+                    </button>
+                    
+                    <button
+                      onClick={() => {
                         router.push('/');
                         setShowUserMenu(false);
                       }}
@@ -525,9 +537,13 @@ export default function PracownikPanel() {
                     <span className="text-sm font-medium">Kalendarz</span>
                   </button>
                   
-                  <button className="flex flex-col items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                  <button 
+                    onClick={() => router.push('/ai-scanner')}
+                    className="flex flex-col items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors relative"
+                  >
                     <FiCamera className="h-8 w-8 text-green-600 mb-2" />
-                    <span className="text-sm font-medium">Zdjęcia</span>
+                    <span className="text-sm font-medium">Skanuj z AI</span>
+                    <span className="absolute -top-1 -right-1 bg-gradient-to-r from-blue-500 to-purple-500 text-white text-xs px-1 py-0.5 rounded-full">🤖</span>
                   </button>
                   
                   <button className="flex flex-col items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">

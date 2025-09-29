@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code - Dostęp z telefonu</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .container {
+            background: white;
+            color: #333;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            max-width: 500px;
+        }
+        .qr-code {
+            margin: 20px 0;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            display: inline-block;
+        }
+        .url {
+            font-family: monospace;
+            font-size: 18px;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            word-break: break-all;
+        }
+        .instructions {
+            text-align: left;
+            margin-top: 30px;
+            padding: 20px;
+            background: #e3f2fd;
+            border-radius: 10px;
+            border-left: 4px solid #2196f3;
+        }
+        .step {
+            margin: 10px 0;
+            padding: 5px 0;
+        }
+        .highlight {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+            display: inline-block;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Technik AI Scanner</h1>
+        <p class="highlight">Dostęp z telefonu w sieci lokalnej</p>
+        
+        <div class="qr-code">
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=http://192.168.0.2:3000" alt="QR Code">
+        </div>
+        
+        <div class="url">
+            http://192.168.0.2:3000
+        </div>
+        
+        <div class="instructions">
+            <h3>📱 Instrukcje testowania na telefonie:</h3>
+            
+            <div class="step">
+                <strong>1.</strong> Upewnij się, że telefon jest w tej samej sieci WiFi
+            </div>
+            
+            <div class="step">
+                <strong>2.</strong> Zeskanuj QR kod kamerą telefonu lub wpisz adres ręcznie
+            </div>
+            
+            <div class="step">
+                <strong>3.</strong> Przejdź do AI Scanner:
+                <br>→ Menu hamburger → "Pracownik"
+                <br>→ Login: admin / admin123 
+                <br>→ Panel pracownika → "Skanuj z AI"
+            </div>
+            
+            <div class="step">
+                <strong>4.</strong> Testuj skanowanie:
+                <br>→ Otwórz <code>/ai-scanner</code>
+                <br>→ Użyj "Użyj kamery" 
+                <br>→ Zrób zdjęcie tabliczki AGD
+                <br>→ Kliknij "Analizuj z AI"
+            </div>
+            
+            <div class="step">
+                <strong>5.</strong> GPT-4o Mini przeanalizuje zdjęcie i rozpozna model!
+            </div>
+        </div>
+        
+        <div style="margin-top: 30px; padding: 15px; background: #c8e6c9; border-radius: 10px; border-left: 4px solid #4caf50;">
+            <strong>✅ Status:</strong> Serwer aktywny na porcie 3000<br>
+            <strong>🤖 AI:</strong> GPT-4o Mini gotowy<br>
+            <strong>📱 Kamera:</strong> Obsługiwana na telefonach
+        </div>
+    </div>
+</body>
+</html>

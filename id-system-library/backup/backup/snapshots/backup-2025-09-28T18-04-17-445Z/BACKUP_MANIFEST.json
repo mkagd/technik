@@ -1,0 +1,108 @@
+{
+  "backup": {
+    "timestamp": "2025-09-28T18-04-17-445Z",
+    "version": "1.0.0",
+    "created": "2025-09-28T18:04:17.475Z",
+    "type": "full-backup",
+    "files": [
+      {
+        "path": "context/AI_CONTEXT_GUIDE.md",
+        "size": 6211,
+        "modified": "2025-09-28T17:49:57.900Z"
+      },
+      {
+        "path": "context/PROJECT_INTEGRATION_MAP.md",
+        "size": 5741,
+        "modified": "2025-09-28T17:50:40.330Z"
+      },
+      {
+        "path": "context/system-context.json",
+        "size": 2665,
+        "modified": "2025-09-28T17:49:12.513Z"
+      },
+      {
+        "path": "main/.gitignore",
+        "size": 651,
+        "modified": "2025-09-28T17:19:27.253Z"
+      },
+      {
+        "path": "main/CHANGELOG.md",
+        "size": 3817,
+        "modified": "2025-09-28T17:19:27.243Z"
+      },
+      {
+        "path": "main/demo-id-system.js",
+        "size": 10480,
+        "modified": "2025-09-28T17:19:27.273Z"
+      },
+      {
+        "path": "main/id-generator.js",
+        "size": 9908,
+        "modified": "2025-09-27T19:05:11.917Z"
+      },
+      {
+        "path": "main/id-system.js",
+        "size": 20319,
+        "modified": "2025-09-28T16:58:22.201Z"
+      },
+      {
+        "path": "main/ID_SYSTEM_USAGE_GUIDE.md",
+        "size": 17537,
+        "modified": "2025-09-28T16:58:22.217Z"
+      },
+      {
+        "path": "main/index.js",
+        "size": 7162,
+        "modified": "2025-09-28T17:19:27.264Z"
+      },
+      {
+        "path": "main/package.json",
+        "size": 2165,
+        "modified": "2025-09-28T17:19:27.243Z"
+      },
+      {
+        "path": "main/README.md",
+        "size": 10282,
+        "modified": "2025-09-28T17:19:27.243Z"
+      },
+      {
+        "path": "main/README_ID_SYSTEM.md",
+        "size": 5592,
+        "modified": "2025-09-28T16:58:22.222Z"
+      },
+      {
+        "path": "main/test-10k-orders.js",
+        "size": 8922,
+        "modified": "2025-09-28T16:40:11.474Z"
+      },
+      {
+        "path": "main/test-all-ids-demo.js",
+        "size": 10231,
+        "modified": "2025-09-28T16:13:33.142Z"
+      },
+      {
+        "path": "main/test-compact-ids.js",
+        "size": 8573,
+        "modified": "2025-09-28T16:40:11.473Z"
+      }
+    ]
+  },
+  "system": {
+    "name": "Technik ID System Library",
+    "mainFile": "id-system.js",
+    "entryPoint": "index.js",
+    "version": "1.0.0"
+  },
+  "restore": {
+    "instructions": "Użyj restore-backup.js do przywrócenia",
+    "command": "node restore-backup.js backup-2025-09-28T18-04-17-445Z",
+    "requirements": [
+      "Node.js >= 12.0.0"
+    ]
+  },
+  "integrity": {
+    "totalFiles": 16,
+    "checksum": "16-130256-2025-09-28T18-04-17-445Z",
+    "validated": true
+  }
+}

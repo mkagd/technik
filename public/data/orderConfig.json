@@ -1,0 +1,175 @@
+{
+  "deviceMapping": {
+    "pralka": "washing_machine",
+    "pralk": "washing_machine", 
+    "washing machine": "washing_machine",
+    "automatic washing machine": "washing_machine",
+    "pralko-suszarka": "washing_machine",
+    "lodówka": "refrigerator",
+    "lodowka": "refrigerator",
+    "chłodziarka": "refrigerator",
+    "chlodziarko-zamrazarka": "refrigerator",
+    "zamrazarka": "refrigerator",
+    "refrigerator": "refrigerator",
+    "freezer": "refrigerator",
+    "suszarka": "dryer",
+    "suszarka do ubrań": "dryer",
+    "suszarka bębnowa": "dryer",
+    "dryer": "dryer",
+    "tumble dryer": "dryer",
+    "zmywarka": "dishwasher",
+    "dishwasher": "dishwasher",
+    "kuchenka": "oven",
+    "piekarnik": "oven",
+    "płyta": "cooktop",
+    "plyta": "cooktop",
+    "okap": "hood",
+    "mikrofalówka": "microwave",
+    "microwave": "microwave",
+    "laptop": "laptop",
+    "komputer": "computer",
+    "pc": "computer",
+    "telefon": "smartphone",
+    "smartfon": "smartphone",
+    "smartphone": "smartphone",
+    "tablet": "tablet",
+    "telewizor": "tv",
+    "tv": "tv",
+    "klimatyzacja": "ac_unit",
+    "klimatyzator": "ac_unit"
+  },
+  "orderStatusFlow": {
+    "new": {
+      "name": "Nowe zgłoszenie",
+      "color": "blue",
+      "icon": "📋",
+      "description": "Zgłoszenie zostało utworzone",
+      "nextStates": ["scheduled", "cancelled"]
+    },
+    "scheduled": {
+      "name": "Zaplanowane",
+      "color": "purple", 
+      "icon": "📅",
+      "description": "Wizyta została zaplanowana",
+      "nextStates": ["in_progress", "cancelled", "rescheduled"]
+    },
+    "rescheduled": {
+      "name": "Przełożone",
+      "color": "orange",
+      "icon": "🔄",
+      "description": "Wizyta została przełożona",
+      "nextStates": ["scheduled", "cancelled"]
+    },
+    "in_progress": {
+      "name": "W realizacji",
+      "color": "yellow",
+      "icon": "🔧",
+      "description": "Serwisant pracuje nad zleceniem",
+      "nextStates": ["diagnosis_complete", "parts_needed", "cancelled"]
+    },
+    "diagnosis_complete": {
+      "name": "Diagnoza zakończona",
+      "color": "teal",
+      "icon": "🔍",
+      "description": "Diagnoza została przeprowadzona",
+      "nextStates": ["repair_approved", "repair_declined", "completed"]
+    },
+    "repair_approved": {
+      "name": "Naprawa zatwierdzona",
+      "color": "green",
+      "icon": "✅",
+      "description": "Klient zgodził się na naprawę",
+      "nextStates": ["parts_needed", "repair_in_progress"]
+    },
+    "repair_declined": {
+      "name": "Naprawa odrzucona",
+      "color": "red",
+      "icon": "❌",
+      "description": "Klient nie zgodził się na naprawę",
+      "nextStates": ["completed"]
+    },
+    "parts_needed": {
+      "name": "Potrzebne części",
+      "color": "amber",
+      "icon": "📦",
+      "description": "Oczekiwanie na dostawę części",
+      "nextStates": ["parts_delivered", "cancelled"]
+    },
+    "parts_delivered": {
+      "name": "Części dostarczone",
+      "color": "indigo",
+      "icon": "📋",
+      "description": "Części zostały dostarczone",
+      "nextStates": ["repair_in_progress"]
+    },
+    "repair_in_progress": {
+      "name": "Naprawa w toku",
+      "color": "blue",
+      "icon": "🔨",
+      "description": "Trwa naprawa urządzenia",
+      "nextStates": ["repair_complete", "additional_issues"]
+    },
+    "additional_issues": {
+      "name": "Dodatkowe problemy",
+      "color": "orange",
+      "icon": "⚠️",
+      "description": "Wykryto dodatkowe usterki",
+      "nextStates": ["repair_approved", "repair_declined"]
+    },
+    "repair_complete": {
+      "name": "Naprawa zakończona",
+      "color": "green",
+      "icon": "🎯",
+      "description": "Naprawa została ukończona",
+      "nextStates": ["testing", "completed"]
+    },
+    "testing": {
+      "name": "Testowanie",
+      "color": "purple",
+      "icon": "🧪",
+      "description": "Testowanie naprawionego urządzenia",
+      "nextStates": ["completed", "additional_issues"]
+    },
+    "completed": {
+      "name": "Zakończone",
+      "color": "green",
+      "icon": "✅",
+      "description": "Zlecenie zostało ukończone",
+      "nextStates": ["invoiced"]
+    },
+    "invoiced": {
+      "name": "Wystawiona faktura",
+      "color": "blue",
+      "icon": "🧾",
+      "description": "Faktura została wystawiona",
+      "nextStates": ["paid"]
+    },
+    "paid": {
+      "name": "Opłacone",
+      "color": "green",
+      "icon": "💰",
+      "description": "Płatność została zrealizowana",
+      "nextStates": ["closed"]
+    },
+    "closed": {
+      "name": "Zamknięte",
+      "color": "gray",
+      "icon": "🏁",
+      "description": "Zlecenie zostało całkowicie zamknięte",
+      "nextStates": []
+    },
+    "cancelled": {
+      "name": "Anulowane",
+      "color": "red",
+      "icon": "🚫",
+      "description": "Zlecenie zostało anulowane",
+      "nextStates": []
+    }
+  },
+  "autoStatusTransitions": {
+    "timer_started": "in_progress",
+    "diagnosis_saved": "diagnosis_complete", 
+    "payment_received": "paid",
+    "completion_confirmed": "completed"
+  }
+}

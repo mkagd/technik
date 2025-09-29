@@ -45,6 +45,15 @@ export default function Admin() {
   const [userToDelete, setUserToDelete] = useState(null);
   const [employeeToDelete, setEmployeeToDelete] = useState(null);
 
+  // Stany dla ustawień AI
+  const [aiSettings, setAiSettings] = useState({
+    openai: true,
+    googleVision: false,
+    ocrSpace: false,
+    tesseract: false,
+    primaryProvider: 'openai'
+  });
+
   // Nowe stany dla ustawień wyświetlania kontaktu
   const [contactDisplaySettings, setContactDisplaySettings] = useState({
     showPhone: true,
@@ -194,8 +203,27 @@ export default function Admin() {
   useEffect(() => {
     if (auth) {
       loadRealData();
+      loadAISettings();
     }
   }, [auth]);
+
+  // Funkcja do ładowania ustawień AI z API
+  const loadAISettings = async () => {
+    try {
+      console.log('🤖 Ładowanie ustawień AI z API...');
+      const response = await fetch('/api/ai-settings');
+      if (response.ok) {
+        const result = await response.json();
+        if (result.success) {
+          setAiSettings(result.settings);
+          localStorage.setItem('aiSettings', JSON.stringify(result.settings));
+          console.log('✅ Ustawienia AI załadowane z API:', result.settings);
+        }
+      }
+    } catch (error) {
+      console.log('⚠️ Nie udało się załadować ustawień AI z API, używam localStorage:', error);
+    }
+  };
 
   // Funkcja do ładowania rzeczywistych danych
   const loadRealData = async () => {
@@ -296,6 +324,73 @@ export default function Admin() {
       setAuth(true);
     } else {
       alert('Błędne hasło');
+    }
+  };
+
+  // Funkcje zarządzania AI
+  const toggleAIProvider = (provider) => {
+    setAiSettings(prev => ({
+      ...prev,
+      [provider]: !prev[provider]
+    }));
+  };
+
+  const setPrimaryProvider = (provider) => {
+    setAiSettings(prev => ({
+      ...prev,
+      primaryProvider: provider,
+      [provider]: true // Automatycznie włącz wybrany główny provider
+    }));
+  };
+
+  const saveAISettings = async () => {
+    try {
+      console.log('💾 Zapisywanie ustawień AI...', aiSettings);
+      
+      // Zapisz ustawienia do API
+      const response = await fetch('/api/ai-settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(aiSettings)
+      });
+
+      const result = await response.json();
+      if (result.success) {
+        // Zapisz również do localStorage jako backup
+        localStorage.setItem('aiSettings', JSON.stringify(aiSettings));
+        console.log('✅ Ustawienia AI zapisane pomyślnie');
+        alert('Ustawienia AI zostały zapisane!');
+      } else {
+        throw new Error(result.error || 'Nieznany błąd API');
+      }
+    } catch (error) {
+      console.error('❌ Błąd zapisywania ustawień AI:', error);
+      alert(`Błąd podczas zapisywania ustawień AI: ${error.message}`);
+    }
+  };
+
+  const resetAISettings = async () => {
+    try {
+      console.log('🔄 Resetowanie ustawień AI do domyślnych...');
+      
+      // Reset przez API
+      const response = await fetch('/api/ai-settings', {
+        method: 'DELETE'
+      });
+
+      const result = await response.json();
+      if (result.success) {
+        const defaultSettings = result.settings;
+        setAiSettings(defaultSettings);
+        localStorage.setItem('aiSettings', JSON.stringify(defaultSettings));
+        console.log('✅ Ustawienia AI zresetowane pomyślnie');
+        alert('Ustawienia AI zostały zresetowane do domyślnych!');
+      } else {
+        throw new Error(result.error || 'Nieznany błąd API');
+      }
+    } catch (error) {
+      console.error('❌ Błąd resetowania ustawień AI:', error);
+      alert(`Błąd podczas resetowania ustawień AI: ${error.message}`);
     }
   };
 
@@ -868,6 +963,12 @@ export default function Admin() {
       if (savedSettings) {
         setContactDisplaySettings(JSON.parse(savedSettings));
       }
+      
+      // Ładowanie ustawień AI
+      const savedAISettings = localStorage.getItem('aiSettings');
+      if (savedAISettings) {
+        setAiSettings(JSON.parse(savedAISettings));
+      }
     }
   }, []);
 
@@ -968,6 +1069,15 @@ export default function Admin() {
                   }`}
               >
                 Ustawienia
+              </button>
+              <button
+                onClick={() => setActiveTab('ai-system')}
+                className={`py-2 px-1 border-b-2 font-medium text-sm ${activeTab === 'ai-system'
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  }`}
+              >
+                🤖 AI System
               </button>
             </nav>
           </div>
@@ -1167,6 +1277,67 @@ export default function Admin() {
                 </div>
               </div>
             </>
+          ) : activeTab === 'ai-system' ? (
+            <>
+              <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
+                <div className="flex items-center">
+                  <div className="p-2 bg-green-100 rounded-lg">
+                    <span className="text-2xl">🤖</span>
+                  </div>
+                  <div className="ml-4">
+                    <p className="text-sm text-gray-600">Aktywne dostawcy AI</p>
+                    <p className="text-2xl font-bold text-gray-900">
+                      {Object.entries(aiSettings).filter(([key, value]) => key !== 'primaryProvider' && value).length}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
+                <div className="flex items-center">
+                  <div className="p-2 bg-blue-100 rounded-lg">
+                    <span className="text-2xl">⭐</span>
+                  </div>
+                  <div className="ml-4">
+                    <p className="text-sm text-gray-600">Główny dostawca</p>
+                    <p className="text-lg font-bold text-gray-900">
+                      {aiSettings.primaryProvider === 'openai' ? 'OpenAI GPT-4o Mini' :
+                       aiSettings.primaryProvider === 'googleVision' ? 'Google Vision' :
+                       aiSettings.primaryProvider === 'ocrSpace' ? 'OCR.space' :
+                       aiSettings.primaryProvider === 'tesseract' ? 'Tesseract' :
+                       'Nieznany'}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
+                <div className="flex items-center">
+                  <div className="p-2 bg-purple-100 rounded-lg">
+                    <span className="text-2xl">🔧</span>
+                  </div>
+                  <div className="ml-4">
+                    <p className="text-sm text-gray-600">Funkcje AI</p>
+                    <p className="text-2xl font-bold text-gray-900">3</p>
+                    <p className="text-xs text-gray-500">Scanner, Chat, Sugestie</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
+                <div className="flex items-center">
+                  <div className="p-2 bg-green-100 rounded-lg">
+                    <span className="text-2xl">✅</span>
+                  </div>
+                  <div className="ml-4">
+                    <p className="text-sm text-gray-600">Status systemu</p>
+                    <p className="text-lg font-bold text-green-600">
+                      {Object.values(aiSettings).some(value => value === true) ? 'Aktywny' : 'Wyłączony'}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </>
           ) : (
             <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
               <div className="flex items-center">
@@ -1299,6 +1470,254 @@ export default function Admin() {
                   <div className="flex items-center space-x-2">
                     <FiMapPin className="h-4 w-4 text-gray-500" />
                     <span className="text-sm">Miasto: {formatCity('Warszawa')}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+          
+          {activeTab === 'ai-system' && (
+            <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
+              <div className="flex items-center">
+                <div className="p-2 bg-blue-100 rounded-lg">
+                  <span className="text-2xl">🤖</span>
+                </div>
+                <div className="ml-4">
+                  <p className="text-sm font-medium text-gray-900">Konfiguracja AI System</p>
+                  <p className="text-xs text-gray-600">Zarządzanie dostawcami AI i konfiguracją</p>
+                </div>
+              </div>
+
+              <div className="mt-6 space-y-6">
+                {/* Status AI */}
+                <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                  <div className="flex items-center">
+                    <div className="p-1 bg-green-100 rounded">
+                      <span className="text-green-600 text-sm">✅</span>
+                    </div>
+                    <div className="ml-3">
+                      <h4 className="font-medium text-green-800">GPT-4o Mini - Aktywny</h4>
+                      <p className="text-sm text-green-600">Główny dostawca AI dla skanera zdjęć</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Konfiguracja */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <h4 className="text-sm font-medium text-gray-900 mb-3">Dostępne funkcje AI</h4>
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <span className="text-sm">AI Scanner zdjęć</span>
+                        <span className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">Aktywny</span>
+                      </div>
+                      <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <span className="text-sm">Chat AI (Live Chat)</span>
+                        <span className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">Aktywny</span>
+                      </div>
+                      <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <span className="text-sm">Sugestie napraw</span>
+                        <span className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">Aktywny</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h4 className="text-sm font-medium text-gray-900 mb-3">Ustawienia dostawców AI</h4>
+                    <div className="space-y-3">
+                      {/* OpenAI GPT-4o Mini */}
+                      <div className={`p-3 border rounded-lg ${aiSettings.openai ? 'border-green-200 bg-green-50' : 'border-gray-200 bg-gray-50'}`}>
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="font-medium text-sm">OpenAI GPT-4o Mini</span>
+                          <div className="flex items-center space-x-2">
+                            {aiSettings.primaryProvider === 'openai' && (
+                              <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">Główny</span>
+                            )}
+                            <button
+                              onClick={() => toggleAIProvider('openai')}
+                              className="flex items-center justify-center w-8 h-8 rounded-full transition-all duration-200"
+                              title={aiSettings.openai ? 'Wyłącz OpenAI' : 'Włącz OpenAI'}
+                            >
+                              {aiSettings.openai ? (
+                                <FiToggleRight className="h-5 w-5 text-green-600" />
+                              ) : (
+                                <FiToggleLeft className="h-5 w-5 text-gray-400" />
+                              )}
+                            </button>
+                          </div>
+                        </div>
+                        <p className="text-xs text-gray-600">Model: gpt-4o-mini</p>
+                        <p className="text-xs text-gray-600">Status: {aiSettings.openai ? 'Połączony' : 'Wyłączony'}</p>
+                      </div>
+                      
+                      {/* Google Vision API */}
+                      <div className={`p-3 border rounded-lg ${aiSettings.googleVision ? 'border-green-200 bg-green-50' : 'border-gray-200 bg-gray-50'}`}>
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="font-medium text-sm">Google Vision API</span>
+                          <div className="flex items-center space-x-2">
+                            {aiSettings.primaryProvider === 'googleVision' && (
+                              <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">Główny</span>
+                            )}
+                            <button
+                              onClick={() => toggleAIProvider('googleVision')}
+                              className="flex items-center justify-center w-8 h-8 rounded-full transition-all duration-200"
+                              title={aiSettings.googleVision ? 'Wyłącz Google Vision' : 'Włącz Google Vision'}
+                            >
+                              {aiSettings.googleVision ? (
+                                <FiToggleRight className="h-5 w-5 text-green-600" />
+                              ) : (
+                                <FiToggleLeft className="h-5 w-5 text-gray-400" />
+                              )}
+                            </button>
+                          </div>
+                        </div>
+                        <p className="text-xs text-gray-600">Zapasowy dostawca OCR</p>
+                        <p className="text-xs text-gray-600">Status: {aiSettings.googleVision ? 'Połączony' : 'Wyłączony'}</p>
+                      </div>
+
+                      {/* OCR.space API */}
+                      <div className={`p-3 border rounded-lg ${aiSettings.ocrSpace ? 'border-green-200 bg-green-50' : 'border-gray-200 bg-gray-50'}`}>
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="font-medium text-sm">OCR.space API</span>
+                          <div className="flex items-center space-x-2">
+                            {aiSettings.primaryProvider === 'ocrSpace' && (
+                              <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">Główny</span>
+                            )}
+                            <button
+                              onClick={() => toggleAIProvider('ocrSpace')}
+                              className="flex items-center justify-center w-8 h-8 rounded-full transition-all duration-200"
+                              title={aiSettings.ocrSpace ? 'Wyłącz OCR.space' : 'Włącz OCR.space'}
+                            >
+                              {aiSettings.ocrSpace ? (
+                                <FiToggleRight className="h-5 w-5 text-green-600" />
+                              ) : (
+                                <FiToggleLeft className="h-5 w-5 text-gray-400" />
+                              )}
+                            </button>
+                          </div>
+                        </div>
+                        <p className="text-xs text-gray-600">Zapasowy dostawca OCR</p>
+                        <p className="text-xs text-gray-600">Status: {aiSettings.ocrSpace ? 'Połączony' : 'Wyłączony'}</p>
+                      </div>
+
+                      {/* Tesseract */}
+                      <div className={`p-3 border rounded-lg ${aiSettings.tesseract ? 'border-green-200 bg-green-50' : 'border-gray-200 bg-gray-50'}`}>
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="font-medium text-sm">Tesseract OCR</span>
+                          <div className="flex items-center space-x-2">
+                            {aiSettings.primaryProvider === 'tesseract' && (
+                              <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">Główny</span>
+                            )}
+                            <button
+                              onClick={() => toggleAIProvider('tesseract')}
+                              className="flex items-center justify-center w-8 h-8 rounded-full transition-all duration-200"
+                              title={aiSettings.tesseract ? 'Wyłącz Tesseract' : 'Włącz Tesseract'}
+                            >
+                              {aiSettings.tesseract ? (
+                                <FiToggleRight className="h-5 w-5 text-green-600" />
+                              ) : (
+                                <FiToggleLeft className="h-5 w-5 text-gray-400" />
+                              )}
+                            </button>
+                          </div>
+                        </div>
+                        <p className="text-xs text-gray-600">Lokalny OCR (fallback)</p>
+                        <p className="text-xs text-gray-600">Status: {aiSettings.tesseract ? 'Aktywny' : 'Wyłączony'}</p>
+                      </div>
+
+                      {/* Wybór głównego dostawcy */}
+                      <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                        <h5 className="text-sm font-medium text-blue-900 mb-2">Główny dostawca AI</h5>
+                        <select
+                          className="w-full p-2 border border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          value={aiSettings.primaryProvider}
+                          onChange={(e) => setPrimaryProvider(e.target.value)}
+                        >
+                          <option value="openai">OpenAI GPT-4o Mini</option>
+                          <option value="googleVision">Google Vision API</option>
+                          <option value="ocrSpace">OCR.space API</option>
+                          <option value="tesseract">Tesseract OCR</option>
+                        </select>
+                        <p className="text-xs text-blue-600 mt-1">Główny dostawca będzie automatycznie włączony</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Przyciski zarządzania */}
+                <div className="flex flex-wrap gap-3 pt-4 border-t border-gray-200">
+                  <button
+                    onClick={saveAISettings}
+                    className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center space-x-2"
+                  >
+                    <span>💾</span>
+                    <span>Zapisz ustawienia</span>
+                  </button>
+                  <button
+                    onClick={resetAISettings}
+                    className="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors flex items-center space-x-2"
+                  >
+                    <span>🔄</span>
+                    <span>Reset do domyślnych</span>
+                  </button>
+                  <button
+                    onClick={() => {
+                      console.log('Current AI Settings:', aiSettings);
+                      alert('Ustawienia wyświetlone w konsoli przeglądarki (F12)');
+                    }}
+                    className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors flex items-center space-x-2"
+                  >
+                    <span>🔍</span>
+                    <span>Debug ustawień</span>
+                  </button>
+                </div>
+
+                {/* Informacje o użyciu */}
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                  <h4 className="font-medium text-blue-800 mb-2">💡 Aktualny stan systemu</h4>
+                  <p className="text-sm text-blue-700">
+                    Główny dostawca: <strong>{
+                      aiSettings.primaryProvider === 'openai' ? 'OpenAI GPT-4o Mini' :
+                      aiSettings.primaryProvider === 'googleVision' ? 'Google Vision API' :
+                      aiSettings.primaryProvider === 'ocrSpace' ? 'OCR.space API' :
+                      aiSettings.primaryProvider === 'tesseract' ? 'Tesseract OCR' :
+                      'Nieznany'
+                    }</strong>
+                  </p>
+                  <p className="text-sm text-blue-700 mt-1">
+                    Włączone dostawcy: {Object.entries(aiSettings)
+                      .filter(([key, value]) => key !== 'primaryProvider' && value)
+                      .map(([key]) => {
+                        return key === 'openai' ? 'OpenAI' :
+                               key === 'googleVision' ? 'Google Vision' :
+                               key === 'ocrSpace' ? 'OCR.space' :
+                               key === 'tesseract' ? 'Tesseract' : key;
+                      })
+                      .join(', ') || 'Brak'
+                    }
+                  </p>
+                  <div className="mt-3 pt-3 border-t border-blue-200">
+                    <p className="text-xs text-blue-600">
+                      ✅ AI Scanner: /ai-scanner (dedykowana strona)<br/>
+                      ✅ Modal Scanner: zlecenie-szczegoly (modal)<br/>
+                      ✅ Live Chat: Chat AI dostępny na stronach
+                    </p>
+                  </div>
+                </div>
+
+                {/* Test connectiona */}
+                <div className="border-t border-gray-200 pt-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h4 className="font-medium text-gray-900">Test połączenia</h4>
+                      <p className="text-sm text-gray-600">Sprawdź czy AI działa poprawnie</p>
+                    </div>
+                    <button 
+                      onClick={() => window.open('/ai-scanner', '_blank')}
+                      className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                    >
+                      🔍 Testuj AI Scanner
+                    </button>
                   </div>
                 </div>
               </div>

@@ -173,21 +173,15 @@ class DatabaseManager {
 
   // ========== POMOCNICZE FUNKCJE ==========
   
-  generateId(data) {
-    // STARY SYSTEM - lepiej użyć nowego systemu ID z biblioteki
-    // Import nowego systemu ID
+  generateId(entityType = 'GENERIC') {
+    // NOWY SYSTEM - używa unified-id-system.js
     try {
-      const { generateGenericId } = require('../id-system-library');
-      // Dla bazy danych najlepiej użyć generowania według typu
-      return generateGenericId('reports'); // lub odpowiedni typ
+      const { generateUnifiedID } = require('../scripts/unified-id-system');
+      return generateUnifiedID(entityType);
     } catch (error) {
-      // Fallback do starego systemu
-      if (!Array.isArray(data) || data.length === 0) {
-        return 1;
-      }
-      
-      const maxId = Math.max(...data.map(item => parseInt(item.id) || 0));
-      return maxId + 1;
+      console.warn('Nie można wczytać unified-id-system:', error.message);
+      // Fallback - prostsze ID z timestampem  
+      return `${entityType}${Date.now()}${Math.random().toString(36).substr(2, 3).toUpperCase()}`;
     }
   }
 

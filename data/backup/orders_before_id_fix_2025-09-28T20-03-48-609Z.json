@@ -1,0 +1,640 @@
+[
+  {
+    "clientId": "OLD0001",
+    "category": "Naprawa laptopa",
+    "serviceType": "qwqw",
+    "description": "qwe",
+    "scheduledDate": "2025-07-20T08:14",
+    "status": "pending",
+    "priority": "normal",
+    "devices": [
+      {
+        "name": "qwqw",
+        "description": "qwe",
+        "builtInParams": {
+          "demontaz": false,
+          "montaz": false,
+          "trudna": false,
+          "wolnostojacy": false,
+          "ograniczony": false,
+          "front": false,
+          "czas": false
+        },
+        "builtInParamsNotes": {}
+      }
+    ],
+    "builtInParams": {
+      "demontaz": false,
+      "montaz": false,
+      "trudna": false,
+      "wolnostojacy": false,
+      "ograniczony": false,
+      "front": false,
+      "czas": false
+    },
+    "dates": [
+      "2025-07-20T08:14"
+    ],
+    "hours": null,
+    "end": null,
+    "id": "ORDW252710001",
+    "dateAdded": "2025-07-05T06:14:59.051Z",
+    "newId": "ORDW252710001",
+    "source": "W",
+    "migrated": true,
+    "migrationDate": "2025-09-28T18:43:39.035Z",
+    "migrationSource": "data-migrator"
+  },
+  {
+    "clientId": "OLD0002",
+    "category": "Naprawa telefonu",
+    "serviceType": "sc",
+    "description": "sdv",
+    "scheduledDate": "2025-07-18T08:19",
+    "status": "pending",
+    "priority": "normal",
+    "devices": [
+      {
+        "name": "sc",
+        "description": "sdv",
+        "builtInParams": {
+          "demontaz": false,
+          "montaz": false,
+          "trudna": false,
+          "wolnostojacy": false,
+          "ograniczony": false,
+          "front": false,
+          "czas": false
+        },
+        "builtInParamsNotes": {}
+      }
+    ],
+    "builtInParams": {
+      "demontaz": false,
+      "montaz": false,
+      "trudna": false,
+      "wolnostojacy": false,
+      "ograniczony": false,
+      "front": false,
+      "czas": false
+    },
+    "dates": [
+      "2025-07-18T08:19"
+    ],
+    "hours": null,
+    "end": null,
+    "id": "ORDW252710001",
+    "dateAdded": "2025-07-05T06:15:27.520Z",
+    "newId": "ORDW252710001",
+    "source": "W",
+    "migrated": true,
+    "migrationDate": "2025-09-28T18:43:39.035Z",
+    "migrationSource": "data-migrator"
+  },
+  {
+    "clientId": "OLD0003",
+    "category": "serwis",
+    "serviceType": "Nie określono",
+    "description": "Brak opisu",
+    "scheduledDate": "2025-07-05T06:58:51.228Z",
+    "status": "pending",
+    "priority": "normal",
+    "devices": [
+      {
+        "name": "Nie określono",
+        "description": "Brak opisu",
+        "builtInParams": {
+          "demontaz": false,
+          "montaz": false,
+          "trudna": false,
+          "wolnostojacy": false,
+          "ograniczony": false,
+          "front": false,
+          "czas": false
+        },
+        "builtInParamsNotes": {}
+      }
+    ],
+    "builtInParams": {
+      "demontaz": false,
+      "montaz": false,
+      "trudna": false,
+      "wolnostojacy": false,
+      "ograniczony": false,
+      "front": false,
+      "czas": false
+    },
+    "dates": [
+      "2025-07-05T06:58:51.228Z"
+    ],
+    "hours": null,
+    "end": null,
+    "id": "ORDW252710001",
+    "dateAdded": "2025-07-05T06:58:51.243Z",
+    "newId": "ORDW252710001",
+    "source": "W",
+    "migrated": true,
+    "migrationDate": "2025-09-28T18:43:39.035Z",
+    "migrationSource": "data-migrator"
+  },
+  {
+    "clientId": "OLD0004",
+    "category": "instalacja",
+    "serviceType": "qda",
+    "description": "Brak opisu",
+    "scheduledDate": "2025-07-05T07:14:57.763Z",
+    "status": "pending",
+    "priority": "normal",
+    "devices": [
+      {
+        "name": "qda",
+        "description": "Brak opisu",
+        "builtInParams": {
+          "demontaz": false,
+          "montaz": false,
+          "trudna": false,
+          "wolnostojacy": false,
+          "ograniczony": false,
+          "front": false,
+          "czas": false
+        },
+        "builtInParamsNotes": {}
+      }
+    ],
+    "builtInParams": {
+      "demontaz": false,
+      "montaz": false,
+      "trudna": false,
+      "wolnostojacy": false,
+      "ograniczony": false,
+      "front": false,
+      "czas": false
+    },
+    "dates": [
+      "2025-07-05T07:14:57.763Z"
+    ],
+    "hours": null,
+    "end": null,
+    "id": "ORDW252710001",
+    "dateAdded": "2025-07-05T07:14:57.774Z",
+    "newId": "ORDW252710001",
+    "source": "W",
+    "migrated": true,
+    "migrationDate": "2025-09-28T18:43:39.035Z",
+    "migrationSource": "data-migrator"
+  },
+  {
+    "clientId": "OLD0005",
+    "category": "serwis",
+    "serviceType": "qr",
+    "description": "Brak opisu",
+    "scheduledDate": "2025-07-05T10:40:10.109Z",
+    "status": "pending",
+    "priority": "normal",
+    "devices": [
+      {
+        "name": "qr",
+        "description": "Brak opisu",
+        "builtInParams": {
+          "demontaz": false,
+          "montaz": false,
+          "trudna": false,
+          "wolnostojacy": false,
+          "ograniczony": false,
+          "front": false,
+          "czas": false
+        },
+        "builtInParamsNotes": {}
+      }
+    ],
+    "builtInParams": {
+      "demontaz": false,
+      "montaz": false,
+      "trudna": false,
+      "wolnostojacy": false,
+      "ograniczony": false,
+      "front": false,
+      "czas": false
+    },
+    "dates": [
+      "2025-07-05T10:40:10.109Z"
+    ],
+    "hours": null,
+    "end": null,
+    "id": "ORDW252710001",
+    "dateAdded": "2025-07-05T10:40:10.123Z",
+    "newId": "ORDW252710001",
+    "source": "W",
+    "migrated": true,
+    "migrationDate": "2025-09-28T18:43:39.035Z",
+    "migrationSource": "data-migrator"
+  },
+  {
+    "clientId": "OLD0006",
+    "category": "serwis",
+    "serviceType": "21",
+    "description": "21",
+    "scheduledDate": "2025-07-05T10:40:37.689Z",
+    "status": "pending",
+    "priority": "normal",
+    "devices": [
+      {
+        "name": "21",
+        "description": "21",
+        "builtInParams": {
+          "demontaz": false,
+          "montaz": false,
+          "trudna": false,
+          "wolnostojacy": false,
+          "ograniczony": false,
+          "front": false,
+          "czas": false
+        },
+        "builtInParamsNotes": {}
+      }
+    ],
+    "builtInParams": {
+      "demontaz": false,
+      "montaz": false,
+      "trudna": false,
+      "wolnostojacy": false,
+      "ograniczony": false,
+      "front": false,
+      "czas": false
+    },
+    "dates": [
+      "2025-07-05T10:40:37.689Z"
+    ],
+    "hours": null,
+    "end": null,
+    "id": "ORDW252710001",
+    "dateAdded": "2025-07-05T10:40:37.701Z",
+    "newId": "ORDW252710001",
+    "source": "W",
+    "migrated": true,
+    "migrationDate": "2025-09-28T18:43:39.035Z",
+    "migrationSource": "data-migrator"
+  },
+  {
+    "clientId": "OLD0007",
+    "category": "serwis",
+    "serviceType": "af",
+    "description": "af",
+    "scheduledDate": "2025-07-05T20:32:32.607Z",
+    "status": "pending",
+    "priority": "normal",
+    "devices": [
+      {
+        "name": "af",
+        "description": "af",
+        "builtInParams": {
+          "demontaz": false,
+          "montaz": false,
+          "trudna": false,
+          "wolnostojacy": false,
+          "ograniczony": false,
+          "front": false,
+          "czas": false
+        },
+        "builtInParamsNotes": {}
+      }
+    ],
+    "builtInParams": {
+      "demontaz": false,
+      "montaz": false,
+      "trudna": false,
+      "wolnostojacy": false,
+      "ograniczony": false,
+      "front": false,
+      "czas": false
+    },
+    "dates": [
+      "2025-07-05T20:32:32.607Z"
+    ],
+    "hours": null,
+    "end": null,
+    "id": "ORDW252710001",
+    "dateAdded": "2025-07-05T20:32:32.618Z",
+    "newId": "ORDW252710001",
+    "source": "W",
+    "migrated": true,
+    "migrationDate": "2025-09-28T18:43:39.035Z",
+    "migrationSource": "data-migrator"
+  },
+  {
+    "clientId": "OLD0008",
+    "category": "instalacja",
+    "serviceType": "24",
+    "description": "24",
+    "scheduledDate": "2025-07-05T20:35:12.477Z",
+    "status": "pending",
+    "priority": "normal",
+    "devices": [
+      {
+        "name": "24",
+        "description": "24",
+        "builtInParams": {
+          "demontaz": false,
+          "montaz": false,
+          "trudna": false,
+          "wolnostojacy": false,
+          "ograniczony": false,
+          "front": false,
+          "czas": false
+        },
+        "builtInParamsNotes": {}
+      }
+    ],
+    "builtInParams": {
+      "demontaz": false,
+      "montaz": false,
+      "trudna": false,
+      "wolnostojacy": false,
+      "ograniczony": false,
+      "front": false,
+      "czas": false
+    },
+    "dates": [
+      "2025-07-05T20:35:12.477Z"
+    ],
+    "hours": null,
+    "end": null,
+    "id": "ORDW252710001",
+    "dateAdded": "2025-07-05T20:35:12.488Z",
+    "newId": "ORDW252710001",
+    "source": "W",
+    "migrated": true,
+    "migrationDate": "2025-09-28T18:43:39.035Z",
+    "migrationSource": "data-migrator"
+  },
+  {
+    "clientId": "OLD0009",
+    "category": "Naprawa laptopa",
+    "serviceType": "23r",
+    "description": "23r",
+    "scheduledDate": "2025-08-02T22:35",
+    "status": "pending",
+    "priority": "normal",
+    "devices": [
+      {
+        "name": "23r",
+        "description": "23r",
+        "builtInParams": {
+          "demontaz": false,
+          "montaz": false,
+          "trudna": false,
+          "wolnostojacy": false,
+          "ograniczony": false,
+          "front": false,
+          "czas": false
+        },
+        "builtInParamsNotes": {}
+      }
+    ],
+    "builtInParams": {
+      "demontaz": false,
+      "montaz": false,
+      "trudna": false,
+      "wolnostojacy": false,
+      "ograniczony": false,
+      "front": false,
+      "czas": false
+    },
+    "dates": [
+      "2025-08-02T22:35"
+    ],
+    "hours": null,
+    "end": null,
+    "id": "ORDW252710001",
+    "dateAdded": "2025-07-05T20:35:55.078Z",
+    "newId": "ORDW252710001",
+    "source": "W",
+    "migrated": true,
+    "migrationDate": "2025-09-28T18:43:39.035Z",
+    "migrationSource": "data-migrator"
+  },
+  {
+    "clientId": "OLD0010",
+    "category": "konsultacja",
+    "serviceType": "ad",
+    "description": "ad",
+    "scheduledDate": "2025-07-06T07:01:50.515Z",
+    "availability": "Nie określono",
+    "status": "pending",
+    "priority": "normal",
+    "devices": [
+      {
+        "name": "ad",
+        "description": "ad",
+        "builtInParams": {
+          "demontaz": false,
+          "montaz": false,
+          "trudna": false,
+          "wolnostojacy": false,
+          "ograniczony": false,
+          "front": false,
+          "czas": false
+        },
+        "builtInParamsNotes": {}
+      }
+    ],
+    "builtInParams": {
+      "demontaz": false,
+      "montaz": false,
+      "trudna": false,
+      "wolnostojacy": false,
+      "ograniczony": false,
+      "front": false,
+      "czas": false
+    },
+    "dates": [
+      "2025-07-06T07:01:50.515Z"
+    ],
+    "hours": null,
+    "end": null,
+    "id": "ORDW252710001",
+    "dateAdded": "2025-07-06T07:01:50.524Z",
+    "newId": "ORDW252710001",
+    "source": "W",
+    "migrated": true,
+    "migrationDate": "2025-09-28T18:43:39.035Z",
+    "migrationSource": "data-migrator"
+  },
+  {
+    "clientId": "OLD0011",
+    "category": "Serwis AGD",
+    "serviceType": "Bosch",
+    "description": "qw",
+    "scheduledDate": "2025-07-06T07:05:39.996Z",
+    "availability": "qw",
+    "status": "pending",
+    "priority": "normal",
+    "devices": [
+      {
+        "name": "Bosch",
+        "description": "qw",
+        "builtInParams": {
+          "demontaz": false,
+          "montaz": false,
+          "trudna": false,
+          "wolnostojacy": false,
+          "ograniczony": false,
+          "front": false,
+          "czas": false
+        },
+        "builtInParamsNotes": {}
+      }
+    ],
+    "builtInParams": {
+      "demontaz": false,
+      "montaz": false,
+      "trudna": false,
+      "wolnostojacy": false,
+      "ograniczony": false,
+      "front": false,
+      "czas": false
+    },
+    "dates": [],
+    "hours": null,
+    "end": null,
+    "id": "ORDW252710001",
+    "dateAdded": "2025-07-06T07:05:39.999Z",
+    "newId": "ORDW252710001",
+    "source": "W",
+    "migrated": true,
+    "migrationDate": "2025-09-28T18:43:39.035Z",
+    "migrationSource": "data-migrator"
+  },
+  {
+    "clientId": "OLD0012",
+    "description": "Brak opisu",
+    "scheduledDate": "2025-09-22T21:07:04.587Z",
+    "availability": "Nie określono",
+    "status": "pending",
+    "priority": "normal",
+    "devices": [
+      {
+        "description": "Brak opisu",
+        "builtInParams": {
+          "demontaz": false,
+          "montaz": false,
+          "trudna": false,
+          "wolnostojacy": false,
+          "ograniczony": false,
+          "front": false,
+          "czas": false
+        },
+        "builtInParamsNotes": {}
+      }
+    ],
+    "builtInParams": {
+      "demontaz": false,
+      "montaz": false,
+      "trudna": false,
+      "wolnostojacy": false,
+      "ograniczony": false,
+      "front": false,
+      "czas": false
+    },
+    "dates": [],
+    "hours": null,
+    "end": null,
+    "id": "ORDW252710001",
+    "dateAdded": "2025-09-22T21:07:04.590Z",
+    "newId": "ORDW252710001",
+    "source": "W",
+    "migrated": true,
+    "migrationDate": "2025-09-28T18:43:39.035Z",
+    "migrationSource": "data-migrator"
+  },
+  {
+    "clientId": "OLD0013",
+    "category": "Zmywarka",
+    "serviceType": "",
+    "description": "nie włacza sie",
+    "scheduledDate": "2025-09-23T06:31:06.501Z",
+    "availability": "Nie określono",
+    "status": "pending",
+    "priority": "normal",
+    "devices": [
+      {
+        "name": "",
+        "description": "nie włacza sie",
+        "builtInParams": {
+          "demontaz": false,
+          "montaz": false,
+          "trudna": false,
+          "wolnostojacy": false,
+          "ograniczony": false,
+          "front": false,
+          "czas": false
+        },
+        "builtInParamsNotes": {}
+      }
+    ],
+    "builtInParams": {
+      "demontaz": false,
+      "montaz": false,
+      "trudna": false,
+      "wolnostojacy": false,
+      "ograniczony": false,
+      "front": false,
+      "czas": false
+    },
+    "dates": [],
+    "hours": null,
+    "end": null,
+    "id": "ORDW252710001",
+    "dateAdded": "2025-09-23T06:31:06.506Z",
+    "newId": "ORDW252710001",
+    "source": "W",
+    "migrated": true,
+    "migrationDate": "2025-09-28T18:43:39.035Z",
+    "migrationSource": "data-migrator"
+  },
+  {
+    "clientId": "OLD0014",
+    "category": "Pralka",
+    "serviceType": "",
+    "description": "Nie pobiera wody",
+    "scheduledDate": "2025-09-23T19:20:23.473Z",
+    "availability": "Nie określono",
+    "status": "pending",
+    "priority": "normal",
+    "devices": [
+      {
+        "name": "",
+        "description": "Nie pobiera wody",
+        "builtInParams": {
+          "demontaz": false,
+          "montaz": false,
+          "trudna": false,
+          "wolnostojacy": false,
+          "ograniczony": false,
+          "front": false,
+          "czas": false
+        },
+        "builtInParamsNotes": {}
+      }
+    ],
+    "builtInParams": {
+      "demontaz": false,
+      "montaz": false,
+      "trudna": false,
+      "wolnostojacy": false,
+      "ograniczony": false,
+      "front": false,
+      "czas": false
+    },
+    "dates": [],
+    "hours": null,
+    "end": null,
+    "id": "ORDW252710001",
+    "dateAdded": "2025-09-23T19:20:23.475Z",
+    "newId": "ORDW252710001",
+    "source": "W",
+    "migrated": true,
+    "migrationDate": "2025-09-28T18:43:39.035Z",
+    "migrationSource": "data-migrator"
+  }
+]

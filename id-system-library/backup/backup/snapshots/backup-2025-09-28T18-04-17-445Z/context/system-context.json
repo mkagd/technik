@@ -1,0 +1,100 @@
+{
+  "systemInfo": {
+    "name": "Technik ID System Library",
+    "version": "1.0.0",
+    "created": "2025-09-28",
+    "lastUpdated": "2025-09-28",
+    "author": "Technik System",
+    "description": "Kompletna biblioteka systemów identyfikatorów dla aplikacji webowych i mobilnych"
+  },
+  "projectStructure": {
+    "mainSystem": "id-system.js",
+    "legacySystem": "id-generator.js",
+    "entryPoint": "index.js",
+    "documentation": [
+      "README.md",
+      "ID_SYSTEM_USAGE_GUIDE.md", 
+      "README_ID_SYSTEM.md"
+    ],
+    "tests": [
+      "demo-id-system.js",
+      "test-all-ids-demo.js",
+      "test-10k-orders.js",
+      "test-compact-ids.js"
+    ],
+    "config": [
+      "package.json",
+      "CHANGELOG.md",
+      ".gitignore"
+    ]
+  },
+  "idTypes": {
+    "orders": {
+      "prefix": "ORD",
+      "sources": {
+        "A": "AI Assistant",
+        "M": "Mobile App", 
+        "W": "Website",
+        "T": "Telephone",
+        "E": "Email",
+        "R": "Referral"
+      },
+      "format": "ORD{SOURCE}{DATE}{NUMBER}",
+      "example": "ORDA252710001",
+      "maxPerDay": 59994
+    },
+    "clients": {
+      "prefix": "CLI",
+      "format": "CLI{DATE}{NUMBER}",
+      "example": "CLI252710001",
+      "maxPerDay": 9999
+    },
+    "employees": {
+      "prefix": "EMP", 
+      "format": "EMP{DATE}{NUMBER}",
+      "example": "EMP252710001",
+      "maxPerDay": 9999
+    },
+    "servicemen": {
+      "prefix": "SRV",
+      "format": "SRV{DATE}{NUMBER}", 
+      "example": "SRV252710001",
+      "maxPerDay": 9999
+    },
+    "visits": {
+      "prefix": "VIS",
+      "format": "VIS{DATE}{NUMBER}",
+      "example": "VIS252710001",
+      "maxPerDay": 9999
+    },
+    "appointments": {
+      "prefix": "APP",
+      "format": "APP{DATE}{NUMBER}",
+      "example": "APP252710001", 
+      "maxPerDay": 9999
+    },
+    "legacy": {
+      "prefix": "OLD",
+      "format": "OLD{ORIGINAL_ID}",
+      "example": "OLD123",
+      "description": "Migracja starych systemów"
+    }
+  },
+  "dateEncoding": {
+    "format": "YYDDD",
+    "description": "YY = rok (25), DDD = dzień roku (271)",
+    "example": "25271 = 28 września 2025",
+    "range": "00001-99366"
+  },
+  "compatibility": {
+    "nodejs": ">=12.0.0",
+    "browsers": ["Chrome", "Firefox", "Safari", "Edge"],
+    "mobile": ["React Native", "Expo"],
+    "frameworks": ["Next.js", "Express.js", "Fastify"]
+  },
+  "deployment": {
+    "environments": ["development", "staging", "production"],
+    "databases": ["PostgreSQL", "MySQL", "MongoDB", "SQLite"],
+    "cloud": ["Vercel", "AWS", "Azure", "Google Cloud"]
+  }
+}

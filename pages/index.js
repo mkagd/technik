@@ -574,25 +574,50 @@ export default function Home() {
       {/* Role Tester - tylko w trybie development */}
       <RoleTester />
 
-      {/* Przełącznik wersji - tylko dla testów */}  
-      <div className="fixed bottom-4 left-4 z-50 flex flex-col gap-2">
+      {/* Przełącznik wszystkich wersji homepage */}  
+      <div className="fixed bottom-4 left-4 z-50 flex flex-col gap-2 max-h-96 overflow-y-auto">
+        <div className="text-xs text-gray-600 font-medium mb-1 px-2">🏠 Wybierz Wersję:</div>
+        
+        <Link
+          href="/"
+          className="px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white rounded-lg text-sm shadow-lg transition-all font-medium"
+        >
+          🎨 Oryginalna (51 kolorów)
+        </Link>
+        
+        <Link
+          href="/index-clean-modern"
+          className="px-4 py-2 bg-gradient-to-r from-slate-500 to-gray-600 hover:from-slate-600 hover:to-gray-700 text-white rounded-lg text-sm shadow-lg transition-all font-medium"
+        >
+          🧘 Clean Modern
+        </Link>
+        
         <Link
           href="/index-modern-minimal"
           className="px-4 py-2 bg-white hover:bg-gray-50 text-blue-900 border-2 border-blue-900 rounded-lg text-sm shadow-lg transition-all font-medium"
         >
-          ✨ Wersja Minimalistyczna
+          ✨ Minimalistyczna
         </Link>
-        <Link
-          href="/index-professional-subtle"
-          className="px-4 py-2 bg-slate-600 hover:bg-slate-700 text-white rounded-lg text-sm shadow-lg transition-all"
-        >
-          🎯 Wersja Stonowana
-        </Link>
+        
         <Link
           href="/index-elegant-version"
-          className="px-4 py-2 bg-rose-500 hover:bg-rose-600 text-white rounded-full text-sm font-light shadow-lg transition-all"
+          className="px-4 py-2 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white rounded-lg text-sm shadow-lg transition-all font-medium"
         >
-          💝 Wersja Elegancka
+          🍃 Elegancka (kremowa)
+        </Link>
+        
+        <Link
+          href="/index-professional-subtle"
+          className="px-4 py-2 bg-slate-600 hover:bg-slate-700 text-white rounded-lg text-sm shadow-lg transition-all font-medium"
+        >
+          💼 Profesjonalna
+        </Link>
+        
+        <Link
+          href="/index-futuristic-2026"
+          className="px-4 py-2 bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 hover:from-purple-700 hover:via-pink-700 hover:to-blue-700 text-white rounded-lg text-sm shadow-lg transition-all font-medium animate-pulse"
+        >
+          � Futurystyczna 2026
         </Link>
       </div>
     </div>

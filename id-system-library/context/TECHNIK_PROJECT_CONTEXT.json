@@ -1,0 +1,122 @@
+{
+  "projectContext": {
+    "name": "Technik - System Zarządzania Serwisem",
+    "description": "Aplikacja Next.js z React Native do zarządzania zleceniami serwisowymi",
+    "currentState": "MIGRATION_NEEDED",
+    "dateAssessed": "2025-09-28"
+  },
+  "currentDataStructure": {
+    "orders": {
+      "file": "data/orders.json",
+      "currentIdFormat": "#0001, #0002...",
+      "count": "570+ entries",
+      "keyFields": ["clientId", "category", "status", "priority", "devices"],
+      "migrationNeeded": true,
+      "newIdFormat": "ORD{SOURCE}{DATE}{NUMBER}",
+      "exampleMigration": "#0001 → OLD0001"
+    },
+    "clients": {
+      "file": "data/clients.json", 
+      "currentIdFormat": "#0001, #0002...",
+      "count": "156+ entries",
+      "keyFields": ["name", "phone", "email", "address", "history"],
+      "migrationNeeded": true,
+      "newIdFormat": "CLI{DATE}{NUMBER}",
+      "exampleMigration": "#0001 → OLD0001"
+    },
+    "employees": {
+      "file": "data/employees.json",
+      "currentIdFormat": "#EMP001, #EMP002...",
+      "count": "52+ entries", 
+      "keyFields": ["name", "email", "specializations", "isActive"],
+      "migrationNeeded": true,
+      "newIdFormat": "EMP{DATE}{NUMBER}",
+      "exampleMigration": "#EMP001 → OLDEMP001"
+    },
+    "additionalFiles": [
+      "data/service-orders.json",
+      "data/rezervacje.json",
+      "data/specializations.json",
+      "data/pricingRules.json",
+      "data/modelsDatabase.json"
+    ]
+  },
+  "migrationPlan": {
+    "phase1": {
+      "name": "Backup Current Data",
+      "actions": [
+        "Create backup of all JSON files",
+        "Export current ID mappings",
+        "Verify data integrity"
+      ]
+    },
+    "phase2": {
+      "name": "Implement Legacy Support",
+      "actions": [
+        "Use generateLegacyOrderId() for #0001 → OLD0001",
+        "Use generateLegacyOrderId() for #EMP001 → OLDEMP001", 
+        "Create mapping table old_id → new_id",
+        "Update all foreign key references"
+      ]
+    },
+    "phase3": {
+      "name": "New ID Generation",
+      "actions": [
+        "New orders use generateOrderId('W')",
+        "New clients use generateClientId()",
+        "New employees use generateEmployeeId()",
+        "Maintain dual ID support during transition"
+      ]
+    }
+  },
+  "integrationPoints": {
+    "zlecenieSzczegoly": {
+      "file": "pages/zlecenie-szczegoly.js",
+      "currentIdUsage": "Uses ID from router.query",
+      "requiredChanges": [
+        "Add ID type detection (legacy vs new)",
+        "Import id-system-library functions",
+        "Add ID decoding for display",
+        "Handle both old and new formats"
+      ]
+    },
+    "dataFiles": {
+      "orders.json": {
+        "idField": "clientId",
+        "needsUpdate": true,
+        "strategy": "Add newId field alongside old ID"
+      },
+      "clients.json": {
+        "idField": "id", 
+        "needsUpdate": true,
+        "strategy": "Dual ID system during migration"
+      },
+      "employees.json": {
+        "idField": "id",
+        "needsUpdate": true, 
+        "strategy": "Legacy mapping with new format"
+      }
+    }
+  },
+  "recommendedImplementation": {
+    "step1": "Add id-system-library to project",
+    "step2": "Create migration utility for existing data",
+    "step3": "Update zlecenie-szczegoly.js to handle both ID formats",
+    "step4": "Implement new ID generation for new records",
+    "step5": "Gradual migration of UI components"
+  },
+  "businessLogic": {
+    "orderSources": {
+      "W": "Website orders (from web interface)",
+      "T": "Telephone orders", 
+      "E": "Email requests",
+      "A": "AI Assistant generated",
+      "M": "Mobile app orders"
+    },
+    "workflows": {
+      "orderCreation": "Generate new ORD ID → Save to orders.json → Update client history",
+      "employeeAssignment": "Link EMP ID to ORD ID → Track work sessions",
+      "serviceCompletion": "Update order status → Generate invoice → Archive"
+    }
+  }
+}

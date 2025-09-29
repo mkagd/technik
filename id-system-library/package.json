@@ -1,0 +1,86 @@
+{
+  "name": "technik-id-system",
+  "version": "1.0.0",
+  "description": "Kompletna biblioteka systemów identyfikatorów dla aplikacji webowych i mobilnych",
+  "main": "index.js",
+  "scripts": {
+    "demo": "node demo-id-system.js",
+    "test": "node test-all-ids-demo.js && node test-compact-ids.js && node test-10k-orders.js",
+    "test:all": "node test-all-ids-demo.js",
+    "test:compact": "node test-compact-ids.js", 
+    "test:scalability": "node test-10k-orders.js",
+    "test:demo": "node demo-id-system.js"
+  },
+  "keywords": [
+    "id-system",
+    "identifier",
+    "unique-id",
+    "database",
+    "web-app",
+    "mobile-app",
+    "react-native",
+    "nextjs",
+    "nodejs",
+    "orders",
+    "clients",
+    "employees",
+    "legacy-migration"
+  ],
+  "author": "Technik System",
+  "license": "MIT",
+  "engines": {
+    "node": ">=12.0.0"
+  },
+  "files": [
+    "id-system.js",
+    "id-generator.js",
+    "demo-id-system.js",
+    "test-all-ids-demo.js",
+    "test-compact-ids.js",
+    "test-10k-orders.js",
+    "ID_SYSTEM_USAGE_GUIDE.md",
+    "README_ID_SYSTEM.md",
+    "README.md"
+  ],
+  "exports": {
+    ".": {
+      "require": "./id-system.js",
+      "import": "./id-system.js"
+    },
+    "./id-system": {
+      "require": "./id-system.js",
+      "import": "./id-system.js"
+    },
+    "./id-generator": {
+      "require": "./id-generator.js",
+      "import": "./id-generator.js"
+    },
+    "./demo": "./demo-id-system.js",
+    "./package.json": "./package.json"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mkagd/technik"
+  },
+  "bugs": {
+    "url": "https://github.com/mkagd/technik/issues"
+  },
+  "homepage": "https://github.com/mkagd/technik#readme",
+  "devDependencies": {},
+  "dependencies": {},
+  "peerDependencies": {},
+  "directories": {
+    "doc": ".",
+    "test": "."
+  },
+  "config": {
+    "defaultSystem": "id-system.js",
+    "supportedFormats": [
+      "PREFIXŹRÓDŁODATANUMER",
+      "PREFIX-XXX", 
+      "OLDoriginalId"
+    ],
+    "maxOrdersPerDay": 59994,
+    "supportedSources": ["A", "M", "W", "T", "E", "R", "OLD"]
+  }
+}
