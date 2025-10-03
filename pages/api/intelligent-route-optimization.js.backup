@@ -1,0 +1,1524 @@
+// API endpoint dla inteligentnej optymalizacji tras na podstawie:
+// - dostępności klientów
+// - groupowania geograficznego
+// - ruchu drogowego w czasie rzeczywistym
+// - priorytetów zleceń
+
+export default async function handler(req, res) {
+  if (req.method === 'POST') {
+    try {
+      const { servicemanId, timeframe = 'week', preferences = {} } = req.body;
+      
+      console.log('🔍 API Received data:');
+      console.log('  - servicemanId:', servicemanId);
+      console.log('  - timeframe:', timeframe);
+      console.log('  - preferences:', JSON.stringify(preferences, null, 2));
+      console.log('  - preferences.startLocation:', preferences.startLocation);
+      
+      // Pobierz wszystkie zlecenia serwisanta
+      const orders = await getServicemanOrders(servicemanId);
+      console.log('📦 Liczba zleceń do optymalizacji:', orders.length);
+      
+      if (orders.length === 0) {
+        console.log('❌ Brak zleceń - zwracam błąd');
+        return res.status(400).json({
+          success: false,
+          error: 'Brak danych do optymalizacji',
+          details: 'Nie znaleziono zleceń dla tego serwisanta'
+        });
+      }
+      
+      // Optymalizuj trasy
+      const optimizedPlan = await optimizeWeeklyRoutes(orders, preferences);
+      
+      return res.status(200).json({
+        success: true,
+        data: optimizedPlan,
+        timestamp: new Date().toISOString()
+      });
+      
+    } catch (error) {
+      console.error('Route optimization error:', error);
+      return res.status(500).json({
+        success: false,
+        error: 'Błąd podczas optymalizacji tras',
+        details: error.message
+      });
+    }
+  } else {
+    res.setHeader('Allow', ['POST']);
+    return res.status(405).json({ 
+      error: `Metoda ${req.method} nie jest obsługiwana` 
+    });
+  }
+}
+
+// 🆕 NOWA WERSJA - Pobierz zlecenia z data/orders.json zamiast hardcoded data
+async function getServicemanOrders(servicemanId) {
+  const fs = require('fs').promises;
+  const path = require('path');
+  
+  try {
+    // 📂 Wczytaj orders.jsonio z folderu data/
+    const ordersPath = path.join(process.cwd(), 'data', 'orders.json');
+    const ordersData = await fs.readFile(ordersPath, 'utf8');
+    const allOrders = JSON.parse(ordersData);
+    
+    console.log(`📦 Załadowano ${allOrders.length} zleceń z data/orders.json`);
+    
+    // 🔍 Filtruj zlecenia dla konkretnego serwisanta (jeśli servicemanId nie jest 'USER_001' czyli "wszystkie")
+    let filteredOrders = allOrders;
+    if (servicemanId && servicemanId !== 'USER_001') {
+      filteredOrders = allOrders.filter(order => {
+        // Sprawdź czy zlecenie jest przypisane do tego serwisanta
+        return order.assignedTo === servicemanId || 
+               (order.visits && order.visits.some(v => v.employeeId === servicemanId));
+      });
+      console.log(`🎯 Znaleziono ${filteredOrders.length} zleceń dla serwisanta ${servicemanId}`);
+    }
+    
+    // 🗺️ Przekształć zlecenia do formatu wymaganego przez algorytm optymalizacji
+    const formattedOrders = filteredOrders.map(order => {
+      // Przygotuj coordinates
+      let coordinates = null;
+      if (order.clientLocation?.coordinates) {
+        coordinates = {
+          lat: order.clientLocation.coordinates.lat || order.clientLocation.coordinates.latitude,
+          lng: order.clientLocation.coordinates.lng || order.clientLocation.coordinates.longitude
+        };
+      } else if (order.latitude && order.longitude) {
+        coordinates = { lat: order.latitude, lng: order.longitude };
+      }
+      
+      // Jeśli brak współrzędnych, spróbuj oszacować z adresu (fallback)
+      if (!coordinates && order.clientAddress) {
+        coordinates = estimateCoordinatesFromAddress(order.clientAddress);
+      }
+      
+      // Przygotuj preferredTimeSlots z availableDates
+      const preferredTimeSlots = [];
+      if (order.availableDates && Array.isArray(order.availableDates)) {
+        order.availableDates.forEach(dateInfo => {
+          if (dateInfo.dayOfWeek) {
+            preferredTimeSlots.push({
+              day: dateInfo.dayOfWeek.toLowerCase(),
+              start: dateInfo.startTime || '08:00',
+              end: dateInfo.endTime || '16:00'
+            });
+          }
+        });
+      }
+      
+      // Jeśli brak preferowanych slotów, dodaj domyślne (pon-pt 8-16)
+      if (preferredTimeSlots.length === 0) {
+        ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'].forEach(day => {
+          preferredTimeSlots.push({ day, start: '08:00', end: '16:00' });
+        });
+      }
+      
+      return {
+        id: order.id || order.orderId,
+        clientName: order.clientName || 'Nieznany klient',
+        address: order.clientAddress || 'Brak adresu',
+        coordinates: coordinates || { lat: 50.0647, lng: 19.945 }, // Domyślnie Kraków
+        phone: order.clientPhone || '',
+        priority: order.priority || 'medium',
+        estimatedDuration: order.estimatedDuration || 60,
+        preferredTimeSlots: preferredTimeSlots,
+        unavailableDates: order.unavailableDates || [],
+        serviceCost: order.totalCost || 0,
+        description: order.issueDescription || order.description || '',
+        canReschedule: order.canReschedule !== false, // Domyślnie true
+        originalOrder: order // Zachowaj oryginalne dane dla referencji
+      };
+    });
+    
+    console.log(`✅ Przygotowano ${formattedOrders.length} zleceń do optymalizacji`);
+    return formattedOrders;
+    
+  } catch (error) {
+    console.error('❌ Błąd podczas wczytywania zleceń:', error);
+    
+    // 🔄 Fallback - zwróć puste zlecenia zamiast crashować
+    console.log('⚠️ Używam pustej listy zleceń jako fallback');
+    return [];
+  }
+}
+
+// Pomocnicza funkcja do szacowania współrzędnych z adresu (fallback)
+function estimateCoordinatesFromAddress(address) {
+  // Prosta heurystyka bazująca na miastach w Polsce
+  const cityPatterns = [
+    { pattern: /jasło/i, coords: { lat: 49.7450, lng: 21.4719 } },
+    { pattern: /tarnów/i, coords: { lat: 50.0121, lng: 20.9858 } },
+    { pattern: /dębica/i, coords: { lat: 49.7813, lng: 21.4108 } },
+    { pattern: /mielec/i, coords: { lat: 50.2873, lng: 21.4237 } },
+    { pattern: /ropczyce/i, coords: { lat: 50.0516, lng: 21.6086 } },
+    { pattern: /kraków|krakow/i, coords: { lat: 50.0647, lng: 19.9450 } },
+    { pattern: /warszawa/i, coords: { lat: 52.2297, lng: 21.0122 } },
+    { pattern: /rzeszów|rzeszow/i, coords: { lat: 50.0413, lng: 21.9993 } }
+  ];
+  
+  for (const { pattern, coords } of cityPatterns) {
+    if (pattern.test(address)) {
+      // Dodaj niewielkie losowe przesunięcie dla różnorodności (~0.01 stopnia = ~1km)
+      return {
+        lat: coords.lat + (Math.random() * 0.02 - 0.01),
+        lng: coords.lng + (Math.random() * 0.02 - 0.01)
+      };
+    }
+  }
+  
+  // Domyślny fallback - centrum Krakowa
+  return { lat: 50.0647, lng: 19.945 };
+}
+
+// Główny algorytm optymalizacji tras na cały tydzień
+async function optimizeWeeklyRoutes(orders, servicemen, existingVisits = []) {
+  console.log('🚀 optimizeWeeklyRoutes START');
+  console.log('📊 Liczba zleceń:', orders?.length || 0);
+  console.log('👷 Liczba serwisantów:', servicemen?.length || 0);
+  
+  if (!orders || orders.length === 0) {
+    console.log('❌ Brak zleceń w optimizeWeeklyRoutes');
+    throw new Error('Brak zleceń do optymalizacji');
+  }
+  
+  if (!servicemen || servicemen.length === 0) {
+    console.log('❌ Brak serwisantów w optimizeWeeklyRoutes');
+    throw new Error('Brak serwisantów do przydziału');
+  }
+  
+  // TODO: Implementacja algorytmu optymalizacji
+  // Na razie zwróć pusty plan tygodniowy
+  const weeklyPlan = {
+    monday: [],
+    tuesday: [],
+    wednesday: [],
+    thursday: [],
+    friday: [],
+    saturday: [],
+    sunday: []
+  };
+  
+  return weeklyPlan;
+}
+
+// Główny algorytm optymalizacji tras na cały tydzień
+async function optimizeWeeklyRoutes(orders, preferences = {}) {
+  console.log('🚀 optimizeWeeklyRoutes START');
+  console.log('📊 Liczba zleceń:', orders.length);
+  console.log('⚙️ Preferences:', JSON.stringify(preferences, null, 2));
+  
+  if (!orders || orders.length === 0) {
+    console.log('❌ Brak zleceń w optimizeWeeklyRoutes');
+    throw new Error('Brak zleceń do optymalizacji');
+  }
+  
+  // 1. Grupuj zlecenia geograficznie
+  const geographicGroups = groupOrdersByLocation(orders);
+  console.log('🗺️ Grupy geograficzne:', Object.keys(geographicGroups));
+  
+  // 2. Sprawdź dostępność klientów
+  const availabilityMatrix = buildAvailabilityMatrix(orders);
+  console.log('📅 Macierz dostępności utworzona dla', Object.keys(availabilityMatrix).length, 'zleceń');
+      clientName: 'Jolanta Zając',
+      address: 'ul. Wałowa 8, 33-100 Tarnów',
+      coordinates: { lat: 50.0167, lng: 20.9845 },
+      phone: '+48 666 888 111',
+      priority: 'low',
+      estimatedDuration: 45,
+      preferredTimeSlots: [
+        { day: 'monday', start: '10:00', end: '14:00' },
+        { day: 'wednesday', start: '12:00', end: '16:00' },
+        { day: 'friday', start: '09:00', end: '13:00' }
+      ],
+      unavailableDates: ['2025-10-02', '2025-10-03'],
+      serviceCost: 130,
+      description: 'Przegląd kuchenki mikrofalowej Sharp',
+      canReschedule: true
+    },
+    {
+      id: 'ORD-2025-017',
+      clientName: 'Robert Kamiński',
+      address: 'ul. Bernardyńska 22, 33-100 Tarnów',
+      coordinates: { lat: 50.0189, lng: 20.9875 },
+      phone: '+48 777 999 222',
+      priority: 'high',
+      estimatedDuration: 110,
+      preferredTimeSlots: [
+        { day: 'monday', start: '08:00', end: '16:00' },
+        { day: 'tuesday', start: '09:00', end: '17:00' },
+        { day: 'wednesday', start: '08:00', end: '14:00' }
+      ],
+      unavailableDates: [],
+      serviceCost: 420,
+      description: 'Naprawa piekarnika Electrolux - awaria wentylatora',
+      canReschedule: false
+    },
+    {
+      id: 'ORD-2025-018',
+      clientName: 'Marianna Wiśniewska',
+      address: 'ul. Żydowska 16, 33-100 Tarnów',
+      coordinates: { lat: 50.0156, lng: 20.9810 },
+      phone: '+48 888 111 333',
+      priority: 'medium',
+      estimatedDuration: 70,
+      preferredTimeSlots: [
+        { day: 'tuesday', start: '10:00', end: '16:00' },
+        { day: 'thursday', start: '11:00', end: '17:00' },
+        { day: 'friday', start: '08:00', end: '14:00' }
+      ],
+      unavailableDates: [],
+      serviceCost: 200,
+      description: 'Naprawa suszarki Candy - nie grzeje',
+      canReschedule: true
+    },
+    {
+      id: 'ORD-2025-019',
+      clientName: 'Andrzej Nowak',
+      address: 'ul. Mickiewicza 35, 33-100 Tarnów',
+      coordinates: { lat: 50.0134, lng: 20.9925 },
+      phone: '+48 999 222 444',
+      priority: 'low',
+      estimatedDuration: 50,
+      preferredTimeSlots: [
+        { day: 'wednesday', start: '09:00', end: '15:00' },
+        { day: 'thursday', start: '10:00', end: '16:00' },
+        { day: 'friday', start: '11:00', end: '17:00' }
+      ],
+      unavailableDates: ['2025-10-01'],
+      serviceCost: 150,
+      description: 'Konserwacja ekspresu do kawy Delonghi',
+      canReschedule: true
+    },
+    {
+      id: 'ORD-2025-020',
+      clientName: 'Katarzyna Dąbrowska',
+      address: 'ul. Słowackiego 28, 33-100 Tarnów',
+      coordinates: { lat: 50.0178, lng: 20.9862 },
+      phone: '+48 111 444 666',
+      priority: 'medium',
+      estimatedDuration: 85,
+      preferredTimeSlots: [
+        { day: 'monday', start: '09:00', end: '15:00' },
+        { day: 'tuesday', start: '11:00', end: '17:00' },
+        { day: 'thursday', start: '08:00', end: '16:00' }
+      ],
+      unavailableDates: [],
+      serviceCost: 240,
+      description: 'Naprawa płyty indukcyjnej AEG',
+      canReschedule: true
+    },
+    {
+      id: 'ORD-2025-021',
+      clientName: 'Piotr Jankowski',
+      address: 'ul. Konarskiego 19, 33-100 Tarnów',
+      coordinates: { lat: 50.0112, lng: 20.9940 },
+      phone: '+48 222 555 888',
+      priority: 'high',
+      estimatedDuration: 95,
+      preferredTimeSlots: [
+        { day: 'monday', start: '10:00', end: '16:00' },
+        { day: 'wednesday', start: '08:00', end: '14:00' },
+        { day: 'friday', start: '09:00', end: '15:00' }
+      ],
+      unavailableDates: [],
+      serviceCost: 350,
+      description: 'Naprawa lodówki side-by-side Samsung - problem z kostkarką',
+      canReschedule: false
+    },
+    {
+      id: 'ORD-2025-022',
+      clientName: 'Elżbieta Mazur',
+      address: 'ul. Kościuszki 7, 33-100 Tarnów',
+      coordinates: { lat: 50.0201, lng: 20.9888 },
+      phone: '+48 333 666 999',
+      priority: 'medium',
+      estimatedDuration: 65,
+      preferredTimeSlots: [
+        { day: 'tuesday', start: '12:00', end: '18:00' },
+        { day: 'wednesday', start: '10:00', end: '16:00' },
+        { day: 'thursday', start: '09:00', end: '15:00' }
+      ],
+      unavailableDates: ['2025-10-02'],
+      serviceCost: 170,
+      description: 'Czyszczenie i konserwacja okapu Faber',
+      canReschedule: true
+    },
+
+    // === DĘBICA - 8 zleceń ===
+    {
+      id: 'ORD-2025-023',
+      clientName: 'Stefan Kowalski',
+      address: 'ul. Rynek 15, 39-200 Dębica',
+      coordinates: { lat: 49.7813, lng: 21.4108 },
+      phone: '+48 444 777 111',
+      priority: 'medium',
+      estimatedDuration: 80,
+      preferredTimeSlots: [
+        { day: 'monday', start: '09:00', end: '15:00' },
+        { day: 'wednesday', start: '10:00', end: '16:00' },
+        { day: 'friday', start: '08:00', end: '14:00' }
+      ],
+      unavailableDates: [],
+      serviceCost: 230,
+      description: 'Naprawa pralki Beko - problem z odpompowywaniem',
+      canReschedule: true
+    },
+    {
+      id: 'ORD-2025-024',
+      clientName: 'Anna Wójcik',
+      address: 'ul. Ożoga 18, 39-200 Dębica',
+      coordinates: { lat: 49.7825, lng: 21.4095 },
+      phone: '+48 555 888 222',
+      priority: 'high',
+      estimatedDuration: 100,
+      preferredTimeSlots: [
+        { day: 'monday', start: '08:00', end: '14:00' },
+        { day: 'tuesday', start: '10:00', end: '16:00' },
+        { day: 'thursday', start: '09:00', end: '15:00' }
+      ],
+      unavailableDates: ['2025-10-01'],
+      serviceCost: 380,
+      description: 'Naprawa zmywarki Miele - awaria pompy',
+      canReschedule: false
+    },
+    {
+      id: 'ORD-2025-025',
+      clientName: 'Marek Cichy',
+      address: 'ul. Kościuszki 22, 39-200 Dębica',
+      coordinates: { lat: 49.7790, lng: 21.4130 },
+      phone: '+48 666 999 333',
+      priority: 'low',
+      estimatedDuration: 55,
+      preferredTimeSlots: [
+        { day: 'tuesday', start: '11:00', end: '17:00' },
+        { day: 'wednesday', start: '09:00', end: '15:00' },
+        { day: 'friday', start: '10:00', end: '16:00' }
+      ],
+      unavailableDates: ['2025-10-02'],
+      serviceCost: 160,
+      description: 'Wymiana filtra w okapie kuchennym',
+      canReschedule: true
+    },
+    {
+      id: 'ORD-2025-026',
+      clientName: 'Grażyna Pawlak',
+      address: 'ul. Słowackiego 9, 39-200 Dębica',
+      coordinates: { lat: 49.7850, lng: 21.4115 },
+      phone: '+48 777 111 444',
+      priority: 'medium',
+      estimatedDuration: 75,
+      preferredTimeSlots: [
+        { day: 'monday', start: '10:00', end: '16:00' },
+        { day: 'wednesday', start: '08:00', end: '14:00' },
+        { day: 'thursday', start: '11:00', end: '17:00' }
+      ],
+      unavailableDates: [],
+      serviceCost: 210,
+      description: 'Naprawa kuchenki elektrycznej Electrolux',
+      canReschedule: true
+    },
+    {
+      id: 'ORD-2025-027',
+      clientName: 'Janusz Mazur',
+      address: 'ul. Mickiewicza 31, 39-200 Dębica',
+      coordinates: { lat: 49.7805, lng: 21.4140 },
+      phone: '+48 888 222 555',
+      priority: 'high',
+      estimatedDuration: 90,
+      preferredTimeSlots: [
+        { day: 'tuesday', start: '08:00', end: '16:00' },
+        { day: 'wednesday', start: '09:00', end: '17:00' },
+        { day: 'friday', start: '08:00', end: '14:00' }
+      ],
+      unavailableDates: [],
+      serviceCost: 300,
+      description: 'Naprawa lodówki Whirlpool - nie chłodzi',
+      canReschedule: false
+    },
+    {
+      id: 'ORD-2025-028',
+      clientName: 'Beata Sikora',
+      address: 'ul. Kwiatowa 4, 39-200 Dębica',
+      coordinates: { lat: 49.7780, lng: 21.4120 },
+      phone: '+48 999 333 666',
+      priority: 'medium',
+      estimatedDuration: 60,
+      preferredTimeSlots: [
+        { day: 'monday', start: '12:00', end: '18:00' },
+        { day: 'thursday', start: '10:00', end: '16:00' },
+        { day: 'friday', start: '09:00', end: '15:00' }
+      ],
+      unavailableDates: [],
+      serviceCost: 180,
+      description: 'Wymiana termostatu w piekarniu Amica',
+      canReschedule: true
+    },
+    {
+      id: 'ORD-2025-029',
+      clientName: 'Leszek Nowak',
+      address: 'ul. Parkowa 17, 39-200 Dębica',
+      coordinates: { lat: 49.7835, lng: 21.4085 },
+      phone: '+48 111 555 888',
+      priority: 'low',
+      estimatedDuration: 45,
+      preferredTimeSlots: [
+        { day: 'wednesday', start: '11:00', end: '15:00' },
+        { day: 'thursday', start: '12:00', end: '16:00' },
+        { day: 'friday', start: '13:00', end: '17:00' }
+      ],
+      unavailableDates: ['2025-10-01', '2025-10-03'],
+      serviceCost: 130,
+      description: 'Przegląd ekspresu ciśnieniowego DeLonghi',
+      canReschedule: true
+    },
+    {
+      id: 'ORD-2025-030',
+      clientName: 'Wiesław Krawczyk',
+      address: 'ul. Sportowa 25, 39-200 Dębica',
+      coordinates: { lat: 49.7820, lng: 21.4155 },
+      phone: '+48 222 666 999',
+      priority: 'medium',
+      estimatedDuration: 70,
+      preferredTimeSlots: [
+        { day: 'tuesday', start: '09:00', end: '15:00' },
+        { day: 'wednesday', start: '10:00', end: '16:00' },
+        { day: 'thursday', start: '08:00', end: '14:00' }
+      ],
+      unavailableDates: [],
+      serviceCost: 195,
+      description: 'Naprawa mikrofalówki Samsung - nie działa timer',
+      canReschedule: true
+    },
+
+    // === MIELEC - 6 zleceń ===
+    {
+      id: 'ORD-2025-031',
+      clientName: 'Katarzyna Zielińska',
+      address: 'ul. Kolejowa 12, 39-300 Mielec',
+      coordinates: { lat: 50.2873, lng: 21.4237 },
+      phone: '+48 333 444 555',
+      priority: 'high',
+      estimatedDuration: 120,
+      preferredTimeSlots: [
+        { day: 'monday', start: '08:00', end: '12:00' },
+        { day: 'tuesday', start: '14:00', end: '18:00' },
+        { day: 'friday', start: '09:00', end: '15:00' }
+      ],
+      unavailableDates: ['2025-10-03'],
+      serviceCost: 350,
+      description: 'Naprawa płyty indukcyjnej - awaria',
+      canReschedule: false
+    },
+    {
+      id: 'ORD-2025-032',
+      clientName: 'Jerzy Kowalczyk',
+      address: 'ul. Żeromskiego 8, 39-300 Mielec',
+      coordinates: { lat: 50.2850, lng: 21.4200 },
+      phone: '+48 444 666 999',
+      priority: 'medium',
+      estimatedDuration: 85,
+      preferredTimeSlots: [
+        { day: 'tuesday', start: '09:00', end: '15:00' },
+        { day: 'wednesday', start: '10:00', end: '16:00' },
+        { day: 'thursday', start: '08:00', end: '14:00' }
+      ],
+      unavailableDates: [],
+      serviceCost: 250,
+      description: 'Naprawa pralki Indesit - problem z wirówką',
+      canReschedule: true
+    },
+    {
+      id: 'ORD-2025-033',
+      clientName: 'Magdalena Piotrowska',
+      address: 'ul. Sikorskiego 14, 39-300 Mielec',
+      coordinates: { lat: 50.2890, lng: 21.4260 },
+      phone: '+48 555 777 111',
+      priority: 'high',
+      estimatedDuration: 95,
+      preferredTimeSlots: [
+        { day: 'monday', start: '10:00', end: '16:00' },
+        { day: 'tuesday', start: '08:00', end: '14:00' },
+        { day: 'friday', start: '09:00', end: '15:00' }
+      ],
+      unavailableDates: ['2025-10-02'],
+      serviceCost: 320,
+      description: 'Naprawa zmywarki Hotpoint - nie nabiera wody',
+      canReschedule: false
+    },
+    {
+      id: 'ORD-2025-034',
+      clientName: 'Ryszard Nowicki',
+      address: 'ul. Kościelna 27, 39-300 Mielec',
+      coordinates: { lat: 50.2865, lng: 21.4210 },
+      phone: '+48 666 888 222',
+      priority: 'low',
+      estimatedDuration: 50,
+      preferredTimeSlots: [
+        { day: 'wednesday', start: '11:00', end: '17:00' },
+        { day: 'thursday', start: '09:00', end: '15:00' },
+        { day: 'friday', start: '10:00', end: '16:00' }
+      ],
+      unavailableDates: ['2025-10-01'],
+      serviceCost: 140,
+      description: 'Konserwacja okapu Falmec',
+      canReschedule: true
+    },
+    {
+      id: 'ORD-2025-035',
+      clientName: 'Danuta Mazur',
+      address: 'ul. Mickiewicza 19, 39-300 Mielec',
+      coordinates: { lat: 50.2885, lng: 21.4245 },
+      phone: '+48 777 999 444',
+      priority: 'medium',
+      estimatedDuration: 75,
+      preferredTimeSlots: [
+        { day: 'monday', start: '09:00', end: '15:00' },
+        { day: 'wednesday', start: '08:00', end: '14:00' },
+        { day: 'thursday', start: '10:00', end: '16:00' }
+      ],
+      unavailableDates: [],
+      serviceCost: 220,
+      description: 'Naprawa suszarki Whirlpool - nie suszy',
+      canReschedule: true
+    },
+    {
+      id: 'ORD-2025-036',
+      clientName: 'Zbigniew Lewandowski',
+      address: 'ul. Wolności 33, 39-300 Mielec',
+      coordinates: { lat: 50.2845, lng: 21.4275 },
+      phone: '+48 888 111 555',
+      priority: 'high',
+      estimatedDuration: 110,
+      preferredTimeSlots: [
+        { day: 'tuesday', start: '08:00', end: '16:00' },
+        { day: 'wednesday', start: '09:00', end: '17:00' },
+        { day: 'friday', start: '08:00', end: '14:00' }
+      ],
+      unavailableDates: [],
+      serviceCost: 400,
+      description: 'Naprawa lodówki No Frost LG - problem z odmrażaniem',
+      canReschedule: false
+    },
+
+    // === ROPCZYCE - 5 zleceń ===
+    {
+      id: 'ORD-2025-037',
+      clientName: 'Michał Szymański',
+      address: 'ul. Rzeszowska 45, 39-100 Ropczyce',
+      coordinates: { lat: 50.0516, lng: 21.6086 },
+      phone: '+48 666 777 888',
+      priority: 'medium',
+      estimatedDuration: 60,
+      preferredTimeSlots: [
+        { day: 'wednesday', start: '10:00', end: '16:00' },
+        { day: 'thursday', start: '09:00', end: '15:00' },
+        { day: 'friday', start: '11:00', end: '17:00' }
+      ],
+      unavailableDates: [],
+      serviceCost: 190,
+      description: 'Czyszczenie i konserwacja okapu Globalo',
+      canReschedule: true
+    },
+    {
+      id: 'ORD-2025-038',
+      clientName: 'Teresa Kowal',
+      address: 'ul. Słowackiego 12, 39-100 Ropczyce',
+      coordinates: { lat: 50.0498, lng: 21.6065 },
+      phone: '+48 999 222 666',
+      priority: 'high',
+      estimatedDuration: 100,
+      preferredTimeSlots: [
+        { day: 'monday', start: '08:00', end: '14:00' },
+        { day: 'tuesday', start: '10:00', end: '16:00' },
+        { day: 'thursday', start: '09:00', end: '15:00' }
+      ],
+      unavailableDates: ['2025-10-01'],
+      serviceCost: 340,
+      description: 'Naprawa piekarnika Gorenje - uszkodzony wentylator',
+      canReschedule: false
+    },
+    {
+      id: 'ORD-2025-039',
+      clientName: 'Władysław Nowak',
+      address: 'ul. Krakowska 28, 39-100 Ropczyce',
+      coordinates: { lat: 50.0535, lng: 21.6100 },
+      phone: '+48 111 444 777',
+      priority: 'low',
+      estimatedDuration: 40,
+      preferredTimeSlots: [
+        { day: 'tuesday', start: '12:00', end: '16:00' },
+        { day: 'wednesday', start: '11:00', end: '17:00' },
+        { day: 'friday', start: '10:00', end: '14:00' }
+      ],
+      unavailableDates: ['2025-10-02'],
+      serviceCost: 120,
+      description: 'Wymiana żarówki w mikrofalówce Bosch',
+      canReschedule: true
+    },
+    {
+      id: 'ORD-2025-040',
+      clientName: 'Halina Wiśniewska',
+      address: 'ul. Parkowa 7, 39-100 Ropczyce',
+      coordinates: { lat: 50.0480, lng: 21.6055 },
+      phone: '+48 222 555 999',
+      priority: 'medium',
+      estimatedDuration: 80,
+      preferredTimeSlots: [
+        { day: 'monday', start: '10:00', end: '16:00' },
+        { day: 'wednesday', start: '09:00', end: '15:00' },
+        { day: 'thursday', start: '11:00', end: '17:00' }
+      ],
+      unavailableDates: [],
+      serviceCost: 230,
+      description: 'Naprawa kuchenki gazowej Amica - problem z zapalaniem',
+      canReschedule: true
+    },
+    {
+      id: 'ORD-2025-041',
+      clientName: 'Stanisław Grabowski',
+      address: 'ul. Ogrodowa 15, 39-100 Ropczyce',
+      coordinates: { lat: 50.0520, lng: 21.6075 },
+      phone: '+48 333 666 888',
+      priority: 'medium',
+      estimatedDuration: 70,
+      preferredTimeSlots: [
+        { day: 'tuesday', start: '08:00', end: '14:00' },
+        { day: 'thursday', start: '10:00', end: '16:00' },
+        { day: 'friday', start: '09:00', end: '15:00' }
+      ],
+      unavailableDates: [],
+      serviceCost: 200,
+      description: 'Naprawa płyty ceramicznej Electrolux',
+      canReschedule: true
+    },
+
+    // === NOWY SĄCZ - 4 zlecenia ===
+    {
+      id: 'ORD-2025-042',
+      clientName: 'Jan Kowalski',
+      address: 'ul. Mickiewicza 15, 33-300 Nowy Sącz',
+      coordinates: { lat: 49.6177, lng: 20.7158 },
+      phone: '+48 123 456 789',
+      priority: 'high',
+      estimatedDuration: 120,
+      preferredTimeSlots: [
+        { day: 'monday', start: '08:00', end: '16:00' },
+        { day: 'tuesday', start: '10:00', end: '14:00' },
+        { day: 'thursday', start: '08:00', end: '16:00' }
+      ],
+      unavailableDates: ['2025-10-02'],
+      serviceCost: 380,
+      description: 'Naprawa lodówki Samsung - wymiana termostatu',
+      canReschedule: false
+    },
+    {
+      id: 'ORD-2025-043',
+      clientName: 'Maria Dudek',
+      address: 'ul. Jagiellońska 22, 33-300 Nowy Sącz',
+      coordinates: { lat: 49.6198, lng: 20.7135 },
+      phone: '+48 444 555 777',
+      priority: 'medium',
+      estimatedDuration: 85,
+      preferredTimeSlots: [
+        { day: 'tuesday', start: '09:00', end: '15:00' },
+        { day: 'wednesday', start: '10:00', end: '16:00' },
+        { day: 'friday', start: '08:00', end: '14:00' }
+      ],
+      unavailableDates: [],
+      serviceCost: 260,
+      description: 'Naprawa pralki Candy - uszkodzona pompa odpływowa',
+      canReschedule: true
+    },
+    {
+      id: 'ORD-2025-044',
+      clientName: 'Kazimierz Nowak',
+      address: 'ul. Kościuszki 8, 33-300 Nowy Sącz',
+      coordinates: { lat: 49.6156, lng: 20.7180 },
+      phone: '+48 555 666 888',
+      priority: 'low',
+      estimatedDuration: 55,
+      preferredTimeSlots: [
+        { day: 'monday', start: '11:00', end: '17:00' },
+        { day: 'wednesday', start: '09:00', end: '15:00' },
+        { day: 'friday', start: '10:00', end: '16:00' }
+      ],
+      unavailableDates: ['2025-10-01', '2025-10-03'],
+      serviceCost: 150,
+      description: 'Przegląd roczny kuchenki mikrofalowej',
+      canReschedule: true
+    },
+    {
+      id: 'ORD-2025-045',
+      clientName: 'Irena Zając',
+      address: 'ul. Słowackiego 31, 33-300 Nowy Sącz',
+      coordinates: { lat: 49.6215, lng: 20.7145 },
+      phone: '+48 666 777 999',
+      priority: 'medium',
+      estimatedDuration: 90,
+      preferredTimeSlots: [
+        { day: 'monday', start: '09:00', end: '15:00' },
+        { day: 'tuesday', start: '11:00', end: '17:00' },
+        { day: 'thursday', start: '08:00', end: '16:00' }
+      ],
+      unavailableDates: [],
+      serviceCost: 280,
+      description: 'Naprawa zmywarki Beko - problem z programem mycia',
+      canReschedule: true
+    }
+  ];
+}
+
+// Główny algorytm optymalizacji tras na cały tydzień
+async function optimizeWeeklyRoutes(orders, preferences = {}) {
+  console.log('🚀 optimizeWeeklyRoutes START');
+  console.log('📊 Liczba zleceń:', orders.length);
+  console.log('⚙️ Preferences:', JSON.stringify(preferences, null, 2));
+  
+  if (!orders || orders.length === 0) {
+    console.log('❌ Brak zleceń w optimizeWeeklyRoutes');
+    throw new Error('Brak zleceń do optymalizacji');
+  }
+  
+  // 1. Grupuj zlecenia geograficznie
+  const geographicGroups = groupOrdersByLocation(orders);
+  console.log('🗺️ Grupy geograficzne:', Object.keys(geographicGroups));
+  
+  // 2. Sprawdź dostępność klientów
+  const availabilityMatrix = buildAvailabilityMatrix(orders);
+  console.log('📅 Macierz dostępności utworzona dla', Object.keys(availabilityMatrix).length, 'zleceń');
+  
+  // 3. Optymalizuj trasy dla każdego dnia
+  const weeklyPlan = await optimizeWeeklySchedule(geographicGroups, availabilityMatrix, preferences);
+  
+  // 4. Oblicz koszty i oszczędności
+  const costAnalysis = calculateCostAnalysis(weeklyPlan, orders);
+  
+  return {
+    weeklyPlan,
+    costAnalysis,
+    recommendations: generateRecommendations(weeklyPlan, orders),
+    alternatives: generateAlternatives(weeklyPlan, orders)
+  };
+}
+
+// Grupowanie zleceń według lokalizacji (miasta/rejony)
+function groupOrdersByLocation(orders) {
+  const groups = {};
+  
+  orders.forEach(order => {
+    // Określ rejon na podstawie współrzędnych
+    const region = determineRegion(order.coordinates, order.address);
+    
+    if (!groups[region]) {
+      groups[region] = {
+        name: region,
+        orders: [],
+        centerPoint: null,
+        estimatedTotalTime: 0
+      };
+    }
+    
+    groups[region].orders.push(order);
+    groups[region].estimatedTotalTime += order.estimatedDuration;
+  });
+  
+  // Oblicz środkowe punkty dla każdej grupy
+  Object.keys(groups).forEach(region => {
+    groups[region].centerPoint = calculateCenterPoint(groups[region].orders);
+  });
+  
+  return groups;
+}
+
+// Określanie regionu na podstawie lokalizacji
+async function determineRegion(coordinates, address) {
+  // Definiuj regiony na podstawie miast
+  const regions = [
+    { name: 'Jasło', center: { lat: 49.7450, lng: 21.4719 }, radius: 15 },
+    { name: 'Tarnów', center: { lat: 50.0121, lng: 20.9858 }, radius: 20 },
+    { name: 'Dębica', center: { lat: 49.7813, lng: 21.4108 }, radius: 15 },
+    { name: 'Mielec', center: { lat: 50.2873, lng: 21.4237 }, radius: 15 },
+    { name: 'Ropczyce', center: { lat: 50.0516, lng: 21.6086 }, radius: 10 },
+    { name: 'Nowy Sącz', center: { lat: 49.6177, lng: 20.7158 }, radius: 20 }
+  ];
+  
+  for (const region of regions) {
+    const distance = await calculateDistance(coordinates, region.center);
+    if (distance <= region.radius) {
+      return region.name;
+    }
+  }
+  
+  return 'Inne';
+}
+
+// Budowanie macierzy dostępności klientów
+function buildAvailabilityMatrix(orders) {
+  const matrix = {};
+  const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'];
+  
+  orders.forEach(order => {
+    matrix[order.id] = {};
+    
+    days.forEach(day => {
+      matrix[order.id][day] = {
+        available: false,
+        timeSlots: [],
+        unavailable: false
+      };
+      
+      // Sprawdź czy dzień jest dostępny
+      const daySlots = order.preferredTimeSlots.filter(slot => slot.day === day);
+      if (daySlots.length > 0) {
+        matrix[order.id][day].available = true;
+        matrix[order.id][day].timeSlots = daySlots;
+      }
+      
+      // Sprawdź czy jest konkretna data niedostępności
+      const currentDate = new Date();
+      const dayDate = getDateForDay(currentDate, day);
+      if (order.unavailableDates.includes(dayDate)) {
+        matrix[order.id][day].unavailable = true;
+        matrix[order.id][day].available = false;
+      }
+    });
+  });
+  
+  return matrix;
+}
+
+// Optymalizacja harmonogramu na cały tydzień
+async function optimizeWeeklySchedule(geographicGroups, availabilityMatrix, preferences) {
+  console.log('🗂️ Otrzymane preferences:', JSON.stringify(preferences, null, 2));
+  console.log('📍 startLocation z preferences:', preferences.startLocation);
+  
+  const weeklyPlan = {
+    monday: { orders: [], route: null, stats: null },
+    tuesday: { orders: [], route: null, stats: null },
+    wednesday: { orders: [], route: null, stats: null },
+    thursday: { orders: [], route: null, stats: null },
+    friday: { orders: [], route: null, stats: null }
+  };
+  
+  // 🧠 INTELIGENTNE STRATEGIE OPTYMALIZACJI na podstawie AI
+  const strategy = preferences.priorityMode || 'balanced';
+  console.log(`🤖 AI Optymalizacja: Zastosowano strategię "${strategy}"`);
+  
+  const days = Object.keys(weeklyPlan);
+  const remainingOrders = [...Object.values(geographicGroups).flatMap(group => group.orders)];
+  
+  // WYBÓR STRATEGII OPTYMALIZACJI AI
+  switch (strategy) {
+    case 'priority':
+      console.log('🚨 AI: Priorytet dla pilnych zleceń');
+      await optimizeByPriority(weeklyPlan, remainingOrders, availabilityMatrix);
+      break;
+      
+    case 'geographic':
+      console.log('🗺️ AI: Grupowanie geograficzne');
+      await optimizeByGeography(weeklyPlan, geographicGroups, availabilityMatrix, remainingOrders);
+      break;
+      
+    case 'time':
+      console.log('⚡ AI: Optymalizacja czasowa');
+      await optimizeByTime(weeklyPlan, remainingOrders, availabilityMatrix);
+      break;
+      
+    case 'revenue':
+      console.log('💰 AI: Maksymalizacja przychodu');
+      await optimizeByRevenue(weeklyPlan, remainingOrders, availabilityMatrix);
+      break;
+      
+    case 'vip':
+      console.log('👑 AI: Priorytet VIP klientów');
+      await optimizeByVIP(weeklyPlan, remainingOrders, availabilityMatrix);
+      break;
+      
+    case 'distance':
+      console.log('🎯 AI: Minimalizacja dystansu');
+      const distanceStartPoint = preferences.startLocation || { lat: 50.0647, lng: 19.9450 };
+      await optimizeByDistance(weeklyPlan, remainingOrders, availabilityMatrix, distanceStartPoint);
+      break;
+      
+    default: // 'balanced'
+      console.log('⚖️ AI: Strategia zbalansowana');
+      await optimizeBalanced(weeklyPlan, geographicGroups, availabilityMatrix, remainingOrders);
+      break;
+  }
+  
+  // Trzecia faza: optymalizacja tras dla każdego dnia
+  const baseLocation = preferences.startLocation || { lat: 50.0647, lng: 19.9450 };
+  console.log(`📍 KRYTYCZNY DEBUG - preferences.startLocation:`, preferences.startLocation);
+  console.log(`📍 KRYTYCZNY DEBUG - baseLocation po przypisaniu:`, baseLocation);
+  console.log(`📍 KRYTYCZNY DEBUG - typeof baseLocation.lat:`, typeof baseLocation.lat);
+  console.log(`📍 KRYTYCZNY DEBUG - typeof baseLocation.lng:`, typeof baseLocation.lng);
+  
+  for (const day of days) {
+    if (weeklyPlan[day].orders.length > 0) {
+      weeklyPlan[day].route = await calculateOptimalRoute(weeklyPlan[day].orders, baseLocation);
+      weeklyPlan[day].stats = calculateDayStats(weeklyPlan[day].orders, weeklyPlan[day].route);
+    }
+  }
+  
+  console.log(`✅ AI Optymalizacja zakończona: ${Object.values(weeklyPlan).reduce((sum, day) => sum + day.orders.length, 0)} zleceń rozplanowanych`);
+  return weeklyPlan;
+}
+
+// Przypisywanie zleceń pilnych
+async function assignHighPriorityOrders(weeklyPlan, remainingOrders, availabilityMatrix) {
+  const highPriorityOrders = remainingOrders.filter(order => order.priority === 'high');
+  
+  for (const order of highPriorityOrders) {
+    const bestDay = findBestDayForOrder(order, availabilityMatrix, weeklyPlan);
+    if (bestDay) {
+      weeklyPlan[bestDay].orders.push(order);
+      const index = remainingOrders.indexOf(order);
+      remainingOrders.splice(index, 1);
+    }
+  }
+}
+
+// Przypisywanie grup geograficznych
+async function assignGeographicGroups(weeklyPlan, geographicGroups, availabilityMatrix, remainingOrders) {
+  const regions = Object.keys(geographicGroups).sort((a, b) => {
+    // Sortuj regiony według liczby zleceń (większe grupy pierwsze)
+    return geographicGroups[b].orders.length - geographicGroups[a].orders.length;
+  });
+  
+  for (const region of regions) {
+    const regionOrders = geographicGroups[region].orders.filter(order => 
+      remainingOrders.includes(order)
+    );
+    
+    if (regionOrders.length === 0) continue;
+    
+    // Znajdź najlepszy dzień dla całej grupy
+    const bestDay = findBestDayForGroup(regionOrders, availabilityMatrix, weeklyPlan);
+    
+    if (bestDay) {
+      regionOrders.forEach(order => {
+        weeklyPlan[bestDay].orders.push(order);
+        const index = remainingOrders.indexOf(order);
+        remainingOrders.splice(index, 1);
+      });
+    }
+  }
+}
+
+// Znajdowanie najlepszego dnia dla zlecenia
+function findBestDayForOrder(order, availabilityMatrix, weeklyPlan) {
+  const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'];
+  const availableDays = days.filter(day => {
+    const availability = availabilityMatrix[order.id][day];
+    return availability.available && !availability.unavailable;
+  });
+  
+  if (availableDays.length === 0) return null;
+  
+  // Wybierz dzień z najmniejszą liczbą już zaplanowanych zleceń
+  return availableDays.sort((a, b) => {
+    const aLoad = weeklyPlan[a].orders.length;
+    const bLoad = weeklyPlan[b].orders.length;
+    return aLoad - bLoad;
+  })[0];
+}
+
+// Znajdowanie najlepszego dnia dla grupy zleceń
+function findBestDayForGroup(orders, availabilityMatrix, weeklyPlan) {
+  const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'];
+  const dayScores = {};
+  
+  days.forEach(day => {
+    dayScores[day] = 0;
+    
+    // Sprawdź ile zleceń z grupy może być wykonanych tego dnia
+    orders.forEach(order => {
+      const availability = availabilityMatrix[order.id][day];
+      if (availability.available && !availability.unavailable) {
+        dayScores[day] += 1;
+      }
+    });
+    
+    // Kara za już zaplanowane zlecenia tego dnia
+    dayScores[day] -= weeklyPlan[day].orders.length * 0.1;
+  });
+  
+  // Znajdź dzień z najwyższym wynikiem
+  const bestDay = Object.keys(dayScores).reduce((a, b) => 
+    dayScores[a] > dayScores[b] ? a : b
+  );
+  
+  return dayScores[bestDay] > 0 ? bestDay : null;
+}
+
+// Obliczanie optymalnej trasy dla dnia
+async function calculateOptimalRoute(orders, baseLocation = { lat: 50.0647, lng: 19.9450 }) {
+  console.log('🎯 calculateOptimalRoute wywoływane z baseLocation:', JSON.stringify(baseLocation));
+  console.log('  Czy to Gliniana 17? Oczekujemy: lat: 50.0641, lng: 19.9520');
+  
+  if (orders.length === 0) return null;
+  
+  // Użyj Google Maps API dla optymalizacji trasy
+  const waypoints = orders.map(order => ({
+    location: `${order.coordinates.lat},${order.coordinates.lng}`,
+    stopover: true,
+    orderId: order.id
+  }));
+  
+  // Symulacja optymalizacji trasy (używa naszego DistanceMatrixService)
+  const totalDistance = await calculateTotalDistance(baseLocation, orders);
+  const totalDuration = await calculateTotalDuration(orders, baseLocation);
+  const estimatedFuelCost = await calculateFuelCost(orders, baseLocation);
+  
+  return {
+    totalDistance: totalDistance,
+    totalDuration: totalDuration,
+    optimizedOrder: orders, // W rzeczywistości byłaby zoptymalizowana kolejność
+    estimatedFuelCost: estimatedFuelCost,
+    googleMapsUrl: generateGoogleMapsUrl(baseLocation, orders)
+  };
+}
+
+// Obliczanie statystyk dla dnia
+function calculateDayStats(orders, route) {
+  const totalServiceTime = orders.reduce((sum, order) => sum + order.estimatedDuration, 0);
+  const totalRevenue = orders.reduce((sum, order) => sum + order.serviceCost, 0);
+  
+  return {
+    totalOrders: orders.length,
+    totalServiceTime: totalServiceTime, // minuty
+    totalTravelTime: route ? route.totalDuration : 0, // minuty
+    totalRevenue: totalRevenue,
+    efficiency: totalRevenue / (totalServiceTime + (route ? route.totalDuration : 0)),
+    regions: [...new Set(orders.map(order => determineRegion(order.coordinates, order.address)))]
+  };
+}
+
+// Analiza kosztów i oszczędności
+function calculateCostAnalysis(weeklyPlan, allOrders) {
+  const days = Object.keys(weeklyPlan);
+  let totalDistance = 0;
+  let totalFuelCost = 0;
+  let totalRevenue = 0;
+  
+  days.forEach(day => {
+    if (weeklyPlan[day].route) {
+      totalDistance += weeklyPlan[day].route.totalDistance;
+      totalFuelCost += weeklyPlan[day].route.estimatedFuelCost;
+    }
+    totalRevenue += weeklyPlan[day].orders.reduce((sum, order) => sum + order.serviceCost, 0);
+  });
+  
+  // Porównaj z chaotycznym planowanym (bez optymalizacji)
+  const chaoticCost = estimateChaoticCost(allOrders);
+  const savings = chaoticCost - totalFuelCost;
+  
+  return {
+    optimized: {
+      totalDistance: Math.round(totalDistance),
+      totalFuelCost: Math.round(totalFuelCost),
+      totalRevenue: totalRevenue,
+      profit: totalRevenue - totalFuelCost
+    },
+    chaotic: chaoticCost,
+    savings: Math.round(savings),
+    savingsPercentage: Math.round((savings / chaoticCost) * 100),
+    efficiency: Math.round((totalRevenue - totalFuelCost) / totalRevenue * 100)
+  };
+}
+
+// Generowanie rekomendacji
+function generateRecommendations(weeklyPlan, orders) {
+  const recommendations = [];
+  
+  // Sprawdź czy są dni z dużym obciążeniem
+  Object.keys(weeklyPlan).forEach(day => {
+    const dayOrders = weeklyPlan[day].orders;
+    if (dayOrders.length > 4) {
+      recommendations.push({
+        type: 'warning',
+        message: `${day}: Zaplanowano ${dayOrders.length} zleceń - rozważ przeniesienie części na inny dzień`,
+        priority: 'medium'
+      });
+    }
+  });
+  
+  // Sprawdź grupowanie geograficzne
+  Object.keys(weeklyPlan).forEach(day => {
+    const regions = [...new Set(weeklyPlan[day].orders.map(order => 
+      determineRegion(order.coordinates, order.address)
+    ))];
+    
+    if (regions.length > 2) {
+      recommendations.push({
+        type: 'optimization',
+        message: `${day}: Zlecenia w ${regions.length} różnych regionach - możliwa dalsza optymalizacja`,
+        priority: 'low'
+      });
+    }
+  });
+  
+  return recommendations;
+}
+
+// Generowanie alternatywnych planów
+function generateAlternatives(weeklyPlan, orders) {
+  return [
+    {
+      name: 'Maksymalne grupowanie geograficzne',
+      description: 'Priorytet dla minimalizacji dojazdów',
+      estimatedSavings: '15-25%'
+    },
+    {
+      name: 'Priorytet dla wysokiej wartości zleceń',
+      description: 'Najpierw drogie naprawy, potem pozostałe',
+      estimatedSavings: '5-15%'
+    },
+    {
+      name: 'Równomierne rozłożenie obciążenia',
+      description: 'Podobna liczba zleceń każdego dnia',
+      estimatedSavings: '10-20%'
+    }
+  ];
+}
+
+// Import naszego DistanceMatrixService
+import { DistanceMatrixService } from '../../distance-matrix/index.js';
+
+let distanceMatrixService = null;
+
+// Inicjalizuj DistanceMatrixService
+function getDistanceMatrixService() {
+  if (!distanceMatrixService) {
+    distanceMatrixService = new DistanceMatrixService({
+      googleApiKey: process.env.GOOGLE_MAPS_API_KEY,
+      enableCache: true,
+      enableFallback: true
+    });
+  }
+  return distanceMatrixService;
+}
+
+// Funkcje pomocnicze - używamy teraz DistanceMatrixService
+
+// Synchroniczna wersja dla prostych obliczeń (np. określanie regionu)
+function calculateDistanceSync(point1, point2) {
+  const R = 6371; // km
+  const dLat = (point2.lat - point1.lat) * Math.PI / 180;
+  const dLng = (point2.lng - point1.lng) * Math.PI / 180;
+  const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+           Math.cos(point1.lat * Math.PI / 180) * Math.cos(point2.lat * Math.PI / 180) *
+           Math.sin(dLng/2) * Math.sin(dLng/2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  return R * c;
+}
+
+// Asynchroniczna wersja używająca DistanceMatrixService dla dokładnych tras
+async function calculateDistance(point1, point2) {
+  try {
+    const service = getDistanceMatrixService();
+    const result = await service.calculateDistance(point1, point2);
+    return result.distance.km;
+  } catch (error) {
+    console.warn('⚠️ Distance Matrix failed, using Haversine fallback:', error.message);
+    return calculateDistanceSync(point1, point2);
+  }
+}
+
+function calculateCenterPoint(orders) {
+  const avgLat = orders.reduce((sum, order) => sum + order.coordinates.lat, 0) / orders.length;
+  const avgLng = orders.reduce((sum, order) => sum + order.coordinates.lng, 0) / orders.length;
+  return { lat: avgLat, lng: avgLng };
+}
+
+async function calculateTotalDistance(base, orders) {
+  let total = 0;
+  let current = base;
+  
+  for (const order of orders) {
+    const distance = await calculateDistance(current, order.coordinates);
+    total += distance;
+    current = order.coordinates;
+  }
+  
+  // Powrót do bazy
+  const returnDistance = await calculateDistance(current, base);
+  total += returnDistance;
+  return total;
+}
+
+async function calculateTotalDuration(orders, baseLocation = { lat: 50.0647, lng: 19.9450 }) {
+  const totalDistance = await calculateTotalDistance(baseLocation, orders);
+  const travelTime = totalDistance * 1.5; // 1.5 min/km
+  const serviceTime = orders.reduce((sum, order) => sum + order.estimatedDuration, 0);     
+  return Math.round(travelTime + serviceTime);
+}async function calculateFuelCost(orders, baseLocation = { lat: 50.0647, lng: 19.9450 }) {
+  const distance = await calculateTotalDistance(baseLocation, orders);
+  const fuelConsumption = 8; // l/100km
+  const fuelPrice = 6.5; // zł/l
+  return Math.round((distance * fuelConsumption / 100) * fuelPrice);
+}
+
+function estimateChaoticCost(orders) {
+  // Szacuj koszt bez optymalizacji (losowa kolejność)
+  return orders.length * 80; // Średnio 80 zł na zlecenie bez optymalizacji
+}
+
+function generateGoogleMapsUrl(base, orders) {
+  console.log('🗺️ =============== generateGoogleMapsUrl START ===============');
+  console.log('🗺️ OTRZYMANE base:', JSON.stringify(base));
+  console.log('🗺️ base.lat:', base.lat, 'typeof:', typeof base.lat);
+  console.log('🗺️ base.lng:', base.lng, 'typeof:', typeof base.lng);
+  console.log('🗺️ CZY TO GLINIANA 17? Oczekujemy: lat=50.0641, lng=19.9520');
+  console.log('🗺️ PORÓWNANIE:');
+  console.log('   - base.lat === 50.0641?', base.lat === 50.0641);
+  console.log('   - base.lng === 19.9520?', base.lng === 19.9520);
+  
+  const waypoints = orders.map(order => `${order.coordinates.lat},${order.coordinates.lng}`).join('|');
+  
+  // DEBUGGING KAŻDEGO KROKU GENEROWANIA URL
+  console.log('🗺️ KROK 1 - Składanie origin:');
+  console.log('   base.lat=', base.lat, ', base.lng=', base.lng);
+  console.log('   origin string będzie:', `${base.lat},${base.lng}`);
+  
+  const originString = `${base.lat},${base.lng}`;
+  const destinationString = `${base.lat},${base.lng}`;
+  
+  console.log('🗺️ KROK 2 - Final strings:');
+  console.log('   originString:', originString);
+  console.log('   destinationString:', destinationString);
+  console.log('   waypoints:', waypoints);
+  
+  const url = `https://www.google.com/maps/dir/?api=1&origin=${originString}&destination=${destinationString}&waypoints=${waypoints}&travelmode=driving`;
+  
+  console.log('🗺️ FINAL URL:', url);
+  console.log('🗺️ URL origin fragment:', url.match(/origin=([^&]*)/)?.[1]);
+  console.log('🗺️ CZY ORIGIN ZAWIERA GLINIANA?', url.includes('50.0641'));
+  console.log('🗺️ =============== generateGoogleMapsUrl END ===============');
+  
+  return url;
+}
+
+function getDateForDay(currentDate, dayName) {
+  const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+  const currentDayIndex = currentDate.getDay();
+  const targetDayIndex = days.indexOf(dayName);
+  
+  const daysUntilTarget = (targetDayIndex + 7 - currentDayIndex) % 7;
+  const targetDate = new Date(currentDate);
+  targetDate.setDate(currentDate.getDate() + daysUntilTarget);
+  
+  return targetDate.toISOString().split('T')[0];
+}
+
+// ===============================================
+// 🤖 NOWE INTELIGENTNE STRATEGIE OPTYMALIZACJI AI
+// ===============================================
+
+// 🚨 STRATEGIA: Priorytet dla pilnych zleceń
+async function optimizeByPriority(weeklyPlan, remainingOrders, availabilityMatrix) {
+  // Sortuj zlecenia według priorytetu: high -> medium -> low
+  const sortedOrders = remainingOrders.sort((a, b) => {
+    const priorityWeight = { high: 3, medium: 2, low: 1 };
+    return priorityWeight[b.priority] - priorityWeight[a.priority];
+  });
+  
+  const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'];
+  
+  // Przypisuj zlecenia w kolejności priorytetu
+  for (const order of sortedOrders) {
+    const bestDay = findBestDayForOrder(order, availabilityMatrix, weeklyPlan);
+    if (bestDay) {
+      weeklyPlan[bestDay].orders.push(order);
+    }
+  }
+}
+
+// 🗺️ STRATEGIA: Grupowanie geograficzne
+async function optimizeByGeography(weeklyPlan, geographicGroups, availabilityMatrix, remainingOrders) {
+  // Użyi istniejącej logiki geograficznej, ale z większym naciskiem na kompaktność
+  await assignGeographicGroups(weeklyPlan, geographicGroups, availabilityMatrix, remainingOrders);
+  
+  // Dodatkowe grupowanie - jeśli zlecenia zostały, przypisz je do najbliższych dni
+  const remaining = [...remainingOrders];
+  for (const order of remaining) {
+    const bestDay = findClosestGeographicDay(order, weeklyPlan, availabilityMatrix);
+    if (bestDay) {
+      weeklyPlan[bestDay].orders.push(order);
+      const index = remainingOrders.indexOf(order);
+      remainingOrders.splice(index, 1);
+    }
+  }
+}
+
+// ⚡ STRATEGIA: Optymalizacja czasowa
+async function optimizeByTime(weeklyPlan, remainingOrders, availabilityMatrix) {
+  // Sortuj zlecenia według szacowanego czasu realizacji (krótsze pierwsze)
+  const sortedOrders = remainingOrders.sort((a, b) => a.estimatedDuration - b.estimatedDuration);
+  
+  const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'];
+  
+  // Wypełniaj dni równomiernie, zaczynając od najkrótszych zleceń
+  let currentDayIndex = 0;
+  
+  for (const order of sortedOrders) {
+    // Znajdź dzień z najmniejszym obciążeniem czasowym
+    const bestDay = days.reduce((best, day) => {
+      const currentDayLoad = weeklyPlan[day].orders.reduce((sum, o) => sum + o.estimatedDuration, 0);
+      const bestDayLoad = weeklyPlan[best].orders.reduce((sum, o) => sum + o.estimatedDuration, 0);
+      return currentDayLoad < bestDayLoad ? day : best;
+    });
+    
+    weeklyPlan[bestDay].orders.push(order);
+  }
+}
+
+// 💰 STRATEGIA: Maksymalizacja przychodu
+async function optimizeByRevenue(weeklyPlan, remainingOrders, availabilityMatrix) {
+  // Sortuj zlecenia według wartości (najdroższe pierwsze)
+  const sortedOrders = remainingOrders.sort((a, b) => b.serviceCost - a.serviceCost);
+  
+  const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'];
+  
+  // Przypisuj najbardziej dochodowe zlecenia na początek tygodnia
+  for (const order of sortedOrders) {
+    const bestDay = findBestDayForOrder(order, availabilityMatrix, weeklyPlan);
+    if (bestDay) {
+      weeklyPlan[bestDay].orders.push(order);
+    }
+  }
+}
+
+// 👑 STRATEGIA: Priorytet VIP klientów
+async function optimizeByVIP(weeklyPlan, remainingOrders, availabilityMatrix) {
+  // Najpierw VIP klienci (można rozszerzyć o flagę isVIP w przyszłości)
+  const vipOrders = remainingOrders.filter(order => 
+    order.priority === 'high' || order.serviceCost >= 200
+  );
+  const regularOrders = remainingOrders.filter(order => 
+    !vipOrders.includes(order)
+  );
+  
+  // Przypisz VIP klientów w najlepszych terminach
+  for (const order of vipOrders) {
+    const bestDay = findBestDayForOrder(order, availabilityMatrix, weeklyPlan);
+    if (bestDay) {
+      weeklyPlan[bestDay].orders.push(order);
+    }
+  }
+  
+  // Potem reszta klientów
+  for (const order of regularOrders) {
+    const bestDay = findBestDayForOrder(order, availabilityMatrix, weeklyPlan);
+    if (bestDay) {
+      weeklyPlan[bestDay].orders.push(order);
+    }
+  }
+}
+
+// 🎯 STRATEGIA: Minimalizacja dystansu
+async function optimizeByDistance(weeklyPlan, remainingOrders, availabilityMatrix, startPoint = { lat: 50.0647, lng: 19.9450 }) {       
+  const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'];  // Algorytm najbliższego sąsiada dla każdego dnia
+  for (const day of days) {
+    const availableOrders = remainingOrders.filter(order => 
+      isOrderAvailableOnDay(order, day, availabilityMatrix)
+    );
+    
+    if (availableOrders.length === 0) continue;
+    
+    let currentPoint = startPoint;
+    const dayOrders = [];
+    const remaining = [...availableOrders];
+    
+    // Algorytm najbliższego sąsiada
+    while (remaining.length > 0 && dayOrders.length < 8) { // max 8 zleceń dziennie
+      let closestOrder = null;
+      let minDistance = Infinity;
+      
+      for (const order of remaining) {
+        const distance = calculateDistanceSync(currentPoint, order.coordinates);
+        if (distance < minDistance) {
+          minDistance = distance;
+          closestOrder = order;
+        }
+      }
+      
+      if (closestOrder) {
+        dayOrders.push(closestOrder);
+        currentPoint = closestOrder.coordinates;
+        remaining.splice(remaining.indexOf(closestOrder), 1);
+        remainingOrders.splice(remainingOrders.indexOf(closestOrder), 1);
+      } else {
+        break;
+      }
+    }
+    
+    weeklyPlan[day].orders = dayOrders;
+  }
+}
+
+// ⚖️ STRATEGIA: Zbalansowana (domyślna)
+async function optimizeBalanced(weeklyPlan, geographicGroups, availabilityMatrix, remainingOrders) {
+  // Kombinacja wszystkich strategii z wagami
+  
+  // 1. Najpierw pilne zlecenia (30% wagi)
+  await assignHighPriorityOrders(weeklyPlan, remainingOrders, availabilityMatrix);
+  
+  // 2. Potem grupowanie geograficzne (40% wagi)
+  await assignGeographicGroups(weeklyPlan, geographicGroups, availabilityMatrix, remainingOrders);
+  
+  // 3. Reszta według dostępności i czasu (30% wagi)
+  const remaining = [...remainingOrders];
+  for (const order of remaining) {
+    const bestDay = findBestDayForOrder(order, availabilityMatrix, weeklyPlan);
+    if (bestDay) {
+      weeklyPlan[bestDay].orders.push(order);
+      const index = remainingOrders.indexOf(order);
+      remainingOrders.splice(index, 1);
+    }
+  }
+}
+
+// POMOCNICZE FUNKCJE AI
+
+function findClosestGeographicDay(order, weeklyPlan, availabilityMatrix) {
+  const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'];
+  let bestDay = null;
+  let minAvgDistance = Infinity;
+  
+  for (const day of days) {
+    if (!isOrderAvailableOnDay(order, day, availabilityMatrix)) continue;
+    
+    const dayOrders = weeklyPlan[day].orders;
+    if (dayOrders.length === 0) {
+      // Jeśli dzień pusty, może być dobry
+      if (!bestDay) bestDay = day;
+      continue;
+    }
+    
+    // Oblicz średnią odległość do innych zleceń tego dnia
+    const avgDistance = dayOrders.reduce((sum, otherOrder) => {
+      return sum + calculateDistanceSync(order.coordinates, otherOrder.coordinates);
+    }, 0) / dayOrders.length;
+    
+    if (avgDistance < minAvgDistance) {
+      minAvgDistance = avgDistance;
+      bestDay = day;
+    }
+  }
+  
+  return bestDay;
+}
+
+function isOrderAvailableOnDay(order, day, availabilityMatrix) {
+  // Sprawdź czy klient jest dostępny w danym dniu
+  if (order.preferredTimeSlots && order.preferredTimeSlots.length > 0) {
+    return order.preferredTimeSlots.some(slot => slot.day === day);
+  }
+  
+  // Jeśli brak preferencji, zakładaj że jest dostępny
+  return true;
+}

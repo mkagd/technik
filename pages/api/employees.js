@@ -3,6 +3,8 @@
 import {
     readEmployees,
     addEmployee,
+    updateEmployee,
+    deleteEmployee,
     readSpecializations,
     readDistanceSettings,
     readEmployeeSettings,
@@ -115,6 +117,94 @@ export default async function handler(req, res) {
             console.error('❌ Błąd dodawania pracownika:', error);
             return res.status(500).json({
                 message: 'Błąd serwera przy dodawaniu pracownika',
+                error: error.message
+            });
+        }
+    }
+
+    if (req.method === 'PUT') {
+        try {
+            console.log('📞 API PUT /api/employees - aktualizacja pracownika:', req.body);
+
+            const { id, ...updateData } = req.body;
+
+            if (!id) {
+                return res.status(400).json({
+                    message: 'Brak ID pracownika'
+                });
+            }
+
+            // Sprawdź czy email nie jest już używany przez innego pracownika
+            if (updateData.email) {
+                const existingEmployees = readEmployees();
+                const emailExists = existingEmployees.some(emp => emp.email === updateData.email && emp.id !== id);
+                if (emailExists) {
+                    return res.status(400).json({
+                        message: 'Pracownik z takim adresem email już istnieje'
+                    });
+                }
+            }
+
+            const updatedEmployee = updateEmployee(id, {
+                ...updateData,
+                metadata: {
+                    ...updateData.metadata,
+                    updatedAt: new Date().toISOString(),
+                    lastModifiedBy: 'admin-panel'
+                }
+            });
+
+            if (updatedEmployee) {
+                console.log('✅ Pracownik zaktualizowany:', id);
+                return res.status(200).json({
+                    message: 'Pracownik zaktualizowany pomyślnie',
+                    employee: updatedEmployee
+                });
+            } else {
+                return res.status(404).json({
+                    message: 'Pracownik nie znaleziony'
+                });
+            }
+
+        } catch (error) {
+            console.error('❌ Błąd aktualizacji pracownika:', error);
+            return res.status(500).json({
+                message: 'Błąd serwera przy aktualizacji pracownika',
+                error: error.message
+            });
+        }
+    }
+
+    if (req.method === 'DELETE') {
+        try {
+            const { id } = req.query;
+
+            console.log('📞 API DELETE /api/employees - usuwanie pracownika:', id);
+
+            if (!id) {
+                return res.status(400).json({
+                    message: 'Brak ID pracownika'
+                });
+            }
+
+            const success = deleteEmployee(id);
+
+            if (success) {
+                console.log('✅ Pracownik usunięty:', id);
+                return res.status(200).json({
+                    message: 'Pracownik usunięty pomyślnie',
+                    id
+                });
+            } else {
+                return res.status(404).json({
+                    message: 'Pracownik nie znaleziony'
+                });
+            }
+
+        } catch (error) {
+            console.error('❌ Błąd usuwania pracownika:', error);
+            return res.status(500).json({
+                message: 'Błąd serwera przy usuwaniu pracownika',
                 error: error.message
             });
         }

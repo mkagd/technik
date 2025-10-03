@@ -1,0 +1,185 @@
+/**
+ * Kalkulator czasu naprawy AGD
+ * 
+ * Oblicza szacowany czas naprawy na podstawie:
+ * - Typu urządzenia
+ * - Indywidualnych czasów pracownika
+ * - Dodatkowych czynności (montaż/demontaż zabudowy)
+ * - Ręcznie wprowadzonego dodatkowego czasu
+ */
+
+const repairTimeSettings = require('../data/repair-time-settings.json');
+
+/**
+ * Pobiera czas bazowy naprawy dla pracownika i typu urządzenia
+ * @param {Object} employee - Obiekt pracownika z repairTimes
+ * @param {string} deviceType - Typ urządzenia (np. "pralka", "lodówka")
+ * @returns {number} Czas w minutach
+ */
+function getBaseRepairTime(employee, deviceType) {
+  if (!employee) {
+    // Jeśli brak pracownika, użyj czasu domyślnego z konfiguracji
+    const device = repairTimeSettings.deviceTypes.find(d => d.id === deviceType);
+    return device ? device.defaultTime : 30;
+  }
+
+  // Pobierz czas z ustawień pracownika
+  if (employee.repairTimes && employee.repairTimes[deviceType]) {
+    return employee.repairTimes[deviceType];
+  }
+
+  // Fallback do czasu domyślnego
+  const device = repairTimeSettings.deviceTypes.find(d => d.id === deviceType);
+  return device ? device.defaultTime : 30;
+}
+
+/**
+ * Oblicza dodatkowy czas za czynności montażowe
+ * @param {Object} additionalWork - Obiekt z flagami czynności dodatkowych
+ * @param {boolean} additionalWork.hasDemontaz - Czy wymaga demontażu
+ * @param {boolean} additionalWork.hasMontaz - Czy wymaga montażu
+ * @param {boolean} additionalWork.hasTrudnaZabudowa - Czy trudna zabudowa
+ * @param {number} additionalWork.manualAdditionalTime - Ręcznie dodany czas (minuty)
+ * @returns {number} Dodatkowy czas w minutach
+ */
+function calculateAdditionalTime(additionalWork = {}) {
+  let additionalTime = 0;
+
+  if (additionalWork.hasDemontaz) {
+    additionalTime += repairTimeSettings.additionalTimes.demontaż.time;
+  }
+
+  if (additionalWork.hasMontaz) {
+    additionalTime += repairTimeSettings.additionalTimes.montaż.time;
+  }
+
+  if (additionalWork.hasTrudnaZabudowa) {
+    additionalTime += repairTimeSettings.additionalTimes.trudnaZabudowa.time;
+  }
+
+  if (additionalWork.manualAdditionalTime && typeof additionalWork.manualAdditionalTime === 'number') {
+    additionalTime += additionalWork.manualAdditionalTime;
+  }
+
+  return additionalTime;
+}
+
+/**
+ * Oblicza całkowity szacowany czas naprawy
+ * @param {Object} params - Parametry obliczenia
+ * @param {Object} params.employee - Obiekt pracownika
+ * @param {string} params.deviceType - Typ urządzenia
+ * @param {Object} params.additionalWork - Dodatkowe czynności
+ * @returns {Object} Obiekt z szczegółami czasu
+ */
+function calculateRepairTime(params) {
+  const { employee, deviceType, additionalWork = {} } = params;
+
+  const baseTime = getBaseRepairTime(employee, deviceType);
+  const additionalTime = calculateAdditionalTime(additionalWork);
+  const totalTime = baseTime + additionalTime;
+
+  return {
+    baseTime,
+    additionalTime,
+    totalTime,
+    breakdown: {
+      base: baseTime,
+      demontaz: additionalWork.hasDemontaz ? repairTimeSettings.additionalTimes.demontaż.time : 0,
+      montaz: additionalWork.hasMontaz ? repairTimeSettings.additionalTimes.montaż.time : 0,
+      trudnaZabudowa: additionalWork.hasTrudnaZabudowa ? repairTimeSettings.additionalTimes.trudnaZabudowa.time : 0,
+      manual: additionalWork.manualAdditionalTime || 0
+    },
+    deviceType,
+    employeeName: employee?.name || 'Nieprzypisany'
+  };
+}
+
+/**
+ * Waliduje typ urządzenia
+ * @param {string} deviceType - Typ urządzenia do walidacji
+ * @returns {boolean} Czy typ jest prawidłowy
+ */
+function isValidDeviceType(deviceType) {
+  return repairTimeSettings.deviceTypes.some(d => d.id === deviceType);
+}
+
+/**
+ * Pobiera listę wszystkich typów urządzeń
+ * @returns {Array} Tablica typów urządzeń
+ */
+function getDeviceTypes() {
+  return repairTimeSettings.deviceTypes;
+}
+
+/**
+ * Pobiera ustawienia dodatkowych czasów
+ * @returns {Object} Obiekt z ustawieniami dodatkowych czasów
+ */
+function getAdditionalTimesSettings() {
+  return repairTimeSettings.additionalTimes;
+}
+
+/**
+ * Formatuje czas do wyświetlenia
+ * @param {number} minutes - Czas w minutach
+ * @returns {string} Sformatowany czas (np. "1h 30min", "45min")
+ */
+function formatTime(minutes) {
+  if (minutes < 60) {
+    return `${minutes}min`;
+  }
+  const hours = Math.floor(minutes / 60);
+  const mins = minutes % 60;
+  return mins > 0 ? `${hours}h ${mins}min` : `${hours}h`;
+}
+
+/**
+ * Oblicza sugerowany czas dla wizyty na podstawie zlecenia
+ * @param {Object} order - Zlecenie
+ * @param {Object} employee - Pracownik
+ * @returns {number} Sugerowany czas w minutach
+ */
+function suggestVisitDuration(order, employee) {
+  if (!order) return 60; // Domyślnie 1 godzina
+
+  // Jeśli zlecenie ma już deviceDetails, użyj ich
+  if (order.deviceDetails) {
+    const result = calculateRepairTime({
+      employee,
+      deviceType: order.deviceDetails.deviceType,
+      additionalWork: {
+        hasDemontaz: order.deviceDetails.hasDemontaz,
+        hasMontaz: order.deviceDetails.hasMontaz,
+        hasTrudnaZabudowa: order.deviceDetails.hasTrudnaZabudowa,
+        manualAdditionalTime: order.deviceDetails.manualAdditionalTime
+      }
+    });
+    return result.totalTime;
+  }
+
+  // Fallback - spróbuj odgadnąć z opisu lub tytułu zlecenia
+  const description = (order.description || '').toLowerCase();
+  const title = (order.title || '').toLowerCase();
+  const text = `${description} ${title}`;
+
+  for (const deviceType of repairTimeSettings.deviceTypes) {
+    if (text.includes(deviceType.id) || text.includes(deviceType.label.toLowerCase())) {
+      return getBaseRepairTime(employee, deviceType.id);
+    }
+  }
+
+  // Jeśli nie można określić, zwróć średni czas
+  return 60;
+}
+
+module.exports = {
+  calculateRepairTime,
+  getBaseRepairTime,
+  calculateAdditionalTime,
+  isValidDeviceType,
+  getDeviceTypes,
+  getAdditionalTimesSettings,
+  formatTime,
+  suggestVisitDuration
+};

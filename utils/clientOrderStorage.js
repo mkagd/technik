@@ -1,8 +1,15 @@
 // utils/clientOrderStorage.js
 // System przechowywania danych zgodny z aplikacją mobilną (ClientsContext + OrdersContext)
+// ENHANCED WITH PROFESSIONAL FILE LOCKING + ADVANCED CACHING + UNIFIED ID SYSTEM
 
 import fs from 'fs';
 import path from 'path';
+import { LockedFileOperations } from './fileLocking.js';
+import { 
+    generateClientId, 
+    generateOrderId, 
+    generateVisitId 
+} from './id-generator.js';
 
 const CLIENTS_FILE = path.join(process.cwd(), 'data', 'clients.json');
 const ORDERS_FILE = path.join(process.cwd(), 'data', 'orders.json');
@@ -17,112 +24,149 @@ const ensureDataDir = () => {
 
 // === KLIENCI ===
 
-// Odczytaj klientów z pliku
-export const readClients = () => {
+// Odczytaj klientów z pliku - THREAD-SAFE VERSION
+export const readClients = async () => {
     try {
         ensureDataDir();
-        if (!fs.existsSync(CLIENTS_FILE)) {
-            return [];
-        }
-        const data = fs.readFileSync(CLIENTS_FILE, 'utf8');
-        return JSON.parse(data);
+        const clients = await LockedFileOperations.readJSON(CLIENTS_FILE, []);
+        return clients;
     } catch (error) {
-        console.error('Błąd odczytu klientów:', error);
+        console.error('🔒 Błąd odczytu klientów:', error);
         return [];
     }
 };
 
-// Zapisz klientów do pliku
-export const writeClients = (clients) => {
+// Zapisz klientów do pliku - THREAD-SAFE VERSION
+export const writeClients = async (clients) => {
     try {
         ensureDataDir();
-        fs.writeFileSync(CLIENTS_FILE, JSON.stringify(clients, null, 2));
+        await LockedFileOperations.writeJSON(CLIENTS_FILE, clients);
         return true;
     } catch (error) {
-        console.error('Błąd zapisu klientów:', error);
+        console.error('🔒 Błąd zapisu klientów:', error);
         return false;
     }
 };
 
-// Dodaj nowego klienta (zgodnie z ClientsContext.addClient)
-export const addClient = (clientData) => {
+// Dodaj nowego klienta - ATOMIC OPERATION WITH LOCKING
+export const addClient = async (clientData, metadata = {}) => {
     try {
-        const clients = readClients();
-        const newId = `#${(clients.length + 1).toString().padStart(4, '0')}`;
-        const now = new Date().toISOString();
+        ensureDataDir();
+        const clients = await readClients();
+        
+        const newClient = await LockedFileOperations.updateJSON(CLIENTS_FILE, async (clients) => {
+            // Generuj nowe CLI ID ze źródłem
+            const source = metadata.source || 'system-auto';
+            const newId = generateClientId(clients, new Date(), source);
+            const now = new Date().toISOString();
 
-        const newClient = {
-            ...clientData,
-            id: newId,
-            dateAdded: now,
-            history: clientData.history || []
-        };
+            const clientToAdd = {
+                ...clientData,
+                id: newId,
+                clientId: newId,  // Duplicate dla kompatybilności
+                
+                // METADANE ŹRÓDŁA:
+                source: source,
+                sourceCode: source.length === 1 ? source : undefined,
+                sourceDetails: metadata.sourceDetails || null,
+                createdBy: metadata.createdBy || 'system',
+                createdByName: metadata.createdByName || 'System',
+                userId: metadata.userId || null,  // Dla zalogowanych klientów
+                isAuthenticated: metadata.isAuthenticated || false,
+                createdFromIP: metadata.ip || null,
+                
+                // TIMESTAMPS:
+                dateAdded: now,
+                createdAt: now,
+                updatedAt: now,
+                updatedBy: null,
+                
+                // HISTORIA:
+                history: clientData.history || []
+            };
 
-        clients.push(newClient);
-        writeClients(clients);
+            clients.push(clientToAdd);
+            console.log('✅ Client added:', { 
+                id: clientToAdd.id, 
+                name: clientToAdd.name,
+                source: clientToAdd.source
+            });
+            
+            return clients;
+        }, []);
 
-        console.log('✅ Client added:', { id: newClient.id, name: newClient.name });
-        return newClient;
+        // Zwróć ostatniego dodanego klienta
+        const allClients = await LockedFileOperations.readJSON(CLIENTS_FILE, []);
+        return allClients[allClients.length - 1];
     } catch (error) {
-        console.error('Błąd dodawania klienta:', error);
+        console.error('🔒 Błąd dodawania klienta:', error);
         return null;
     }
 };
 
-// Aktualizuj klienta
-export const updateClient = (updatedClient) => {
+// Aktualizuj klienta - ATOMIC OPERATION WITH LOCKING
+export const updateClient = async (updatedClient) => {
     try {
-        const clients = readClients();
-        const index = clients.findIndex(c => c.id === updatedClient.id);
-        if (index !== -1) {
-            clients[index] = updatedClient;
-            writeClients(clients);
-            return updatedClient;
-        }
-        return null;
+        const result = await LockedFileOperations.updateJSON(CLIENTS_FILE, async (clients) => {
+            const index = clients.findIndex(c => c.id === updatedClient.id);
+            if (index !== -1) {
+                clients[index] = updatedClient;
+                return clients;
+            }
+            throw new Error('Client not found');
+        }, []);
+
+        return updatedClient;
     } catch (error) {
-        console.error('Błąd aktualizacji klienta:', error);
+        console.error('🔒 Błąd aktualizacji klienta:', error);
         return null;
     }
 };
 
-// Usuń klienta
-export const deleteClient = (clientId) => {
+// Usuń klienta - ATOMIC OPERATION WITH LOCKING
+export const deleteClient = async (clientId) => {
     try {
-        const clients = readClients();
-        const filteredClients = clients.filter(c => c.id !== clientId);
-        writeClients(filteredClients);
+        await LockedFileOperations.updateJSON(CLIENTS_FILE, async (clients) => {
+            const filteredClients = clients.filter(c => c.id !== clientId);
+            console.log(`🗑️ Client deleted: ${clientId}`);
+            return filteredClients;
+        }, []);
+        
         return true;
     } catch (error) {
-        console.error('Błąd usuwania klienta:', error);
+        console.error('🔒 Błąd usuwania klienta:', error);
         return false;
     }
 };
 
-// Dodaj kontakt z klientem do historii
-export const logClientContact = (clientId, type, source = 'WebApp') => {
+// Dodaj kontakt z klientem do historii - ATOMIC OPERATION WITH LOCKING
+export const logClientContact = async (clientId, type, source = 'WebApp') => {
     try {
-        const clients = readClients();
-        const clientIndex = clients.findIndex(c => c.id === clientId);
-        if (clientIndex === -1) return null;
+        const updatedClient = await LockedFileOperations.updateJSON(CLIENTS_FILE, async (clients) => {
+            const clientIndex = clients.findIndex(c => c.id === clientId);
+            if (clientIndex === -1) throw new Error('Client not found');
 
-        const icons = {
-            call: '📞',
-            sms: '✉️',
-            email: '📧',
-        };
+            const icons = {
+                call: '📞',
+                sms: '✉️',
+                email: '📧',
+            };
 
-        const newEntry = {
-            date: new Date().toISOString(),
-            note: `${icons[type] || '📍'} ${type.toUpperCase()} z ekranu ${source}`,
-        };
+            const newEntry = {
+                date: new Date().toISOString(),
+                note: `${icons[type] || '📍'} ${type.toUpperCase()} z ekranu ${source}`,
+            };
 
-        clients[clientIndex].history = [...(clients[clientIndex].history || []), newEntry];
-        writeClients(clients);
+            clients[clientIndex].history = [...(clients[clientIndex].history || []), newEntry];
+            console.log(`📞 Contact logged for client ${clientId}: ${type}`);
+            return clients;
+        }, []);
 
-        return clients[clientIndex];
+        // Return updated client
+        const allClients = await readClients();
+        return allClients.find(c => c.id === clientId);
     } catch (error) {
-        console.error('Błąd dodawania kontaktu do historii:', error);
+        console.error('🔒 Błąd dodawania kontaktu do historii:', error);
         return null;
     }
 };
@@ -139,132 +183,166 @@ const DEFAULT_BUILTIN_OPTIONS = {
     czas: false,
 };
 
-// Odczytaj zamówienia z pliku
-export const readOrders = () => {
+// Odczytaj zamówienia z pliku - THREAD-SAFE VERSION
+export const readOrders = async () => {
     try {
         ensureDataDir();
-        if (!fs.existsSync(ORDERS_FILE)) {
-            return [];
-        }
-        const data = fs.readFileSync(ORDERS_FILE, 'utf8');
-        return JSON.parse(data);
+        const orders = await LockedFileOperations.readJSON(ORDERS_FILE, []);
+        return orders;
     } catch (error) {
-        console.error('Błąd odczytu zamówień:', error);
+        console.error('🔒 Błąd odczytu zamówień:', error);
         return [];
     }
 };
 
-// Zapisz zamówienia do pliku
-export const writeOrders = (orders) => {
+// Zapisz zamówienia do pliku - THREAD-SAFE VERSION
+export const writeOrders = async (orders) => {
     try {
         ensureDataDir();
-        fs.writeFileSync(ORDERS_FILE, JSON.stringify(orders, null, 2));
+        await LockedFileOperations.writeJSON(ORDERS_FILE, orders);
         return true;
     } catch (error) {
-        console.error('Błąd zapisu zamówień:', error);
+        console.error('🔒 Błąd zapisu zamówień:', error);
         return false;
     }
 };
 
-// Dodaj nowe zamówienie (zgodnie z OrdersContext.addOrder)
-export const addOrder = (newOrder) => {
+// Dodaj nowe zamówienie - ATOMIC OPERATION WITH LOCKING + UNIFIED ID SYSTEM
+export const addOrder = async (newOrder, metadata = {}) => {
     try {
-        const orders = readOrders();
+        ensureDataDir();
+        const addedOrder = await LockedFileOperations.updateJSON(ORDERS_FILE, async (orders) => {
+            // Zapewnij spójność devices i builtInParams
+            const devices = Array.isArray(newOrder.devices)
+                ? newOrder.devices.map(d => ({
+                    ...d,
+                    builtInParams: {
+                        ...DEFAULT_BUILTIN_OPTIONS,
+                        ...(d.builtInParams || {}),
+                    },
+                    builtInParamsNotes: d.builtInParamsNotes || {},
+                }))
+                : [];
 
-        // Zapewnij spójność devices i builtInParams
-        const devices = Array.isArray(newOrder.devices)
-            ? newOrder.devices.map(d => ({
-                ...d,
-                builtInParams: {
-                    ...DEFAULT_BUILTIN_OPTIONS,
-                    ...(d.builtInParams || {}),
-                },
-                builtInParamsNotes: d.builtInParamsNotes || {},
-            }))
-            : [];
+            // Generuj orderNumber jeśli nie został podany (ze źródłem!)
+            const source = metadata.source || newOrder.source || 'system-auto';
+            const orderNumber = newOrder.orderNumber || generateOrderId(orders, new Date(), source);
+            const now = new Date().toISOString();
 
-        const orderToAdd = {
-            ...newOrder,
-            id: newOrder.id || Date.now(),
-            devices,
-            builtInParams: devices[0]?.builtInParams || { ...DEFAULT_BUILTIN_OPTIONS },
-            dateAdded: new Date().toISOString()
-        };
+            const orderToAdd = {
+                ...newOrder,
+                id: newOrder.id || Date.now(),
+                orderNumber: orderNumber,
+                devices,
+                builtInParams: devices[0]?.builtInParams || { ...DEFAULT_BUILTIN_OPTIONS },
+                
+                // METADANE ŹRÓDŁA:
+                source: source,
+                sourceCode: source.length === 1 ? source : undefined,
+                sourceDetails: metadata.sourceDetails || newOrder.sourceDetails || null,
+                createdBy: metadata.createdBy || newOrder.createdBy || 'system',
+                createdByName: metadata.createdByName || newOrder.createdByName || 'System',
+                userId: metadata.userId || newOrder.userId || null,  // Dla zalogowanych klientów
+                isUserCreated: metadata.isUserCreated || newOrder.isUserCreated || false,
+                createdFromIP: metadata.ip || null,
+                
+                // TIMESTAMPS:
+                dateAdded: now,
+                createdAt: now,
+                updatedAt: now,
+                updatedBy: null
+            };
 
-        orders.push(orderToAdd);
-        writeOrders(orders);
+            orders.push(orderToAdd);
+            console.log('✅ Order added:', { 
+                id: orderToAdd.id, 
+                orderNumber: orderToAdd.orderNumber,
+                source: orderToAdd.source,
+                devicesCount: devices.length 
+            });
+            return orders;
+        }, []);
 
-        console.log('✅ Order added:', { id: orderToAdd.id, devicesCount: devices.length });
-        return orderToAdd;
+        // Return the newly added order (ostatni w tablicy)
+        const orders = await LockedFileOperations.readJSON(ORDERS_FILE, []);
+        return orders[orders.length - 1];
     } catch (error) {
-        console.error('Błąd dodawania zamówienia:', error);
+        console.error('🔒 Błąd dodawania zamówienia:', error);
         return null;
     }
 };
 
-// Patch zamówienia (zgodnie z OrdersContext.patchOrder)
-export const patchOrder = (id, patch) => {
+// Patch zamówienia - ATOMIC OPERATION WITH LOCKING
+export const patchOrder = async (id, patch) => {
     try {
-        const orders = readOrders();
-        const orderIndex = orders.findIndex(order => String(order.id) === String(id));
+        let patchedOrder = null;
+        await LockedFileOperations.updateJSON(ORDERS_FILE, async (orders) => {
+            const orderIndex = orders.findIndex(order => String(order.id) === String(id));
 
-        if (orderIndex === -1) return null;
+            if (orderIndex === -1) throw new Error('Order not found');
 
-        const merged = {
-            ...orders[orderIndex],
-            ...patch,
-            dates: patch.dates ? patch.dates : orders[orderIndex].dates,
-            hours: patch.hours !== undefined ? patch.hours : orders[orderIndex].hours,
-            end: patch.end !== undefined ? patch.end : orders[orderIndex].end,
-        };
+            const merged = {
+                ...orders[orderIndex],
+                ...patch,
+                dates: patch.dates ? patch.dates : orders[orderIndex].dates,
+                hours: patch.hours !== undefined ? patch.hours : orders[orderIndex].hours,
+                end: patch.end !== undefined ? patch.end : orders[orderIndex].end,
+            };
 
-        if (patch.dates) merged.dates = [...patch.dates];
+            if (patch.dates) merged.dates = [...patch.dates];
 
-        orders[orderIndex] = merged;
-        writeOrders(orders);
+            orders[orderIndex] = merged;
+            patchedOrder = merged;
+            console.log('✅ Order patched:', { id: merged.id });
+            return orders;
+        }, []);
 
-        console.log('✅ Order patched:', { id: merged.id });
-        return merged;
+        return patchedOrder;
     } catch (error) {
-        console.error('Błąd aktualizacji zamówienia:', error);
+        console.error('🔒 Błąd aktualizacji zamówienia:', error);
         return null;
     }
 };
 
-// Aktualizuj zamówienie
-export const updateOrder = (updatedOrder) => {
+// Aktualizuj zamówienie - ATOMIC OPERATION WITH LOCKING
+export const updateOrder = async (updatedOrder) => {
     try {
-        const orders = readOrders();
-        const index = orders.findIndex(order => order.id === updatedOrder.id);
-        if (index !== -1) {
-            orders[index] = updatedOrder;
-            writeOrders(orders);
-            return updatedOrder;
-        }
-        return null;
+        const result = await LockedFileOperations.updateJSON(ORDERS_FILE, async (orders) => {
+            const index = orders.findIndex(order => order.id === updatedOrder.id);
+            if (index !== -1) {
+                orders[index] = updatedOrder;
+                return orders;
+            }
+            throw new Error('Order not found');
+        }, []);
+
+        return updatedOrder;
     } catch (error) {
-        console.error('Błąd aktualizacji zamówienia:', error);
+        console.error('🔒 Błąd aktualizacji zamówienia:', error);
         return null;
     }
 };
 
-// Usuń zamówienie
-export const deleteOrder = (orderId) => {
+// Usuń zamówienie - ATOMIC OPERATION WITH LOCKING
+export const deleteOrder = async (orderId) => {
     try {
-        const orders = readOrders();
-        const filteredOrders = orders.filter(order => order.id !== orderId);
-        writeOrders(filteredOrders);
+        await LockedFileOperations.updateJSON(ORDERS_FILE, async (orders) => {
+            const filteredOrders = orders.filter(order => order.id !== orderId);
+            console.log(`🗑️ Order deleted: ${orderId}`);
+            return filteredOrders;
+        }, []);
+        
         return true;
     } catch (error) {
-        console.error('Błąd usuwania zamówienia:', error);
+        console.error('🔒 Błąd usuwania zamówienia:', error);
         return false;
     }
 };
 
 // === KONWERSJA DANYCH ===
 
-// Konwertuj dane z formularza rezerwacji na format klienta + zamówienia
-export const convertReservationToClientOrder = (reservationData) => {
+// Konwertuj dane z formularza rezerwacji na format klienta + zamówienia - ENHANCED WITH BATCH LOCKING
+export const convertReservationToClientOrder = async (reservationData) => {
     const now = new Date().toISOString();
 
     // Stwórz klienta
@@ -279,17 +357,34 @@ export const convertReservationToClientOrder = (reservationData) => {
         history: []
     };
 
-    // Stwórz zamówienie
+    // Stwórz zamówienie - zgodne ze strukturą orders.json
     const order = {
         clientId: null, // zostanie ustawione po dodaniu klienta
+        clientName: client.name,
+        clientPhone: client.phone,
+        email: client.email,
+        address: client.address,
+        city: client.city,
+        street: client.street,
+        postalCode: reservationData.postalCode || '',
+        // 🌍 WSPÓŁRZĘDNE GPS z geocodingu
+        clientLocation: reservationData.clientLocation || null,
+        latitude: reservationData.clientLocation?.coordinates?.lat || null,
+        longitude: reservationData.clientLocation?.coordinates?.lng || null,
+        deviceType: reservationData.category || reservationData.device || 'Nie określono',
+        brand: reservationData.brand || 'Nie określono',
+        model: reservationData.device || 'Nie określono',
+        serialNumber: '',
+        description: reservationData.problem || reservationData.description || 'Brak opisu',
+        priority: reservationData.priority || 'medium',
+        status: reservationData.status || 'scheduled',
+        visits: [], // Puste wizyty na start
+        // Pola legacy dla kompatybilności
         category: reservationData.category,
         serviceType: reservationData.serviceType || reservationData.device,
-        description: reservationData.problem || reservationData.description,
         scheduledDate: reservationData.date || reservationData.scheduledDate,
         scheduledTime: reservationData.scheduledTime,
-        availability: reservationData.availability || 'Nie określono', // Client availability info
-        status: reservationData.status || 'pending',
-        priority: reservationData.priority || 'normal',
+        availability: reservationData.availability || 'Nie określono',
         devices: [{
             name: reservationData.device || reservationData.serviceType,
             description: reservationData.problem || reservationData.description,
@@ -297,6 +392,15 @@ export const convertReservationToClientOrder = (reservationData) => {
             builtInParamsNotes: {}
         }],
         builtInParams: { ...DEFAULT_BUILTIN_OPTIONS },
+        // Dodajemy deviceDetails z informacjami o zabudowie
+        deviceDetails: {
+            deviceType: (reservationData.category || reservationData.device || '').toLowerCase(),
+            hasBuiltIn: reservationData.hasBuiltIn || false,
+            hasDemontaz: reservationData.hasDemontaz || false,
+            hasMontaz: reservationData.hasMontaz || false,
+            hasTrudnaZabudowa: reservationData.hasTrudnaZabudowa || false,
+            manualAdditionalTime: 0
+        },
         dates: reservationData.scheduledDate ? [reservationData.scheduledDate] : [],
         hours: null,
         end: null

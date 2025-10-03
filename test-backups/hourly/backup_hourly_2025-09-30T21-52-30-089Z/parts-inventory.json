@@ -1,0 +1,432 @@
+{
+  "inventory": [
+    {
+      "id": "PART001",
+      "name": "Łożysko bębna Samsung",
+      "partNumber": "DC97-16151A",
+      "category": "AGD",
+      "subcategory": "Pralka",
+      "compatibleBrands": ["Samsung"],
+      "compatibleModels": [
+        "WW90T4540AE", "WW80T4540AE", "WW70T4540AE",
+        "WW90T4040CE", "WW80T4040CE"
+      ],
+      "description": "Łożysko bębna do pralek Samsung, wysokiej jakości zamiennik",
+      "specifications": {
+        "diameter": "35mm",
+        "material": "Stal nierdzewna + uszczelka NBR",
+        "warranty": "12 miesięcy",
+        "oem": true
+      },
+      "pricing": {
+        "retailPrice": 85,
+        "wholesalePrice": 65,
+        "currency": "PLN",
+        "taxIncluded": true
+      },
+      "availability": {
+        "inStock": 12,
+        "minStock": 3,
+        "maxStock": 20,
+        "reserved": 2,
+        "available": 10
+      },
+      "supplier": {
+        "name": "Samsung Parts Europe",
+        "supplierCode": "SPE-001",
+        "contactInfo": {
+          "phone": "+48 22 123 45 67",
+          "email": "parts@samsung.pl"
+        },
+        "deliveryTime": "24h",
+        "minOrderQuantity": 1
+      },
+      "installation": {
+        "difficulty": "high",
+        "estimatedTime": 120,
+        "requiredTools": [
+          "klucze do AGD",
+          "ściągacz łożysk",
+          "klucz dynamometryczny"
+        ],
+        "specialRequirements": [
+          "demontaż bębna",
+          "wymiana jednoczesna z uszczelkami"
+        ]
+      },
+      "failureIndicators": [
+        "hałas podczas wirowania",
+        "wyciek wody pod pralką",
+        "wibracje podczas prania",
+        "zablokowany bęben"
+      ],
+      "metadata": {
+        "createdAt": "2025-09-30T12:00:00Z",
+        "updatedAt": "2025-09-30T12:00:00Z",
+        "lastOrderDate": "2025-09-25T10:30:00Z",
+        "popularityScore": 8.5,
+        "seasonalDemand": "stable"
+      }
+    },
+    {
+      "id": "PART002", 
+      "name": "Pompa odpływowa uniwersalna",
+      "partNumber": "DC96-01414G",
+      "category": "AGD",
+      "subcategory": "Pralka",
+      "compatibleBrands": ["Samsung", "LG", "Bosch"],
+      "compatibleModels": ["universal"],
+      "description": "Uniwersalna pompa odpływowa do pralek, pasuje do większości modeli",
+      "specifications": {
+        "power": "30W",
+        "voltage": "230V",
+        "flow": "12L/min",
+        "warranty": "6 miesięcy"
+      },
+      "pricing": {
+        "retailPrice": 120,
+        "wholesalePrice": 90,
+        "currency": "PLN",
+        "taxIncluded": true
+      },
+      "availability": {
+        "inStock": 8,
+        "minStock": 2,
+        "maxStock": 15,
+        "reserved": 1,
+        "available": 7
+      },
+      "supplier": {
+        "name": "Universal Parts Ltd",
+        "supplierCode": "UPL-002",
+        "deliveryTime": "48h",
+        "minOrderQuantity": 2
+      },
+      "installation": {
+        "difficulty": "medium",
+        "estimatedTime": 45,
+        "requiredTools": [
+          "klucze płaskie",
+          "szczypce do węży"
+        ]
+      },
+      "failureIndicators": [
+        "woda nie odpływa",
+        "komunikat błędu na wyświetlaczu",
+        "hałas z dolnej części pralki"
+      ]
+    },
+    {
+      "id": "PART003",
+      "name": "Pasek napędowy HTD",
+      "partNumber": "6PH1871",
+      "category": "AGD", 
+      "subcategory": "Pralka",
+      "compatibleBrands": ["Samsung", "LG", "Whirlpool"],
+      "description": "Pasek napędowy HTD o długości 1871mm",
+      "specifications": {
+        "length": "1871mm",
+        "width": "6mm",
+        "type": "HTD",
+        "material": "Guma + aramid"
+      },
+      "pricing": {
+        "retailPrice": 35,
+        "wholesalePrice": 25,
+        "currency": "PLN",
+        "taxIncluded": true
+      },
+      "availability": {
+        "inStock": 15,
+        "minStock": 5,
+        "available": 15
+      },
+      "installation": {
+        "difficulty": "low",
+        "estimatedTime": 20,
+        "requiredTools": ["podstawowy zestaw narzędzi"]
+      },
+      "failureIndicators": [
+        "bęben nie obraca się",
+        "pęknięty pasek",
+        "poślizg paska"
+      ]
+    },
+    {
+      "id": "PART004",
+      "name": "Elektrozawór podwójny",
+      "partNumber": "DC62-00024A",
+      "category": "AGD",
+      "subcategory": "Pralka",
+      "compatibleBrands": ["Samsung"],
+      "description": "Elektrozawór podwójny do pralek Samsung - sterowanie dopływem wody",
+      "specifications": {
+        "voltage": "230V",
+        "current": "200mA",
+        "pressure": "0.1-1.0 MPa",
+        "outlets": 2
+      },
+      "pricing": {
+        "retailPrice": 65,
+        "wholesalePrice": 50,
+        "currency": "PLN"
+      },
+      "availability": {
+        "inStock": 6,
+        "available": 6
+      },
+      "installation": {
+        "difficulty": "medium",
+        "estimatedTime": 30
+      }
+    },
+    {
+      "id": "PART005",
+      "name": "Amortyzator pralki",
+      "partNumber": "DC66-00343A",
+      "category": "AGD",
+      "subcategory": "Pralka",
+      "compatibleBrands": ["Samsung"],
+      "description": "Amortyzator tylny do pralek Samsung - tłumienie wibracji",
+      "specifications": {
+        "length": "185mm",
+        "force": "120N",
+        "mounting": "górne i dolne"
+      },
+      "pricing": {
+        "retailPrice": 45,
+        "wholesalePrice": 35,
+        "currency": "PLN"
+      },
+      "availability": {
+        "inStock": 10,
+        "available": 10
+      },
+      "installation": {
+        "difficulty": "medium",
+        "estimatedTime": 40
+      },
+      "failureIndicators": [
+        "nadmierne wibracje",
+        "hałas podczas wirowania",
+        "przemieszczanie się pralki"
+      ]
+    },
+    {
+      "id": "PART006",
+      "name": "Pompa myjąca zmywarki",
+      "partNumber": "DW-PUMP-001",
+      "category": "AGD",
+      "subcategory": "Zmywarka",
+      "compatibleBrands": ["Bosch", "Siemens"],
+      "description": "Pompa myjąca do zmywarek Bosch/Siemens",
+      "specifications": {
+        "power": "65W",
+        "voltage": "230V",
+        "flow": "250L/h"
+      },
+      "pricing": {
+        "retailPrice": 180,
+        "wholesalePrice": 140,
+        "currency": "PLN"
+      },
+      "availability": {
+        "inStock": 4,
+        "available": 4
+      },
+      "installation": {
+        "difficulty": "high",
+        "estimatedTime": 90
+      }
+    },
+    {
+      "id": "PART007",
+      "name": "Ramię spryskujące dolne",
+      "partNumber": "DW-ARM-BOT",
+      "category": "AGD",
+      "subcategory": "Zmywarka",
+      "compatibleBrands": ["universal"],
+      "description": "Uniwersalne ramię spryskujące dolne do zmywarek",
+      "pricing": {
+        "retailPrice": 75,
+        "currency": "PLN"
+      },
+      "availability": {
+        "inStock": 8,
+        "available": 8
+      },
+      "installation": {
+        "difficulty": "low",
+        "estimatedTime": 15
+      }
+    },
+    {
+      "id": "PART008",
+      "name": "Filtr pompy zmywarki",
+      "partNumber": "DW-FILTER-01",
+      "category": "AGD",
+      "subcategory": "Zmywarka",
+      "compatibleBrands": ["universal"],
+      "description": "Filtr cylindryczny do pompy zmywarki",
+      "pricing": {
+        "retailPrice": 25,
+        "currency": "PLN"
+      },
+      "availability": {
+        "inStock": 20,
+        "available": 20
+      },
+      "installation": {
+        "difficulty": "low",
+        "estimatedTime": 10
+      }
+    },
+    {
+      "id": "PART009",
+      "name": "Termostat lodówki",
+      "partNumber": "FR-THERM-01",
+      "category": "AGD",
+      "subcategory": "Lodówka",
+      "compatibleBrands": ["Samsung", "LG"],
+      "description": "Termostat elektroniczny do lodówek",
+      "specifications": {
+        "range": "-30°C do +30°C",
+        "accuracy": "±1°C"
+      },
+      "pricing": {
+        "retailPrice": 85,
+        "currency": "PLN"
+      },
+      "availability": {
+        "inStock": 6,
+        "available": 6
+      },
+      "installation": {
+        "difficulty": "medium",
+        "estimatedTime": 45
+      }
+    },
+    {
+      "id": "PART010",
+      "name": "Element grzejny piekarnika",
+      "partNumber": "OV-HEAT-TOP",
+      "category": "AGD",
+      "subcategory": "Piekarnik",
+      "compatibleBrands": ["Bosch", "Siemens", "Electrolux"],
+      "description": "Element grzejny górny do piekarników",
+      "specifications": {
+        "power": "1200W",
+        "voltage": "230V",
+        "length": "440mm"
+      },
+      "pricing": {
+        "retailPrice": 95,
+        "currency": "PLN"
+      },
+      "availability": {
+        "inStock": 5,
+        "available": 5
+      },
+      "installation": {
+        "difficulty": "medium",
+        "estimatedTime": 60
+      }
+    }
+  ],
+  "categories": {
+    "AGD": {
+      "Pralka": {
+        "commonParts": ["łożysko", "pompa", "pasek", "elektrozawór", "amortyzator"],
+        "averageRepairCost": 180,
+        "complexityLevel": "medium"
+      },
+      "Zmywarka": {
+        "commonParts": ["pompa", "ramię", "filtr", "czujnik"],
+        "averageRepairCost": 220,
+        "complexityLevel": "medium"
+      },
+      "Lodówka": {
+        "commonParts": ["termostat", "wentylator", "uszczelka"],
+        "averageRepairCost": 150,
+        "complexityLevel": "low"
+      },
+      "Piekarnik": {
+        "commonParts": ["element grzejny", "termostat", "uszczelka"],
+        "averageRepairCost": 130,
+        "complexityLevel": "medium"
+      }
+    }
+  },
+  "suppliers": {
+    "SPE-001": {
+      "name": "Samsung Parts Europe",
+      "contact": {
+        "phone": "+48 22 123 45 67",
+        "email": "parts@samsung.pl",
+        "website": "parts.samsung.com"
+      },
+      "deliveryOptions": {
+        "standard": "24-48h",
+        "express": "same-day",
+        "weekend": false
+      },
+      "paymentTerms": "30 dni",
+      "minOrderValue": 200,
+      "discountTiers": {
+        "bronze": { "threshold": 1000, "discount": 5 },
+        "silver": { "threshold": 5000, "discount": 10 },
+        "gold": { "threshold": 15000, "discount": 15 }
+      }
+    },
+    "UPL-002": {
+      "name": "Universal Parts Ltd",
+      "contact": {
+        "phone": "+48 22 987 65 43", 
+        "email": "orders@universalparts.pl"
+      },
+      "deliveryOptions": {
+        "standard": "48h",
+        "express": "24h"
+      },
+      "specialties": ["pompy", "filtry", "elementy uniwersalne"]
+    }
+  },
+  "stockAlerts": {
+    "lowStock": [
+      {
+        "partId": "PART002",
+        "currentStock": 8,
+        "minStock": 2,
+        "recommendedOrder": 10,
+        "urgency": "medium"
+      },
+      {
+        "partId": "PART006", 
+        "currentStock": 4,
+        "minStock": 2,
+        "recommendedOrder": 8,
+        "urgency": "low"
+      }
+    ],
+    "outOfStock": [],
+    "overStock": []
+  },
+  "statistics": {
+    "totalParts": 10,
+    "totalValue": 815,
+    "topSellingParts": [
+      { "partId": "PART001", "sales": 25 },
+      { "partId": "PART003", "sales": 18 },
+      { "partId": "PART002", "sales": 15 }
+    ],
+    "averageDeliveryTime": "36h",
+    "stockTurnover": 4.2
+  },
+  "metadata": {
+    "version": "1.0",
+    "lastUpdated": "2025-09-30T12:30:00Z",
+    "createdBy": "parts-inventory-script-v1",
+    "nextStockCheck": "2025-10-01T09:00:00Z",
+    "autoReorderEnabled": true
+  }
+}

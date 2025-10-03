@@ -1,1947 +1,970 @@
 [
   {
-    "name": "Mariusz Bielaszka",
-    "phone": "123123123",
+    "name": "Technik B",
+    "phone": "987654987",
+    "email": "",
+    "address": "Słupia 114, 28-133 Pacanow",
+    "city": "Pacanow",
+    "street": "Słupia 114",
+    "dateAdded": "2025-10-02T07:51:08.055Z",
+    "history": [],
+    "id": "CLIW252750001",
+    "clientId": "CLIW252750001",
+    "source": "web-form",
+    "sourceDetails": "rezerwacja-nowa",
+    "createdBy": "system",
+    "createdByName": "Formularz rezerwacji online",
+    "userId": null,
+    "isAuthenticated": false,
+    "createdFromIP": "127.0.0.1",
+    "createdAt": "2025-10-02T07:51:08.055Z",
+    "updatedAt": "2025-10-02T07:51:08.055Z",
+    "updatedBy": null
+  },
+  {
+    "name": "Technik B",
+    "phone": "987654987",
+    "email": "",
+    "address": "Słupia 114, 28-133 Pacanow",
+    "city": "Pacanow",
+    "street": "Słupia 114",
+    "dateAdded": "2025-10-02T07:51:09.888Z",
+    "history": [],
+    "id": "CLIW252750002",
+    "clientId": "CLIW252750002",
+    "source": "web-form",
+    "sourceDetails": "rezerwacja-nowa",
+    "createdBy": "system",
+    "createdByName": "Formularz rezerwacji online",
+    "userId": null,
+    "isAuthenticated": false,
+    "createdFromIP": "127.0.0.1",
+    "createdAt": "2025-10-02T07:51:09.888Z",
+    "updatedAt": "2025-10-02T07:51:09.888Z",
+    "updatedBy": null
+  },
+  {
+    "name": "Oliwia Bielaszka",
+    "phone": "792392870",
+    "email": "oliwkaa867@wp.pl",
+    "address": "Malinie 607, 39-331 Chorzelów",
+    "city": "Chorzelów",
+    "street": "Malinie 607",
+    "dateAdded": "2025-10-02T07:55:34.909Z",
+    "history": [],
+    "id": "CLIW252750003",
+    "clientId": "CLIW252750003",
+    "source": "web-form",
+    "sourceDetails": "rezerwacja-nowa",
+    "createdBy": "system",
+    "createdByName": "Formularz rezerwacji online",
+    "userId": null,
+    "isAuthenticated": false,
+    "createdFromIP": "127.0.0.1",
+    "createdAt": "2025-10-02T07:55:34.909Z",
+    "updatedAt": "2025-10-02T07:55:34.909Z",
+    "updatedBy": null
+  },
+  {
+    "name": "Oliwia Bielaszka",
+    "phone": "792392870",
+    "email": "oliwkaa867@wp.pl",
+    "address": "Malinie 607, 39-331 Chorzelów",
+    "city": "Chorzelów",
+    "street": "Malinie 607",
+    "dateAdded": "2025-10-02T07:55:49.549Z",
+    "history": [],
+    "id": "CLIW252750004",
+    "clientId": "CLIW252750004",
+    "source": "web-form",
+    "sourceDetails": "rezerwacja-nowa",
+    "createdBy": "system",
+    "createdByName": "Formularz rezerwacji online",
+    "userId": null,
+    "isAuthenticated": false,
+    "createdFromIP": "127.0.0.1",
+    "createdAt": "2025-10-02T07:55:49.549Z",
+    "updatedAt": "2025-10-02T07:55:49.549Z",
+    "updatedBy": null
+  },
+  {
+    "name": "Technik B",
+    "phone": "987654987",
+    "email": "",
+    "address": "Słupia 114, 28-133 Pacanow",
+    "city": "Pacanow",
+    "street": "Słupia 114",
+    "dateAdded": "2025-10-02T08:14:19.346Z",
+    "history": [],
+    "id": "CLIW252750005",
+    "clientId": "CLIW252750005",
+    "source": "web-form",
+    "sourceDetails": "rezerwacja-nowa",
+    "createdBy": "system",
+    "createdByName": "Formularz rezerwacji online",
+    "userId": null,
+    "isAuthenticated": false,
+    "createdFromIP": "127.0.0.1",
+    "createdAt": "2025-10-02T08:14:19.346Z",
+    "updatedAt": "2025-10-02T08:14:19.346Z",
+    "updatedBy": null
+  },
+  {
+    "name": "Technik B",
+    "phone": "987654987",
+    "email": "",
+    "address": "Słupia 114, 28-133 Pacanow",
+    "city": "Pacanow",
+    "street": "Słupia 114",
+    "dateAdded": "2025-10-02T08:14:20.829Z",
+    "history": [],
+    "id": "CLIW252750006",
+    "clientId": "CLIW252750006",
+    "source": "web-form",
+    "sourceDetails": "rezerwacja-nowa",
+    "createdBy": "system",
+    "createdByName": "Formularz rezerwacji online",
+    "userId": null,
+    "isAuthenticated": false,
+    "createdFromIP": "127.0.0.1",
+    "createdAt": "2025-10-02T08:14:20.829Z",
+    "updatedAt": "2025-10-02T08:14:20.829Z",
+    "updatedBy": null
+  },
+  {
+    "name": "Technik B",
+    "phone": "987654987",
+    "email": "",
+    "address": "Słupia 114, 28-133 Pacanow",
+    "city": "Pacanow",
+    "street": "Słupia 114",
+    "dateAdded": "2025-10-02T08:15:13.704Z",
+    "history": [],
+    "id": "CLIW252750007",
+    "clientId": "CLIW252750007",
+    "source": "web-form",
+    "sourceDetails": "rezerwacja-nowa",
+    "createdBy": "system",
+    "createdByName": "Formularz rezerwacji online",
+    "userId": null,
+    "isAuthenticated": false,
+    "createdFromIP": "127.0.0.1",
+    "createdAt": "2025-10-02T08:15:13.704Z",
+    "updatedAt": "2025-10-02T08:15:13.704Z",
+    "updatedBy": null
+  },
+  {
+    "name": "Technik B",
+    "phone": "987654987",
     "email": "bielaszkam2@gmail.com",
-    "address": "Słupia, 114 Pacanów",
-    "city": "Pacanów",
-    "street": "Nie podano",
-    "dateAdded": "2025-07-05T06:14:59.048Z",
+    "address": "Słupia 114, 28-133 Pacanow",
+    "city": "Pacanow",
+    "street": "Słupia 114",
+    "dateAdded": "2025-10-02T08:15:38.836Z",
     "history": [],
-    "id": "CLI25186001",
-    "legacyId": "#0001",
-    "newId": "OLD0001",
-    "migrated": true,
-    "migrationDate": "2025-09-28T22:12:00.353Z",
-    "migrationSource": "unified-id-system",
-    "phones": [
-      {
-        "number": "123123123",
-        "label": "Komórka",
-        "isPrimary": true,
-        "notes": "Główny numer kontaktowy"
-      }
-    ],
-    "addresses": [
-      {
-        "address": "Słupia, 114 Pacanów",
-        "label": "Dom",
-        "isPrimary": true,
-        "coordinates": null,
-        "notes": "Główne miejsce zamieszkania"
-      }
-    ],
-    "notes": [
-      {
-        "id": "note1",
-        "content": "Stały klient serwisu AGD, zawsze punktualny",
-        "type": "general",
-        "createdAt": "2025-09-28T20:00:00.000Z",
-        "createdBy": "system"
-      }
-    ],
-    "tags": [
-      "Stały klient",
-      "Punktualny",
-      "AGD"
-    ],
-    "availability": {
-      "workingHours": [
-        {
-          "dayOfWeek": "monday",
-          "periods": [
-            {
-              "from": "17:00",
-              "to": "19:00",
-              "label": "Po pracy"
-            }
-          ]
-        },
-        {
-          "dayOfWeek": "saturday",
-          "periods": [
-            {
-              "from": "09:00",
-              "to": "15:00",
-              "label": "Weekend"
-            }
-          ]
-        }
-      ],
-      "specialAvailability": [],
-      "unavailableDates": [],
-      "preferredContactTime": "Po 17:00",
-      "notes": "Najlepiej dzwonić wieczorem po pracy"
-    },
-    "companyInfo": {
-      "isCompany": false,
-      "companyName": "",
-      "nip": "",
-      "regon": "",
-      "krs": ""
-    },
-    "preferences": {
-      "preferredPaymentMethod": "cash",
-      "invoiceRequired": false,
-      "preferredCommunication": "phone",
-      "language": "pl"
-    },
-    "stats": {
-      "totalOrders": 3,
-      "completedOrders": 2,
-      "cancelledOrders": 0,
-      "averageOrderValue": 150,
-      "lastOrderDate": "2025-07-05T00:00:00.000Z",
-      "customerSince": "2025-07-05T06:14:59.048Z"
-    },
-    "contactHistory": [
-      {
-        "id": "contact1",
-        "date": "2025-07-05T18:30:00.000Z",
-        "type": "phone_call",
-        "direction": "outgoing",
-        "duration": 120,
-        "notes": "Omówienie szczegółów naprawy",
-        "result": "information_provided"
-      }
-    ],
-    "enhanced": true,
-    "enhancedDate": "2025-09-28T20:00:00.000Z",
-    "oldId": "CLI25186001"
+    "id": "CLIW252750008",
+    "clientId": "CLIW252750008",
+    "source": "web-form",
+    "sourceDetails": "rezerwacja-nowa",
+    "createdBy": "system",
+    "createdByName": "Formularz rezerwacji online",
+    "userId": null,
+    "isAuthenticated": false,
+    "createdFromIP": "127.0.0.1",
+    "createdAt": "2025-10-02T08:15:38.836Z",
+    "updatedAt": "2025-10-02T08:15:38.836Z",
+    "updatedBy": null
   },
   {
-    "name": "Kręgielnia Laguna",
-    "phone": "+48501626112",
-    "email": "marek.kowalski@techserwis.pl",
-    "address": "Grunwaldzka 52",
-    "city": "Ropczyce",
-    "street": "Nie podano",
-    "dateAdded": "2025-07-05T06:15:27.519Z",
-    "history": [],
-    "id": "CLI25186002",
-    "legacyId": "#0002",
-    "newId": "OLD0002",
-    "migrated": true,
-    "migrationDate": "2025-09-28T22:12:00.353Z",
-    "migrationSource": "unified-id-system",
-    "phones": [
-      {
-        "number": "+48501626112",
-        "label": "Główny",
-        "isPrimary": true,
-        "notes": "Przeniesiony z pola phone"
-      }
-    ],
-    "addresses": [
-      {
-        "address": "Grunwaldzka 52",
-        "label": "Główny",
-        "isPrimary": true,
-        "coordinates": null,
-        "notes": "Miasto: Ropczyce"
-      }
-    ],
-    "notes": [
-      {
-        "id": "note_1759086523046_xt9os5mek",
-        "content": "Klient zarejestrowany w systemie. Email: marek.kowalski@techserwis.pl, Miasto: Ropczyce, Klient od: 5.07.2025",
-        "type": "general",
-        "createdAt": "2025-09-28T19:08:43.065Z",
-        "createdBy": "system"
-      }
-    ],
-    "tags": [
-      "Ropczyce",
-      "Nowy klient",
-      "Firma"
-    ],
-    "availability": {
-      "workingHours": [
-        {
-          "dayOfWeek": "monday",
-          "periods": [
-            {
-              "from": "17:00",
-              "to": "19:00",
-              "label": "Po pracy"
-            }
-          ]
-        },
-        {
-          "dayOfWeek": "tuesday",
-          "periods": [
-            {
-              "from": "17:00",
-              "to": "19:00",
-              "label": "Po pracy"
-            }
-          ]
-        },
-        {
-          "dayOfWeek": "wednesday",
-          "periods": [
-            {
-              "from": "17:00",
-              "to": "19:00",
-              "label": "Po pracy"
-            }
-          ]
-        },
-        {
-          "dayOfWeek": "thursday",
-          "periods": [
-            {
-              "from": "17:00",
-              "to": "19:00",
-              "label": "Po pracy"
-            }
-          ]
-        },
-        {
-          "dayOfWeek": "friday",
-          "periods": [
-            {
-              "from": "17:00",
-              "to": "19:00",
-              "label": "Po pracy"
-            }
-          ]
-        },
-        {
-          "dayOfWeek": "saturday",
-          "periods": [
-            {
-              "from": "09:00",
-              "to": "15:00",
-              "label": "Weekend"
-            }
-          ]
-        }
-      ],
-      "specialAvailability": [],
-      "unavailableDates": [],
-      "preferredContactTime": "Po 17:00",
-      "notes": "Standardowa dostępność po godzinach pracy"
-    },
-    "companyInfo": {
-      "isCompany": true,
-      "companyName": "Kręgielnia Laguna",
-      "nip": "",
-      "regon": "",
-      "krs": ""
-    },
-    "preferences": {
-      "preferredPaymentMethod": "cash",
-      "invoiceRequired": false,
-      "preferredCommunication": "phone",
-      "language": "pl"
-    },
-    "stats": {
-      "totalOrders": 0,
-      "completedOrders": 0,
-      "cancelledOrders": 0,
-      "averageOrderValue": 0,
-      "lastOrderDate": null,
-      "customerSince": "2025-07-05T06:15:27.519Z"
-    },
-    "contactHistory": [],
-    "enhanced": true,
-    "enhancedDate": "2025-09-28T19:08:43.065Z",
-    "enhancedVersion": "1.0",
-    "oldId": "CLI25186002"
-  },
-  {
-    "name": "Marisz",
-    "phone": "123123123",
-    "email": "bielaszka@amorki.pl",
-    "address": "123",
-    "city": "Nie podano",
-    "street": "Nie podano",
-    "dateAdded": "2025-07-05T06:58:51.239Z",
-    "history": [],
-    "id": "CLI25186003",
-    "legacyId": "#0003",
-    "newId": "OLD0003",
-    "migrated": true,
-    "migrationDate": "2025-09-28T22:12:00.355Z",
-    "migrationSource": "unified-id-system",
-    "phones": [
-      {
-        "number": "123123123",
-        "label": "Główny",
-        "isPrimary": true,
-        "notes": "Przeniesiony z pola phone"
-      }
-    ],
-    "addresses": [
-      {
-        "address": "123",
-        "label": "Główny",
-        "isPrimary": true,
-        "coordinates": null,
-        "notes": "Miasto: Nie podano"
-      }
-    ],
-    "notes": [
-      {
-        "id": "note_1759086523066_h5jc73f1r",
-        "content": "Klient zarejestrowany w systemie. Email: bielaszka@amorki.pl, Klient od: 5.07.2025",
-        "type": "general",
-        "createdAt": "2025-09-28T19:08:43.066Z",
-        "createdBy": "system"
-      }
-    ],
-    "tags": [
-      "Nowy klient",
-      "Osoba prywatna"
-    ],
-    "availability": {
-      "workingHours": [
-        {
-          "dayOfWeek": "monday",
-          "periods": [
-            {
-              "from": "17:00",
-              "to": "19:00",
-              "label": "Po pracy"
-            }
-          ]
-        },
-        {
-          "dayOfWeek": "tuesday",
-          "periods": [
-            {
-              "from": "17:00",
-              "to": "19:00",
-              "label": "Po pracy"
-            }
-          ]
-        },
-        {
-          "dayOfWeek": "wednesday",
-          "periods": [
-            {
-              "from": "17:00",
-              "to": "19:00",
-              "label": "Po pracy"
-            }
-          ]
-        },
-        {
-          "dayOfWeek": "thursday",
-          "periods": [
-            {
-              "from": "17:00",
-              "to": "19:00",
-              "label": "Po pracy"
-            }
-          ]
-        },
-        {
-          "dayOfWeek": "friday",
-          "periods": [
-            {
-              "from": "17:00",
-              "to": "19:00",
-              "label": "Po pracy"
-            }
-          ]
-        },
-        {
-          "dayOfWeek": "saturday",
-          "periods": [
-            {
-              "from": "09:00",
-              "to": "15:00",
-              "label": "Weekend"
-            }
-          ]
-        }
-      ],
-      "specialAvailability": [],
-      "unavailableDates": [],
-      "preferredContactTime": "Po 17:00",
-      "notes": "Standardowa dostępność po godzinach pracy"
-    },
-    "companyInfo": {
-      "isCompany": false,
-      "companyName": "",
-      "nip": "",
-      "regon": "",
-      "krs": ""
-    },
-    "preferences": {
-      "preferredPaymentMethod": "cash",
-      "invoiceRequired": false,
-      "preferredCommunication": "phone",
-      "language": "pl"
-    },
-    "stats": {
-      "totalOrders": 0,
-      "completedOrders": 0,
-      "cancelledOrders": 0,
-      "averageOrderValue": 0,
-      "lastOrderDate": null,
-      "customerSince": "2025-07-05T06:58:51.239Z"
-    },
-    "contactHistory": [],
-    "enhanced": true,
-    "enhancedDate": "2025-09-28T19:08:43.066Z",
-    "enhancedVersion": "1.0",
-    "oldId": "CLI25186003"
-  },
-  {
-    "name": "123",
-    "phone": "13",
+    "name": "Technik B",
+    "phone": "987654987",
     "email": "bielaszkam2@gmail.com",
-    "address": "123",
-    "city": "123",
-    "street": "123",
-    "dateAdded": "2025-07-05T07:14:57.772Z",
+    "address": "Słupia 114, 28-133 Pacanow",
+    "city": "Pacanow",
+    "street": "Słupia 114",
+    "dateAdded": "2025-10-02T08:15:40.378Z",
     "history": [],
-    "id": "CLI25186004",
-    "legacyId": "#0004",
-    "newId": "OLD0004",
-    "migrated": true,
-    "migrationDate": "2025-09-28T22:12:00.355Z",
-    "migrationSource": "unified-id-system",
-    "phones": [
-      {
-        "number": "13",
-        "label": "Główny",
-        "isPrimary": true,
-        "notes": "Przeniesiony z pola phone"
-      }
-    ],
-    "addresses": [
-      {
-        "address": "123",
-        "label": "Główny",
-        "isPrimary": true,
-        "coordinates": null,
-        "notes": "Ulica: 123, Miasto: 123"
-      }
-    ],
-    "notes": [
-      {
-        "id": "note_1759086523066_p05u1b6zd",
-        "content": "Klient zarejestrowany w systemie. Email: bielaszkam2@gmail.com, Miasto: 123, Klient od: 5.07.2025",
-        "type": "general",
-        "createdAt": "2025-09-28T19:08:43.066Z",
-        "createdBy": "system"
-      }
-    ],
-    "tags": [
-      "123",
-      "Nowy klient",
-      "Osoba prywatna",
-      "Gmail"
-    ],
-    "availability": {
-      "workingHours": [
-        {
-          "dayOfWeek": "monday",
-          "periods": [
-            {
-              "from": "17:00",
-              "to": "19:00",
-              "label": "Po pracy"
-            }
-          ]
-        },
-        {
-          "dayOfWeek": "tuesday",
-          "periods": [
-            {
-              "from": "17:00",
-              "to": "19:00",
-              "label": "Po pracy"
-            }
-          ]
-        },
-        {
-          "dayOfWeek": "wednesday",
-          "periods": [
-            {
-              "from": "17:00",
-              "to": "19:00",
-              "label": "Po pracy"
-            }
-          ]
-        },
-        {
-          "dayOfWeek": "thursday",
-          "periods": [
-            {
-              "from": "17:00",
-              "to": "19:00",
-              "label": "Po pracy"
-            }
-          ]
-        },
-        {
-          "dayOfWeek": "friday",
-          "periods": [
-            {
-              "from": "17:00",
-              "to": "19:00",
-              "label": "Po pracy"
-            }
-          ]
-        },
-        {
-          "dayOfWeek": "saturday",
-          "periods": [
-            {
-              "from": "09:00",
-              "to": "15:00",
-              "label": "Weekend"
-            }
-          ]
-        }
-      ],
-      "specialAvailability": [],
-      "unavailableDates": [],
-      "preferredContactTime": "Po 17:00",
-      "notes": "Standardowa dostępność po godzinach pracy"
-    },
-    "companyInfo": {
-      "isCompany": false,
-      "companyName": "",
-      "nip": "",
-      "regon": "",
-      "krs": ""
-    },
-    "preferences": {
-      "preferredPaymentMethod": "cash",
-      "invoiceRequired": false,
-      "preferredCommunication": "phone",
-      "language": "pl"
-    },
-    "stats": {
-      "totalOrders": 0,
-      "completedOrders": 0,
-      "cancelledOrders": 0,
-      "averageOrderValue": 0,
-      "lastOrderDate": null,
-      "customerSince": "2025-07-05T07:14:57.772Z"
-    },
-    "contactHistory": [],
-    "enhanced": true,
-    "enhancedDate": "2025-09-28T19:08:43.066Z",
-    "enhancedVersion": "1.0",
-    "oldId": "CLI25186004"
+    "id": "CLIW252750009",
+    "clientId": "CLIW252750009",
+    "source": "web-form",
+    "sourceDetails": "rezerwacja-nowa",
+    "createdBy": "system",
+    "createdByName": "Formularz rezerwacji online",
+    "userId": null,
+    "isAuthenticated": false,
+    "createdFromIP": "127.0.0.1",
+    "createdAt": "2025-10-02T08:15:40.378Z",
+    "updatedAt": "2025-10-02T08:15:40.378Z",
+    "updatedBy": null
   },
   {
-    "name": "Mariusz",
-    "phone": "789789789",
-    "email": "bielaszkma2@mgail.pl",
-    "address": "kraków",
-    "city": "kraków",
-    "street": "Nie podano",
-    "dateAdded": "2025-07-05T10:40:10.120Z",
+    "name": "oli bie",
+    "phone": "792392870",
+    "email": "bielaszkam2@gmail.com",
+    "address": "Słupia 114, 28-133 Pacanow",
+    "city": "Pacanow",
+    "street": "Słupia 114",
+    "dateAdded": "2025-10-02T08:41:58.198Z",
     "history": [],
-    "id": "CLI25186005",
-    "legacyId": "#0005",
-    "newId": "OLD0005",
-    "migrated": true,
-    "migrationDate": "2025-09-28T22:12:00.356Z",
-    "migrationSource": "unified-id-system",
-    "phones": [
-      {
-        "number": "789789789",
-        "label": "Główny",
-        "isPrimary": true,
-        "notes": "Przeniesiony z pola phone"
-      }
-    ],
-    "addresses": [
-      {
-        "address": "kraków",
-        "label": "Główny",
-        "isPrimary": true,
-        "coordinates": null,
-        "notes": "Miasto: kraków"
-      }
-    ],
-    "notes": [
-      {
-        "id": "note_1759086523067_ax55kmjfm",
-        "content": "Klient zarejestrowany w systemie. Email: bielaszkma2@mgail.pl, Miasto: kraków, Klient od: 5.07.2025",
-        "type": "general",
-        "createdAt": "2025-09-28T19:08:43.067Z",
-        "createdBy": "system"
-      }
-    ],
-    "tags": [
-      "kraków",
-      "Nowy klient",
-      "Osoba prywatna"
-    ],
-    "availability": {
-      "workingHours": [
-        {
-          "dayOfWeek": "monday",
-          "periods": [
-            {
-              "from": "17:00",
-              "to": "19:00",
-              "label": "Po pracy"
-            }
-          ]
-        },
-        {
-          "dayOfWeek": "tuesday",
-          "periods": [
-            {
-              "from": "17:00",
-              "to": "19:00",
-              "label": "Po pracy"
-            }
-          ]
-        },
-        {
-          "dayOfWeek": "wednesday",
-          "periods": [
-            {
-              "from": "17:00",
-              "to": "19:00",
-              "label": "Po pracy"
-            }
-          ]
-        },
-        {
-          "dayOfWeek": "thursday",
-          "periods": [
-            {
-              "from": "17:00",
-              "to": "19:00",
-              "label": "Po pracy"
-            }
-          ]
-        },
-        {
-          "dayOfWeek": "friday",
-          "periods": [
-            {
-              "from": "17:00",
-              "to": "19:00",
-              "label": "Po pracy"
-            }
-          ]
-        },
-        {
-          "dayOfWeek": "saturday",
-          "periods": [
-            {
-              "from": "09:00",
-              "to": "15:00",
-              "label": "Weekend"
-            }
-          ]
-        }
-      ],
-      "specialAvailability": [],
-      "unavailableDates": [],
-      "preferredContactTime": "Po 17:00",
-      "notes": "Standardowa dostępność po godzinach pracy"
-    },
-    "companyInfo": {
-      "isCompany": false,
-      "companyName": "",
-      "nip": "",
-      "regon": "",
-      "krs": ""
-    },
-    "preferences": {
-      "preferredPaymentMethod": "cash",
-      "invoiceRequired": false,
-      "preferredCommunication": "phone",
-      "language": "pl"
-    },
-    "stats": {
-      "totalOrders": 0,
-      "completedOrders": 0,
-      "cancelledOrders": 0,
-      "averageOrderValue": 0,
-      "lastOrderDate": null,
-      "customerSince": "2025-07-05T10:40:10.120Z"
-    },
-    "contactHistory": [],
-    "enhanced": true,
-    "enhancedDate": "2025-09-28T19:08:43.067Z",
-    "enhancedVersion": "1.0",
-    "oldId": "CLI25186005"
+    "id": "CLIW252750010",
+    "clientId": "CLIW252750010",
+    "source": "web-form",
+    "sourceDetails": "rezerwacja-nowa",
+    "createdBy": "system",
+    "createdByName": "Formularz rezerwacji online",
+    "userId": null,
+    "isAuthenticated": false,
+    "createdFromIP": "127.0.0.1",
+    "createdAt": "2025-10-02T08:41:58.198Z",
+    "updatedAt": "2025-10-02T08:41:58.198Z",
+    "updatedBy": null
   },
   {
-    "name": "acsasc",
-    "phone": "12",
-    "email": "bielaszkm2@gamilc.om",
-    "address": "142",
-    "city": "124",
-    "street": "124",
-    "dateAdded": "2025-07-05T10:40:37.700Z",
+    "name": "oli bie",
+    "phone": "792392870",
+    "email": "bielaszkam2@gmail.com",
+    "address": "Słupia 114, 28-133 Pacanow",
+    "city": "Pacanow",
+    "street": "Słupia 114",
+    "dateAdded": "2025-10-02T08:42:04.555Z",
     "history": [],
-    "id": "CLI25186006",
-    "legacyId": "#0006",
-    "newId": "OLD0006",
-    "migrated": true,
-    "migrationDate": "2025-09-28T22:12:00.357Z",
-    "migrationSource": "unified-id-system",
-    "phones": [
-      {
-        "number": "12",
-        "label": "Główny",
-        "isPrimary": true,
-        "notes": "Przeniesiony z pola phone"
-      }
-    ],
-    "addresses": [
-      {
-        "address": "142",
-        "label": "Główny",
-        "isPrimary": true,
-        "coordinates": null,
-        "notes": "Ulica: 124, Miasto: 124"
-      }
-    ],
-    "notes": [
-      {
-        "id": "note_1759086523067_b4olfhcz2",
-        "content": "Klient zarejestrowany w systemie. Email: bielaszkm2@gamilc.om, Miasto: 124, Klient od: 5.07.2025",
-        "type": "general",
-        "createdAt": "2025-09-28T19:08:43.067Z",
-        "createdBy": "system"
-      }
-    ],
-    "tags": [
-      "124",
-      "Nowy klient",
-      "Osoba prywatna"
-    ],
-    "availability": {
-      "workingHours": [
-        {
-          "dayOfWeek": "monday",
-          "periods": [
-            {
-              "from": "17:00",
-              "to": "19:00",
-              "label": "Po pracy"
-            }
-          ]
-        },
-        {
-          "dayOfWeek": "tuesday",
-          "periods": [
-            {
-              "from": "17:00",
-              "to": "19:00",
-              "label": "Po pracy"
-            }
-          ]
-        },
-        {
-          "dayOfWeek": "wednesday",
-          "periods": [
-            {
-              "from": "17:00",
-              "to": "19:00",
-              "label": "Po pracy"
-            }
-          ]
-        },
-        {
-          "dayOfWeek": "thursday",
-          "periods": [
-            {
-              "from": "17:00",
-              "to": "19:00",
-              "label": "Po pracy"
-            }
-          ]
-        },
-        {
-          "dayOfWeek": "friday",
-          "periods": [
-            {
-              "from": "17:00",
-              "to": "19:00",
-              "label": "Po pracy"
-            }
-          ]
-        },
-        {
-          "dayOfWeek": "saturday",
-          "periods": [
-            {
-              "from": "09:00",
-              "to": "15:00",
-              "label": "Weekend"
-            }
-          ]
-        }
-      ],
-      "specialAvailability": [],
-      "unavailableDates": [],
-      "preferredContactTime": "Po 17:00",
-      "notes": "Standardowa dostępność po godzinach pracy"
-    },
-    "companyInfo": {
-      "isCompany": false,
-      "companyName": "",
-      "nip": "",
-      "regon": "",
-      "krs": ""
-    },
-    "preferences": {
-      "preferredPaymentMethod": "cash",
-      "invoiceRequired": false,
-      "preferredCommunication": "phone",
-      "language": "pl"
-    },
-    "stats": {
-      "totalOrders": 0,
-      "completedOrders": 0,
-      "cancelledOrders": 0,
-      "averageOrderValue": 0,
-      "lastOrderDate": null,
-      "customerSince": "2025-07-05T10:40:37.700Z"
-    },
-    "contactHistory": [],
-    "enhanced": true,
-    "enhancedDate": "2025-09-28T19:08:43.067Z",
-    "enhancedVersion": "1.0",
-    "oldId": "CLI25186006"
+    "id": "CLIW252750011",
+    "clientId": "CLIW252750011",
+    "source": "web-form",
+    "sourceDetails": "rezerwacja-nowa",
+    "createdBy": "system",
+    "createdByName": "Formularz rezerwacji online",
+    "userId": null,
+    "isAuthenticated": false,
+    "createdFromIP": "127.0.0.1",
+    "createdAt": "2025-10-02T08:42:04.555Z",
+    "updatedAt": "2025-10-02T08:42:04.555Z",
+    "updatedBy": null
   },
   {
-    "name": "ada",
-    "phone": "123123123",
-    "email": "asd@amori.pl",
-    "address": "Słupia, 114",
-    "city": "Pacanów",
-    "street": "Nie podano",
-    "dateAdded": "2025-07-05T20:32:32.616Z",
+    "name": "Kot Kotik",
+    "phone": "792392870",
+    "email": "bielaszkam2@gmail.com",
+    "address": "Malinie 607, 39-331 Chorzelów",
+    "city": "Chorzelów",
+    "street": "Malinie 607",
+    "dateAdded": "2025-10-02T08:52:58.024Z",
     "history": [],
-    "id": "CLI25186007",
-    "legacyId": "#0007",
-    "newId": "OLD0007",
-    "migrated": true,
-    "migrationDate": "2025-09-28T22:12:00.357Z",
-    "migrationSource": "unified-id-system",
-    "phones": [
-      {
-        "number": "123123123",
-        "label": "Główny",
-        "isPrimary": true,
-        "notes": "Przeniesiony z pola phone"
-      }
-    ],
-    "addresses": [
-      {
-        "address": "Słupia, 114",
-        "label": "Główny",
-        "isPrimary": true,
-        "coordinates": null,
-        "notes": "Miasto: Pacanów"
-      }
-    ],
-    "notes": [
-      {
-        "id": "note_1759086523067_rftj9ybko",
-        "content": "Klient zarejestrowany w systemie. Email: asd@amori.pl, Miasto: Pacanów, Klient od: 5.07.2025",
-        "type": "general",
-        "createdAt": "2025-09-28T19:08:43.067Z",
-        "createdBy": "system"
-      }
-    ],
-    "tags": [
-      "Pacanów",
-      "Nowy klient",
-      "Osoba prywatna"
-    ],
-    "availability": {
-      "workingHours": [
-        {
-          "dayOfWeek": "monday",
-          "periods": [
-            {
-              "from": "17:00",
-              "to": "19:00",
-              "label": "Po pracy"
-            }
-          ]
-        },
-        {
-          "dayOfWeek": "tuesday",
-          "periods": [
-            {
-              "from": "17:00",
-              "to": "19:00",
-              "label": "Po pracy"
-            }
-          ]
-        },
-        {
-          "dayOfWeek": "wednesday",
-          "periods": [
-            {
-              "from": "17:00",
-              "to": "19:00",
-              "label": "Po pracy"
-            }
-          ]
-        },
-        {
-          "dayOfWeek": "thursday",
-          "periods": [
-            {
-              "from": "17:00",
-              "to": "19:00",
-              "label": "Po pracy"
-            }
-          ]
-        },
-        {
-          "dayOfWeek": "friday",
-          "periods": [
-            {
-              "from": "17:00",
-              "to": "19:00",
-              "label": "Po pracy"
-            }
-          ]
-        },
-        {
-          "dayOfWeek": "saturday",
-          "periods": [
-            {
-              "from": "09:00",
-              "to": "15:00",
-              "label": "Weekend"
-            }
-          ]
-        }
-      ],
-      "specialAvailability": [],
-      "unavailableDates": [],
-      "preferredContactTime": "Po 17:00",
-      "notes": "Standardowa dostępność po godzinach pracy"
-    },
-    "companyInfo": {
-      "isCompany": false,
-      "companyName": "",
-      "nip": "",
-      "regon": "",
-      "krs": ""
-    },
-    "preferences": {
-      "preferredPaymentMethod": "cash",
-      "invoiceRequired": false,
-      "preferredCommunication": "phone",
-      "language": "pl"
-    },
-    "stats": {
-      "totalOrders": 0,
-      "completedOrders": 0,
-      "cancelledOrders": 0,
-      "averageOrderValue": 0,
-      "lastOrderDate": null,
-      "customerSince": "2025-07-05T20:32:32.616Z"
-    },
-    "contactHistory": [],
-    "enhanced": true,
-    "enhancedDate": "2025-09-28T19:08:43.067Z",
-    "enhancedVersion": "1.0",
-    "oldId": "CLI25186007"
+    "id": "CLIW252750012",
+    "clientId": "CLIW252750012",
+    "source": "web-form",
+    "sourceDetails": "rezerwacja-nowa",
+    "createdBy": "system",
+    "createdByName": "Formularz rezerwacji online",
+    "userId": null,
+    "isAuthenticated": false,
+    "createdFromIP": "127.0.0.1",
+    "createdAt": "2025-10-02T08:52:58.024Z",
+    "updatedAt": "2025-10-02T08:52:58.024Z",
+    "updatedBy": null
   },
   {
-    "name": "qwe",
-    "phone": "123123123",
-    "email": "mkagd@gmial.com",
-    "address": "GLiniana 17",
-    "city": "Kraków",
-    "street": "Nie podano",
-    "dateAdded": "2025-07-05T20:35:12.486Z",
+    "name": "Kot Kotik",
+    "phone": "792392870",
+    "email": "bielaszkam2@gmail.com",
+    "address": "Malinie 607, 39-331 Chorzelów",
+    "city": "Chorzelów",
+    "street": "Malinie 607",
+    "dateAdded": "2025-10-02T08:53:08.442Z",
     "history": [],
-    "id": "CLI25186008",
-    "legacyId": "#0008",
-    "newId": "OLD0008",
-    "migrated": true,
-    "migrationDate": "2025-09-28T22:12:00.359Z",
-    "migrationSource": "unified-id-system",
-    "phones": [
-      {
-        "number": "123123123",
-        "label": "Główny",
-        "isPrimary": true,
-        "notes": "Przeniesiony z pola phone"
-      }
-    ],
-    "addresses": [
-      {
-        "address": "GLiniana 17",
-        "label": "Główny",
-        "isPrimary": true,
-        "coordinates": null,
-        "notes": "Miasto: Kraków"
-      }
-    ],
-    "notes": [
-      {
-        "id": "note_1759086523067_96ad5gfho",
-        "content": "Klient zarejestrowany w systemie. Email: mkagd@gmial.com, Miasto: Kraków, Klient od: 5.07.2025",
-        "type": "general",
-        "createdAt": "2025-09-28T19:08:43.067Z",
-        "createdBy": "system"
-      }
-    ],
-    "tags": [
-      "Kraków",
-      "Nowy klient",
-      "Osoba prywatna"
-    ],
-    "availability": {
-      "workingHours": [
-        {
-          "dayOfWeek": "monday",
-          "periods": [
-            {
-              "from": "17:00",
-              "to": "19:00",
-              "label": "Po pracy"
-            }
-          ]
-        },
-        {
-          "dayOfWeek": "tuesday",
-          "periods": [
-            {
-              "from": "17:00",
-              "to": "19:00",
-              "label": "Po pracy"
-            }
-          ]
-        },
-        {
-          "dayOfWeek": "wednesday",
-          "periods": [
-            {
-              "from": "17:00",
-              "to": "19:00",
-              "label": "Po pracy"
-            }
-          ]
-        },
-        {
-          "dayOfWeek": "thursday",
-          "periods": [
-            {
-              "from": "17:00",
-              "to": "19:00",
-              "label": "Po pracy"
-            }
-          ]
-        },
-        {
-          "dayOfWeek": "friday",
-          "periods": [
-            {
-              "from": "17:00",
-              "to": "19:00",
-              "label": "Po pracy"
-            }
-          ]
-        },
-        {
-          "dayOfWeek": "saturday",
-          "periods": [
-            {
-              "from": "09:00",
-              "to": "15:00",
-              "label": "Weekend"
-            }
-          ]
-        }
-      ],
-      "specialAvailability": [],
-      "unavailableDates": [],
-      "preferredContactTime": "Po 17:00",
-      "notes": "Standardowa dostępność po godzinach pracy"
-    },
-    "companyInfo": {
-      "isCompany": false,
-      "companyName": "",
-      "nip": "",
-      "regon": "",
-      "krs": ""
-    },
-    "preferences": {
-      "preferredPaymentMethod": "cash",
-      "invoiceRequired": false,
-      "preferredCommunication": "phone",
-      "language": "pl"
-    },
-    "stats": {
-      "totalOrders": 0,
-      "completedOrders": 0,
-      "cancelledOrders": 0,
-      "averageOrderValue": 0,
-      "lastOrderDate": null,
-      "customerSince": "2025-07-05T20:35:12.486Z"
-    },
-    "contactHistory": [],
-    "enhanced": true,
-    "enhancedDate": "2025-09-28T19:08:43.067Z",
-    "enhancedVersion": "1.0",
-    "oldId": "CLI25186008"
+    "id": "CLIW252750013",
+    "clientId": "CLIW252750013",
+    "source": "web-form",
+    "sourceDetails": "rezerwacja-nowa",
+    "createdBy": "system",
+    "createdByName": "Formularz rezerwacji online",
+    "userId": null,
+    "isAuthenticated": false,
+    "createdFromIP": "127.0.0.1",
+    "createdAt": "2025-10-02T08:53:08.442Z",
+    "updatedAt": "2025-10-02T08:53:08.442Z",
+    "updatedBy": null
+  },
+  {
+    "name": "Kot Kotik",
+    "phone": "792392870",
+    "email": "bielaszkam2@gmail.com",
+    "address": "Malinie 607, 39-331 Chorzelów",
+    "city": "Chorzelów",
+    "street": "Malinie 607",
+    "dateAdded": "2025-10-02T08:53:17.054Z",
+    "history": [],
+    "id": "CLIW252750014",
+    "clientId": "CLIW252750014",
+    "source": "web-form",
+    "sourceDetails": "rezerwacja-nowa",
+    "createdBy": "system",
+    "createdByName": "Formularz rezerwacji online",
+    "userId": null,
+    "isAuthenticated": false,
+    "createdFromIP": "127.0.0.1",
+    "createdAt": "2025-10-02T08:53:17.054Z",
+    "updatedAt": "2025-10-02T08:53:17.054Z",
+    "updatedBy": null
+  },
+  {
+    "name": "Kot Kotik",
+    "phone": "792392870",
+    "email": "bielaszkam2@gmail.com",
+    "address": "Malinie 607, 39-331 Chorzelów",
+    "city": "Chorzelów",
+    "street": "Malinie 607",
+    "dateAdded": "2025-10-02T08:53:40.791Z",
+    "history": [],
+    "id": "CLIW252750015",
+    "clientId": "CLIW252750015",
+    "source": "web-form",
+    "sourceDetails": "rezerwacja-nowa",
+    "createdBy": "system",
+    "createdByName": "Formularz rezerwacji online",
+    "userId": null,
+    "isAuthenticated": false,
+    "createdFromIP": "127.0.0.1",
+    "createdAt": "2025-10-02T08:53:40.791Z",
+    "updatedAt": "2025-10-02T08:53:40.791Z",
+    "updatedBy": null
+  },
+  {
+    "name": "ola ",
+    "phone": "792392870",
+    "email": "technik24dev@gmail.com",
+    "address": "Slupia 112, 28-133 Słupia",
+    "city": "Słupia",
+    "street": "Slupia 112",
+    "dateAdded": "2025-10-02T09:01:32.833Z",
+    "history": [],
+    "id": "CLIW252750016",
+    "clientId": "CLIW252750016",
+    "source": "web-form",
+    "sourceDetails": "rezerwacja-nowa",
+    "createdBy": "system",
+    "createdByName": "Formularz rezerwacji online",
+    "userId": null,
+    "isAuthenticated": false,
+    "createdFromIP": "127.0.0.1",
+    "createdAt": "2025-10-02T09:01:32.833Z",
+    "updatedAt": "2025-10-02T09:01:32.833Z",
+    "updatedBy": null
+  },
+  {
+    "name": "ola ",
+    "phone": "792392870",
+    "email": "technik24dev@gmail.com",
+    "address": "Slupia 112, 28-133 Słupia",
+    "city": "Słupia",
+    "street": "Slupia 112",
+    "dateAdded": "2025-10-02T09:01:40.487Z",
+    "history": [],
+    "id": "CLIW252750017",
+    "clientId": "CLIW252750017",
+    "source": "web-form",
+    "sourceDetails": "rezerwacja-nowa",
+    "createdBy": "system",
+    "createdByName": "Formularz rezerwacji online",
+    "userId": null,
+    "isAuthenticated": false,
+    "createdFromIP": "127.0.0.1",
+    "createdAt": "2025-10-02T09:01:40.487Z",
+    "updatedAt": "2025-10-02T09:01:40.487Z",
+    "updatedBy": null
   },
   {
     "name": "Mariusz Bielaszka",
-    "phone": "234234234",
+    "phone": "792392870",
     "email": "bielaszkam2@gmail.com",
-    "address": "Słupia, 114",
-    "city": "Pacanów",
-    "street": "Nie podano",
-    "dateAdded": "2025-07-05T20:35:55.076Z",
+    "address": "112, 28-133 Słupia",
+    "city": "Słupia",
+    "street": "112",
+    "dateAdded": "2025-10-02T09:18:51.357Z",
     "history": [],
-    "id": "CLI25186009",
-    "legacyId": "#0009",
-    "newId": "OLD0009",
-    "migrated": true,
-    "migrationDate": "2025-09-28T22:12:00.359Z",
-    "migrationSource": "unified-id-system",
-    "phones": [
-      {
-        "number": "234234234",
-        "label": "Główny",
-        "isPrimary": true,
-        "notes": "Przeniesiony z pola phone"
-      }
-    ],
-    "addresses": [
-      {
-        "address": "Słupia, 114",
-        "label": "Główny",
-        "isPrimary": true,
-        "coordinates": null,
-        "notes": "Miasto: Pacanów"
-      }
-    ],
-    "notes": [
-      {
-        "id": "note_1759086523068_geh3pg841",
-        "content": "Klient zarejestrowany w systemie. Email: bielaszkam2@gmail.com, Miasto: Pacanów, Klient od: 5.07.2025",
-        "type": "general",
-        "createdAt": "2025-09-28T19:08:43.068Z",
-        "createdBy": "system"
-      }
-    ],
-    "tags": [
-      "Pacanów",
-      "Nowy klient",
-      "Osoba prywatna",
-      "Gmail"
-    ],
-    "availability": {
-      "workingHours": [
-        {
-          "dayOfWeek": "monday",
-          "periods": [
-            {
-              "from": "17:00",
-              "to": "19:00",
-              "label": "Po pracy"
-            }
-          ]
-        },
-        {
-          "dayOfWeek": "tuesday",
-          "periods": [
-            {
-              "from": "17:00",
-              "to": "19:00",
-              "label": "Po pracy"
-            }
-          ]
-        },
-        {
-          "dayOfWeek": "wednesday",
-          "periods": [
-            {
-              "from": "17:00",
-              "to": "19:00",
-              "label": "Po pracy"
-            }
-          ]
-        },
-        {
-          "dayOfWeek": "thursday",
-          "periods": [
-            {
-              "from": "17:00",
-              "to": "19:00",
-              "label": "Po pracy"
-            }
-          ]
-        },
-        {
-          "dayOfWeek": "friday",
-          "periods": [
-            {
-              "from": "17:00",
-              "to": "19:00",
-              "label": "Po pracy"
-            }
-          ]
-        },
-        {
-          "dayOfWeek": "saturday",
-          "periods": [
-            {
-              "from": "09:00",
-              "to": "15:00",
-              "label": "Weekend"
-            }
-          ]
-        }
-      ],
-      "specialAvailability": [],
-      "unavailableDates": [],
-      "preferredContactTime": "Po 17:00",
-      "notes": "Standardowa dostępność po godzinach pracy"
-    },
-    "companyInfo": {
-      "isCompany": false,
-      "companyName": "",
-      "nip": "",
-      "regon": "",
-      "krs": ""
-    },
-    "preferences": {
-      "preferredPaymentMethod": "cash",
-      "invoiceRequired": false,
-      "preferredCommunication": "phone",
-      "language": "pl"
-    },
-    "stats": {
-      "totalOrders": 0,
-      "completedOrders": 0,
-      "cancelledOrders": 0,
-      "averageOrderValue": 0,
-      "lastOrderDate": null,
-      "customerSince": "2025-07-05T20:35:55.076Z"
-    },
-    "contactHistory": [],
-    "enhanced": true,
-    "enhancedDate": "2025-09-28T19:08:43.068Z",
-    "enhancedVersion": "1.0",
-    "oldId": "CLI25186009"
-  },
-  {
-    "name": "124",
-    "phone": "123123123",
-    "email": "mkagd@qwe.com",
-    "address": "ul. Lachnita 5",
-    "city": "Mielec",
-    "street": "123",
-    "dateAdded": "2025-07-06T07:01:50.523Z",
-    "history": [],
-    "id": "CLI25187010",
-    "legacyId": "#0010",
-    "newId": "OLD0010",
-    "migrated": true,
-    "migrationDate": "2025-09-28T22:12:00.360Z",
-    "migrationSource": "unified-id-system",
-    "phones": [
-      {
-        "number": "123123123",
-        "label": "Główny",
-        "isPrimary": true,
-        "notes": "Przeniesiony z pola phone"
-      }
-    ],
-    "addresses": [
-      {
-        "address": "ul. Lachnita 5",
-        "label": "Główny",
-        "isPrimary": true,
-        "coordinates": null,
-        "notes": "Ulica: 123, Miasto: Mielec"
-      }
-    ],
-    "notes": [
-      {
-        "id": "note_1759086523068_97a7xs7x6",
-        "content": "Klient zarejestrowany w systemie. Email: mkagd@qwe.com, Miasto: Mielec, Klient od: 6.07.2025",
-        "type": "general",
-        "createdAt": "2025-09-28T19:08:43.068Z",
-        "createdBy": "system"
-      }
-    ],
-    "tags": [
-      "Mielec",
-      "Nowy klient",
-      "Osoba prywatna"
-    ],
-    "availability": {
-      "workingHours": [
-        {
-          "dayOfWeek": "monday",
-          "periods": [
-            {
-              "from": "17:00",
-              "to": "19:00",
-              "label": "Po pracy"
-            }
-          ]
-        },
-        {
-          "dayOfWeek": "tuesday",
-          "periods": [
-            {
-              "from": "17:00",
-              "to": "19:00",
-              "label": "Po pracy"
-            }
-          ]
-        },
-        {
-          "dayOfWeek": "wednesday",
-          "periods": [
-            {
-              "from": "17:00",
-              "to": "19:00",
-              "label": "Po pracy"
-            }
-          ]
-        },
-        {
-          "dayOfWeek": "thursday",
-          "periods": [
-            {
-              "from": "17:00",
-              "to": "19:00",
-              "label": "Po pracy"
-            }
-          ]
-        },
-        {
-          "dayOfWeek": "friday",
-          "periods": [
-            {
-              "from": "17:00",
-              "to": "19:00",
-              "label": "Po pracy"
-            }
-          ]
-        },
-        {
-          "dayOfWeek": "saturday",
-          "periods": [
-            {
-              "from": "09:00",
-              "to": "15:00",
-              "label": "Weekend"
-            }
-          ]
-        }
-      ],
-      "specialAvailability": [],
-      "unavailableDates": [],
-      "preferredContactTime": "Po 17:00",
-      "notes": "Standardowa dostępność po godzinach pracy"
-    },
-    "companyInfo": {
-      "isCompany": false,
-      "companyName": "",
-      "nip": "",
-      "regon": "",
-      "krs": ""
-    },
-    "preferences": {
-      "preferredPaymentMethod": "cash",
-      "invoiceRequired": false,
-      "preferredCommunication": "phone",
-      "language": "pl"
-    },
-    "stats": {
-      "totalOrders": 0,
-      "completedOrders": 0,
-      "cancelledOrders": 0,
-      "averageOrderValue": 0,
-      "lastOrderDate": null,
-      "customerSince": "2025-07-06T07:01:50.523Z"
-    },
-    "contactHistory": [],
-    "enhanced": true,
-    "enhancedDate": "2025-09-28T19:08:43.068Z",
-    "enhancedVersion": "1.0",
-    "oldId": "CLI25187010"
+    "id": "CLIW252750018",
+    "clientId": "CLIW252750018",
+    "source": "web-form",
+    "sourceDetails": "rezerwacja-nowa",
+    "createdBy": "system",
+    "createdByName": "Formularz rezerwacji online",
+    "userId": null,
+    "isAuthenticated": false,
+    "createdFromIP": "127.0.0.1",
+    "createdAt": "2025-10-02T09:18:51.357Z",
+    "updatedAt": "2025-10-02T09:18:51.357Z",
+    "updatedBy": null
   },
   {
     "name": "Mariusz Bielaszka",
-    "phone": "123123123",
+    "phone": "792392870",
     "email": "bielaszkam2@gmail.com",
-    "address": "Słupia, 114",
-    "city": "Pacanów",
-    "street": "Nie podano",
-    "dateAdded": "2025-07-06T07:05:39.997Z",
+    "address": "112, 28-133 Słupia",
+    "city": "Słupia",
+    "street": "112",
+    "dateAdded": "2025-10-02T09:18:55.891Z",
     "history": [],
-    "id": "CLI25187011",
-    "legacyId": "#0011",
-    "newId": "OLD0011",
-    "migrated": true,
-    "migrationDate": "2025-09-28T22:12:00.360Z",
-    "migrationSource": "unified-id-system",
-    "phones": [
-      {
-        "number": "123123123",
-        "label": "Główny",
-        "isPrimary": true,
-        "notes": "Przeniesiony z pola phone"
-      }
-    ],
-    "addresses": [
-      {
-        "address": "Słupia, 114",
-        "label": "Główny",
-        "isPrimary": true,
-        "coordinates": null,
-        "notes": "Miasto: Pacanów"
-      }
-    ],
-    "notes": [
-      {
-        "id": "note_1759086523068_hkqbc60vn",
-        "content": "Klient zarejestrowany w systemie. Email: bielaszkam2@gmail.com, Miasto: Pacanów, Klient od: 6.07.2025",
-        "type": "general",
-        "createdAt": "2025-09-28T19:08:43.068Z",
-        "createdBy": "system"
-      }
-    ],
-    "tags": [
-      "Pacanów",
-      "Nowy klient",
-      "Osoba prywatna",
-      "Gmail"
-    ],
-    "availability": {
-      "workingHours": [
-        {
-          "dayOfWeek": "monday",
-          "periods": [
-            {
-              "from": "17:00",
-              "to": "19:00",
-              "label": "Po pracy"
-            }
-          ]
-        },
-        {
-          "dayOfWeek": "tuesday",
-          "periods": [
-            {
-              "from": "17:00",
-              "to": "19:00",
-              "label": "Po pracy"
-            }
-          ]
-        },
-        {
-          "dayOfWeek": "wednesday",
-          "periods": [
-            {
-              "from": "17:00",
-              "to": "19:00",
-              "label": "Po pracy"
-            }
-          ]
-        },
-        {
-          "dayOfWeek": "thursday",
-          "periods": [
-            {
-              "from": "17:00",
-              "to": "19:00",
-              "label": "Po pracy"
-            }
-          ]
-        },
-        {
-          "dayOfWeek": "friday",
-          "periods": [
-            {
-              "from": "17:00",
-              "to": "19:00",
-              "label": "Po pracy"
-            }
-          ]
-        },
-        {
-          "dayOfWeek": "saturday",
-          "periods": [
-            {
-              "from": "09:00",
-              "to": "15:00",
-              "label": "Weekend"
-            }
-          ]
-        }
-      ],
-      "specialAvailability": [],
-      "unavailableDates": [],
-      "preferredContactTime": "Po 17:00",
-      "notes": "Standardowa dostępność po godzinach pracy"
-    },
-    "companyInfo": {
-      "isCompany": false,
-      "companyName": "",
-      "nip": "",
-      "regon": "",
-      "krs": ""
-    },
-    "preferences": {
-      "preferredPaymentMethod": "cash",
-      "invoiceRequired": false,
-      "preferredCommunication": "phone",
-      "language": "pl"
-    },
-    "stats": {
-      "totalOrders": 0,
-      "completedOrders": 0,
-      "cancelledOrders": 0,
-      "averageOrderValue": 0,
-      "lastOrderDate": null,
-      "customerSince": "2025-07-06T07:05:39.997Z"
-    },
-    "contactHistory": [],
-    "enhanced": true,
-    "enhancedDate": "2025-09-28T19:08:43.068Z",
-    "enhancedVersion": "1.0",
-    "oldId": "CLI25187011"
+    "id": "CLIW252750019",
+    "clientId": "CLIW252750019",
+    "source": "web-form",
+    "sourceDetails": "rezerwacja-nowa",
+    "createdBy": "system",
+    "createdByName": "Formularz rezerwacji online",
+    "userId": null,
+    "isAuthenticated": false,
+    "createdFromIP": "127.0.0.1",
+    "createdAt": "2025-10-02T09:18:55.891Z",
+    "updatedAt": "2025-10-02T09:18:55.891Z",
+    "updatedBy": null
+  },
+  {
+    "name": "MAriusz Bielaszka",
+    "phone": "792392870",
+    "email": "technik24dev@gmail.com",
+    "address": "14, 28-133 Słupia",
+    "city": "Słupia",
+    "street": "14",
+    "dateAdded": "2025-10-02T19:04:26.254Z",
+    "history": [],
+    "id": "CLIW252750020",
+    "clientId": "CLIW252750020",
+    "source": "web-form",
+    "sourceDetails": "rezerwacja-nowa",
+    "createdBy": "system",
+    "createdByName": "Formularz rezerwacji online",
+    "userId": null,
+    "isAuthenticated": false,
+    "createdFromIP": "127.0.0.1",
+    "createdAt": "2025-10-02T19:04:26.254Z",
+    "updatedAt": "2025-10-02T19:04:26.254Z",
+    "updatedBy": null
+  },
+  {
+    "name": "MAriusz Bielaszka",
+    "phone": "792392870",
+    "email": "technik24dev@gmail.com",
+    "address": "14, 28-133 Słupia",
+    "city": "Słupia",
+    "street": "14",
+    "dateAdded": "2025-10-02T19:04:40.977Z",
+    "history": [],
+    "id": "CLIW252750021",
+    "clientId": "CLIW252750021",
+    "source": "web-form",
+    "sourceDetails": "rezerwacja-nowa",
+    "createdBy": "system",
+    "createdByName": "Formularz rezerwacji online",
+    "userId": null,
+    "isAuthenticated": false,
+    "createdFromIP": "127.0.0.1",
+    "createdAt": "2025-10-02T19:04:40.977Z",
+    "updatedAt": "2025-10-02T19:04:40.977Z",
+    "updatedBy": null
+  },
+  {
+    "name": "Technik B",
+    "phone": "987654987",
+    "email": "technik24dev@gmail.com",
+    "address": "Słupia 114, 28-133 Pacanow",
+    "city": "Pacanow",
+    "street": "Słupia 114",
+    "dateAdded": "2025-10-02T19:12:35.888Z",
+    "history": [],
+    "id": "CLIW252750022",
+    "clientId": "CLIW252750022",
+    "source": "web-form",
+    "sourceDetails": "rezerwacja-nowa",
+    "createdBy": "system",
+    "createdByName": "Formularz rezerwacji online",
+    "userId": null,
+    "isAuthenticated": false,
+    "createdFromIP": "127.0.0.1",
+    "createdAt": "2025-10-02T19:12:35.888Z",
+    "updatedAt": "2025-10-02T19:12:35.888Z",
+    "updatedBy": null
+  },
+  {
+    "name": "Technik B",
+    "phone": "987654987",
+    "email": "technik24dev@gmail.com",
+    "address": "Słupia 114, 28-133 Pacanow",
+    "city": "Pacanow",
+    "street": "Słupia 114",
+    "dateAdded": "2025-10-02T19:12:40.681Z",
+    "history": [],
+    "id": "CLIW252750023",
+    "clientId": "CLIW252750023",
+    "source": "web-form",
+    "sourceDetails": "rezerwacja-nowa",
+    "createdBy": "system",
+    "createdByName": "Formularz rezerwacji online",
+    "userId": null,
+    "isAuthenticated": false,
+    "createdFromIP": "127.0.0.1",
+    "createdAt": "2025-10-02T19:12:40.681Z",
+    "updatedAt": "2025-10-02T19:12:40.681Z",
+    "updatedBy": null
+  },
+  {
+    "name": "Technik B",
+    "phone": "987654987",
+    "email": "technik24dev@gmail.com",
+    "address": "Słupia 114, 28-133 Pacanow",
+    "city": "Pacanow",
+    "street": "Słupia 114",
+    "dateAdded": "2025-10-02T20:34:37.223Z",
+    "history": [],
+    "id": "CLIS252750001",
+    "clientId": "CLIS252750001",
+    "source": "system-auto",
+    "sourceDetails": null,
+    "createdBy": "system",
+    "createdByName": "System",
+    "userId": null,
+    "isAuthenticated": false,
+    "createdFromIP": null,
+    "createdAt": "2025-10-02T20:34:37.223Z",
+    "updatedAt": "2025-10-02T20:34:37.223Z",
+    "updatedBy": null
+  },
+  {
+    "name": "Technik B",
+    "phone": "987654987",
+    "email": "technik24dev@gmail.com",
+    "address": "Słupia 114, 28-133 Pacanow",
+    "city": "Pacanow",
+    "street": "Słupia 114",
+    "dateAdded": "2025-10-02T20:34:41.237Z",
+    "history": [],
+    "id": "CLIS252750002",
+    "clientId": "CLIS252750002",
+    "source": "system-auto",
+    "sourceDetails": null,
+    "createdBy": "system",
+    "createdByName": "System",
+    "userId": null,
+    "isAuthenticated": false,
+    "createdFromIP": null,
+    "createdAt": "2025-10-02T20:34:41.237Z",
+    "updatedAt": "2025-10-02T20:34:41.237Z",
+    "updatedBy": null
+  },
+  {
+    "name": "Technik B",
+    "phone": "987987987",
+    "email": "technik24dev@gmail.com",
+    "address": "Glinana, 28-133 Pacanow",
+    "city": "Pacanow",
+    "street": "Glinana",
+    "dateAdded": "2025-10-02T20:44:41.368Z",
+    "history": [],
+    "id": "CLIS252750003",
+    "clientId": "CLIS252750003",
+    "source": "system-auto",
+    "sourceDetails": null,
+    "createdBy": "system",
+    "createdByName": "System",
+    "userId": null,
+    "isAuthenticated": false,
+    "createdFromIP": null,
+    "createdAt": "2025-10-02T20:44:41.368Z",
+    "updatedAt": "2025-10-02T20:44:41.368Z",
+    "updatedBy": null
+  },
+  {
+    "name": "Technik B",
+    "phone": "987987987",
+    "email": "technik24dev@gmail.com",
+    "address": "Glinana, 28-133 Pacanow",
+    "city": "Pacanow",
+    "street": "Glinana",
+    "dateAdded": "2025-10-02T20:44:59.971Z",
+    "history": [],
+    "id": "CLIS252750004",
+    "clientId": "CLIS252750004",
+    "source": "system-auto",
+    "sourceDetails": null,
+    "createdBy": "system",
+    "createdByName": "System",
+    "userId": null,
+    "isAuthenticated": false,
+    "createdFromIP": null,
+    "createdAt": "2025-10-02T20:44:59.971Z",
+    "updatedAt": "2025-10-02T20:44:59.971Z",
+    "updatedBy": null
+  },
+  {
+    "name": "qwd",
+    "phone": "qwd",
+    "email": "technik24dev@gmail.com",
+    "address": "qwd, qwd qwd",
+    "city": "qwd",
+    "street": "qwd",
+    "dateAdded": "2025-10-02T20:45:29.820Z",
+    "history": [],
+    "id": "CLIS252750005",
+    "clientId": "CLIS252750005",
+    "source": "system-auto",
+    "sourceDetails": null,
+    "createdBy": "system",
+    "createdByName": "System",
+    "userId": null,
+    "isAuthenticated": false,
+    "createdFromIP": null,
+    "createdAt": "2025-10-02T20:45:29.820Z",
+    "updatedAt": "2025-10-02T20:45:29.820Z",
+    "updatedBy": null
+  },
+  {
+    "name": "Technik B",
+    "phone": "987654987",
+    "email": "technik24dev@gmail.com",
+    "address": "Słupia 114, 28-133 Pacanow",
+    "city": "Pacanow",
+    "street": "Słupia 114",
+    "dateAdded": "2025-10-02T20:51:25.436Z",
+    "history": [],
+    "id": "CLIS252750006",
+    "clientId": "CLIS252750006",
+    "source": "system-auto",
+    "sourceDetails": null,
+    "createdBy": "system",
+    "createdByName": "System",
+    "userId": null,
+    "isAuthenticated": false,
+    "createdFromIP": null,
+    "createdAt": "2025-10-02T20:51:25.436Z",
+    "updatedAt": "2025-10-02T20:51:25.436Z",
+    "updatedBy": null
+  },
+  {
+    "name": "Technik B",
+    "phone": "987654987",
+    "email": "technik24dev@gmail.com",
+    "address": "Słupia 114, 28-133 Pacanow",
+    "city": "Pacanow",
+    "street": "Słupia 114",
+    "dateAdded": "2025-10-02T20:51:28.578Z",
+    "history": [],
+    "id": "CLIS252750007",
+    "clientId": "CLIS252750007",
+    "source": "system-auto",
+    "sourceDetails": null,
+    "createdBy": "system",
+    "createdByName": "System",
+    "userId": null,
+    "isAuthenticated": false,
+    "createdFromIP": null,
+    "createdAt": "2025-10-02T20:51:28.578Z",
+    "updatedAt": "2025-10-02T20:51:28.578Z",
+    "updatedBy": null
+  },
+  {
+    "name": "jan",
+    "phone": "123123123",
+    "email": "technik24dev@gmail.com",
+    "address": "g, 28-133 Słupia",
+    "city": "Słupia",
+    "street": "g",
+    "dateAdded": "2025-10-02T20:59:25.212Z",
+    "history": [],
+    "id": "CLIS252750008",
+    "clientId": "CLIS252750008",
+    "source": "system-auto",
+    "sourceDetails": null,
+    "createdBy": "system",
+    "createdByName": "System",
+    "userId": null,
+    "isAuthenticated": false,
+    "createdFromIP": null,
+    "createdAt": "2025-10-02T20:59:25.212Z",
+    "updatedAt": "2025-10-02T20:59:25.212Z",
+    "updatedBy": null
   },
   {
     "name": "ad",
     "phone": "123123123",
-    "email": "",
-    "address": "ad, 39-300 Mielec",
-    "city": "Mielec",
-    "street": "ad",
-    "dateAdded": "2025-09-22T21:07:04.588Z",
+    "email": "technik24dev@gmail.com",
+    "address": "asda, 28-133 Słupia",
+    "city": "Słupia",
+    "street": "asda",
+    "dateAdded": "2025-10-02T21:04:13.294Z",
     "history": [],
-    "id": "CLI25265012",
-    "legacyId": "#0012",
-    "newId": "OLD0012",
-    "migrated": true,
-    "migrationDate": "2025-09-28T22:12:00.361Z",
-    "migrationSource": "unified-id-system",
-    "phones": [
-      {
-        "number": "123123123",
-        "label": "Główny",
-        "isPrimary": true,
-        "notes": "Przeniesiony z pola phone"
-      }
-    ],
-    "addresses": [
-      {
-        "address": "ad, 39-300 Mielec",
-        "label": "Główny",
-        "isPrimary": true,
-        "coordinates": null,
-        "notes": "Ulica: ad, Miasto: Mielec"
-      }
-    ],
-    "notes": [
-      {
-        "id": "note_1759086523068_uji6k12yq",
-        "content": "Klient zarejestrowany w systemie. Miasto: Mielec, Klient od: 22.09.2025",
-        "type": "general",
-        "createdAt": "2025-09-28T19:08:43.068Z",
-        "createdBy": "system"
-      }
-    ],
-    "tags": [
-      "Mielec",
-      "Nowy klient",
-      "Osoba prywatna"
-    ],
-    "availability": {
-      "workingHours": [
-        {
-          "dayOfWeek": "monday",
-          "periods": [
-            {
-              "from": "17:00",
-              "to": "19:00",
-              "label": "Po pracy"
-            }
-          ]
-        },
-        {
-          "dayOfWeek": "tuesday",
-          "periods": [
-            {
-              "from": "17:00",
-              "to": "19:00",
-              "label": "Po pracy"
-            }
-          ]
-        },
-        {
-          "dayOfWeek": "wednesday",
-          "periods": [
-            {
-              "from": "17:00",
-              "to": "19:00",
-              "label": "Po pracy"
-            }
-          ]
-        },
-        {
-          "dayOfWeek": "thursday",
-          "periods": [
-            {
-              "from": "17:00",
-              "to": "19:00",
-              "label": "Po pracy"
-            }
-          ]
-        },
-        {
-          "dayOfWeek": "friday",
-          "periods": [
-            {
-              "from": "17:00",
-              "to": "19:00",
-              "label": "Po pracy"
-            }
-          ]
-        },
-        {
-          "dayOfWeek": "saturday",
-          "periods": [
-            {
-              "from": "09:00",
-              "to": "15:00",
-              "label": "Weekend"
-            }
-          ]
-        }
-      ],
-      "specialAvailability": [],
-      "unavailableDates": [],
-      "preferredContactTime": "Po 17:00",
-      "notes": "Standardowa dostępność po godzinach pracy"
-    },
-    "companyInfo": {
-      "isCompany": false,
-      "companyName": "",
-      "nip": "",
-      "regon": "",
-      "krs": ""
-    },
-    "preferences": {
-      "preferredPaymentMethod": "cash",
-      "invoiceRequired": false,
-      "preferredCommunication": "phone",
-      "language": "pl"
-    },
-    "stats": {
-      "totalOrders": 0,
-      "completedOrders": 0,
-      "cancelledOrders": 0,
-      "averageOrderValue": 0,
-      "lastOrderDate": null,
-      "customerSince": "2025-09-22T21:07:04.588Z"
-    },
-    "contactHistory": [],
-    "enhanced": true,
-    "enhancedDate": "2025-09-28T19:08:43.068Z",
-    "enhancedVersion": "1.0",
-    "oldId": "CLI25265012"
+    "id": "CLIS252750009",
+    "clientId": "CLIS252750009",
+    "source": "system-auto",
+    "sourceDetails": null,
+    "createdBy": "system",
+    "createdByName": "System",
+    "userId": null,
+    "isAuthenticated": false,
+    "createdFromIP": null,
+    "createdAt": "2025-10-02T21:04:13.294Z",
+    "updatedAt": "2025-10-02T21:04:13.294Z",
+    "updatedBy": null
   },
   {
-    "name": "MAriusz Bielaszka",
-    "phone": "789456123",
-    "email": "",
-    "address": "Krakowksa, 28-133 Pacanoó",
-    "city": "Pacanoó",
-    "street": "Krakowksa",
-    "dateAdded": "2025-09-23T06:31:06.503Z",
+    "name": "123123123",
+    "phone": "123123123",
+    "email": "technik24dev@gmail.com",
+    "address": "Słupia 114, 28-133 Pacanow",
+    "city": "Pacanow",
+    "street": "Słupia 114",
+    "dateAdded": "2025-10-02T21:10:56.906Z",
     "history": [],
-    "id": "CLI25266013",
-    "legacyId": "#0013",
-    "newId": "OLD0013",
-    "migrated": true,
-    "migrationDate": "2025-09-28T22:12:00.361Z",
-    "migrationSource": "unified-id-system",
-    "phones": [
-      {
-        "number": "789456123",
-        "label": "Główny",
-        "isPrimary": true,
-        "notes": "Przeniesiony z pola phone"
-      }
-    ],
-    "addresses": [
-      {
-        "address": "Krakowksa, 28-133 Pacanoó",
-        "label": "Główny",
-        "isPrimary": true,
-        "coordinates": null,
-        "notes": "Ulica: Krakowksa, Miasto: Pacanoó"
-      }
-    ],
-    "notes": [
-      {
-        "id": "note_1759086523068_2m1nt9sur",
-        "content": "Klient zarejestrowany w systemie. Miasto: Pacanoó, Klient od: 23.09.2025",
-        "type": "general",
-        "createdAt": "2025-09-28T19:08:43.068Z",
-        "createdBy": "system"
-      }
-    ],
-    "tags": [
-      "Pacanoó",
-      "Nowy klient",
-      "Osoba prywatna"
-    ],
-    "availability": {
-      "workingHours": [
-        {
-          "dayOfWeek": "monday",
-          "periods": [
-            {
-              "from": "17:00",
-              "to": "19:00",
-              "label": "Po pracy"
-            }
-          ]
-        },
-        {
-          "dayOfWeek": "tuesday",
-          "periods": [
-            {
-              "from": "17:00",
-              "to": "19:00",
-              "label": "Po pracy"
-            }
-          ]
-        },
-        {
-          "dayOfWeek": "wednesday",
-          "periods": [
-            {
-              "from": "17:00",
-              "to": "19:00",
-              "label": "Po pracy"
-            }
-          ]
-        },
-        {
-          "dayOfWeek": "thursday",
-          "periods": [
-            {
-              "from": "17:00",
-              "to": "19:00",
-              "label": "Po pracy"
-            }
-          ]
-        },
-        {
-          "dayOfWeek": "friday",
-          "periods": [
-            {
-              "from": "17:00",
-              "to": "19:00",
-              "label": "Po pracy"
-            }
-          ]
-        },
-        {
-          "dayOfWeek": "saturday",
-          "periods": [
-            {
-              "from": "09:00",
-              "to": "15:00",
-              "label": "Weekend"
-            }
-          ]
-        }
-      ],
-      "specialAvailability": [],
-      "unavailableDates": [],
-      "preferredContactTime": "Po 17:00",
-      "notes": "Standardowa dostępność po godzinach pracy"
-    },
-    "companyInfo": {
-      "isCompany": false,
-      "companyName": "",
-      "nip": "",
-      "regon": "",
-      "krs": ""
-    },
-    "preferences": {
-      "preferredPaymentMethod": "cash",
-      "invoiceRequired": false,
-      "preferredCommunication": "phone",
-      "language": "pl"
-    },
-    "stats": {
-      "totalOrders": 0,
-      "completedOrders": 0,
-      "cancelledOrders": 0,
-      "averageOrderValue": 0,
-      "lastOrderDate": null,
-      "customerSince": "2025-09-23T06:31:06.503Z"
-    },
-    "contactHistory": [],
-    "enhanced": true,
-    "enhancedDate": "2025-09-28T19:08:43.068Z",
-    "enhancedVersion": "1.0",
-    "oldId": "CLI25266013"
+    "id": "CLIS252750010",
+    "clientId": "CLIS252750010",
+    "source": "system-auto",
+    "sourceDetails": null,
+    "createdBy": "system",
+    "createdByName": "System",
+    "userId": null,
+    "isAuthenticated": false,
+    "createdFromIP": null,
+    "createdAt": "2025-10-02T21:10:56.906Z",
+    "updatedAt": "2025-10-02T21:10:56.906Z",
+    "updatedBy": null
   },
   {
-    "name": "MAriusz Bielaszka",
-    "phone": "987654321",
-    "email": "",
-    "address": "Malinie 607, 39-331 Chorzelów",
+    "name": "123123123",
+    "phone": "123123123",
+    "email": "technik24dev@gmail.com",
+    "address": "Słupia 114, 28-133 Pacanow",
+    "city": "Pacanow",
+    "street": "Słupia 114",
+    "dateAdded": "2025-10-02T21:10:59.887Z",
+    "history": [],
+    "id": "CLIS252750011",
+    "clientId": "CLIS252750011",
+    "source": "system-auto",
+    "sourceDetails": null,
+    "createdBy": "system",
+    "createdByName": "System",
+    "userId": null,
+    "isAuthenticated": false,
+    "createdFromIP": null,
+    "createdAt": "2025-10-02T21:10:59.887Z",
+    "updatedAt": "2025-10-02T21:10:59.887Z",
+    "updatedBy": null
+  },
+  {
+    "name": "Technik B",
+    "phone": "12123123",
+    "email": "technik24dev@gmail.com",
+    "address": "Malinie 607, 30-331 Chorzelów",
     "city": "Chorzelów",
     "street": "Malinie 607",
-    "dateAdded": "2025-09-23T19:20:23.474Z",
+    "dateAdded": "2025-10-02T21:17:59.090Z",
     "history": [],
-    "id": "CLI25266014",
-    "legacyId": "#0014",
-    "newId": "OLD0014",
-    "migrated": true,
-    "migrationDate": "2025-09-28T22:12:00.362Z",
-    "migrationSource": "unified-id-system",
-    "phones": [
-      {
-        "number": "987654321",
-        "label": "Główny",
-        "isPrimary": true,
-        "notes": "Przeniesiony z pola phone"
-      }
-    ],
-    "addresses": [
-      {
-        "address": "Malinie 607, 39-331 Chorzelów",
-        "label": "Główny",
-        "isPrimary": true,
-        "coordinates": null,
-        "notes": "Ulica: Malinie 607, Miasto: Chorzelów"
-      }
-    ],
-    "notes": [
-      {
-        "id": "note_1759086523069_eqey913ep",
-        "content": "Klient zarejestrowany w systemie. Miasto: Chorzelów, Klient od: 23.09.2025",
-        "type": "general",
-        "createdAt": "2025-09-28T19:08:43.069Z",
-        "createdBy": "system"
-      }
-    ],
-    "tags": [
-      "Chorzelów",
-      "Nowy klient",
-      "Osoba prywatna"
-    ],
-    "availability": {
-      "workingHours": [
-        {
-          "dayOfWeek": "monday",
-          "periods": [
-            {
-              "from": "17:00",
-              "to": "19:00",
-              "label": "Po pracy"
-            }
-          ]
-        },
-        {
-          "dayOfWeek": "tuesday",
-          "periods": [
-            {
-              "from": "17:00",
-              "to": "19:00",
-              "label": "Po pracy"
-            }
-          ]
-        },
-        {
-          "dayOfWeek": "wednesday",
-          "periods": [
-            {
-              "from": "17:00",
-              "to": "19:00",
-              "label": "Po pracy"
-            }
-          ]
-        },
-        {
-          "dayOfWeek": "thursday",
-          "periods": [
-            {
-              "from": "17:00",
-              "to": "19:00",
-              "label": "Po pracy"
-            }
-          ]
-        },
-        {
-          "dayOfWeek": "friday",
-          "periods": [
-            {
-              "from": "17:00",
-              "to": "19:00",
-              "label": "Po pracy"
-            }
-          ]
-        },
-        {
-          "dayOfWeek": "saturday",
-          "periods": [
-            {
-              "from": "09:00",
-              "to": "15:00",
-              "label": "Weekend"
-            }
-          ]
-        }
-      ],
-      "specialAvailability": [],
-      "unavailableDates": [],
-      "preferredContactTime": "Po 17:00",
-      "notes": "Standardowa dostępność po godzinach pracy"
-    },
-    "companyInfo": {
-      "isCompany": false,
-      "companyName": "",
-      "nip": "",
-      "regon": "",
-      "krs": ""
-    },
-    "preferences": {
-      "preferredPaymentMethod": "cash",
-      "invoiceRequired": false,
-      "preferredCommunication": "phone",
-      "language": "pl"
-    },
-    "stats": {
-      "totalOrders": 0,
-      "completedOrders": 0,
-      "cancelledOrders": 0,
-      "averageOrderValue": 0,
-      "lastOrderDate": null,
-      "customerSince": "2025-09-23T19:20:23.474Z"
-    },
-    "contactHistory": [],
-    "enhanced": true,
-    "enhancedDate": "2025-09-28T19:08:43.069Z",
-    "enhancedVersion": "1.0",
-    "oldId": "CLI25266014"
+    "id": "CLIS252750012",
+    "clientId": "CLIS252750012",
+    "source": "system-auto",
+    "sourceDetails": null,
+    "createdBy": "system",
+    "createdByName": "System",
+    "userId": null,
+    "isAuthenticated": false,
+    "createdFromIP": null,
+    "createdAt": "2025-10-02T21:17:59.090Z",
+    "updatedAt": "2025-10-02T21:17:59.090Z",
+    "updatedBy": null
+  },
+  {
+    "name": "Technik B",
+    "phone": "12123123",
+    "email": "technik24dev@gmail.com",
+    "address": "Malinie 607, 30-331 Chorzelów",
+    "city": "Chorzelów",
+    "street": "Malinie 607",
+    "dateAdded": "2025-10-02T21:18:02.065Z",
+    "history": [],
+    "id": "CLIS252750013",
+    "clientId": "CLIS252750013",
+    "source": "system-auto",
+    "sourceDetails": null,
+    "createdBy": "system",
+    "createdByName": "System",
+    "userId": null,
+    "isAuthenticated": false,
+    "createdFromIP": null,
+    "createdAt": "2025-10-02T21:18:02.065Z",
+    "updatedAt": "2025-10-02T21:18:02.065Z",
+    "updatedBy": null
+  },
+  {
+    "name": "Technik B",
+    "phone": "12123123",
+    "email": "technik24dev@gmail.com",
+    "address": "Malinie 607, 30-331 Chorzelów",
+    "city": "Chorzelów",
+    "street": "Malinie 607",
+    "dateAdded": "2025-10-02T21:18:06.288Z",
+    "history": [],
+    "id": "CLIS252750014",
+    "clientId": "CLIS252750014",
+    "source": "system-auto",
+    "sourceDetails": null,
+    "createdBy": "system",
+    "createdByName": "System",
+    "userId": null,
+    "isAuthenticated": false,
+    "createdFromIP": null,
+    "createdAt": "2025-10-02T21:18:06.288Z",
+    "updatedAt": "2025-10-02T21:18:06.288Z",
+    "updatedBy": null
+  },
+  {
+    "name": "Technik B",
+    "phone": "123123123",
+    "email": "",
+    "address": "Słupia 114, Pacanow",
+    "city": "Pacanow",
+    "street": "Słupia 114",
+    "dateAdded": "2025-10-02T21:22:31.971Z",
+    "history": [],
+    "id": "CLIS252750015",
+    "clientId": "CLIS252750015",
+    "source": "system-auto",
+    "sourceDetails": null,
+    "createdBy": "system",
+    "createdByName": "System",
+    "userId": null,
+    "isAuthenticated": false,
+    "createdFromIP": null,
+    "createdAt": "2025-10-02T21:22:31.971Z",
+    "updatedAt": "2025-10-02T21:22:31.971Z",
+    "updatedBy": null
+  },
+  {
+    "name": "Technik B",
+    "phone": "123123123",
+    "email": "technik24dev@gmial.com",
+    "address": "Słupia 114, 28-133 Pacanow",
+    "city": "Pacanow",
+    "street": "Słupia 114",
+    "dateAdded": "2025-10-02T21:43:09.456Z",
+    "history": [],
+    "id": "CLIS252750016",
+    "clientId": "CLIS252750016",
+    "source": "system-auto",
+    "sourceDetails": null,
+    "createdBy": "system",
+    "createdByName": "System",
+    "userId": null,
+    "isAuthenticated": false,
+    "createdFromIP": null,
+    "createdAt": "2025-10-02T21:43:09.456Z",
+    "updatedAt": "2025-10-02T21:43:09.456Z",
+    "updatedBy": null
+  },
+  {
+    "name": "Olgier Klich",
+    "phone": "456456456",
+    "email": "",
+    "address": "Słowackiego 4/5, Dębica",
+    "city": "Dębica",
+    "street": "Słowackiego 4/5",
+    "dateAdded": "2025-10-03T05:03:06.610Z",
+    "history": [],
+    "id": "CLIS252760001",
+    "clientId": "CLIS252760001",
+    "source": "system-auto",
+    "sourceDetails": null,
+    "createdBy": "system",
+    "createdByName": "System",
+    "userId": null,
+    "isAuthenticated": false,
+    "createdFromIP": null,
+    "createdAt": "2025-10-03T05:03:06.610Z",
+    "updatedAt": "2025-10-03T05:03:06.610Z",
+    "updatedBy": null
+  },
+  {
+    "name": "Technik B",
+    "phone": "987654987",
+    "email": "technik24dev@gmail.com",
+    "address": "Słupia 114, 28-133 Pacanow",
+    "city": "Pacanow",
+    "street": "Słupia 114",
+    "dateAdded": "2025-10-03T05:07:42.095Z",
+    "history": [],
+    "id": "CLIS252760002",
+    "clientId": "CLIS252760002",
+    "source": "system-auto",
+    "sourceDetails": null,
+    "createdBy": "system",
+    "createdByName": "System",
+    "userId": null,
+    "isAuthenticated": false,
+    "createdFromIP": null,
+    "createdAt": "2025-10-03T05:07:42.095Z",
+    "updatedAt": "2025-10-03T05:07:42.095Z",
+    "updatedBy": null
+  },
+  {
+    "name": "Technik B",
+    "phone": "987654987",
+    "email": "technik24dev@gmail.com",
+    "address": "Słupia 114, 28-133 Pacanow",
+    "city": "Pacanow",
+    "street": "Słupia 114",
+    "dateAdded": "2025-10-03T05:08:07.475Z",
+    "history": [],
+    "id": "CLIS252760003",
+    "clientId": "CLIS252760003",
+    "source": "system-auto",
+    "sourceDetails": null,
+    "createdBy": "system",
+    "createdByName": "System",
+    "userId": null,
+    "isAuthenticated": false,
+    "createdFromIP": null,
+    "createdAt": "2025-10-03T05:08:07.475Z",
+    "updatedAt": "2025-10-03T05:08:07.475Z",
+    "updatedBy": null
+  },
+  {
+    "name": "Technik B",
+    "phone": "123123123",
+    "email": "",
+    "address": "Słupia 114, Pacanow",
+    "city": "Pacanow",
+    "street": "Słupia 114",
+    "dateAdded": "2025-10-03T05:35:30.494Z",
+    "history": [],
+    "id": "CLIS252760004",
+    "clientId": "CLIS252760004",
+    "source": "system-auto",
+    "sourceDetails": null,
+    "createdBy": "system",
+    "createdByName": "System",
+    "userId": null,
+    "isAuthenticated": false,
+    "createdFromIP": null,
+    "createdAt": "2025-10-03T05:35:30.494Z",
+    "updatedAt": "2025-10-03T05:35:30.494Z",
+    "updatedBy": null
+  },
+  {
+    "name": "kooo",
+    "phone": "123123123",
+    "email": "",
+    "address": "Słupia 114, Pacanow",
+    "city": "Pacanow",
+    "street": "Słupia 114",
+    "dateAdded": "2025-10-03T05:57:52.981Z",
+    "history": [],
+    "id": "CLIS252760005",
+    "clientId": "CLIS252760005",
+    "source": "system-auto",
+    "sourceDetails": null,
+    "createdBy": "system",
+    "createdByName": "System",
+    "userId": null,
+    "isAuthenticated": false,
+    "createdFromIP": null,
+    "createdAt": "2025-10-03T05:57:52.981Z",
+    "updatedAt": "2025-10-03T05:57:52.981Z",
+    "updatedBy": null
   }
 ]

@@ -14,6 +14,12 @@ import {
     readClients
 } from '../../utils/clientOrderStorage';
 
+import { 
+    generateOrderId, 
+    generateVisitId,
+    parseId 
+} from '../../utils/id-generator';
+
 import { ENHANCED_ORDER_STRUCTURE_V4 } from '../../shared/enhanced-order-structure-v4';
 import { AGDMobileToV4Converter } from '../../shared/agd-mobile-to-v4-converter';
 
@@ -22,7 +28,22 @@ export default async function handler(req, res) {
 
     if (req.method === 'GET') {
         try {
-            const orders = readOrders();
+            const { id } = req.query;
+            const orders = await readOrders();
+            
+            // Jeśli podano ID, zwróć pojedyncze zamówienie
+            if (id) {
+                const order = orders.find(o => o.id == id || o.orderNumber == id);
+                if (order) {
+                    console.log(`✅ Returning order: ${order.orderNumber}`);
+                    return res.status(200).json(order);
+                } else {
+                    console.log(`❌ Order not found: ${id}`);
+                    return res.status(404).json({ message: 'Zamówienie nie znalezione' });
+                }
+            }
+            
+            // Zwróć wszystkie zamówienia
             console.log(`✅ Returning ${orders.length} orders`);
             return res.status(200).json({ orders });
         } catch (error) {
@@ -59,14 +80,21 @@ export default async function handler(req, res) {
             }
             
             // ========== FINALNE UZUPEŁNIENIE ==========
+            const source = isAGDMobile ? 'mobile-app' : (orderData.source || 'admin-panel');
+            
             const finalOrderData = {
                 ...processedOrderData,
                 
                 // Metadane
                 createdAt: new Date().toISOString(),
                 updatedAt: new Date().toISOString(),
-                createdBy: orderData.createdBy || orderData.selectedEmployee || 'system',
-                source: isAGDMobile ? 'agd_mobile' : (orderData.source || 'web'),
+                createdBy: orderData.createdBy || orderData.selectedEmployee || 'admin',
+                createdByName: orderData.createdByName || (isAGDMobile ? 'AGD Mobile App' : 'Panel Admina'),
+                source: source,
+                sourceDetails: orderData.sourceDetails || (isAGDMobile ? 'agd-mobile-app' : 'admin-panel'),
+                userId: orderData.userId || null,
+                isUserCreated: !!orderData.userId,
+                createdFromIP: orderData.ip || req.headers['x-forwarded-for'] || req.connection.remoteAddress || null,
                 version: '4.0'
             };
 
@@ -106,8 +134,10 @@ export default async function handler(req, res) {
     if (req.method === 'PUT') {
         try {
             const updatedOrder = req.body;
+            console.log('🔧 PUT Request body:', JSON.stringify(updatedOrder, null, 2));
 
             if (!updatedOrder.id) {
+                console.log('❌ Missing ID in order:', updatedOrder);
                 return res.status(400).json({ message: 'Brak ID zamówienia' });
             }
 
@@ -116,11 +146,12 @@ export default async function handler(req, res) {
                 console.log(`✅ Order updated: ${result.id}`);
                 return res.status(200).json({ order: result });
             } else {
+                console.log('❌ Order not found for update:', updatedOrder.id);
                 return res.status(404).json({ message: 'Zamówienie nie znalezione' });
             }
         } catch (error) {
             console.error('❌ Error updating order:', error);
-            return res.status(500).json({ message: 'Błąd aktualizacji zamówienia' });
+            return res.status(500).json({ message: 'Błąd aktualizacji zamówienia', error: error.message });
         }
     }
 
@@ -204,12 +235,16 @@ function detectAGDMobileOrder(orderData) {
  * 🌐 Przetwarza zlecenie webowe na Enhanced v4.0
  */
 function processWebOrder(orderData) {
+    // Określ źródło zlecenia
+    const source = orderData.source || 'admin-panel'; // admin tworzy przez ten endpoint
+    const orders = readOrders();
+    
     return {
         ...orderData,
         
-        // Generuj ID jeśli brak
-        orderNumber: orderData.orderNumber || generateOrderNumber(),
-        visitId: orderData.visitId || (orderData.appointmentDate ? generateVisitId() : null),
+        // Generuj ID jeśli brak (z nowym formatem ORDW/ORDA/ORDU itd.)
+        orderNumber: orderData.orderNumber || generateOrderId(orders, new Date(), source),
+        visitId: orderData.visitId || (orderData.appointmentDate ? generateVisitId(readOrders(), new Date(), source) : null),
         
         // Pobierz nazwę klienta
         clientName: orderData.clientName || getClientName(orderData.clientId),
@@ -223,6 +258,15 @@ function processWebOrder(orderData) {
         status: mapStatusToEnhanced(orderData.status) || 'pending',
         priority: orderData.priority || 'medium',
         warrantyMonths: orderData.warrantyMonths || 3,
+        
+        // Szczegóły urządzenia i czasu naprawy
+        deviceDetails: orderData.deviceDetails || {
+            deviceType: orderData.deviceType || null,
+            hasDemontaz: orderData.hasDemontaz || false,
+            hasMontaz: orderData.hasMontaz || false,
+            hasTrudnaZabudowa: orderData.hasTrudnaZabudowa || false,
+            manualAdditionalTime: orderData.manualAdditionalTime || 0
+        },
         
         // Inicjalizacja struktur
         devices: orderData.devices || [],
@@ -264,14 +308,14 @@ function validateEnhancedV4Order(orderData) {
     // Sprawdź wymagane pola podstawowe
     if (!orderData.clientId) {
         errors.push('clientId jest wymagane');
-    } else if (!orderData.clientId.match(/^CLI\d{8}$/)) {
-        errors.push('clientId musi mieć format CLI12345678');
+    } else if (!orderData.clientId.match(/^CLI[WUATCQPEMRVFNSIX]\d{9}$/)) {
+        errors.push('clientId musi mieć nowy format CLIW252750001 (13 znaków) lub stary CLI12345678');
     }
     
     if (!orderData.orderNumber) {
         errors.push('orderNumber jest wymagane');
-    } else if (!orderData.orderNumber.match(/^ORDA\d{8}$/)) {
-        errors.push('orderNumber musi mieć format ORDA12345678');
+    } else if (!orderData.orderNumber.match(/^ORD[WUATCQPEMRVFNSIX]\d{9}$/)) {
+        errors.push('orderNumber musi mieć nowy format ORDW252750001 (13 znaków) lub stary ORDA12345678');
     }
     
     // Sprawdź opis (fallback na description lub problemDescription)
@@ -291,8 +335,8 @@ function validateEnhancedV4Order(orderData) {
     
     // Walidacja wizyt
     if (orderData.visitId) {
-        if (!orderData.visitId.match(/^VIS\d{8}$/)) {
-            errors.push('visitId musi mieć format VIS12345678');
+        if (!orderData.visitId.match(/^VIS[WUATCQPEMRVFNSIX]\d{9}$/)) {
+            errors.push('visitId musi mieć nowy format VISW252750001 (13 znaków) lub stary VIS12345678');
         }
         
         if (orderData.appointmentDate) {
@@ -340,41 +384,10 @@ function validateEnhancedV4Order(orderData) {
     return errors;
 }
 
-/**
- * 🔢 Generuje nowy numer zlecenia w formacie ORDA
- */
-function generateOrderNumber() {
-    const now = new Date();
-    const year = now.getFullYear().toString().slice(-2);
-    const month = (now.getMonth() + 1).toString().padStart(2, '0');
-    const day = now.getDate().toString().padStart(2, '0');
-    
-    // Znajdź ostatni numer dziś
-    const orders = readOrders();
-    const todayPrefix = `ORDA${year}${month}${day}`;
-    const todayOrders = orders.filter(o => o.orderNumber?.startsWith(todayPrefix));
-    const lastNumber = todayOrders.length;
-    
-    return `${todayPrefix}${(lastNumber + 1).toString().padStart(3, '0')}`;
-}
-
-/**
- * 🏥 Generuje ID wizyty w formacie VIS
- */
-function generateVisitId() {
-    const now = new Date();
-    const year = now.getFullYear().toString().slice(-2);
-    const month = (now.getMonth() + 1).toString().padStart(2, '0');
-    const day = now.getDate().toString().padStart(2, '0');
-    
-    // Znajdź ostatni numer wizyt dziś
-    const orders = readOrders();
-    const todayPrefix = `VIS${year}${month}${day}`;
-    const todayVisits = orders.filter(o => o.visitId?.startsWith(todayPrefix));
-    const lastNumber = todayVisits.length;
-    
-    return `${todayPrefix}${(lastNumber + 1).toString().padStart(3, '0')}`;
-}
+// Funkcje generateOrderNumber() i generateVisitId() zostały zastąpione
+// przez nowy system z utils/id-generator.js który obsługuje 16 źródeł (W, U, A, T, C, Q, P, E, M, R, V, F, N, S, I, X)
+// i format: PREFIX(3) + SOURCE(1) + YEAR(2) + DAY(3) + SEQUENCE(4) = 13 znaków
+// Przykład: ORDW252750001 = ORD + W(web-form) + 25(2025) + 275(day) + 0001(sequence)
 
 /**
  * 🗂️ Mapuje clientId do nowego formatu

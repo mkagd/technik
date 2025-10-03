@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Podgląd Email - Potwierdzenie Rezerwacji</title>
+  <style>
+    /* Style emaila */
+    body { 
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; 
+      line-height: 1.6; 
+      color: #333; 
+      background-color: #f5f5f5; 
+      margin: 0; 
+      padding: 20px;
+    }
+    .preview-note {
+      background: #fff3cd;
+      border: 2px solid #ffc107;
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    .preview-note h3 {
+      margin: 0 0 10px 0;
+      color: #856404;
+    }
+    .container { 
+      max-width: 600px; 
+      margin: 20px auto; 
+      background-color: #ffffff; 
+      border-radius: 8px; 
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
+      overflow: hidden; 
+    }
+    .header { 
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+      color: white; 
+      padding: 30px 20px; 
+      text-align: center; 
+    }
+    .header h1 { 
+      margin: 0; 
+      font-size: 24px; 
+      font-weight: 600; 
+    }
+    .content { 
+      padding: 30px 20px; 
+    }
+    .order-box { 
+      background-color: #f8f9fa; 
+      border-left: 4px solid #667eea; 
+      padding: 20px; 
+      margin: 20px 0; 
+      border-radius: 4px; 
+    }
+    .order-number { 
+      font-size: 28px; 
+      font-weight: bold; 
+      color: #667eea; 
+      margin: 10px 0; 
+      font-family: 'Courier New', monospace; 
+      letter-spacing: 2px; 
+    }
+    .button { 
+      display: inline-block; 
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+      color: white; 
+      padding: 14px 32px; 
+      text-decoration: none; 
+      border-radius: 6px; 
+      margin: 20px 0; 
+      font-weight: 600; 
+      text-align: center; 
+      box-shadow: 0 4px 6px rgba(102, 126, 234, 0.3); 
+    }
+    .button:hover { 
+      box-shadow: 0 6px 8px rgba(102, 126, 234, 0.4); 
+    }
+    .info-row { 
+      margin: 12px 0; 
+      padding: 8px 0; 
+      border-bottom: 1px solid #e9ecef; 
+    }
+    .info-label { 
+      font-weight: 600; 
+      color: #495057; 
+      display: inline-block; 
+      min-width: 120px; 
+    }
+    .info-value { 
+      color: #212529; 
+    }
+    .footer { 
+      background-color: #f8f9fa; 
+      padding: 20px; 
+      text-align: center; 
+      font-size: 12px; 
+      color: #6c757d; 
+      border-top: 1px solid #dee2e6; 
+    }
+    .check-icon { 
+      font-size: 48px; 
+    }
+  </style>
+</head>
+<body>
+  <!-- Notka o podglądzie -->
+  <div class="preview-note">
+    <h3>📧 PODGLĄD EMAILA</h3>
+    <p>To jest dokładnie tak jak będzie wyglądał email wysyłany do klientów po złożeniu rezerwacji.</p>
+    <p><strong>Numer przykładowy:</strong> ORDW252750010</p>
+  </div>
+
+  <!-- Rzeczywisty email -->
+  <div class="container">
+    <div class="header">
+      <div class="check-icon">✅</div>
+      <h1>Potwierdzenie rezerwacji</h1>
+      <p style="margin: 10px 0 0 0; font-size: 18px; opacity: 0.95;">Technik</p>
+    </div>
+    
+    <div class="content">
+      <h2 style="color: #212529; font-size: 20px; margin-bottom: 10px;">
+        ✓ Dziękujemy za złożenie rezerwacji!
+      </h2>
+      <p style="color: #6c757d; margin-bottom: 20px;">
+        Twoje zgłoszenie zostało przyjęte i oczekuje na realizację.
+      </p>
+      
+      <div class="order-box">
+        <p style="margin: 0 0 5px 0; color: #495057; font-size: 14px;">
+          <strong>Numer zgłoszenia:</strong>
+        </p>
+        <div class="order-number">ORDW252750010</div>
+        <p style="margin: 10px 0 0 0; color: #6c757d; font-size: 13px;">
+          Zapisz ten numer - będzie potrzebny do sprawdzenia statusu
+        </p>
+      </div>
+      
+      <div style="text-align: center; margin: 30px 0;">
+        <a href="http://localhost:3000/moje-zamowienie?order=ORDW252750010" class="button">
+          📱 Sprawdź Status Zamówienia
+        </a>
+      </div>
+      
+      <div style="background-color: #e7f3ff; border-radius: 8px; padding: 20px; margin: 20px 0;">
+        <h3 style="margin: 0 0 15px 0; color: #0066cc; font-size: 16px;">
+          📋 Szczegóły wizyty
+        </h3>
+        <div class="info-row">
+          <span class="info-label">📅 Termin:</span>
+          <span class="info-value">2 października 2025</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">⏰ Przedział:</span>
+          <span class="info-value">Weekend</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">🔧 Urządzenie:</span>
+          <span class="info-value">Zmywarka</span>
+        </div>
+        <div class="info-row" style="border-bottom: none;">
+          <span class="info-label">⚠️ Problem:</span>
+          <span class="info-value">Nie pobiera wody</span>
+        </div>
+      </div>
+      
+      <div style="background-color: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; border-radius: 4px; margin: 20px 0;">
+        <p style="margin: 0; color: #856404; font-size: 14px;">
+          <strong>💡 Co dalej?</strong><br>
+          Nasz serwisant skontaktuje się z Tobą, aby potwierdzić dokładny termin wizyty.
+          W międzyczasie możesz sprawdzić status zamówienia klikając przycisk powyżej.
+        </p>
+      </div>
+      
+      <p style="color: #6c757d; font-size: 14px; margin-top: 30px;">
+        Jeśli masz pytania, skontaktuj się z nami:
+      </p>
+    </div>
+    
+    <div class="footer">
+      <p style="margin: 5px 0;">📞 Pytania? Zadzwoń: <strong>+48 22 120 24 59</strong></p>
+      <p style="margin: 5px 0;">✉️ Email: <strong>kontakt@technik.pl</strong></p>
+      <p style="margin: 15px 0 5px 0; color: #adb5bd;">© 2025 Technik. Wszystkie prawa zastrzeżone.</p>
+    </div>
+  </div>
+
+  <!-- Informacje techniczne -->
+  <div style="max-width: 600px; margin: 20px auto; padding: 15px; background: #e3f2fd; border-radius: 8px;">
+    <h4 style="margin: 0 0 10px 0; color: #1976d2;">🔍 Informacje techniczne:</h4>
+    <ul style="margin: 0; padding-left: 20px; color: #555;">
+      <li>Email wysyłany przez: <strong>onboarding@resend.dev</strong></li>
+      <li>Link prowadzi do: <strong>/moje-zamowienie?order=ORDW...</strong></li>
+      <li>Design: Responsywny (działa na mobile i desktop)</li>
+      <li>Kolor marki: Gradient niebieski-fioletowy (#667eea → #764ba2)</li>
+      <li>Ikony: Emoji (✅📧📱📋📅⏰🔧⚠️💡📞✉️)</li>
+    </ul>
+  </div>
+</body>
+</html>

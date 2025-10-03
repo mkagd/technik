@@ -1,0 +1,96 @@
+[
+  {
+    "id": "PU-2025-10-001",
+    "employeeId": "EMP25189002",
+    "employeeName": "Adam Nowak",
+    "orderId": "ORD1023",
+    "client": "Pan Kowalski",
+    "usageDate": "2025-10-02T14:00:00Z",
+    "parts": [
+      {
+        "partId": "PART001",
+        "partNumber": "DC97-16151A",
+        "name": "Łożysko bębna Samsung",
+        "quantity": 2,
+        "unitPrice": 85.00,
+        "totalPrice": 170.00,
+        "fromPersonalInventory": true,
+        "installedSuccessfully": true,
+        "warranty": "12 months",
+        "installationTime": 120,
+        "notes": "Wymiana łożyska, wszystko OK"
+      }
+    ],
+    "totalValue": 170.00,
+    "addedToInvoice": true,
+    "invoiceId": "FV/2025/10/123",
+    "createdAt": "2025-10-02T16:00:00Z"
+  },
+  {
+    "id": "PU-2025-10-002",
+    "employeeId": "EMP25189003",
+    "employeeName": "Tomek Wiśniewski",
+    "orderId": "ORD1024",
+    "client": "Pani Nowak",
+    "usageDate": "2025-10-03T09:30:00Z",
+    "parts": [
+      {
+        "partId": "PART002",
+        "partNumber": "DC96-01414G",
+        "name": "Pompa odpływowa Samsung",
+        "quantity": 1,
+        "unitPrice": 90.00,
+        "totalPrice": 90.00,
+        "fromPersonalInventory": true,
+        "installedSuccessfully": true,
+        "warranty": "12 months",
+        "installationTime": 45,
+        "notes": "Pompa wymieniona, pralka działa"
+      }
+    ],
+    "totalValue": 90.00,
+    "addedToInvoice": true,
+    "invoiceId": "FV/2025/10/124",
+    "createdAt": "2025-10-03T11:00:00Z"
+  },
+  {
+    "id": "PU-2025-10-003",
+    "employeeId": "EMP25189001",
+    "employeeName": "Jan Kowalski",
+    "orderId": "ORD1022",
+    "client": "Firma XYZ Sp. z o.o.",
+    "usageDate": "2025-10-01T13:15:00Z",
+    "parts": [
+      {
+        "partId": "PART005",
+        "partNumber": "DC66-00343A",
+        "name": "Amortyzator pralki Samsung",
+        "quantity": 2,
+        "unitPrice": 45.00,
+        "totalPrice": 90.00,
+        "fromPersonalInventory": true,
+        "installedSuccessfully": true,
+        "warranty": "12 months",
+        "installationTime": 30,
+        "notes": "Wymiana amortyzatorów"
+      },
+      {
+        "partId": "PART004",
+        "partNumber": "DC63-00563A",
+        "name": "Uszczelka drzwi pralki",
+        "quantity": 1,
+        "unitPrice": 45.00,
+        "totalPrice": 45.00,
+        "fromPersonalInventory": true,
+        "installedSuccessfully": true,
+        "warranty": "12 months",
+        "installationTime": 20,
+        "notes": "Uszczelka wymieniona"
+      }
+    ],
+    "totalValue": 135.00,
+    "addedToInvoice": true,
+    "invoiceId": "FV/2025/10/122",
+    "createdAt": "2025-10-01T15:30:00Z"
+  }
+]

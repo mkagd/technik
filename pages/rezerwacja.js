@@ -38,6 +38,10 @@ export default function Rezerwacja() {
         devices: [], // Tablica modeli dla każdego urządzenia
         brands: [], // Tablica marek dla każdego urządzenia
         problems: [], // Tablica problemów dla każdego urządzenia
+        hasBuiltIn: [], // Tablica: czy urządzenie jest w zabudowie
+        hasDemontaz: [], // Tablica: czy wymaga demontażu
+        hasMontaz: [], // Tablica: czy wymaga montażu
+        hasTrudnaZabudowa: [], // Tablica: czy trudna zabudowa
         timeSlot: '',
         additionalNotes: ''
     });
@@ -650,7 +654,12 @@ export default function Rezerwacja() {
             category: formData.categories[0] || '',
             brand: formData.brands[0] || '',
             device: formData.devices[0] || '',
-            problem: formData.problems[0] || ''
+            problem: formData.problems[0] || '',
+            // Dodajemy informacje o zabudowie dla pierwszego urządzenia
+            hasBuiltIn: formData.hasBuiltIn[0] || false,
+            hasDemontaz: formData.hasDemontaz[0] || false,
+            hasMontaz: formData.hasMontaz[0] || false,
+            hasTrudnaZabudowa: formData.hasTrudnaZabudowa[0] || false
         };
 
         try {
@@ -668,7 +677,14 @@ export default function Rezerwacja() {
                 const deviceCount = formData.categories.length;
                 const deviceText = deviceCount === 1 ? 'urządzenie' : 
                                  deviceCount < 5 ? 'urządzenia' : 'urządzeń';
-                setMessage(`✅ Zgłoszenie na ${deviceCount} ${deviceText} zostało wysłane! Nasz zespół skontaktuje się z Tobą wkrótce.`);
+                
+                // Sprawdź czy API zwróciło numer zamówienia
+                const orderInfo = result.order?.orderNumber 
+                    ? `\n\n📋 Numer Twojego zlecenia: ${result.order.orderNumber}` 
+                    : '';
+                
+                setMessage(`✅ Zgłoszenie na ${deviceCount} ${deviceText} zostało wysłane!${orderInfo}\n\nNasz zespół skontaktuje się z Tobą wkrótce.`);
+                
                 setTimeout(() => {
                     setMessage(prevMessage =>
                         prevMessage + '\n\n🗺️ Możesz już zobaczyć swoje zgłoszenie na mapie!'
@@ -909,6 +925,89 @@ export default function Rezerwacja() {
                                                             💡 Zacznij pisać, a pokażemy typowe usterki dla {category.toLowerCase()}
                                                         </p>
                                                     </div>
+
+                                                    {/* Dodatkowe informacje o zabudowie */}
+                                                    <div className="mt-4 pt-4 border-t border-gray-200">
+                                                        <label className="block text-sm font-medium text-gray-700 mb-3">
+                                                            Dodatkowe informacje
+                                                        </label>
+                                                        <div className="space-y-3">
+                                                            {/* Główny checkbox - Sprzęt w zabudowie */}
+                                                            <div>
+                                                                <label className="flex items-center cursor-pointer">
+                                                                    <input
+                                                                        type="checkbox"
+                                                                        checked={formData.hasBuiltIn[index] || false}
+                                                                        onChange={(e) => {
+                                                                            const isChecked = e.target.checked;
+                                                                            const newHasBuiltIn = [...formData.hasBuiltIn];
+                                                                            const newHasDemontaz = [...formData.hasDemontaz];
+                                                                            const newHasMontaz = [...formData.hasMontaz];
+                                                                            
+                                                                            newHasBuiltIn[index] = isChecked;
+                                                                            // Automatycznie zaznacz/odznacz demontaż i montaż
+                                                                            newHasDemontaz[index] = isChecked;
+                                                                            newHasMontaz[index] = isChecked;
+                                                                            
+                                                                            // Jeśli odznaczamy zabudowę, odznacz też trudną zabudowę
+                                                                            if (!isChecked) {
+                                                                                const newHasTrudnaZabudowa = [...formData.hasTrudnaZabudowa];
+                                                                                newHasTrudnaZabudowa[index] = false;
+                                                                                setFormData({
+                                                                                    ...formData, 
+                                                                                    hasBuiltIn: newHasBuiltIn,
+                                                                                    hasDemontaz: newHasDemontaz,
+                                                                                    hasMontaz: newHasMontaz,
+                                                                                    hasTrudnaZabudowa: newHasTrudnaZabudowa
+                                                                                });
+                                                                            } else {
+                                                                                setFormData({
+                                                                                    ...formData, 
+                                                                                    hasBuiltIn: newHasBuiltIn,
+                                                                                    hasDemontaz: newHasDemontaz,
+                                                                                    hasMontaz: newHasMontaz
+                                                                                });
+                                                                            }
+                                                                        }}
+                                                                        className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                                                                    />
+                                                                    <span className="ml-2 text-sm font-medium text-gray-700">
+                                                                        🔧 Sprzęt w zabudowie
+                                                                        {formData.hasBuiltIn[index] && (
+                                                                            <span className="ml-2 text-xs text-blue-600">(+20 min: demontaż i montaż)</span>
+                                                                        )}
+                                                                    </span>
+                                                                </label>
+                                                                
+                                                                {/* Rozwijane opcje - tylko gdy zaznaczona zabudowa */}
+                                                                {formData.hasBuiltIn[index] && (
+                                                                    <div className="ml-6 mt-2 pl-4 border-l-2 border-blue-200 space-y-2">
+                                                                        <label className="flex items-center cursor-pointer">
+                                                                            <input
+                                                                                type="checkbox"
+                                                                                checked={formData.hasTrudnaZabudowa[index] || false}
+                                                                                onChange={(e) => {
+                                                                                    const newHasTrudnaZabudowa = [...formData.hasTrudnaZabudowa];
+                                                                                    newHasTrudnaZabudowa[index] = e.target.checked;
+                                                                                    setFormData({...formData, hasTrudnaZabudowa: newHasTrudnaZabudowa});
+                                                                                }}
+                                                                                className="w-4 h-4 text-orange-600 border-gray-300 rounded focus:ring-orange-500"
+                                                                            />
+                                                                            <span className="ml-2 text-sm text-gray-700">
+                                                                                ⚠️ Trudna zabudowa <span className="text-xs text-orange-600">(+30 min dodatkowego czasu)</span>
+                                                                            </span>
+                                                                        </label>
+                                                                        <p className="text-xs text-gray-500 italic">
+                                                                            💡 Zaznacz jeśli zabudowa jest niestandardowa lub trudno dostępna
+                                                                        </p>
+                                                                    </div>
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                        <p className="text-xs text-gray-500 mt-2">
+                                                            💡 Informacja o zabudowie pomoże nam lepiej zaplanować czas wizyty
+                                                        </p>
+                                                    </div>
                                                 </div>
                                             ))}
                                         </div>
@@ -1081,32 +1180,21 @@ export default function Rezerwacja() {
                                 <div className="space-y-4">
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-3">
-                                            🕒 W jakich godzinach możemy umówić wizytę? *
+                                            Preferowany przedział czasowy *
                                         </label>
-                                        
-                                        {/* Informacja o priorytetach terminów */}
-                                        <div className="mb-4 p-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border-l-4 border-blue-400">
-                                            <h4 className="font-medium text-gray-800 mb-2">💡 Informacja o terminach:</h4>
-                                            <div className="text-sm space-y-1">
-                                                <div className="text-green-700">✅ <strong>Cały czas dostępny</strong> = najszybszy termin wizyty</div>
-                                                <div className="text-yellow-700">⚠️ <strong>Ograniczona dostępność</strong> = standardowy czas oczekiwania</div>
-                                                <div className="text-red-700">⏰ <strong>Po 15:00 i przed 10:00</strong> = najdłuższy czas oczekiwania</div>
-                                            </div>
-                                        </div>
-
-                                        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-4">
+                                        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                                             {[
-                                                { value: 'Cały dzień', label: '⏰', desc: 'Cały dzień', subDesc: '8:00-20:00 (najszybszy)', priority: 'high' },
-                                                { value: '8:00-12:00', label: '🌅', desc: 'Rano', subDesc: '8:00-12:00', priority: 'medium' },
-                                                { value: '12:00-16:00', label: '☀️', desc: 'Popołudnie', subDesc: '12:00-16:00', priority: 'medium' },
-                                                { value: '16:00-20:00', label: '🌆', desc: 'Wieczór', subDesc: '16:00-20:00', priority: 'medium' },
-                                                { value: 'Weekend', label: '�', desc: 'Weekend', subDesc: 'Sobota/Niedziela', priority: 'medium' },
-                                                { value: 'Po 15:00', label: '🌙', desc: 'Tylko wieczory', subDesc: 'Po 15:00 (wolniejszy)', priority: 'low' }
+                                                { value: 'Cały dzień', icon: '⏰', label: 'Cały dzień', desc: '8:00-20:00', color: 'from-green-400 to-green-600' },
+                                                { value: '8:00-12:00', icon: '🌅', label: 'Rano', desc: '8:00-12:00', color: 'from-yellow-400 to-yellow-600' },
+                                                { value: '12:00-16:00', icon: '☀️', label: 'Popołudnie', desc: '12:00-16:00', color: 'from-orange-400 to-orange-600' },
+                                                { value: '16:00-20:00', icon: '🌆', label: 'Wieczór', desc: '16:00-20:00', color: 'from-purple-400 to-purple-600' },
+                                                { value: 'Weekend', icon: '📅', label: 'Weekend', desc: 'Sobota/Niedziela', color: 'from-blue-400 to-blue-600' },
+                                                { value: 'Po 15:00', icon: '🌙', label: 'Po 15:00', desc: 'Późne popołudnie', color: 'from-indigo-400 to-indigo-600' }
                                             ].map((option) => (
-                                                <label key={option.value} className={`cursor-pointer border-2 rounded-lg p-4 text-center transition-all duration-200 ${
+                                                <label key={option.value} className={`cursor-pointer border-2 rounded-xl p-4 text-center transition-all duration-300 transform hover:scale-105 ${
                                                     formData.timeSlot === option.value 
-                                                        ? 'border-blue-500 bg-blue-50 shadow-md' 
-                                                        : 'border-gray-200 hover:border-gray-300 hover:shadow-sm bg-white'
+                                                        ? 'border-blue-500 bg-gradient-to-br from-blue-50 to-blue-100 shadow-lg' 
+                                                        : 'border-gray-200 hover:border-gray-300 hover:shadow-md bg-white'
                                                 }`}>
                                                     <input
                                                         type="radio"
@@ -1116,28 +1204,22 @@ export default function Rezerwacja() {
                                                         onChange={handleChange}
                                                         className="sr-only"
                                                     />
-                                                    <div className="text-2xl mb-2">{option.label}</div>
-                                                    <div className="text-sm font-semibold text-gray-800 mb-1">{option.desc}</div>
-                                                    <div className="text-xs text-gray-600">{option.subDesc}</div>
-                                                    
-                                                    {/* Simple priority indicators */}
-                                                    {option.priority === 'high' && (
-                                                        <div className="mt-2 text-xs text-green-600 font-medium">✨ Priorytet</div>
-                                                    )}
-                                                    {option.priority === 'low' && (
-                                                        <div className="mt-2 text-xs text-orange-600">⏳ Wolniejszy</div>
+                                                    <div className={`w-12 h-12 mx-auto mb-2 rounded-full bg-gradient-to-br ${option.color} flex items-center justify-center text-white text-2xl shadow-md`}>
+                                                        {option.icon}
+                                                    </div>
+                                                    <div className="text-sm font-semibold text-gray-800 mb-1">{option.label}</div>
+                                                    <div className="text-xs text-gray-500">{option.desc}</div>
+                                                    {formData.timeSlot === option.value && (
+                                                        <div className="mt-2 text-blue-600 text-sm font-semibold">✓ Wybrane</div>
                                                     )}
                                                 </label>
                                             ))}
                                         </div>
-                                        <p className="text-sm text-gray-500 mt-2">
-                                            💡 Wybierz preferowany przedział czasowy - ułatwi to planowanie wizyty
-                                        </p>
                                     </div>
 
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                                            Dodatkowe uwagi o dostępności
+                                            Dodatkowe uwagi o dostępności (opcjonalnie)
                                         </label>
                                         <textarea
                                             name="additionalNotes"
@@ -1147,6 +1229,9 @@ export default function Rezerwacja() {
                                             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                             placeholder="np. Dzwoń po 18:00, nie jestem dostępny w środy, najlepiej SMS..."
                                         />
+                                        <p className="text-sm text-gray-500 mt-1">
+                                            💡 Możesz podać dodatkowe informacje które ułatwią kontakt
+                                        </p>
                                     </div>
 
                                     {/* Podsumowanie */}

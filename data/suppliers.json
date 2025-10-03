@@ -1,0 +1,140 @@
+[
+  {
+    "id": "SUP001",
+    "name": "ASWO Sp. z o.o.",
+    "code": "ASWO-001",
+    "type": "online_store",
+    "contact": {
+      "email": "zamowienia@aswo.pl",
+      "phone": "+48 12 345 6789",
+      "person": "Marek Wiśniewski",
+      "website": "https://aswo.pl"
+    },
+    "integration": {
+      "hasAPI": false,
+      "apiEndpoint": null,
+      "apiKey": null,
+      "orderMethod": "email"
+    },
+    "delivery": {
+      "standardTime": "24h",
+      "expressTime": "4h",
+      "freeShippingThreshold": 500,
+      "shippingCost": 15,
+      "expressShippingCost": 25,
+      "acceptsPaczkomat": true,
+      "acceptsPersonalPickup": false,
+      "deliveryDays": ["pon", "wt", "sr", "czw", "pt"]
+    },
+    "payment": {
+      "methods": ["transfer", "invoice"],
+      "invoiceDays": 14,
+      "discount": 0
+    },
+    "categories": ["AGD", "Pralki", "Zmywarki", "Lodówki", "Piekarniki"],
+    "isActive": true,
+    "preferredFor": ["Samsung", "LG", "Bosch"],
+    "notes": "Główny dostawca części Samsung i LG. Bardzo szybka realizacja zamówień.",
+    "statistics": {
+      "totalOrders": 142,
+      "totalValue": 45230.50,
+      "avgDeliveryTime": "26h",
+      "reliability": 0.97,
+      "lastOrderDate": "2025-10-02T14:30:00Z"
+    },
+    "createdAt": "2024-01-15T10:00:00Z",
+    "updatedAt": "2025-10-03T09:00:00Z"
+  },
+  {
+    "id": "SUP002",
+    "name": "Samsung Parts Europe",
+    "code": "SPE-001",
+    "type": "manufacturer",
+    "contact": {
+      "email": "parts@samsung.pl",
+      "phone": "+48 22 123 4567",
+      "person": "Anna Nowak",
+      "website": "https://samsung.pl/parts"
+    },
+    "integration": {
+      "hasAPI": true,
+      "apiEndpoint": "https://api.samsung.pl/parts/v1",
+      "apiKey": "SAMSUNG_API_KEY_HERE",
+      "orderMethod": "api"
+    },
+    "delivery": {
+      "standardTime": "48h",
+      "expressTime": "24h",
+      "freeShippingThreshold": 1000,
+      "shippingCost": 20,
+      "expressShippingCost": 40,
+      "acceptsPaczkomat": false,
+      "acceptsPersonalPickup": true,
+      "deliveryDays": ["pon", "wt", "sr", "czw", "pt"]
+    },
+    "payment": {
+      "methods": ["invoice"],
+      "invoiceDays": 30,
+      "discount": 5
+    },
+    "categories": ["AGD", "Pralki", "Zmywarki", "Lodówki", "Piekarniki", "Klima"],
+    "isActive": true,
+    "preferredFor": ["Samsung"],
+    "notes": "Producent - oryginalne części Samsung. Wyższe ceny ale gwarancja jakości.",
+    "statistics": {
+      "totalOrders": 87,
+      "totalValue": 38450.00,
+      "avgDeliveryTime": "52h",
+      "reliability": 0.99,
+      "lastOrderDate": "2025-09-28T11:20:00Z"
+    },
+    "createdAt": "2024-02-01T10:00:00Z",
+    "updatedAt": "2025-10-02T15:30:00Z"
+  },
+  {
+    "id": "SUP003",
+    "name": "Universal Parts Ltd.",
+    "code": "UPL-001",
+    "type": "distributor",
+    "contact": {
+      "email": "order@universalparts.eu",
+      "phone": "+48 61 987 6543",
+      "person": "Piotr Kowalczyk",
+      "website": "https://universalparts.eu"
+    },
+    "integration": {
+      "hasAPI": false,
+      "apiEndpoint": null,
+      "apiKey": null,
+      "orderMethod": "email"
+    },
+    "delivery": {
+      "standardTime": "72h",
+      "expressTime": "48h",
+      "freeShippingThreshold": 300,
+      "shippingCost": 12,
+      "expressShippingCost": 20,
+      "acceptsPaczkomat": true,
+      "acceptsPersonalPickup": false,
+      "deliveryDays": ["pon", "wt", "sr", "czw", "pt"]
+    },
+    "payment": {
+      "methods": ["transfer", "invoice", "card"],
+      "invoiceDays": 7,
+      "discount": 3
+    },
+    "categories": ["AGD", "RTV", "Elektronika"],
+    "isActive": true,
+    "preferredFor": ["Whirlpool", "Electrolux", "Amica", "Beko"],
+    "notes": "Dystrybutor części zamiennych. Tańsze alternatywy dla OEM. Dobra jakość.",
+    "statistics": {
+      "totalOrders": 203,
+      "totalValue": 52890.75,
+      "avgDeliveryTime": "78h",
+      "reliability": 0.94,
+      "lastOrderDate": "2025-10-01T16:45:00Z"
+    },
+    "createdAt": "2024-03-10T10:00:00Z",
+    "updatedAt": "2025-10-03T08:15:00Z"
+  }
+]

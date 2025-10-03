@@ -1,0 +1,2512 @@
+[
+  {
+    "name": "Mariusz Bielaszka",
+    "phone": "123123123",
+    "email": "bielaszkam2@gmail.com",
+    "address": "Słupia, 114 Pacanów",
+    "city": "Pacanów",
+    "street": "Nie podano",
+    "dateAdded": "2025-07-05T06:14:59.048Z",
+    "history": [],
+    "id": "CLI25186001",
+    "legacyId": "#0001",
+    "newId": "OLD0001",
+    "migrated": true,
+    "migrationDate": "2025-09-28T22:12:00.353Z",
+    "migrationSource": "unified-id-system",
+    "phones": [
+      {
+        "number": "123123123",
+        "label": "Komórka",
+        "isPrimary": true,
+        "notes": "Główny numer kontaktowy"
+      }
+    ],
+    "addresses": [
+      {
+        "address": "Słupia, 114 Pacanów",
+        "label": "Dom",
+        "isPrimary": true,
+        "coordinates": null,
+        "notes": "Główne miejsce zamieszkania"
+      }
+    ],
+    "notes": [
+      {
+        "id": "note1",
+        "content": "Stały klient serwisu AGD, zawsze punktualny",
+        "type": "general",
+        "createdAt": "2025-09-28T20:00:00.000Z",
+        "createdBy": "system"
+      }
+    ],
+    "tags": [
+      "Stały klient",
+      "Punktualny",
+      "AGD"
+    ],
+    "availability": {
+      "workingHours": [
+        {
+          "dayOfWeek": "monday",
+          "periods": [
+            {
+              "from": "17:00",
+              "to": "19:00",
+              "label": "Po pracy"
+            }
+          ]
+        },
+        {
+          "dayOfWeek": "saturday",
+          "periods": [
+            {
+              "from": "09:00",
+              "to": "15:00",
+              "label": "Weekend"
+            }
+          ]
+        }
+      ],
+      "specialAvailability": [],
+      "unavailableDates": [],
+      "preferredContactTime": "Po 17:00",
+      "notes": "Najlepiej dzwonić wieczorem po pracy"
+    },
+    "companyInfo": {
+      "isCompany": false,
+      "companyName": "",
+      "nip": "",
+      "regon": "",
+      "krs": ""
+    },
+    "preferences": {
+      "preferredPaymentMethod": "cash",
+      "invoiceRequired": false,
+      "preferredCommunication": "phone",
+      "language": "pl"
+    },
+    "stats": {
+      "totalOrders": 3,
+      "completedOrders": 2,
+      "cancelledOrders": 0,
+      "averageOrderValue": 150,
+      "lastOrderDate": "2025-07-05T00:00:00.000Z",
+      "customerSince": "2025-07-05T06:14:59.048Z"
+    },
+    "contactHistory": [
+      {
+        "id": "contact1",
+        "date": "2025-07-05T18:30:00.000Z",
+        "type": "phone_call",
+        "direction": "outgoing",
+        "duration": 120,
+        "notes": "Omówienie szczegółów naprawy",
+        "result": "information_provided"
+      }
+    ],
+    "enhanced": true,
+    "enhancedDate": "2025-09-28T20:00:00.000Z",
+    "oldId": "CLI25186001",
+    "servicePreferences": {
+      "preferredContactMethod": "sms",
+      "preferredTimeSlots": [
+        "morning",
+        "morning"
+      ],
+      "paymentMethod": "transfer",
+      "specialRequirements": "Preferowane terminy popołudniowe",
+      "communicationLanguage": "pl",
+      "serviceReminders": true,
+      "marketingConsent": false
+    },
+    "serviceInfo": {
+      "customerSince": "2025-07-05T06:14:59.048Z",
+      "totalOrders": 5,
+      "totalSpent": 3696,
+      "lastServiceDate": null,
+      "averageOrderValue": 730,
+      "creditLimit": 0,
+      "discount": 5,
+      "loyalty": {
+        "level": "silver",
+        "points": 500,
+        "nextLevelRequirement": 180
+      }
+    },
+    "contactPreferences": {
+      "bestTimeToCall": "afternoon (12-16)",
+      "communicationFrequency": "frequent",
+      "emergencyContact": null
+    },
+    "metadata": {
+      "updatedAt": "2025-09-30T20:13:11.358Z",
+      "lastModifiedBy": "enhancement-script-v1",
+      "version": 1,
+      "isActive": true,
+      "dataCompleteness": "enhanced",
+      "enhancementDate": "2025-09-30T20:13:11.358Z"
+    }
+  },
+  {
+    "name": "Kręgielnia Laguna",
+    "phone": "+48501626112",
+    "email": "marek.kowalski@techserwis.pl",
+    "address": "Grunwaldzka 52",
+    "city": "Ropczyce",
+    "street": "Nie podano",
+    "dateAdded": "2025-07-05T06:15:27.519Z",
+    "history": [],
+    "id": "CLI25186002",
+    "legacyId": "#0002",
+    "newId": "OLD0002",
+    "migrated": true,
+    "migrationDate": "2025-09-28T22:12:00.353Z",
+    "migrationSource": "unified-id-system",
+    "phones": [
+      {
+        "number": "+48501626112",
+        "label": "Główny",
+        "isPrimary": true,
+        "notes": "Przeniesiony z pola phone"
+      }
+    ],
+    "addresses": [
+      {
+        "address": "Grunwaldzka 52",
+        "label": "Główny",
+        "isPrimary": true,
+        "coordinates": null,
+        "notes": "Miasto: Ropczyce"
+      }
+    ],
+    "notes": [
+      {
+        "id": "note_1759086523046_xt9os5mek",
+        "content": "Klient zarejestrowany w systemie. Email: marek.kowalski@techserwis.pl, Miasto: Ropczyce, Klient od: 5.07.2025",
+        "type": "general",
+        "createdAt": "2025-09-28T19:08:43.065Z",
+        "createdBy": "system"
+      }
+    ],
+    "tags": [
+      "Ropczyce",
+      "Nowy klient",
+      "Firma"
+    ],
+    "availability": {
+      "workingHours": [
+        {
+          "dayOfWeek": "monday",
+          "periods": [
+            {
+              "from": "17:00",
+              "to": "19:00",
+              "label": "Po pracy"
+            }
+          ]
+        },
+        {
+          "dayOfWeek": "tuesday",
+          "periods": [
+            {
+              "from": "17:00",
+              "to": "19:00",
+              "label": "Po pracy"
+            }
+          ]
+        },
+        {
+          "dayOfWeek": "wednesday",
+          "periods": [
+            {
+              "from": "17:00",
+              "to": "19:00",
+              "label": "Po pracy"
+            }
+          ]
+        },
+        {
+          "dayOfWeek": "thursday",
+          "periods": [
+            {
+              "from": "17:00",
+              "to": "19:00",
+              "label": "Po pracy"
+            }
+          ]
+        },
+        {
+          "dayOfWeek": "friday",
+          "periods": [
+            {
+              "from": "17:00",
+              "to": "19:00",
+              "label": "Po pracy"
+            }
+          ]
+        },
+        {
+          "dayOfWeek": "saturday",
+          "periods": [
+            {
+              "from": "09:00",
+              "to": "15:00",
+              "label": "Weekend"
+            }
+          ]
+        }
+      ],
+      "specialAvailability": [],
+      "unavailableDates": [],
+      "preferredContactTime": "Po 17:00",
+      "notes": "Standardowa dostępność po godzinach pracy"
+    },
+    "companyInfo": {
+      "isCompany": true,
+      "companyName": "Kręgielnia Laguna",
+      "nip": "",
+      "regon": "",
+      "krs": ""
+    },
+    "preferences": {
+      "preferredPaymentMethod": "cash",
+      "invoiceRequired": false,
+      "preferredCommunication": "phone",
+      "language": "pl"
+    },
+    "stats": {
+      "totalOrders": 0,
+      "completedOrders": 0,
+      "cancelledOrders": 0,
+      "averageOrderValue": 0,
+      "lastOrderDate": null,
+      "customerSince": "2025-07-05T06:15:27.519Z"
+    },
+    "contactHistory": [],
+    "enhanced": true,
+    "enhancedDate": "2025-09-28T19:08:43.065Z",
+    "enhancedVersion": "1.0",
+    "oldId": "CLI25186002",
+    "servicePreferences": {
+      "preferredContactMethod": "email",
+      "preferredTimeSlots": [
+        "afternoon",
+        "afternoon"
+      ],
+      "paymentMethod": "invoice",
+      "specialRequirements": "Można zostawić urządzenie bez obecności klienta",
+      "communicationLanguage": "pl",
+      "serviceReminders": true,
+      "marketingConsent": true
+    },
+    "serviceInfo": {
+      "customerSince": "2025-07-05T06:15:27.519Z",
+      "totalOrders": 14,
+      "totalSpent": 2352,
+      "lastServiceDate": null,
+      "averageOrderValue": 864,
+      "creditLimit": 0,
+      "discount": 0,
+      "loyalty": {
+        "level": "platinum",
+        "points": 528,
+        "nextLevelRequirement": 163
+      }
+    },
+    "contactPreferences": {
+      "bestTimeToCall": "evening (16-20)",
+      "communicationFrequency": "minimal",
+      "emergencyContact": {
+        "name": "Kręgielnia Laguna (backup)",
+        "phone": "+48501626114",
+        "relationship": "colleague"
+      }
+    },
+    "metadata": {
+      "updatedAt": "2025-09-30T20:13:11.358Z",
+      "lastModifiedBy": "enhancement-script-v1",
+      "version": 1,
+      "isActive": true,
+      "dataCompleteness": "enhanced",
+      "enhancementDate": "2025-09-30T20:13:11.358Z"
+    }
+  },
+  {
+    "name": "Marisz",
+    "phone": "123123123",
+    "email": "bielaszka@amorki.pl",
+    "address": "123",
+    "city": "Nie podano",
+    "street": "Nie podano",
+    "dateAdded": "2025-07-05T06:58:51.239Z",
+    "history": [],
+    "id": "CLI25186003",
+    "legacyId": "#0003",
+    "newId": "OLD0003",
+    "migrated": true,
+    "migrationDate": "2025-09-28T22:12:00.355Z",
+    "migrationSource": "unified-id-system",
+    "phones": [
+      {
+        "number": "123123123",
+        "label": "Główny",
+        "isPrimary": true,
+        "notes": "Przeniesiony z pola phone"
+      }
+    ],
+    "addresses": [
+      {
+        "address": "123",
+        "label": "Główny",
+        "isPrimary": true,
+        "coordinates": null,
+        "notes": "Miasto: Nie podano"
+      }
+    ],
+    "notes": [
+      {
+        "id": "note_1759086523066_h5jc73f1r",
+        "content": "Klient zarejestrowany w systemie. Email: bielaszka@amorki.pl, Klient od: 5.07.2025",
+        "type": "general",
+        "createdAt": "2025-09-28T19:08:43.066Z",
+        "createdBy": "system"
+      }
+    ],
+    "tags": [
+      "Nowy klient",
+      "Osoba prywatna"
+    ],
+    "availability": {
+      "workingHours": [
+        {
+          "dayOfWeek": "monday",
+          "periods": [
+            {
+              "from": "17:00",
+              "to": "19:00",
+              "label": "Po pracy"
+            }
+          ]
+        },
+        {
+          "dayOfWeek": "tuesday",
+          "periods": [
+            {
+              "from": "17:00",
+              "to": "19:00",
+              "label": "Po pracy"
+            }
+          ]
+        },
+        {
+          "dayOfWeek": "wednesday",
+          "periods": [
+            {
+              "from": "17:00",
+              "to": "19:00",
+              "label": "Po pracy"
+            }
+          ]
+        },
+        {
+          "dayOfWeek": "thursday",
+          "periods": [
+            {
+              "from": "17:00",
+              "to": "19:00",
+              "label": "Po pracy"
+            }
+          ]
+        },
+        {
+          "dayOfWeek": "friday",
+          "periods": [
+            {
+              "from": "17:00",
+              "to": "19:00",
+              "label": "Po pracy"
+            }
+          ]
+        },
+        {
+          "dayOfWeek": "saturday",
+          "periods": [
+            {
+              "from": "09:00",
+              "to": "15:00",
+              "label": "Weekend"
+            }
+          ]
+        }
+      ],
+      "specialAvailability": [],
+      "unavailableDates": [],
+      "preferredContactTime": "Po 17:00",
+      "notes": "Standardowa dostępność po godzinach pracy"
+    },
+    "companyInfo": {
+      "isCompany": false,
+      "companyName": "",
+      "nip": "",
+      "regon": "",
+      "krs": ""
+    },
+    "preferences": {
+      "preferredPaymentMethod": "cash",
+      "invoiceRequired": false,
+      "preferredCommunication": "phone",
+      "language": "pl"
+    },
+    "stats": {
+      "totalOrders": 0,
+      "completedOrders": 0,
+      "cancelledOrders": 0,
+      "averageOrderValue": 0,
+      "lastOrderDate": null,
+      "customerSince": "2025-07-05T06:58:51.239Z"
+    },
+    "contactHistory": [],
+    "enhanced": true,
+    "enhancedDate": "2025-09-28T19:08:43.066Z",
+    "enhancedVersion": "1.0",
+    "oldId": "CLI25186003",
+    "servicePreferences": {
+      "preferredContactMethod": "phone",
+      "preferredTimeSlots": [
+        "morning"
+      ],
+      "paymentMethod": "card",
+      "specialRequirements": "Dzwonić 15 min przed przyjazdem",
+      "communicationLanguage": "pl",
+      "serviceReminders": true,
+      "marketingConsent": true
+    },
+    "serviceInfo": {
+      "customerSince": "2025-07-05T06:58:51.239Z",
+      "totalOrders": 4,
+      "totalSpent": 4146,
+      "lastServiceDate": null,
+      "averageOrderValue": 670,
+      "creditLimit": 2000,
+      "discount": 0,
+      "loyalty": {
+        "level": "silver",
+        "points": 722,
+        "nextLevelRequirement": 168
+      }
+    },
+    "contactPreferences": {
+      "bestTimeToCall": "anytime",
+      "communicationFrequency": "minimal",
+      "emergencyContact": null
+    },
+    "metadata": {
+      "updatedAt": "2025-09-30T20:13:11.358Z",
+      "lastModifiedBy": "enhancement-script-v1",
+      "version": 1,
+      "isActive": true,
+      "dataCompleteness": "enhanced",
+      "enhancementDate": "2025-09-30T20:13:11.358Z"
+    }
+  },
+  {
+    "name": "123",
+    "phone": "13",
+    "email": "bielaszkam2@gmail.com",
+    "address": "123",
+    "city": "123",
+    "street": "123",
+    "dateAdded": "2025-07-05T07:14:57.772Z",
+    "history": [],
+    "id": "CLI25186004",
+    "legacyId": "#0004",
+    "newId": "OLD0004",
+    "migrated": true,
+    "migrationDate": "2025-09-28T22:12:00.355Z",
+    "migrationSource": "unified-id-system",
+    "phones": [
+      {
+        "number": "13",
+        "label": "Główny",
+        "isPrimary": true,
+        "notes": "Przeniesiony z pola phone"
+      }
+    ],
+    "addresses": [
+      {
+        "address": "123",
+        "label": "Główny",
+        "isPrimary": true,
+        "coordinates": null,
+        "notes": "Ulica: 123, Miasto: 123"
+      }
+    ],
+    "notes": [
+      {
+        "id": "note_1759086523066_p05u1b6zd",
+        "content": "Klient zarejestrowany w systemie. Email: bielaszkam2@gmail.com, Miasto: 123, Klient od: 5.07.2025",
+        "type": "general",
+        "createdAt": "2025-09-28T19:08:43.066Z",
+        "createdBy": "system"
+      }
+    ],
+    "tags": [
+      "123",
+      "Nowy klient",
+      "Osoba prywatna",
+      "Gmail"
+    ],
+    "availability": {
+      "workingHours": [
+        {
+          "dayOfWeek": "monday",
+          "periods": [
+            {
+              "from": "17:00",
+              "to": "19:00",
+              "label": "Po pracy"
+            }
+          ]
+        },
+        {
+          "dayOfWeek": "tuesday",
+          "periods": [
+            {
+              "from": "17:00",
+              "to": "19:00",
+              "label": "Po pracy"
+            }
+          ]
+        },
+        {
+          "dayOfWeek": "wednesday",
+          "periods": [
+            {
+              "from": "17:00",
+              "to": "19:00",
+              "label": "Po pracy"
+            }
+          ]
+        },
+        {
+          "dayOfWeek": "thursday",
+          "periods": [
+            {
+              "from": "17:00",
+              "to": "19:00",
+              "label": "Po pracy"
+            }
+          ]
+        },
+        {
+          "dayOfWeek": "friday",
+          "periods": [
+            {
+              "from": "17:00",
+              "to": "19:00",
+              "label": "Po pracy"
+            }
+          ]
+        },
+        {
+          "dayOfWeek": "saturday",
+          "periods": [
+            {
+              "from": "09:00",
+              "to": "15:00",
+              "label": "Weekend"
+            }
+          ]
+        }
+      ],
+      "specialAvailability": [],
+      "unavailableDates": [],
+      "preferredContactTime": "Po 17:00",
+      "notes": "Standardowa dostępność po godzinach pracy"
+    },
+    "companyInfo": {
+      "isCompany": false,
+      "companyName": "",
+      "nip": "",
+      "regon": "",
+      "krs": ""
+    },
+    "preferences": {
+      "preferredPaymentMethod": "cash",
+      "invoiceRequired": false,
+      "preferredCommunication": "phone",
+      "language": "pl"
+    },
+    "stats": {
+      "totalOrders": 0,
+      "completedOrders": 0,
+      "cancelledOrders": 0,
+      "averageOrderValue": 0,
+      "lastOrderDate": null,
+      "customerSince": "2025-07-05T07:14:57.772Z"
+    },
+    "contactHistory": [],
+    "enhanced": true,
+    "enhancedDate": "2025-09-28T19:08:43.066Z",
+    "enhancedVersion": "1.0",
+    "oldId": "CLI25186004",
+    "servicePreferences": {
+      "preferredContactMethod": "phone",
+      "preferredTimeSlots": [
+        "morning",
+        "afternoon"
+      ],
+      "paymentMethod": "invoice",
+      "specialRequirements": "Dostęp przez bramę - dzwonić do domofonu",
+      "communicationLanguage": "pl",
+      "serviceReminders": true,
+      "marketingConsent": true
+    },
+    "serviceInfo": {
+      "customerSince": "2025-07-05T07:14:57.772Z",
+      "totalOrders": 12,
+      "totalSpent": 3780,
+      "lastServiceDate": null,
+      "averageOrderValue": 230,
+      "creditLimit": 1000,
+      "discount": 15,
+      "loyalty": {
+        "level": "gold",
+        "points": 939,
+        "nextLevelRequirement": 189
+      }
+    },
+    "contactPreferences": {
+      "bestTimeToCall": "morning (8-12)",
+      "communicationFrequency": "minimal",
+      "emergencyContact": null
+    },
+    "metadata": {
+      "updatedAt": "2025-09-30T20:13:11.358Z",
+      "lastModifiedBy": "enhancement-script-v1",
+      "version": 1,
+      "isActive": true,
+      "dataCompleteness": "enhanced",
+      "enhancementDate": "2025-09-30T20:13:11.358Z"
+    }
+  },
+  {
+    "name": "Mariusz",
+    "phone": "789789789",
+    "email": "bielaszkma2@mgail.pl",
+    "address": "kraków",
+    "city": "kraków",
+    "street": "Nie podano",
+    "dateAdded": "2025-07-05T10:40:10.120Z",
+    "history": [],
+    "id": "CLI25186005",
+    "legacyId": "#0005",
+    "newId": "OLD0005",
+    "migrated": true,
+    "migrationDate": "2025-09-28T22:12:00.356Z",
+    "migrationSource": "unified-id-system",
+    "phones": [
+      {
+        "number": "789789789",
+        "label": "Główny",
+        "isPrimary": true,
+        "notes": "Przeniesiony z pola phone"
+      }
+    ],
+    "addresses": [
+      {
+        "address": "kraków",
+        "label": "Główny",
+        "isPrimary": true,
+        "coordinates": null,
+        "notes": "Miasto: kraków"
+      }
+    ],
+    "notes": [
+      {
+        "id": "note_1759086523067_ax55kmjfm",
+        "content": "Klient zarejestrowany w systemie. Email: bielaszkma2@mgail.pl, Miasto: kraków, Klient od: 5.07.2025",
+        "type": "general",
+        "createdAt": "2025-09-28T19:08:43.067Z",
+        "createdBy": "system"
+      }
+    ],
+    "tags": [
+      "kraków",
+      "Nowy klient",
+      "Osoba prywatna"
+    ],
+    "availability": {
+      "workingHours": [
+        {
+          "dayOfWeek": "monday",
+          "periods": [
+            {
+              "from": "17:00",
+              "to": "19:00",
+              "label": "Po pracy"
+            }
+          ]
+        },
+        {
+          "dayOfWeek": "tuesday",
+          "periods": [
+            {
+              "from": "17:00",
+              "to": "19:00",
+              "label": "Po pracy"
+            }
+          ]
+        },
+        {
+          "dayOfWeek": "wednesday",
+          "periods": [
+            {
+              "from": "17:00",
+              "to": "19:00",
+              "label": "Po pracy"
+            }
+          ]
+        },
+        {
+          "dayOfWeek": "thursday",
+          "periods": [
+            {
+              "from": "17:00",
+              "to": "19:00",
+              "label": "Po pracy"
+            }
+          ]
+        },
+        {
+          "dayOfWeek": "friday",
+          "periods": [
+            {
+              "from": "17:00",
+              "to": "19:00",
+              "label": "Po pracy"
+            }
+          ]
+        },
+        {
+          "dayOfWeek": "saturday",
+          "periods": [
+            {
+              "from": "09:00",
+              "to": "15:00",
+              "label": "Weekend"
+            }
+          ]
+        }
+      ],
+      "specialAvailability": [],
+      "unavailableDates": [],
+      "preferredContactTime": "Po 17:00",
+      "notes": "Standardowa dostępność po godzinach pracy"
+    },
+    "companyInfo": {
+      "isCompany": false,
+      "companyName": "",
+      "nip": "",
+      "regon": "",
+      "krs": ""
+    },
+    "preferences": {
+      "preferredPaymentMethod": "cash",
+      "invoiceRequired": false,
+      "preferredCommunication": "phone",
+      "language": "pl"
+    },
+    "stats": {
+      "totalOrders": 0,
+      "completedOrders": 0,
+      "cancelledOrders": 0,
+      "averageOrderValue": 0,
+      "lastOrderDate": null,
+      "customerSince": "2025-07-05T10:40:10.120Z"
+    },
+    "contactHistory": [],
+    "enhanced": true,
+    "enhancedDate": "2025-09-28T19:08:43.067Z",
+    "enhancedVersion": "1.0",
+    "oldId": "CLI25186005",
+    "servicePreferences": {
+      "preferredContactMethod": "email",
+      "preferredTimeSlots": [
+        "afternoon",
+        "morning"
+      ],
+      "paymentMethod": "card",
+      "specialRequirements": "Można zostawić urządzenie bez obecności klienta",
+      "communicationLanguage": "pl",
+      "serviceReminders": true,
+      "marketingConsent": false
+    },
+    "serviceInfo": {
+      "customerSince": "2025-07-05T10:40:10.120Z",
+      "totalOrders": 10,
+      "totalSpent": 4386,
+      "lastServiceDate": null,
+      "averageOrderValue": 832,
+      "creditLimit": 1000,
+      "discount": 10,
+      "loyalty": {
+        "level": "platinum",
+        "points": 978,
+        "nextLevelRequirement": 147
+      }
+    },
+    "contactPreferences": {
+      "bestTimeToCall": "evening (16-20)",
+      "communicationFrequency": "minimal",
+      "emergencyContact": {
+        "name": "Mariusz (backup)",
+        "phone": "789789787",
+        "relationship": "colleague"
+      }
+    },
+    "metadata": {
+      "updatedAt": "2025-09-30T20:13:11.358Z",
+      "lastModifiedBy": "enhancement-script-v1",
+      "version": 1,
+      "isActive": true,
+      "dataCompleteness": "enhanced",
+      "enhancementDate": "2025-09-30T20:13:11.358Z"
+    }
+  },
+  {
+    "name": "acsasc",
+    "phone": "12",
+    "email": "bielaszkm2@gamilc.om",
+    "address": "142",
+    "city": "124",
+    "street": "124",
+    "dateAdded": "2025-07-05T10:40:37.700Z",
+    "history": [],
+    "id": "CLI25186006",
+    "legacyId": "#0006",
+    "newId": "OLD0006",
+    "migrated": true,
+    "migrationDate": "2025-09-28T22:12:00.357Z",
+    "migrationSource": "unified-id-system",
+    "phones": [
+      {
+        "number": "12",
+        "label": "Główny",
+        "isPrimary": true,
+        "notes": "Przeniesiony z pola phone"
+      }
+    ],
+    "addresses": [
+      {
+        "address": "142",
+        "label": "Główny",
+        "isPrimary": true,
+        "coordinates": null,
+        "notes": "Ulica: 124, Miasto: 124"
+      }
+    ],
+    "notes": [
+      {
+        "id": "note_1759086523067_b4olfhcz2",
+        "content": "Klient zarejestrowany w systemie. Email: bielaszkm2@gamilc.om, Miasto: 124, Klient od: 5.07.2025",
+        "type": "general",
+        "createdAt": "2025-09-28T19:08:43.067Z",
+        "createdBy": "system"
+      }
+    ],
+    "tags": [
+      "124",
+      "Nowy klient",
+      "Osoba prywatna"
+    ],
+    "availability": {
+      "workingHours": [
+        {
+          "dayOfWeek": "monday",
+          "periods": [
+            {
+              "from": "17:00",
+              "to": "19:00",
+              "label": "Po pracy"
+            }
+          ]
+        },
+        {
+          "dayOfWeek": "tuesday",
+          "periods": [
+            {
+              "from": "17:00",
+              "to": "19:00",
+              "label": "Po pracy"
+            }
+          ]
+        },
+        {
+          "dayOfWeek": "wednesday",
+          "periods": [
+            {
+              "from": "17:00",
+              "to": "19:00",
+              "label": "Po pracy"
+            }
+          ]
+        },
+        {
+          "dayOfWeek": "thursday",
+          "periods": [
+            {
+              "from": "17:00",
+              "to": "19:00",
+              "label": "Po pracy"
+            }
+          ]
+        },
+        {
+          "dayOfWeek": "friday",
+          "periods": [
+            {
+              "from": "17:00",
+              "to": "19:00",
+              "label": "Po pracy"
+            }
+          ]
+        },
+        {
+          "dayOfWeek": "saturday",
+          "periods": [
+            {
+              "from": "09:00",
+              "to": "15:00",
+              "label": "Weekend"
+            }
+          ]
+        }
+      ],
+      "specialAvailability": [],
+      "unavailableDates": [],
+      "preferredContactTime": "Po 17:00",
+      "notes": "Standardowa dostępność po godzinach pracy"
+    },
+    "companyInfo": {
+      "isCompany": false,
+      "companyName": "",
+      "nip": "",
+      "regon": "",
+      "krs": ""
+    },
+    "preferences": {
+      "preferredPaymentMethod": "cash",
+      "invoiceRequired": false,
+      "preferredCommunication": "phone",
+      "language": "pl"
+    },
+    "stats": {
+      "totalOrders": 0,
+      "completedOrders": 0,
+      "cancelledOrders": 0,
+      "averageOrderValue": 0,
+      "lastOrderDate": null,
+      "customerSince": "2025-07-05T10:40:37.700Z"
+    },
+    "contactHistory": [],
+    "enhanced": true,
+    "enhancedDate": "2025-09-28T19:08:43.067Z",
+    "enhancedVersion": "1.0",
+    "oldId": "CLI25186006",
+    "servicePreferences": {
+      "preferredContactMethod": "sms",
+      "preferredTimeSlots": [
+        "morning",
+        "morning"
+      ],
+      "paymentMethod": "card",
+      "specialRequirements": "Dostęp przez bramę - dzwonić do domofonu",
+      "communicationLanguage": "pl",
+      "serviceReminders": true,
+      "marketingConsent": true
+    },
+    "serviceInfo": {
+      "customerSince": "2025-07-05T10:40:37.700Z",
+      "totalOrders": 17,
+      "totalSpent": 2221,
+      "lastServiceDate": null,
+      "averageOrderValue": 607,
+      "creditLimit": 2000,
+      "discount": 0,
+      "loyalty": {
+        "level": "gold",
+        "points": 422,
+        "nextLevelRequirement": 556
+      }
+    },
+    "contactPreferences": {
+      "bestTimeToCall": "morning (8-12)",
+      "communicationFrequency": "frequent",
+      "emergencyContact": {
+        "name": "acsasc (backup)",
+        "phone": "16",
+        "relationship": "spouse"
+      }
+    },
+    "metadata": {
+      "updatedAt": "2025-09-30T20:13:11.358Z",
+      "lastModifiedBy": "enhancement-script-v1",
+      "version": 1,
+      "isActive": true,
+      "dataCompleteness": "enhanced",
+      "enhancementDate": "2025-09-30T20:13:11.358Z"
+    }
+  },
+  {
+    "name": "ada",
+    "phone": "123123123",
+    "email": "asd@amori.pl",
+    "address": "Słupia, 114",
+    "city": "Pacanów",
+    "street": "Nie podano",
+    "dateAdded": "2025-07-05T20:32:32.616Z",
+    "history": [],
+    "id": "CLI25186007",
+    "legacyId": "#0007",
+    "newId": "OLD0007",
+    "migrated": true,
+    "migrationDate": "2025-09-28T22:12:00.357Z",
+    "migrationSource": "unified-id-system",
+    "phones": [
+      {
+        "number": "123123123",
+        "label": "Główny",
+        "isPrimary": true,
+        "notes": "Przeniesiony z pola phone"
+      }
+    ],
+    "addresses": [
+      {
+        "address": "Słupia, 114",
+        "label": "Główny",
+        "isPrimary": true,
+        "coordinates": null,
+        "notes": "Miasto: Pacanów"
+      }
+    ],
+    "notes": [
+      {
+        "id": "note_1759086523067_rftj9ybko",
+        "content": "Klient zarejestrowany w systemie. Email: asd@amori.pl, Miasto: Pacanów, Klient od: 5.07.2025",
+        "type": "general",
+        "createdAt": "2025-09-28T19:08:43.067Z",
+        "createdBy": "system"
+      }
+    ],
+    "tags": [
+      "Pacanów",
+      "Nowy klient",
+      "Osoba prywatna"
+    ],
+    "availability": {
+      "workingHours": [
+        {
+          "dayOfWeek": "monday",
+          "periods": [
+            {
+              "from": "17:00",
+              "to": "19:00",
+              "label": "Po pracy"
+            }
+          ]
+        },
+        {
+          "dayOfWeek": "tuesday",
+          "periods": [
+            {
+              "from": "17:00",
+              "to": "19:00",
+              "label": "Po pracy"
+            }
+          ]
+        },
+        {
+          "dayOfWeek": "wednesday",
+          "periods": [
+            {
+              "from": "17:00",
+              "to": "19:00",
+              "label": "Po pracy"
+            }
+          ]
+        },
+        {
+          "dayOfWeek": "thursday",
+          "periods": [
+            {
+              "from": "17:00",
+              "to": "19:00",
+              "label": "Po pracy"
+            }
+          ]
+        },
+        {
+          "dayOfWeek": "friday",
+          "periods": [
+            {
+              "from": "17:00",
+              "to": "19:00",
+              "label": "Po pracy"
+            }
+          ]
+        },
+        {
+          "dayOfWeek": "saturday",
+          "periods": [
+            {
+              "from": "09:00",
+              "to": "15:00",
+              "label": "Weekend"
+            }
+          ]
+        }
+      ],
+      "specialAvailability": [],
+      "unavailableDates": [],
+      "preferredContactTime": "Po 17:00",
+      "notes": "Standardowa dostępność po godzinach pracy"
+    },
+    "companyInfo": {
+      "isCompany": false,
+      "companyName": "",
+      "nip": "",
+      "regon": "",
+      "krs": ""
+    },
+    "preferences": {
+      "preferredPaymentMethod": "cash",
+      "invoiceRequired": false,
+      "preferredCommunication": "phone",
+      "language": "pl"
+    },
+    "stats": {
+      "totalOrders": 0,
+      "completedOrders": 0,
+      "cancelledOrders": 0,
+      "averageOrderValue": 0,
+      "lastOrderDate": null,
+      "customerSince": "2025-07-05T20:32:32.616Z"
+    },
+    "contactHistory": [],
+    "enhanced": true,
+    "enhancedDate": "2025-09-28T19:08:43.067Z",
+    "enhancedVersion": "1.0",
+    "oldId": "CLI25186007",
+    "servicePreferences": {
+      "preferredContactMethod": "email",
+      "preferredTimeSlots": [
+        "afternoon",
+        "morning"
+      ],
+      "paymentMethod": "cash",
+      "specialRequirements": "Dzwonić 15 min przed przyjazdem",
+      "communicationLanguage": "pl",
+      "serviceReminders": true,
+      "marketingConsent": true
+    },
+    "serviceInfo": {
+      "customerSince": "2025-07-05T20:32:32.616Z",
+      "totalOrders": 18,
+      "totalSpent": 4290,
+      "lastServiceDate": null,
+      "averageOrderValue": 457,
+      "creditLimit": 500,
+      "discount": 15,
+      "loyalty": {
+        "level": "platinum",
+        "points": 452,
+        "nextLevelRequirement": 184
+      }
+    },
+    "contactPreferences": {
+      "bestTimeToCall": "anytime",
+      "communicationFrequency": "standard",
+      "emergencyContact": null
+    },
+    "metadata": {
+      "updatedAt": "2025-09-30T20:13:11.358Z",
+      "lastModifiedBy": "enhancement-script-v1",
+      "version": 1,
+      "isActive": true,
+      "dataCompleteness": "enhanced",
+      "enhancementDate": "2025-09-30T20:13:11.358Z"
+    }
+  },
+  {
+    "name": "qwe",
+    "phone": "123123123",
+    "email": "mkagd@gmial.com",
+    "address": "GLiniana 17",
+    "city": "Kraków",
+    "street": "Nie podano",
+    "dateAdded": "2025-07-05T20:35:12.486Z",
+    "history": [],
+    "id": "CLI25186008",
+    "legacyId": "#0008",
+    "newId": "OLD0008",
+    "migrated": true,
+    "migrationDate": "2025-09-28T22:12:00.359Z",
+    "migrationSource": "unified-id-system",
+    "phones": [
+      {
+        "number": "123123123",
+        "label": "Główny",
+        "isPrimary": true,
+        "notes": "Przeniesiony z pola phone"
+      }
+    ],
+    "addresses": [
+      {
+        "address": "GLiniana 17",
+        "label": "Główny",
+        "isPrimary": true,
+        "coordinates": null,
+        "notes": "Miasto: Kraków"
+      }
+    ],
+    "notes": [
+      {
+        "id": "note_1759086523067_96ad5gfho",
+        "content": "Klient zarejestrowany w systemie. Email: mkagd@gmial.com, Miasto: Kraków, Klient od: 5.07.2025",
+        "type": "general",
+        "createdAt": "2025-09-28T19:08:43.067Z",
+        "createdBy": "system"
+      }
+    ],
+    "tags": [
+      "Kraków",
+      "Nowy klient",
+      "Osoba prywatna"
+    ],
+    "availability": {
+      "workingHours": [
+        {
+          "dayOfWeek": "monday",
+          "periods": [
+            {
+              "from": "17:00",
+              "to": "19:00",
+              "label": "Po pracy"
+            }
+          ]
+        },
+        {
+          "dayOfWeek": "tuesday",
+          "periods": [
+            {
+              "from": "17:00",
+              "to": "19:00",
+              "label": "Po pracy"
+            }
+          ]
+        },
+        {
+          "dayOfWeek": "wednesday",
+          "periods": [
+            {
+              "from": "17:00",
+              "to": "19:00",
+              "label": "Po pracy"
+            }
+          ]
+        },
+        {
+          "dayOfWeek": "thursday",
+          "periods": [
+            {
+              "from": "17:00",
+              "to": "19:00",
+              "label": "Po pracy"
+            }
+          ]
+        },
+        {
+          "dayOfWeek": "friday",
+          "periods": [
+            {
+              "from": "17:00",
+              "to": "19:00",
+              "label": "Po pracy"
+            }
+          ]
+        },
+        {
+          "dayOfWeek": "saturday",
+          "periods": [
+            {
+              "from": "09:00",
+              "to": "15:00",
+              "label": "Weekend"
+            }
+          ]
+        }
+      ],
+      "specialAvailability": [],
+      "unavailableDates": [],
+      "preferredContactTime": "Po 17:00",
+      "notes": "Standardowa dostępność po godzinach pracy"
+    },
+    "companyInfo": {
+      "isCompany": false,
+      "companyName": "",
+      "nip": "",
+      "regon": "",
+      "krs": ""
+    },
+    "preferences": {
+      "preferredPaymentMethod": "cash",
+      "invoiceRequired": false,
+      "preferredCommunication": "phone",
+      "language": "pl"
+    },
+    "stats": {
+      "totalOrders": 0,
+      "completedOrders": 0,
+      "cancelledOrders": 0,
+      "averageOrderValue": 0,
+      "lastOrderDate": null,
+      "customerSince": "2025-07-05T20:35:12.486Z"
+    },
+    "contactHistory": [],
+    "enhanced": true,
+    "enhancedDate": "2025-09-28T19:08:43.067Z",
+    "enhancedVersion": "1.0",
+    "oldId": "CLI25186008",
+    "servicePreferences": {
+      "preferredContactMethod": "sms",
+      "preferredTimeSlots": [
+        "morning"
+      ],
+      "paymentMethod": "cash",
+      "specialRequirements": "Dostęp przez bramę - dzwonić do domofonu",
+      "communicationLanguage": "pl",
+      "serviceReminders": true,
+      "marketingConsent": true
+    },
+    "serviceInfo": {
+      "customerSince": "2025-07-05T20:35:12.486Z",
+      "totalOrders": 2,
+      "totalSpent": 871,
+      "lastServiceDate": null,
+      "averageOrderValue": 658,
+      "creditLimit": 2000,
+      "discount": 10,
+      "loyalty": {
+        "level": "gold",
+        "points": 245,
+        "nextLevelRequirement": 151
+      }
+    },
+    "contactPreferences": {
+      "bestTimeToCall": "afternoon (12-16)",
+      "communicationFrequency": "minimal",
+      "emergencyContact": {
+        "name": "qwe (backup)",
+        "phone": "123123128",
+        "relationship": "family"
+      }
+    },
+    "metadata": {
+      "updatedAt": "2025-09-30T20:13:11.359Z",
+      "lastModifiedBy": "enhancement-script-v1",
+      "version": 1,
+      "isActive": true,
+      "dataCompleteness": "enhanced",
+      "enhancementDate": "2025-09-30T20:13:11.359Z"
+    }
+  },
+  {
+    "name": "Mariusz Bielaszka",
+    "phone": "234234234",
+    "email": "bielaszkam2@gmail.com",
+    "address": "Słupia, 114",
+    "city": "Pacanów",
+    "street": "Nie podano",
+    "dateAdded": "2025-07-05T20:35:55.076Z",
+    "history": [],
+    "id": "CLI25186009",
+    "legacyId": "#0009",
+    "newId": "OLD0009",
+    "migrated": true,
+    "migrationDate": "2025-09-28T22:12:00.359Z",
+    "migrationSource": "unified-id-system",
+    "phones": [
+      {
+        "number": "234234234",
+        "label": "Główny",
+        "isPrimary": true,
+        "notes": "Przeniesiony z pola phone"
+      }
+    ],
+    "addresses": [
+      {
+        "address": "Słupia, 114",
+        "label": "Główny",
+        "isPrimary": true,
+        "coordinates": null,
+        "notes": "Miasto: Pacanów"
+      }
+    ],
+    "notes": [
+      {
+        "id": "note_1759086523068_geh3pg841",
+        "content": "Klient zarejestrowany w systemie. Email: bielaszkam2@gmail.com, Miasto: Pacanów, Klient od: 5.07.2025",
+        "type": "general",
+        "createdAt": "2025-09-28T19:08:43.068Z",
+        "createdBy": "system"
+      }
+    ],
+    "tags": [
+      "Pacanów",
+      "Nowy klient",
+      "Osoba prywatna",
+      "Gmail"
+    ],
+    "availability": {
+      "workingHours": [
+        {
+          "dayOfWeek": "monday",
+          "periods": [
+            {
+              "from": "17:00",
+              "to": "19:00",
+              "label": "Po pracy"
+            }
+          ]
+        },
+        {
+          "dayOfWeek": "tuesday",
+          "periods": [
+            {
+              "from": "17:00",
+              "to": "19:00",
+              "label": "Po pracy"
+            }
+          ]
+        },
+        {
+          "dayOfWeek": "wednesday",
+          "periods": [
+            {
+              "from": "17:00",
+              "to": "19:00",
+              "label": "Po pracy"
+            }
+          ]
+        },
+        {
+          "dayOfWeek": "thursday",
+          "periods": [
+            {
+              "from": "17:00",
+              "to": "19:00",
+              "label": "Po pracy"
+            }
+          ]
+        },
+        {
+          "dayOfWeek": "friday",
+          "periods": [
+            {
+              "from": "17:00",
+              "to": "19:00",
+              "label": "Po pracy"
+            }
+          ]
+        },
+        {
+          "dayOfWeek": "saturday",
+          "periods": [
+            {
+              "from": "09:00",
+              "to": "15:00",
+              "label": "Weekend"
+            }
+          ]
+        }
+      ],
+      "specialAvailability": [],
+      "unavailableDates": [],
+      "preferredContactTime": "Po 17:00",
+      "notes": "Standardowa dostępność po godzinach pracy"
+    },
+    "companyInfo": {
+      "isCompany": false,
+      "companyName": "",
+      "nip": "",
+      "regon": "",
+      "krs": ""
+    },
+    "preferences": {
+      "preferredPaymentMethod": "cash",
+      "invoiceRequired": false,
+      "preferredCommunication": "phone",
+      "language": "pl"
+    },
+    "stats": {
+      "totalOrders": 0,
+      "completedOrders": 0,
+      "cancelledOrders": 0,
+      "averageOrderValue": 0,
+      "lastOrderDate": null,
+      "customerSince": "2025-07-05T20:35:55.076Z"
+    },
+    "contactHistory": [],
+    "enhanced": true,
+    "enhancedDate": "2025-09-28T19:08:43.068Z",
+    "enhancedVersion": "1.0",
+    "oldId": "CLI25186009",
+    "servicePreferences": {
+      "preferredContactMethod": "phone",
+      "preferredTimeSlots": [
+        "morning",
+        "morning"
+      ],
+      "paymentMethod": "card",
+      "specialRequirements": "Preferowane terminy popołudniowe",
+      "communicationLanguage": "pl",
+      "serviceReminders": true,
+      "marketingConsent": true
+    },
+    "serviceInfo": {
+      "customerSince": "2025-07-05T20:35:55.076Z",
+      "totalOrders": 17,
+      "totalSpent": 3682,
+      "lastServiceDate": null,
+      "averageOrderValue": 890,
+      "creditLimit": 500,
+      "discount": 0,
+      "loyalty": {
+        "level": "platinum",
+        "points": 349,
+        "nextLevelRequirement": 545
+      }
+    },
+    "contactPreferences": {
+      "bestTimeToCall": "anytime",
+      "communicationFrequency": "standard",
+      "emergencyContact": {
+        "name": "Mariusz Bielaszka (backup)",
+        "phone": "234234238",
+        "relationship": "family"
+      }
+    },
+    "metadata": {
+      "updatedAt": "2025-09-30T20:13:11.359Z",
+      "lastModifiedBy": "enhancement-script-v1",
+      "version": 1,
+      "isActive": true,
+      "dataCompleteness": "enhanced",
+      "enhancementDate": "2025-09-30T20:13:11.359Z"
+    }
+  },
+  {
+    "name": "124",
+    "phone": "123123123",
+    "email": "mkagd@qwe.com",
+    "address": "ul. Lachnita 5",
+    "city": "Mielec",
+    "street": "123",
+    "dateAdded": "2025-07-06T07:01:50.523Z",
+    "history": [],
+    "id": "CLI25187010",
+    "legacyId": "#0010",
+    "newId": "OLD0010",
+    "migrated": true,
+    "migrationDate": "2025-09-28T22:12:00.360Z",
+    "migrationSource": "unified-id-system",
+    "phones": [
+      {
+        "number": "123123123",
+        "label": "Główny",
+        "isPrimary": true,
+        "notes": "Przeniesiony z pola phone"
+      }
+    ],
+    "addresses": [
+      {
+        "address": "ul. Lachnita 5",
+        "label": "Główny",
+        "isPrimary": true,
+        "coordinates": null,
+        "notes": "Ulica: 123, Miasto: Mielec"
+      }
+    ],
+    "notes": [
+      {
+        "id": "note_1759086523068_97a7xs7x6",
+        "content": "Klient zarejestrowany w systemie. Email: mkagd@qwe.com, Miasto: Mielec, Klient od: 6.07.2025",
+        "type": "general",
+        "createdAt": "2025-09-28T19:08:43.068Z",
+        "createdBy": "system"
+      }
+    ],
+    "tags": [
+      "Mielec",
+      "Nowy klient",
+      "Osoba prywatna"
+    ],
+    "availability": {
+      "workingHours": [
+        {
+          "dayOfWeek": "monday",
+          "periods": [
+            {
+              "from": "17:00",
+              "to": "19:00",
+              "label": "Po pracy"
+            }
+          ]
+        },
+        {
+          "dayOfWeek": "tuesday",
+          "periods": [
+            {
+              "from": "17:00",
+              "to": "19:00",
+              "label": "Po pracy"
+            }
+          ]
+        },
+        {
+          "dayOfWeek": "wednesday",
+          "periods": [
+            {
+              "from": "17:00",
+              "to": "19:00",
+              "label": "Po pracy"
+            }
+          ]
+        },
+        {
+          "dayOfWeek": "thursday",
+          "periods": [
+            {
+              "from": "17:00",
+              "to": "19:00",
+              "label": "Po pracy"
+            }
+          ]
+        },
+        {
+          "dayOfWeek": "friday",
+          "periods": [
+            {
+              "from": "17:00",
+              "to": "19:00",
+              "label": "Po pracy"
+            }
+          ]
+        },
+        {
+          "dayOfWeek": "saturday",
+          "periods": [
+            {
+              "from": "09:00",
+              "to": "15:00",
+              "label": "Weekend"
+            }
+          ]
+        }
+      ],
+      "specialAvailability": [],
+      "unavailableDates": [],
+      "preferredContactTime": "Po 17:00",
+      "notes": "Standardowa dostępność po godzinach pracy"
+    },
+    "companyInfo": {
+      "isCompany": false,
+      "companyName": "",
+      "nip": "",
+      "regon": "",
+      "krs": ""
+    },
+    "preferences": {
+      "preferredPaymentMethod": "cash",
+      "invoiceRequired": false,
+      "preferredCommunication": "phone",
+      "language": "pl"
+    },
+    "stats": {
+      "totalOrders": 0,
+      "completedOrders": 0,
+      "cancelledOrders": 0,
+      "averageOrderValue": 0,
+      "lastOrderDate": null,
+      "customerSince": "2025-07-06T07:01:50.523Z"
+    },
+    "contactHistory": [],
+    "enhanced": true,
+    "enhancedDate": "2025-09-28T19:08:43.068Z",
+    "enhancedVersion": "1.0",
+    "oldId": "CLI25187010",
+    "servicePreferences": {
+      "preferredContactMethod": "email",
+      "preferredTimeSlots": [
+        "afternoon"
+      ],
+      "paymentMethod": "card",
+      "specialRequirements": null,
+      "communicationLanguage": "pl",
+      "serviceReminders": true,
+      "marketingConsent": true
+    },
+    "serviceInfo": {
+      "customerSince": "2025-07-06T07:01:50.523Z",
+      "totalOrders": 5,
+      "totalSpent": 5000,
+      "lastServiceDate": null,
+      "averageOrderValue": 489,
+      "creditLimit": 2000,
+      "discount": 5,
+      "loyalty": {
+        "level": "silver",
+        "points": 667,
+        "nextLevelRequirement": 192
+      }
+    },
+    "contactPreferences": {
+      "bestTimeToCall": "morning (8-12)",
+      "communicationFrequency": "frequent",
+      "emergencyContact": null
+    },
+    "metadata": {
+      "updatedAt": "2025-09-30T20:13:11.359Z",
+      "lastModifiedBy": "enhancement-script-v1",
+      "version": 1,
+      "isActive": true,
+      "dataCompleteness": "enhanced",
+      "enhancementDate": "2025-09-30T20:13:11.359Z"
+    }
+  },
+  {
+    "name": "Mariusz Bielaszka",
+    "phone": "123123123",
+    "email": "bielaszkam2@gmail.com",
+    "address": "Słupia, 114",
+    "city": "Pacanów",
+    "street": "Nie podano",
+    "dateAdded": "2025-07-06T07:05:39.997Z",
+    "history": [],
+    "id": "CLI25187011",
+    "legacyId": "#0011",
+    "newId": "OLD0011",
+    "migrated": true,
+    "migrationDate": "2025-09-28T22:12:00.360Z",
+    "migrationSource": "unified-id-system",
+    "phones": [
+      {
+        "number": "123123123",
+        "label": "Główny",
+        "isPrimary": true,
+        "notes": "Przeniesiony z pola phone"
+      }
+    ],
+    "addresses": [
+      {
+        "address": "Słupia, 114",
+        "label": "Główny",
+        "isPrimary": true,
+        "coordinates": null,
+        "notes": "Miasto: Pacanów"
+      }
+    ],
+    "notes": [
+      {
+        "id": "note_1759086523068_hkqbc60vn",
+        "content": "Klient zarejestrowany w systemie. Email: bielaszkam2@gmail.com, Miasto: Pacanów, Klient od: 6.07.2025",
+        "type": "general",
+        "createdAt": "2025-09-28T19:08:43.068Z",
+        "createdBy": "system"
+      }
+    ],
+    "tags": [
+      "Pacanów",
+      "Nowy klient",
+      "Osoba prywatna",
+      "Gmail"
+    ],
+    "availability": {
+      "workingHours": [
+        {
+          "dayOfWeek": "monday",
+          "periods": [
+            {
+              "from": "17:00",
+              "to": "19:00",
+              "label": "Po pracy"
+            }
+          ]
+        },
+        {
+          "dayOfWeek": "tuesday",
+          "periods": [
+            {
+              "from": "17:00",
+              "to": "19:00",
+              "label": "Po pracy"
+            }
+          ]
+        },
+        {
+          "dayOfWeek": "wednesday",
+          "periods": [
+            {
+              "from": "17:00",
+              "to": "19:00",
+              "label": "Po pracy"
+            }
+          ]
+        },
+        {
+          "dayOfWeek": "thursday",
+          "periods": [
+            {
+              "from": "17:00",
+              "to": "19:00",
+              "label": "Po pracy"
+            }
+          ]
+        },
+        {
+          "dayOfWeek": "friday",
+          "periods": [
+            {
+              "from": "17:00",
+              "to": "19:00",
+              "label": "Po pracy"
+            }
+          ]
+        },
+        {
+          "dayOfWeek": "saturday",
+          "periods": [
+            {
+              "from": "09:00",
+              "to": "15:00",
+              "label": "Weekend"
+            }
+          ]
+        }
+      ],
+      "specialAvailability": [],
+      "unavailableDates": [],
+      "preferredContactTime": "Po 17:00",
+      "notes": "Standardowa dostępność po godzinach pracy"
+    },
+    "companyInfo": {
+      "isCompany": false,
+      "companyName": "",
+      "nip": "",
+      "regon": "",
+      "krs": ""
+    },
+    "preferences": {
+      "preferredPaymentMethod": "cash",
+      "invoiceRequired": false,
+      "preferredCommunication": "phone",
+      "language": "pl"
+    },
+    "stats": {
+      "totalOrders": 0,
+      "completedOrders": 0,
+      "cancelledOrders": 0,
+      "averageOrderValue": 0,
+      "lastOrderDate": null,
+      "customerSince": "2025-07-06T07:05:39.997Z"
+    },
+    "contactHistory": [],
+    "enhanced": true,
+    "enhancedDate": "2025-09-28T19:08:43.068Z",
+    "enhancedVersion": "1.0",
+    "oldId": "CLI25187011",
+    "servicePreferences": {
+      "preferredContactMethod": "phone",
+      "preferredTimeSlots": [
+        "afternoon"
+      ],
+      "paymentMethod": "card",
+      "specialRequirements": "Dzwonić 15 min przed przyjazdem",
+      "communicationLanguage": "pl",
+      "serviceReminders": true,
+      "marketingConsent": true
+    },
+    "serviceInfo": {
+      "customerSince": "2025-07-06T07:05:39.997Z",
+      "totalOrders": 7,
+      "totalSpent": 630,
+      "lastServiceDate": null,
+      "averageOrderValue": 612,
+      "creditLimit": 0,
+      "discount": 0,
+      "loyalty": {
+        "level": "platinum",
+        "points": 304,
+        "nextLevelRequirement": 218
+      }
+    },
+    "contactPreferences": {
+      "bestTimeToCall": "afternoon (12-16)",
+      "communicationFrequency": "standard",
+      "emergencyContact": null
+    },
+    "metadata": {
+      "updatedAt": "2025-09-30T20:13:11.359Z",
+      "lastModifiedBy": "enhancement-script-v1",
+      "version": 1,
+      "isActive": true,
+      "dataCompleteness": "enhanced",
+      "enhancementDate": "2025-09-30T20:13:11.359Z"
+    }
+  },
+  {
+    "name": "ad",
+    "phone": "123123123",
+    "email": "",
+    "address": "ad, 39-300 Mielec",
+    "city": "Mielec",
+    "street": "ad",
+    "dateAdded": "2025-09-22T21:07:04.588Z",
+    "history": [],
+    "id": "CLI25265012",
+    "legacyId": "#0012",
+    "newId": "OLD0012",
+    "migrated": true,
+    "migrationDate": "2025-09-28T22:12:00.361Z",
+    "migrationSource": "unified-id-system",
+    "phones": [
+      {
+        "number": "123123123",
+        "label": "Główny",
+        "isPrimary": true,
+        "notes": "Przeniesiony z pola phone"
+      }
+    ],
+    "addresses": [
+      {
+        "address": "ad, 39-300 Mielec",
+        "label": "Główny",
+        "isPrimary": true,
+        "coordinates": null,
+        "notes": "Ulica: ad, Miasto: Mielec"
+      }
+    ],
+    "notes": [
+      {
+        "id": "note_1759086523068_uji6k12yq",
+        "content": "Klient zarejestrowany w systemie. Miasto: Mielec, Klient od: 22.09.2025",
+        "type": "general",
+        "createdAt": "2025-09-28T19:08:43.068Z",
+        "createdBy": "system"
+      }
+    ],
+    "tags": [
+      "Mielec",
+      "Nowy klient",
+      "Osoba prywatna"
+    ],
+    "availability": {
+      "workingHours": [
+        {
+          "dayOfWeek": "monday",
+          "periods": [
+            {
+              "from": "17:00",
+              "to": "19:00",
+              "label": "Po pracy"
+            }
+          ]
+        },
+        {
+          "dayOfWeek": "tuesday",
+          "periods": [
+            {
+              "from": "17:00",
+              "to": "19:00",
+              "label": "Po pracy"
+            }
+          ]
+        },
+        {
+          "dayOfWeek": "wednesday",
+          "periods": [
+            {
+              "from": "17:00",
+              "to": "19:00",
+              "label": "Po pracy"
+            }
+          ]
+        },
+        {
+          "dayOfWeek": "thursday",
+          "periods": [
+            {
+              "from": "17:00",
+              "to": "19:00",
+              "label": "Po pracy"
+            }
+          ]
+        },
+        {
+          "dayOfWeek": "friday",
+          "periods": [
+            {
+              "from": "17:00",
+              "to": "19:00",
+              "label": "Po pracy"
+            }
+          ]
+        },
+        {
+          "dayOfWeek": "saturday",
+          "periods": [
+            {
+              "from": "09:00",
+              "to": "15:00",
+              "label": "Weekend"
+            }
+          ]
+        }
+      ],
+      "specialAvailability": [],
+      "unavailableDates": [],
+      "preferredContactTime": "Po 17:00",
+      "notes": "Standardowa dostępność po godzinach pracy"
+    },
+    "companyInfo": {
+      "isCompany": false,
+      "companyName": "",
+      "nip": "",
+      "regon": "",
+      "krs": ""
+    },
+    "preferences": {
+      "preferredPaymentMethod": "cash",
+      "invoiceRequired": false,
+      "preferredCommunication": "phone",
+      "language": "pl"
+    },
+    "stats": {
+      "totalOrders": 0,
+      "completedOrders": 0,
+      "cancelledOrders": 0,
+      "averageOrderValue": 0,
+      "lastOrderDate": null,
+      "customerSince": "2025-09-22T21:07:04.588Z"
+    },
+    "contactHistory": [],
+    "enhanced": true,
+    "enhancedDate": "2025-09-28T19:08:43.068Z",
+    "enhancedVersion": "1.0",
+    "oldId": "CLI25265012",
+    "servicePreferences": {
+      "preferredContactMethod": "email",
+      "preferredTimeSlots": [
+        "morning",
+        "afternoon"
+      ],
+      "paymentMethod": "transfer",
+      "specialRequirements": "Preferowane terminy popołudniowe",
+      "communicationLanguage": "pl",
+      "serviceReminders": true,
+      "marketingConsent": true
+    },
+    "serviceInfo": {
+      "customerSince": "2025-09-22T21:07:04.588Z",
+      "totalOrders": 2,
+      "totalSpent": 2518,
+      "lastServiceDate": null,
+      "averageOrderValue": 152,
+      "creditLimit": 1000,
+      "discount": 0,
+      "loyalty": {
+        "level": "bronze",
+        "points": 246,
+        "nextLevelRequirement": 303
+      }
+    },
+    "contactPreferences": {
+      "bestTimeToCall": "anytime",
+      "communicationFrequency": "frequent",
+      "emergencyContact": null
+    },
+    "metadata": {
+      "updatedAt": "2025-09-30T20:13:11.359Z",
+      "lastModifiedBy": "enhancement-script-v1",
+      "version": 1,
+      "isActive": true,
+      "dataCompleteness": "enhanced",
+      "enhancementDate": "2025-09-30T20:13:11.359Z"
+    }
+  },
+  {
+    "name": "MAriusz Bielaszka",
+    "phone": "789456123",
+    "email": "",
+    "address": "Krakowksa, 28-133 Pacanoó",
+    "city": "Pacanoó",
+    "street": "Krakowksa",
+    "dateAdded": "2025-09-23T06:31:06.503Z",
+    "history": [],
+    "id": "CLI25266013",
+    "legacyId": "#0013",
+    "newId": "OLD0013",
+    "migrated": true,
+    "migrationDate": "2025-09-28T22:12:00.361Z",
+    "migrationSource": "unified-id-system",
+    "phones": [
+      {
+        "number": "789456123",
+        "label": "Główny",
+        "isPrimary": true,
+        "notes": "Przeniesiony z pola phone"
+      }
+    ],
+    "addresses": [
+      {
+        "address": "Krakowksa, 28-133 Pacanoó",
+        "label": "Główny",
+        "isPrimary": true,
+        "coordinates": null,
+        "notes": "Ulica: Krakowksa, Miasto: Pacanoó"
+      }
+    ],
+    "notes": [
+      {
+        "id": "note_1759086523068_2m1nt9sur",
+        "content": "Klient zarejestrowany w systemie. Miasto: Pacanoó, Klient od: 23.09.2025",
+        "type": "general",
+        "createdAt": "2025-09-28T19:08:43.068Z",
+        "createdBy": "system"
+      }
+    ],
+    "tags": [
+      "Pacanoó",
+      "Nowy klient",
+      "Osoba prywatna"
+    ],
+    "availability": {
+      "workingHours": [
+        {
+          "dayOfWeek": "monday",
+          "periods": [
+            {
+              "from": "17:00",
+              "to": "19:00",
+              "label": "Po pracy"
+            }
+          ]
+        },
+        {
+          "dayOfWeek": "tuesday",
+          "periods": [
+            {
+              "from": "17:00",
+              "to": "19:00",
+              "label": "Po pracy"
+            }
+          ]
+        },
+        {
+          "dayOfWeek": "wednesday",
+          "periods": [
+            {
+              "from": "17:00",
+              "to": "19:00",
+              "label": "Po pracy"
+            }
+          ]
+        },
+        {
+          "dayOfWeek": "thursday",
+          "periods": [
+            {
+              "from": "17:00",
+              "to": "19:00",
+              "label": "Po pracy"
+            }
+          ]
+        },
+        {
+          "dayOfWeek": "friday",
+          "periods": [
+            {
+              "from": "17:00",
+              "to": "19:00",
+              "label": "Po pracy"
+            }
+          ]
+        },
+        {
+          "dayOfWeek": "saturday",
+          "periods": [
+            {
+              "from": "09:00",
+              "to": "15:00",
+              "label": "Weekend"
+            }
+          ]
+        }
+      ],
+      "specialAvailability": [],
+      "unavailableDates": [],
+      "preferredContactTime": "Po 17:00",
+      "notes": "Standardowa dostępność po godzinach pracy"
+    },
+    "companyInfo": {
+      "isCompany": false,
+      "companyName": "",
+      "nip": "",
+      "regon": "",
+      "krs": ""
+    },
+    "preferences": {
+      "preferredPaymentMethod": "cash",
+      "invoiceRequired": false,
+      "preferredCommunication": "phone",
+      "language": "pl"
+    },
+    "stats": {
+      "totalOrders": 0,
+      "completedOrders": 0,
+      "cancelledOrders": 0,
+      "averageOrderValue": 0,
+      "lastOrderDate": null,
+      "customerSince": "2025-09-23T06:31:06.503Z"
+    },
+    "contactHistory": [],
+    "enhanced": true,
+    "enhancedDate": "2025-09-28T19:08:43.068Z",
+    "enhancedVersion": "1.0",
+    "oldId": "CLI25266013",
+    "servicePreferences": {
+      "preferredContactMethod": "sms",
+      "preferredTimeSlots": [
+        "afternoon"
+      ],
+      "paymentMethod": "cash",
+      "specialRequirements": "Dzwonić 15 min przed przyjazdem",
+      "communicationLanguage": "pl",
+      "serviceReminders": true,
+      "marketingConsent": true
+    },
+    "serviceInfo": {
+      "customerSince": "2025-09-23T06:31:06.503Z",
+      "totalOrders": 18,
+      "totalSpent": 1611,
+      "lastServiceDate": null,
+      "averageOrderValue": 846,
+      "creditLimit": 1000,
+      "discount": 0,
+      "loyalty": {
+        "level": "bronze",
+        "points": 727,
+        "nextLevelRequirement": 476
+      }
+    },
+    "contactPreferences": {
+      "bestTimeToCall": "anytime",
+      "communicationFrequency": "frequent",
+      "emergencyContact": {
+        "name": "MAriusz Bielaszka (backup)",
+        "phone": "789456128",
+        "relationship": "spouse"
+      }
+    },
+    "metadata": {
+      "updatedAt": "2025-09-30T20:13:11.359Z",
+      "lastModifiedBy": "enhancement-script-v1",
+      "version": 1,
+      "isActive": true,
+      "dataCompleteness": "enhanced",
+      "enhancementDate": "2025-09-30T20:13:11.359Z"
+    }
+  },
+  {
+    "name": "MAriusz Bielaszka",
+    "phone": "987654321",
+    "email": "",
+    "address": "Malinie 607, 39-331 Chorzelów",
+    "city": "Chorzelów",
+    "street": "Malinie 607",
+    "dateAdded": "2025-09-23T19:20:23.474Z",
+    "history": [],
+    "id": "CLI25266014",
+    "legacyId": "#0014",
+    "newId": "OLD0014",
+    "migrated": true,
+    "migrationDate": "2025-09-28T22:12:00.362Z",
+    "migrationSource": "unified-id-system",
+    "phones": [
+      {
+        "number": "987654321",
+        "label": "Główny",
+        "isPrimary": true,
+        "notes": "Przeniesiony z pola phone"
+      }
+    ],
+    "addresses": [
+      {
+        "address": "Malinie 607, 39-331 Chorzelów",
+        "label": "Główny",
+        "isPrimary": true,
+        "coordinates": null,
+        "notes": "Ulica: Malinie 607, Miasto: Chorzelów"
+      }
+    ],
+    "notes": [
+      {
+        "id": "note_1759086523069_eqey913ep",
+        "content": "Klient zarejestrowany w systemie. Miasto: Chorzelów, Klient od: 23.09.2025",
+        "type": "general",
+        "createdAt": "2025-09-28T19:08:43.069Z",
+        "createdBy": "system"
+      }
+    ],
+    "tags": [
+      "Chorzelów",
+      "Nowy klient",
+      "Osoba prywatna"
+    ],
+    "availability": {
+      "workingHours": [
+        {
+          "dayOfWeek": "monday",
+          "periods": [
+            {
+              "from": "17:00",
+              "to": "19:00",
+              "label": "Po pracy"
+            }
+          ]
+        },
+        {
+          "dayOfWeek": "tuesday",
+          "periods": [
+            {
+              "from": "17:00",
+              "to": "19:00",
+              "label": "Po pracy"
+            }
+          ]
+        },
+        {
+          "dayOfWeek": "wednesday",
+          "periods": [
+            {
+              "from": "17:00",
+              "to": "19:00",
+              "label": "Po pracy"
+            }
+          ]
+        },
+        {
+          "dayOfWeek": "thursday",
+          "periods": [
+            {
+              "from": "17:00",
+              "to": "19:00",
+              "label": "Po pracy"
+            }
+          ]
+        },
+        {
+          "dayOfWeek": "friday",
+          "periods": [
+            {
+              "from": "17:00",
+              "to": "19:00",
+              "label": "Po pracy"
+            }
+          ]
+        },
+        {
+          "dayOfWeek": "saturday",
+          "periods": [
+            {
+              "from": "09:00",
+              "to": "15:00",
+              "label": "Weekend"
+            }
+          ]
+        }
+      ],
+      "specialAvailability": [],
+      "unavailableDates": [],
+      "preferredContactTime": "Po 17:00",
+      "notes": "Standardowa dostępność po godzinach pracy"
+    },
+    "companyInfo": {
+      "isCompany": false,
+      "companyName": "",
+      "nip": "",
+      "regon": "",
+      "krs": ""
+    },
+    "preferences": {
+      "preferredPaymentMethod": "cash",
+      "invoiceRequired": false,
+      "preferredCommunication": "phone",
+      "language": "pl"
+    },
+    "stats": {
+      "totalOrders": 0,
+      "completedOrders": 0,
+      "cancelledOrders": 0,
+      "averageOrderValue": 0,
+      "lastOrderDate": null,
+      "customerSince": "2025-09-23T19:20:23.474Z"
+    },
+    "contactHistory": [],
+    "enhanced": true,
+    "enhancedDate": "2025-09-28T19:08:43.069Z",
+    "enhancedVersion": "1.0",
+    "oldId": "CLI25266014",
+    "servicePreferences": {
+      "preferredContactMethod": "phone",
+      "preferredTimeSlots": [
+        "morning",
+        "morning"
+      ],
+      "paymentMethod": "card",
+      "specialRequirements": "Preferowane terminy popołudniowe",
+      "communicationLanguage": "pl",
+      "serviceReminders": true,
+      "marketingConsent": true
+    },
+    "serviceInfo": {
+      "customerSince": "2025-09-23T19:20:23.474Z",
+      "totalOrders": 20,
+      "totalSpent": 1337,
+      "lastServiceDate": null,
+      "averageOrderValue": 892,
+      "creditLimit": 0,
+      "discount": 5,
+      "loyalty": {
+        "level": "bronze",
+        "points": 509,
+        "nextLevelRequirement": 172
+      }
+    },
+    "contactPreferences": {
+      "bestTimeToCall": "evening (16-20)",
+      "communicationFrequency": "standard",
+      "emergencyContact": null
+    },
+    "metadata": {
+      "updatedAt": "2025-09-30T20:13:11.359Z",
+      "lastModifiedBy": "enhancement-script-v1",
+      "version": 1,
+      "isActive": true,
+      "dataCompleteness": "enhanced",
+      "enhancementDate": "2025-09-30T20:13:11.359Z"
+    }
+  }
+]

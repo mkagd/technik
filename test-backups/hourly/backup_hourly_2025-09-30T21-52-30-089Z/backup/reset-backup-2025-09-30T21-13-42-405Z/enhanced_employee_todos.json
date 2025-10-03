@@ -1,0 +1,186 @@
+[
+  {
+    "id": "TOD75017368978",
+    "employeeId": "TEST_EMP_001",
+    "title": "Napraw laptop Dell - Mariusz Bielaszka",
+    "description": "Wymień ekran LCD w laptopie klienta",
+    "priority": "high",
+    "category": "hardware",
+    "dueDate": "2024-12-31",
+    "completed": true,
+    "createdAt": "2025-09-29T19:43:37.368Z",
+    "updatedAt": "2025-09-29T19:43:37.388Z",
+    "tags": [
+      "pilne",
+      "laptop",
+      "naprawa"
+    ],
+    "attachments": [],
+    "estimatedHours": 2,
+    "actualHours": 1.5,
+    "linkedOrderId": null,
+    
+    "clientId": "CLI25186001",
+    "clientData": {
+      "name": "Mariusz Bielaszka",
+      "phone": "123123123",
+      "email": "bielaszkam2@gmail.com",
+      "preferredContactTime": "Po 17:00",
+      "isCompany": false,
+      "tags": ["Stały klient", "Punktualny", "AGD"],
+      "city": "Pacanów"
+    },
+    
+    "location": {
+      "address": "Słupia, 114 Pacanów",
+      "city": "Pacanów",
+      "coordinates": null,
+      "estimatedTravelTime": 25,
+      "distanceFromBase": 12.5,
+      "region": "świętokrzyskie"
+    },
+    
+    "scheduling": {
+      "suggestedDate": "2025-10-01",
+      "suggestedTimeSlot": "17:00-19:00",
+      "clientAvailability": "Po pracy",
+      "conflictsWith": [],
+      "travelBuffer": 30,
+      "isOptimalTime": true
+    },
+    
+    "clientHistory": {
+      "previousTodos": 3,
+      "lastCompletedDate": "2025-09-15",
+      "averageRating": 4.8,
+      "notes": "Zawsze punktualny, dobrze przygotowany",
+      "totalCompletedTasks": 15,
+      "averageCompletionTime": 1.8
+    }
+  },
+  {
+    "id": "TOD76062628085",
+    "employeeId": "DEMO_EMP_001",
+    "title": "Naprawa pralki Samsung - Andrzej Nowak",
+    "description": "Wymiana łożysk oraz uszczelki drzwi",
+    "priority": "high",
+    "category": "AGD",
+    "dueDate": "2025-10-05",
+    "completed": false,
+    "createdAt": "2025-09-29T20:01:02.628Z",
+    "updatedAt": "2025-09-29T20:01:11.933Z",
+    "tags": [
+      "pralka",
+      "naprawa",
+      "Samsung",
+      "gwarancja"
+    ],
+    "attachments": [],
+    "estimatedHours": 3,
+    "actualHours": null,
+    "linkedOrderId": "ORD25272001",
+    
+    "clientId": "CLI25186002",
+    "clientData": {
+      "name": "Andrzej Nowak",
+      "phone": "987654321",
+      "email": "andrzej.nowak@email.com",
+      "preferredContactTime": "09:00-16:00",
+      "isCompany": false,
+      "tags": ["Nowy klient", "AGD"],
+      "city": "Kielce"
+    },
+    
+    "location": {
+      "address": "ul. Wesoła 15, Kielce",
+      "city": "Kielce",
+      "coordinates": {
+        "lat": 50.8661,
+        "lng": 20.6286
+      },
+      "estimatedTravelTime": 45,
+      "distanceFromBase": 35.2,
+      "region": "świętokrzyskie"
+    },
+    
+    "scheduling": {
+      "suggestedDate": "2025-10-05",
+      "suggestedTimeSlot": "10:00-13:00",
+      "clientAvailability": "Dni robocze",
+      "conflictsWith": [],
+      "travelBuffer": 45,
+      "isOptimalTime": true
+    },
+    
+    "clientHistory": {
+      "previousTodos": 0,
+      "lastCompletedDate": null,
+      "averageRating": null,
+      "notes": "Nowy klient - pierwsza naprawa",
+      "totalCompletedTasks": 0,
+      "averageCompletionTime": null
+    }
+  },
+  {
+    "id": "TOD76062639412",
+    "employeeId": "DEMO_EMP_001",
+    "title": "Instalacja oprogramowania - Firma TechMax",
+    "description": "Aktualizacja systemu i instalacja niezbędnego oprogramowania",
+    "priority": "medium",
+    "category": "software",
+    "dueDate": "2025-10-01", 
+    "completed": false,
+    "createdAt": "2025-09-29T20:01:02.639Z",
+    "updatedAt": "2025-09-29T20:01:02.639Z",
+    "tags": [
+      "software",
+      "instalacja",
+      "firma"
+    ],
+    "attachments": [],
+    "estimatedHours": 4,
+    "actualHours": null,
+    "linkedOrderId": null,
+    
+    "clientId": "CLI25186003",
+    "clientData": {
+      "name": "Firma TechMax Sp. z o.o.",
+      "phone": "41-123-45-67",
+      "email": "kontakt@techmax.pl",
+      "preferredContactTime": "08:00-16:00",
+      "isCompany": true,
+      "tags": ["Firma", "Stały klient", "IT"],
+      "city": "Kielce"
+    },
+    
+    "location": {
+      "address": "ul. Żelazna 5, Kielce",
+      "city": "Kielce", 
+      "coordinates": {
+        "lat": 50.8833,
+        "lng": 20.6167
+      },
+      "estimatedTravelTime": 30,
+      "distanceFromBase": 20.1,
+      "region": "świętokrzyskie"
+    },
+    
+    "scheduling": {
+      "suggestedDate": "2025-10-01",
+      "suggestedTimeSlot": "09:00-13:00",
+      "clientAvailability": "Godziny biurowe",
+      "conflictsWith": [],
+      "travelBuffer": 30,
+      "isOptimalTime": true
+    },
+    
+    "clientHistory": {
+      "previousTodos": 8,
+      "lastCompletedDate": "2025-09-20",
+      "averageRating": 4.9,
+      "notes": "Stały klient biznesowy - zawsze terminowy, dobre kontakty",
+      "totalCompletedTasks": 25,
+      "averageCompletionTime": 3.2
+    }
+  }
+]

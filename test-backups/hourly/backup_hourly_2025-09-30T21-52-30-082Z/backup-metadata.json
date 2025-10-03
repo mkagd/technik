@@ -1,0 +1,25 @@
+{
+  "version": "1.0.0",
+  "timestamp": "2025-09-30T21:52:30.082Z",
+  "type": "hourly",
+  "files": [
+    {
+      "path": "D:\\Projekty\\Technik\\Technik\\test-data\\clients.json",
+      "size": 154
+    },
+    {
+      "path": "D:\\Projekty\\Technik\\Technik\\test-data\\orders.json",
+      "size": 152
+    },
+    {
+      "path": "D:\\Projekty\\Technik\\Technik\\test-data\\settings.json",
+      "size": 66
+    }
+  ],
+  "totalSize": 372,
+  "compressionRatio": 0,
+  "checksum": "files:3-size:372",
+  "startTime": 1759269150082,
+  "endTime": 1759269150085,
+  "duration": 3
+}

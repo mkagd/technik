@@ -17,7 +17,212 @@
     "completedJobs": 245,
     "oldId": "EMP25189001",
     "migrationDate": "2025-09-28T22:12:00.370Z",
-    "migrationSource": "unified-id-system"
+    "migrationSource": "unified-id-system",
+    "agdSpecializations": {
+      "primaryCategory": "AGD",
+      "devices": [
+        {
+          "type": "pralka",
+          "brands": [
+            "Samsung",
+            "LG"
+          ],
+          "experienceYears": 8,
+          "level": "beginner",
+          "certifications": [
+            "Samsung Service Professional",
+            "LG Authorized Service"
+          ]
+        },
+        {
+          "type": "zmywarka",
+          "brands": [
+            "Samsung",
+            "LG",
+            "Bosch",
+            "Whirlpool"
+          ],
+          "experienceYears": 1,
+          "level": "beginner",
+          "certifications": [
+            "Samsung Service Professional",
+            "LG Authorized Service",
+            "Bosch Technical Expert"
+          ]
+        },
+        {
+          "type": "lodówka",
+          "brands": [
+            "Samsung",
+            "LG",
+            "Bosch",
+            "Whirlpool"
+          ],
+          "experienceYears": 3,
+          "level": "expert",
+          "certifications": [
+            "Samsung Service Professional"
+          ]
+        },
+        {
+          "type": "piekarnik",
+          "brands": [
+            "Samsung",
+            "LG",
+            "Bosch",
+            "Whirlpool"
+          ],
+          "experienceYears": 6,
+          "level": "expert",
+          "certifications": [
+            "Samsung Service Professional",
+            "LG Authorized Service"
+          ]
+        }
+      ],
+      "specialSkills": [
+        "Diagnostyka elektroniczna",
+        "Naprawa układów chłodniczych"
+      ]
+    },
+    "equipment": {
+      "personalTools": [
+        "Multimetr Fluke 117",
+        "Zestaw kluczy do AGD",
+        "Pompa kontroli ciśnienia",
+        "Tester izolacji",
+        "Walizka narzędziowa 150 elementów",
+        "Klucze dynamometryczne",
+        "Oscyloskop cyfrowy"
+      ],
+      "specializedEquipment": [
+        "Analizator parametrów sieci",
+        "Tester silników elektrycznych",
+        "Zestaw do obsługi układów chłodniczych"
+      ],
+      "mobileWorkshop": true,
+      "toolsValue": 6301,
+      "lastInventoryCheck": "2025-08-21"
+    },
+    "vehicle": {
+      "make": "Ford",
+      "model": "Sprinter",
+      "year": 2021,
+      "licensePlate": "WA76927",
+      "fuelType": "diesel",
+      "capacity": {
+        "volume": "15m³",
+        "weight": "1716kg"
+      },
+      "features": [
+        "Klimatyzacja",
+        "Regały na narzędzia",
+        "Oświetlenie LED",
+        "Gniazdka 230V"
+      ],
+      "mileage": 41339,
+      "nextService": "2025-10-18"
+    },
+    "serviceArea": {
+      "primaryCity": "Warszawa",
+      "radius": 30,
+      "preferredDistricts": [
+        "Mokotów",
+        "Ursynów",
+        "Wilanów",
+        "Ochota",
+        "Wola"
+      ],
+      "maxDistanceKm": 40,
+      "avoidAreas": [
+        "Centrum w godzinach szczytu"
+      ],
+      "travelTimePreference": "minimize"
+    },
+    "performance": {
+      "monthlyStats": {
+        "completedOrders": 32,
+        "averageTimePerOrder": 139,
+        "customerSatisfaction": "4.7",
+        "onTimeArrival": 98,
+        "firstTimeFixRate": 74,
+        "repeatCustomers": 50
+      },
+      "specialtyMetrics": {
+        "agdRepairSuccess": 82,
+        "complexRepairCapability": 68,
+        "partsOrderAccuracy": 97,
+        "diagnosticAccuracy": 87
+      }
+    },
+    "availability": {
+      "vacationDays": {
+        "total": 26,
+        "used": 0,
+        "planned": []
+      },
+      "overtime": {
+        "maxHoursPerWeek": 10,
+        "currentWeekHours": 5,
+        "overtimeRate": 1.5
+      },
+      "emergencyAvailability": true
+    },
+    "certifications": {
+      "current": [
+        {
+          "name": "Uprawnienia elektryczne do 1kV",
+          "issuer": "UDT",
+          "validUntil": "2026-05-15",
+          "level": "E"
+        },
+        {
+          "name": "Obsługa urządzeń gazowych",
+          "issuer": "Gazownictwo",
+          "validUntil": "2025-12-20",
+          "level": "II"
+        }
+      ],
+      "required": [
+        "Uprawnienia elektryczne",
+        "Bezpieczeństwo pracy"
+      ],
+      "inProgress": [
+        "Nowe technologie AGD 2025"
+      ]
+    },
+    "metadata": {
+      "createdAt": "2025-07-08T22:25:15.180Z",
+      "updatedAt": "2025-09-30T20:21:02.155Z",
+      "lastModifiedBy": "enhancement-script-v2",
+      "version": 2,
+      "dataCompleteness": "enhanced",
+      "enhancementDate": "2025-09-30T20:21:02.155Z",
+      "profileCompleteness": 95
+    },
+    "repairTimes": {
+      "pralka": 29,
+      "lodówka": 34,
+      "zmywarka": 38,
+      "piekarnik": 37,
+      "kuchenka": 40,
+      "płyta indukcyjna": 35,
+      "suszarka": 35,
+      "pralko-suszarka": 45,
+      "zamrażarka": 40,
+      "ekspres do kawy": 25,
+      "robot kuchenny": 30,
+      "blender": 20,
+      "sokowirówka": 20,
+      "mikrofalówka": 25,
+      "okap": 30,
+      "inne AGD": 30
+    },
+    "builtInWorkTimes": {
+      "demontaż": 10,
+      "montaż": 10,
+      "trudnaZabudowa": 30
+    }
   },
   {
     "id": "EMP25189002",
@@ -37,25 +242,871 @@
     "completedJobs": 189,
     "oldId": "EMP25189002",
     "migrationDate": "2025-09-28T22:12:00.371Z",
-    "migrationSource": "unified-id-system"
+    "migrationSource": "unified-id-system",
+    "agdSpecializations": {
+      "primaryCategory": "AGD",
+      "devices": [],
+      "specialSkills": []
+    },
+    "equipment": {
+      "personalTools": [
+        "Multimetr Fluke 117",
+        "Zestaw kluczy do AGD",
+        "Pompa kontroli ciśnienia",
+        "Tester izolacji",
+        "Walizka narzędziowa 150 elementów",
+        "Klucze dynamometryczne",
+        "Oscyloskop cyfrowy"
+      ],
+      "specializedEquipment": [],
+      "mobileWorkshop": true,
+      "toolsValue": 9949,
+      "lastInventoryCheck": "2025-08-16"
+    },
+    "vehicle": {
+      "make": "Fiat",
+      "model": "Crafter",
+      "year": 2023,
+      "licensePlate": "WA77112",
+      "fuelType": "diesel",
+      "capacity": {
+        "volume": "14m³",
+        "weight": "1085kg"
+      },
+      "features": [
+        "Klimatyzacja",
+        "Regały na narzędzia"
+      ],
+      "mileage": 61281,
+      "nextService": "2025-11-22"
+    },
+    "serviceArea": {
+      "primaryCity": "Kraków",
+      "radius": 40,
+      "preferredDistricts": [
+        "Mokotów",
+        "Ursynów"
+      ],
+      "maxDistanceKm": 32,
+      "avoidAreas": [
+        "Centrum w godzinach szczytu"
+      ],
+      "travelTimePreference": "minimize"
+    },
+    "performance": {
+      "monthlyStats": {
+        "completedOrders": 22,
+        "averageTimePerOrder": 135,
+        "customerSatisfaction": "5.0",
+        "onTimeArrival": 94,
+        "firstTimeFixRate": 72,
+        "repeatCustomers": 48
+      },
+      "specialtyMetrics": null
+    },
+    "availability": {
+      "vacationDays": {
+        "total": 26,
+        "used": 10,
+        "planned": []
+      },
+      "overtime": {
+        "maxHoursPerWeek": 10,
+        "currentWeekHours": 1,
+        "overtimeRate": 1.5
+      },
+      "emergencyAvailability": true
+    },
+    "certifications": {
+      "current": [],
+      "required": [],
+      "inProgress": []
+    },
+    "metadata": {
+      "createdAt": "2025-07-08T22:25:15.180Z",
+      "updatedAt": "2025-10-02T20:07:13.249Z",
+      "lastModifiedBy": "admin-panel",
+      "version": 2,
+      "dataCompleteness": "enhanced",
+      "enhancementDate": "2025-09-30T20:21:02.155Z",
+      "profileCompleteness": 75
+    },
+    "repairTimes": {
+      "pralka": 30,
+      "lodówka": 40,
+      "zmywarka": 35,
+      "piekarnik": 45,
+      "kuchenka": 40,
+      "płyta indukcyjna": 35,
+      "suszarka": 35,
+      "pralko-suszarka": 45,
+      "zamrażarka": 40,
+      "ekspres do kawy": 25,
+      "robot kuchenny": 30,
+      "blender": 20,
+      "sokowirówka": 20,
+      "mikrofalówka": 25,
+      "okap": 30,
+      "inne AGD": 30
+    },
+    "builtInWorkTimes": {
+      "demontaż": 10,
+      "montaż": 10,
+      "trudnaZabudowa": 30
+    },
+    "updated_at": "2025-10-02T20:07:13.250Z"
   },
   {
-    "id": "EMP25189003",
-    "name": "asf",
-    "email": "bielaszkm2@gmail.com",
-    "phone": "123123123",
+    "id": "EMP25092001",
+    "name": "Jan Serwisant",
+    "email": "jan.serwisant@agdtech.pl",
+    "phone": "+48 601 234 567",
     "specializations": [
-      "123"
+      "Serwis AGD",
+      "Pralki",
+      "Zmywarki"
     ],
     "isActive": true,
-    "dateAdded": "2025-07-08T22:25:15.182Z",
-    "address": "12",
-    "workingHours": "123",
-    "experience": "123",
-    "rating": 5,
-    "completedJobs": 0,
-    "oldId": "EMP25189003",
+    "dateAdded": "2025-01-15T08:00:00.000Z",
+    "address": "Kraków",
+    "workingHours": "8:00-16:00",
+    "experience": "8 lat",
+    "rating": 4.9,
+    "completedJobs": 324,
+    "oldId": "EMP25092001",
     "migrationDate": "2025-09-28T22:12:00.371Z",
-    "migrationSource": "unified-id-system"
+    "migrationSource": "unified-id-system",
+    "agdSpecializations": null,
+    "equipment": {
+      "personalTools": [
+        "Multimetr Fluke 117",
+        "Zestaw kluczy do AGD",
+        "Pompa kontroli ciśnienia",
+        "Tester izolacji",
+        "Walizka narzędziowa 150 elementów",
+        "Klucze dynamometryczne"
+      ],
+      "specializedEquipment": [],
+      "mobileWorkshop": true,
+      "toolsValue": 13377,
+      "lastInventoryCheck": "2025-09-04"
+    },
+    "vehicle": {
+      "make": "Ford",
+      "model": "Sprinter",
+      "year": 2023,
+      "licensePlate": "WA92808",
+      "fuelType": "electric",
+      "capacity": {
+        "volume": "13m³",
+        "weight": "1691kg"
+      },
+      "features": [
+        "Klimatyzacja",
+        "Regały na narzędzia",
+        "Oświetlenie LED",
+        "Gniazdka 230V"
+      ],
+      "mileage": 42182,
+      "nextService": "2025-11-24"
+    },
+    "serviceArea": {
+      "primaryCity": "12",
+      "radius": 25,
+      "preferredDistricts": [
+        "Mokotów",
+        "Ursynów",
+        "Wilanów"
+      ],
+      "maxDistanceKm": 35,
+      "avoidAreas": [],
+      "travelTimePreference": "minimize"
+    },
+    "performance": {
+      "monthlyStats": {
+        "completedOrders": 32,
+        "averageTimePerOrder": 104,
+        "customerSatisfaction": "4.4",
+        "onTimeArrival": 93,
+        "firstTimeFixRate": 90,
+        "repeatCustomers": 31
+      },
+      "specialtyMetrics": null
+    },
+    "availability": {
+      "vacationDays": {
+        "total": 26,
+        "used": 6,
+        "planned": []
+      },
+      "overtime": {
+        "maxHoursPerWeek": 10,
+        "currentWeekHours": 5,
+        "overtimeRate": 1.5
+      },
+      "emergencyAvailability": true
+    },
+    "certifications": {
+      "current": [],
+      "required": [],
+      "inProgress": []
+    },
+    "metadata": {
+      "createdAt": "2025-07-08T22:25:15.182Z",
+      "updatedAt": "2025-09-30T20:21:02.155Z",
+      "lastModifiedBy": "enhancement-script-v2",
+      "version": 2,
+      "dataCompleteness": "enhanced",
+      "enhancementDate": "2025-09-30T20:21:02.155Z",
+      "profileCompleteness": 75
+    },
+    "repairTimes": {
+      "pralka": 30,
+      "lodówka": 40,
+      "zmywarka": 35,
+      "piekarnik": 45,
+      "kuchenka": 40,
+      "płyta indukcyjna": 35,
+      "suszarka": 35,
+      "pralko-suszarka": 45,
+      "zamrażarka": 40,
+      "ekspres do kawy": 25,
+      "robot kuchenny": 30,
+      "blender": 20,
+      "sokowirówka": 20,
+      "mikrofalówka": 25,
+      "okap": 30,
+      "inne AGD": 30
+    },
+    "builtInWorkTimes": {
+      "demontaż": 10,
+      "montaż": 10,
+      "trudnaZabudowa": 30
+    }
+  },
+  {
+    "id": "EMP25092002",
+    "name": "Anna Technik",
+    "email": "anna.technik@agdtech.pl",
+    "phone": "+48 602 345 678",
+    "specializations": [
+      "Serwis AGD",
+      "Zmywarki",
+      "Piekarniki"
+    ],
+    "isActive": true,
+    "dateAdded": "2025-02-01T09:00:00.000Z",
+    "address": "Kraków",
+    "workingHours": "7:30-15:30",
+    "experience": "6 lat",
+    "rating": 4.8,
+    "completedJobs": 287,
+    "agdSpecializations": {
+      "primaryCategory": "AGD",
+      "devices": [
+        {
+          "type": "zmywarka",
+          "brands": [
+            "Bosch",
+            "Siemens",
+            "Miele"
+          ],
+          "experienceYears": 6,
+          "level": "expert",
+          "certifications": [
+            "Bosch Technical Expert",
+            "Siemens Service Pro"
+          ]
+        },
+        {
+          "type": "piekarnik",
+          "brands": [
+            "Bosch",
+            "Siemens",
+            "Electrolux"
+          ],
+          "experienceYears": 5,
+          "level": "expert",
+          "certifications": [
+            "Bosch Technical Expert"
+          ]
+        }
+      ],
+      "specialSkills": [
+        "Diagnostyka elektroniczna",
+        "Naprawa płyt sterujących"
+      ]
+    },
+    "createdAt": "2025-02-01T09:00:00.000Z",
+    "updatedAt": "2025-09-28T16:45:00.000Z",
+    "repairTimes": {
+      "pralka": 30,
+      "lodówka": 40,
+      "zmywarka": 27,
+      "piekarnik": 38,
+      "kuchenka": 40,
+      "płyta indukcyjna": 35,
+      "suszarka": 35,
+      "pralko-suszarka": 45,
+      "zamrażarka": 40,
+      "ekspres do kawy": 25,
+      "robot kuchenny": 30,
+      "blender": 20,
+      "sokowirówka": 20,
+      "mikrofalówka": 25,
+      "okap": 30,
+      "inne AGD": 30
+    },
+    "builtInWorkTimes": {
+      "demontaż": 12,
+      "montaż": 12,
+      "trudnaZabudowa": 25
+    }
+  },
+  {
+    "id": "EMP25092003",
+    "name": "Piotr Chłodnictwo",
+    "email": "piotr.chlodnictwo@agdtech.pl",
+    "phone": "+48 603 456 789",
+    "specializations": [
+      "Chłodnictwo",
+      "Lodówki",
+      "Zamrażarki"
+    ],
+    "isActive": true,
+    "dateAdded": "2025-01-10T08:30:00.000Z",
+    "address": "Kraków",
+    "workingHours": "8:00-16:00",
+    "experience": "12 lat",
+    "rating": 5,
+    "completedJobs": 456,
+    "agdSpecializations": {
+      "primaryCategory": "Chłodnictwo",
+      "devices": [
+        {
+          "type": "lodówka",
+          "brands": [
+            "Liebherr",
+            "Samsung",
+            "LG",
+            "Bosch"
+          ],
+          "experienceYears": 12,
+          "level": "expert",
+          "certifications": [
+            "Liebherr Service Master",
+            "Czynniki chłodnicze F-Gas"
+          ]
+        },
+        {
+          "type": "zamrażarka",
+          "brands": [
+            "Liebherr",
+            "Beko",
+            "Whirlpool"
+          ],
+          "experienceYears": 10,
+          "level": "expert",
+          "certifications": [
+            "F-Gas Certificate"
+          ]
+        }
+      ],
+      "specialSkills": [
+        "Obsługa czynników chłodniczych",
+        "Układy sterowania elektronicznego",
+        "Diagnostyka kompresorów"
+      ]
+    },
+    "certifications": {
+      "current": [
+        {
+          "name": "Uprawnienia F-Gas",
+          "issuer": "UDT",
+          "validUntil": "2026-12-15",
+          "level": "II"
+        },
+        {
+          "name": "Obsługa czynników chłodniczych",
+          "issuer": "Chłodnictwo",
+          "validUntil": "2025-12-20",
+          "level": "Expert"
+        }
+      ]
+    },
+    "createdAt": "2025-01-10T08:30:00.000Z",
+    "updatedAt": "2025-09-23T11:45:00.000Z",
+    "repairTimes": {
+      "pralka": 30,
+      "lodówka": 29,
+      "zmywarka": 35,
+      "piekarnik": 45,
+      "kuchenka": 40,
+      "płyta indukcyjna": 35,
+      "suszarka": 35,
+      "pralko-suszarka": 45,
+      "zamrażarka": 30,
+      "ekspres do kawy": 25,
+      "robot kuchenny": 30,
+      "blender": 20,
+      "sokowirówka": 20,
+      "mikrofalówka": 25,
+      "okap": 30,
+      "inne AGD": 30
+    },
+    "builtInWorkTimes": {
+      "demontaż": 8,
+      "montaż": 8,
+      "trudnaZabudowa": 25
+    }
+  },
+  {
+    "id": "EMP25092004",
+    "name": "Tomasz Elektryk",
+    "email": "tomasz.elektryk@agdtech.pl",
+    "phone": "+48 604 567 890",
+    "specializations": [
+      "Serwis AGD",
+      "Elektronika",
+      "Kuchenki elektryczne"
+    ],
+    "isActive": true,
+    "dateAdded": "2025-03-15T10:00:00.000Z",
+    "address": "Warszawa",
+    "workingHours": "7:00-15:00",
+    "experience": "10 lat",
+    "rating": 4.9,
+    "completedJobs": 389,
+    "agdSpecializations": {
+      "primaryCategory": "Elektronika AGD",
+      "devices": [
+        {
+          "type": "kuchenka",
+          "brands": [
+            "Bosch",
+            "Siemens",
+            "Amica",
+            "Electrolux"
+          ],
+          "experienceYears": 10,
+          "level": "expert",
+          "certifications": [
+            "Bosch Technical Expert",
+            "Siemens Service Master"
+          ]
+        },
+        {
+          "type": "piekarnik",
+          "brands": [
+            "Bosch",
+            "Siemens",
+            "Whirlpool",
+            "Electrolux"
+          ],
+          "experienceYears": 8,
+          "level": "expert",
+          "certifications": [
+            "Bosch Technical Expert"
+          ]
+        },
+        {
+          "type": "płyta indukcyjna",
+          "brands": [
+            "Bosch",
+            "Siemens",
+            "AEG",
+            "Electrolux"
+          ],
+          "experienceYears": 7,
+          "level": "expert",
+          "certifications": [
+            "Elektronika przemysłowa"
+          ]
+        }
+      ],
+      "specialSkills": [
+        "Diagnostyka płyt elektronicznych",
+        "Naprawa układów grzejnych",
+        "Programowanie sterowników"
+      ]
+    },
+    "certifications": {
+      "current": [
+        {
+          "name": "Uprawnienia elektryczne do 15kV",
+          "issuer": "UDT",
+          "validUntil": "2026-08-20",
+          "level": "D"
+        },
+        {
+          "name": "Elektronika przemysłowa",
+          "issuer": "Politechnika Warszawska",
+          "validUntil": "2027-03-15",
+          "level": "Inżynier"
+        }
+      ]
+    },
+    "equipment": {
+      "personalTools": [
+        "Oscyloskop Rigol DS1054Z",
+        "Multimetr Fluke 287",
+        "Stacja lutownicza JBC",
+        "Tester izolacji Megger",
+        "Zestaw kluczy do AGD",
+        "Analizator spektrum"
+      ],
+      "specializedEquipment": [
+        "Tester płyt elektronicznych",
+        "Programator EPROM",
+        "Stacja BGA rework"
+      ],
+      "mobileWorkshop": true,
+      "toolsValue": 18500,
+      "lastInventoryCheck": "2025-09-15"
+    },
+    "vehicle": {
+      "make": "Mercedes",
+      "model": "Sprinter",
+      "year": 2022,
+      "licensePlate": "WA88334",
+      "fuelType": "diesel",
+      "capacity": {
+        "volume": "16m³",
+        "weight": "1800kg"
+      },
+      "features": [
+        "Klimatyzacja",
+        "Regały specjalistyczne",
+        "Oświetlenie LED",
+        "Gniazdka 230V",
+        "Kompresor powietrza",
+        "Stół roboczy"
+      ],
+      "mileage": 35200,
+      "nextService": "2025-12-10"
+    },
+    "createdAt": "2025-03-15T10:00:00.000Z",
+    "updatedAt": "2025-10-01T08:00:00.000Z",
+    "repairTimes": {
+      "pralka": 30,
+      "lodówka": 40,
+      "zmywarka": 35,
+      "piekarnik": 36,
+      "kuchenka": 30,
+      "płyta indukcyjna": 27,
+      "suszarka": 35,
+      "pralko-suszarka": 45,
+      "zamrażarka": 40,
+      "ekspres do kawy": 25,
+      "robot kuchenny": 30,
+      "blender": 20,
+      "sokowirówka": 20,
+      "mikrofalówka": 25,
+      "okap": 30,
+      "inne AGD": 30
+    },
+    "builtInWorkTimes": {
+      "demontaż": 9,
+      "montaż": 9,
+      "trudnaZabudowa": 28
+    }
+  },
+  {
+    "id": "EMP25092005",
+    "name": "Marek Pralkowski",
+    "email": "marek.pralkowski@agdtech.pl",
+    "phone": "+48 605 678 901",
+    "specializations": [
+      "Pralki automatyczne",
+      "Suszarki bębnowe",
+      "Serwis AGD"
+    ],
+    "isActive": true,
+    "dateAdded": "2025-04-20T09:30:00.000Z",
+    "address": "Kraków",
+    "workingHours": "8:30-16:30",
+    "experience": "7 lat",
+    "rating": 4.7,
+    "completedJobs": 267,
+    "agdSpecializations": {
+      "primaryCategory": "Pralki i Suszarki",
+      "devices": [
+        {
+          "type": "pralka",
+          "brands": [
+            "Bosch",
+            "Siemens",
+            "Miele",
+            "Samsung",
+            "LG",
+            "Whirlpool"
+          ],
+          "experienceYears": 7,
+          "level": "expert",
+          "certifications": [
+            "Miele Service Master",
+            "Bosch Technical Expert"
+          ]
+        },
+        {
+          "type": "suszarka",
+          "brands": [
+            "Bosch",
+            "Siemens",
+            "Miele",
+            "Beko"
+          ],
+          "experienceYears": 6,
+          "level": "expert",
+          "certifications": [
+            "Miele Service Master"
+          ]
+        },
+        {
+          "type": "pralko-suszarka",
+          "brands": [
+            "LG",
+            "Samsung",
+            "Bosch"
+          ],
+          "experienceYears": 4,
+          "level": "advanced",
+          "certifications": [
+            "LG Combo Specialist"
+          ]
+        }
+      ],
+      "specialSkills": [
+        "Mechanika precyzyjna",
+        "Diagnostyka łożysk i amortyzatorów",
+        "Systemy dozowania detergentów",
+        "Pompy i filtry"
+      ]
+    },
+    "certifications": {
+      "current": [
+        {
+          "name": "Uprawnienia hydrauliczne",
+          "issuer": "Izba Rzemiosł",
+          "validUntil": "2026-04-20",
+          "level": "Mistrz"
+        }
+      ]
+    },
+    "equipment": {
+      "personalTools": [
+        "Multimetr Fluke 117",
+        "Zestaw kluczy specjalistycznych do pralek",
+        "Tester łożysk",
+        "Pompa próżniowa",
+        "Klucze dynamometryczne",
+        "Zestaw uszczelniaczy"
+      ],
+      "specializedEquipment": [
+        "Tester pompy odpływowej",
+        "Analizator drgań",
+        "Narzędzia do wymiany łożysk"
+      ],
+      "mobileWorkshop": true,
+      "toolsValue": 12300,
+      "lastInventoryCheck": "2025-09-20"
+    },
+    "vehicle": {
+      "make": "Fiat",
+      "model": "Ducato",
+      "year": 2021,
+      "licensePlate": "KR99667",
+      "fuelType": "diesel",
+      "capacity": {
+        "volume": "13m³",
+        "weight": "1500kg"
+      },
+      "features": [
+        "Klimatyzacja",
+        "Regały na narzędzia",
+        "Gniazdka 12V i 230V"
+      ],
+      "mileage": 48900,
+      "nextService": "2025-11-15"
+    },
+    "createdAt": "2025-04-20T09:30:00.000Z",
+    "updatedAt": "2025-10-01T08:00:00.000Z",
+    "repairTimes": {
+      "pralka": 22,
+      "lodówka": 40,
+      "zmywarka": 35,
+      "piekarnik": 45,
+      "kuchenka": 40,
+      "płyta indukcyjna": 35,
+      "suszarka": 27,
+      "pralko-suszarka": 41,
+      "zamrażarka": 40,
+      "ekspres do kawy": 25,
+      "robot kuchenny": 30,
+      "blender": 20,
+      "sokowirówka": 20,
+      "mikrofalówka": 25,
+      "okap": 30,
+      "inne AGD": 30
+    },
+    "builtInWorkTimes": {
+      "demontaż": 11,
+      "montaż": 11,
+      "trudnaZabudowa": 32
+    }
+  },
+  {
+    "id": "EMP25092006",
+    "name": "Karolina Kucharska",
+    "email": "karolina.kucharska@agdtech.pl",
+    "phone": "+48 606 789 012",
+    "specializations": [
+      "Małe AGD",
+      "Ekspresy do kawy",
+      "Roboty kuchenne"
+    ],
+    "isActive": true,
+    "dateAdded": "2025-05-10T11:00:00.000Z",
+    "address": "Warszawa",
+    "workingHours": "9:00-17:00",
+    "experience": "5 lat",
+    "rating": 4.8,
+    "completedJobs": 198,
+    "agdSpecializations": {
+      "primaryCategory": "Małe AGD",
+      "devices": [
+        {
+          "type": "ekspres do kawy",
+          "brands": [
+            "DeLonghi",
+            "Saeco",
+            "Jura",
+            "Krups",
+            "Bosch"
+          ],
+          "experienceYears": 5,
+          "level": "expert",
+          "certifications": [
+            "DeLonghi Service Master",
+            "Saeco Technical Expert"
+          ]
+        },
+        {
+          "type": "robot kuchenny",
+          "brands": [
+            "Thermomix",
+            "KitchenAid",
+            "Bosch",
+            "Kenwood"
+          ],
+          "experienceYears": 4,
+          "level": "advanced",
+          "certifications": [
+            "Thermomix Service Specialist"
+          ]
+        },
+        {
+          "type": "blender",
+          "brands": [
+            "Vitamix",
+            "Blendtec",
+            "Bosch",
+            "Philips"
+          ],
+          "experienceYears": 3,
+          "level": "advanced",
+          "certifications": []
+        },
+        {
+          "type": "sokowirówka",
+          "brands": [
+            "Hurom",
+            "Omega",
+            "Kuvings",
+            "Philips"
+          ],
+          "experienceYears": 3,
+          "level": "advanced",
+          "certifications": []
+        }
+      ],
+      "specialSkills": [
+        "Mechanika precyzyjna małych urządzeń",
+        "Systemy mielenia kawy",
+        "Pompy ciśnieniowe",
+        "Elektronika sterująca"
+      ]
+    },
+    "certifications": {
+      "current": [
+        {
+          "name": "Serwis ekspresów ciśnieniowych",
+          "issuer": "DeLonghi Academy",
+          "validUntil": "2026-05-10",
+          "level": "Expert"
+        }
+      ]
+    },
+    "equipment": {
+      "personalTools": [
+        "Multimetr cyfrowy",
+        "Zestaw śrubokrętów precyzyjnych",
+        "Klucze imbusowe micro",
+        "Tester ciśnienia",
+        "Lupa z oświetleniem LED",
+        "Pinezty precyzyjne"
+      ],
+      "specializedEquipment": [
+        "Tester pomp ciśnieniowych",
+        "Kalibratory temperatury",
+        "Zestaw do czyszczenia ekspresów"
+      ],
+      "mobileWorkshop": false,
+      "toolsValue": 8900,
+      "lastInventoryCheck": "2025-09-25"
+    },
+    "vehicle": {
+      "make": "Volkswagen",
+      "model": "Caddy",
+      "year": 2023,
+      "licensePlate": "WA11223",
+      "fuelType": "benzyna",
+      "capacity": {
+        "volume": "4.2m³",
+        "weight": "750kg"
+      },
+      "features": [
+        "Klimatyzacja",
+        "Organizery na małe części",
+        "Gniazdka 12V"
+      ],
+      "mileage": 22100,
+      "nextService": "2025-12-05"
+    },
+    "createdAt": "2025-05-10T11:00:00.000Z",
+    "updatedAt": "2025-10-01T08:00:00.000Z",
+    "repairTimes": {
+      "pralka": 30,
+      "lodówka": 40,
+      "zmywarka": 35,
+      "piekarnik": 45,
+      "kuchenka": 40,
+      "płyta indukcyjna": 35,
+      "suszarka": 35,
+      "pralko-suszarka": 45,
+      "zamrażarka": 40,
+      "ekspres do kawy": 18,
+      "robot kuchenny": 26,
+      "blender": 17,
+      "sokowirówka": 17,
+      "mikrofalówka": 25,
+      "okap": 30,
+      "inne AGD": 30
+    },
+    "builtInWorkTimes": {
+      "demontaż": 10,
+      "montaż": 10,
+      "trudnaZabudowa": 30
+    }
   }
 ]

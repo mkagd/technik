@@ -1,0 +1,9 @@
+{
+  "openai": true,
+  "googleVision": false,
+  "ocrSpace": false,
+  "tesseract": false,
+  "primaryProvider": "openai",
+  "lastUpdated": "2025-09-28T10:24:44.974Z",
+  "updatedBy": "admin"
+}

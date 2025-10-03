@@ -1,0 +1,183 @@
+{
+  "serviceTypes": {
+    "diagnosis": {
+      "name": "Diagnoza",
+      "basePrice": 150,
+      "minCharge": 120,
+      "description": "Stawka godzinowa dla diagnozy (brutto z dojazdem do 15km), minimum 120 PLN",
+      "includedDistance": 15,
+      "unit": "per_hour"
+    },
+    "repair": {
+      "name": "Naprawa",
+      "basePrice": 200,
+      "description": "Podstawowa stawka za naprawę do 30 minut",
+      "includedTime": 30,
+      "unit": "base_rate"
+    }
+  },
+  "deviceCategories": {
+    "washing_machine": {
+      "name": "Pralka",
+      "icon": "🧺",
+      "diagnosis": {
+        "hourlyRate": 150,
+        "minCharge": 120,
+        "complexity": "medium"
+      },
+      "repair": {
+        "baseRate": 200,
+        "hourlyRateAfter30min": 250,
+        "complexity": "medium"
+      }
+    },
+    "refrigerator": {
+      "name": "Lodówka",
+      "icon": "❄️",
+      "diagnosis": {
+        "hourlyRate": 180,
+        "minCharge": 150,
+        "complexity": "high"
+      },
+      "repair": {
+        "baseRate": 250,
+        "hourlyRateAfter30min": 300,
+        "complexity": "high"
+      }
+    },
+    "dryer": {
+      "name": "Suszarka do ubrań",
+      "icon": "🌪️",
+      "diagnosis": {
+        "hourlyRate": 180,
+        "minCharge": 150,
+        "complexity": "high"
+      },
+      "repair": {
+        "baseRate": 220,
+        "hourlyRateAfter30min": 280,
+        "complexity": "high"
+      }
+    },
+    "dishwasher": {
+      "name": "Zmywarka",
+      "icon": "🍽️",
+      "diagnosis": {
+        "hourlyRate": 160,
+        "minCharge": 120,
+        "complexity": "medium"
+      },
+      "repair": {
+        "baseRate": 220,
+        "hourlyRateAfter30min": 270,
+        "complexity": "medium"
+      }
+    },
+    "oven": {
+      "name": "Piekarnik",
+      "icon": "🔥",
+      "diagnosis": {
+        "hourlyRate": 170,
+        "minCharge": 150,
+        "complexity": "high"
+      },
+      "repair": {
+        "baseRate": 240,
+        "hourlyRateAfter30min": 290,
+        "complexity": "high"
+      }
+    },
+    "cooktop": {
+      "name": "Płyta grzewcza",
+      "icon": "🍳",
+      "diagnosis": {
+        "hourlyRate": 160,
+        "minCharge": 120,
+        "complexity": "medium"
+      },
+      "repair": {
+        "baseRate": 210,
+        "hourlyRateAfter30min": 260,
+        "complexity": "medium"
+      }
+    },
+    "microwave": {
+      "name": "Mikrofalówka",
+      "icon": "📡",
+      "diagnosis": {
+        "hourlyRate": 120,
+        "minCharge": 120,
+        "complexity": "low"
+      },
+      "repair": {
+        "baseRate": 150,
+        "hourlyRateAfter30min": 180,
+        "complexity": "low"
+      }
+    },
+    "vacuum_cleaner": {
+      "name": "Odkurzacz",
+      "icon": "🧹",
+      "diagnosis": {
+        "hourlyRate": 100,
+        "minCharge": 120,
+        "complexity": "low"
+      },
+      "repair": {
+        "baseRate": 120,
+        "hourlyRateAfter30min": 150,
+        "complexity": "low"
+      }
+    },
+    "air_conditioner": {
+      "name": "Klimatyzacja",
+      "icon": "❄️",
+      "diagnosis": {
+        "hourlyRate": 200,
+        "minCharge": 150,
+        "complexity": "high"
+      },
+      "repair": {
+        "baseRate": 280,
+        "hourlyRateAfter30min": 350,
+        "complexity": "high"
+      }
+    },
+    "other": {
+      "name": "Inne urządzenie",
+      "icon": "⚙️",
+      "diagnosis": {
+        "hourlyRate": 150,
+        "minCharge": 120,
+        "complexity": "medium"
+      },
+      "repair": {
+        "baseRate": 200,
+        "hourlyRateAfter30min": 250,
+        "complexity": "medium"
+      }
+    }
+  },
+  "distanceRates": {
+    "0-15": {
+      "name": "Do 15 km",
+      "rate": 0,
+      "description": "Wliczone w cenę"
+    },
+    "16-30": {
+      "name": "16-30 km",
+      "rate": 2.5,
+      "description": "2.50 PLN za km"
+    },
+    "31-50": {
+      "name": "31-50 km",
+      "rate": 3.0,
+      "description": "3.00 PLN za km"
+    },
+    "51+": {
+      "name": "Powyżej 50 km",
+      "rate": 3.5,
+      "description": "3.50 PLN za km"
+    }
+  }
+}

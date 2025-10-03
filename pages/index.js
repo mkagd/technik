@@ -171,6 +171,11 @@ export default function Home() {
 
               {/* Mobile Controls - kompaktowe i responsive */}
               <div className="flex md:hidden items-center space-x-1 flex-shrink-0">
+                {/* Admin Panel dla mobile */}
+                <Link href="/admin" className={`p-2 ${colors.secondary} rounded-lg hover:bg-blue-500/10 transition-colors`} title="Panel Admina">
+                  <FiSettings className="h-4 w-4" />
+                </Link>
+                
                 {/* Theme Toggle dla mobile */}
                 <div className="flex-shrink-0">
                   <ThemeToggle />
@@ -214,6 +219,10 @@ export default function Home() {
               </Link>
               <Link href="#kontakt" className={`${colors.textSecondary} hover:text-blue-400 transition-colors`}>
                 Kontakt
+              </Link>
+              <Link href="/admin" className={`${colors.textSecondary} hover:text-blue-400 transition-colors flex items-center space-x-1`}>
+                <FiSettings className="h-4 w-4" />
+                <span>Admin</span>
               </Link>
               
               {/* Theme Toggle */}
@@ -447,6 +456,13 @@ export default function Home() {
                     Zamów Serwis
                   </Link>
                   <Link
+                    href="/moje-zamowienie"
+                    className="flex items-center justify-center px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors font-medium"
+                  >
+                    <FiCheck className="h-5 w-5 mr-2" />
+                    Sprawdź Status Zamówienia
+                  </Link>
+                  <Link
                     href="/pracownik-logowanie"
                     className="flex items-center justify-center px-6 py-3 bg-slate-700 hover:bg-slate-600 border border-slate-600 rounded-lg transition-colors font-medium"
                   >
@@ -544,6 +560,43 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Sprawdź Status Zamówienia - Sekcja CTA */}
+      <section className="py-16 bg-gradient-to-r from-blue-600 to-purple-600">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-white/20 rounded-full mb-6">
+              <FiCheck className="h-8 w-8 text-white" />
+            </div>
+            <h2 className="text-3xl font-bold text-white mb-4">
+              Masz już zlecenie? Sprawdź jego status!
+            </h2>
+            <p className="text-lg text-white/90 mb-8 max-w-2xl mx-auto">
+              Wpisz numer swojego zamówienia (np. <strong>ORDW252750001</strong>) i numer telefonu, 
+              aby śledzić postęp realizacji w czasie rzeczywistym.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link
+                href="/moje-zamowienie"
+                className="inline-flex items-center justify-center px-8 py-4 bg-white text-blue-600 rounded-lg font-semibold hover:bg-gray-100 transition-colors shadow-lg"
+              >
+                <FiCheck className="h-5 w-5 mr-2" />
+                Sprawdź Status Teraz
+              </Link>
+              <Link
+                href="/rezerwacja"
+                className="inline-flex items-center justify-center px-8 py-4 bg-transparent border-2 border-white text-white rounded-lg font-semibold hover:bg-white/10 transition-colors"
+              >
+                <FiSmartphone className="h-5 w-5 mr-2" />
+                Złóż Nowe Zamówienie
+              </Link>
+            </div>
+            <div className="mt-6 text-sm text-white/80">
+              <p>💡 <strong>Wskazówka:</strong> Numer zamówienia znajdziesz w emailu potwierdzającym lub SMS-ie</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Footer */}
       <footer className="bg-slate-900 border-t border-slate-800 py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -577,6 +630,13 @@ export default function Home() {
       {/* Przełącznik wszystkich wersji homepage */}  
       <div className="fixed bottom-4 left-4 z-50 flex flex-col gap-2 max-h-96 overflow-y-auto">
         <div className="text-xs text-gray-600 font-medium mb-1 px-2">🏠 Wybierz Wersję:</div>
+        
+        <Link
+          href="/index-serwis-agd"
+          className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm shadow-lg transition-all font-medium animate-pulse"
+        >
+          🔧 SERWIS AGD (NOWA!)
+        </Link>
         
         <Link
           href="/"

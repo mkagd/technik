@@ -24,6 +24,10 @@ export default function Layout({ children }) {
             <Link href="/kalendarz" className="hover:text-blue-600">Dostępność</Link>
             <Link href="/cennik" className="hover:text-green-600 text-green-700 font-medium">💰 Cennik</Link>
             <Link href="/mapa" className="hover:text-blue-600">Mapa</Link>
+            <Link href="/team-collaboration" className="hover:text-orange-600 text-orange-700 font-medium">👥 Zespół</Link>
+            <Link href="/day-plan" className="hover:text-purple-600 text-purple-700 font-medium">📅 Plan dnia</Link>
+            <Link href="/intelligent-planner" className="hover:text-cyan-600 text-cyan-700 font-medium">🧠 Smart Planer</Link>
+            <Link href="/employee-todo-system" className="hover:text-indigo-600 text-indigo-700 font-medium">📋 TODO</Link>
             <Link href="/admin" className="hover:text-blue-600">Admin</Link>
           </nav>
         </div>
@@ -36,6 +40,9 @@ export default function Layout({ children }) {
             <Link href="/kalendarz" onClick={() => setMenuOpen(false)} className="hover:text-blue-600">Dostępność</Link>
             <Link href="/cennik" onClick={() => setMenuOpen(false)} className="hover:text-green-600 text-green-700 font-medium">💰 Cennik</Link>
             <Link href="/mapa" onClick={() => setMenuOpen(false)} className="hover:text-blue-600">Mapa</Link>
+            <Link href="/team-collaboration" onClick={() => setMenuOpen(false)} className="hover:text-orange-600 text-orange-700 font-medium">👥 Zespół</Link>
+            <Link href="/intelligent-planner" onClick={() => setMenuOpen(false)} className="hover:text-cyan-600 text-cyan-700 font-medium">🧠 Smart Planer</Link>
+            <Link href="/employee-todo-system" onClick={() => setMenuOpen(false)} className="hover:text-indigo-600 text-indigo-700 font-medium">📋 TODO</Link>
             <Link href="/admin" onClick={() => setMenuOpen(false)} className="hover:text-blue-600">Admin</Link>
           </nav>
         )}

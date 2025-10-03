@@ -1,0 +1,172 @@
+[
+  {
+    "id": "SO-2025-10-001",
+    "orderedBy": "LOG001",
+    "orderedByName": "Jan Kowalski (Logistyk)",
+    "orderDate": "2025-10-03T10:35:00Z",
+    "supplier": {
+      "id": "SUP001",
+      "name": "ASWO Sp. z o.o.",
+      "code": "ASWO-001",
+      "contact": "zamowienia@aswo.pl",
+      "phone": "+48 12 345 6789"
+    },
+    "items": [
+      {
+        "partId": "PART002",
+        "partNumber": "DC96-01414G",
+        "name": "Pompa odpływowa Samsung",
+        "quantity": 1,
+        "unitPrice": 90.00,
+        "totalPrice": 90.00,
+        "requestIds": ["PR-2025-10-003"],
+        "assignTo": [
+          {
+            "employeeId": "EMP25189004",
+            "employeeName": "Marek Kowal",
+            "quantity": 1,
+            "delivery": {
+              "type": "work_address",
+              "address": "ul. Przemysłowa 10, 30-600 Kraków (Baza serwisu)",
+              "paczkomatId": null
+            }
+          }
+        ]
+      }
+    ],
+    "totalValue": 90.00,
+    "totalValueWithVAT": 110.70,
+    "shippingCost": 25,
+    "deliveryMethod": "express_courier",
+    "deliveryAddresses": [
+      {
+        "type": "work_address",
+        "address": "ul. Przemysłowa 10, 30-600 Kraków (Baza serwisu)",
+        "paczkomatId": null,
+        "employeeIds": ["EMP25189004"],
+        "trackingNumber": "DPD123456789PL"
+      }
+    ],
+    "status": "shipped",
+    "expectedDelivery": "2025-10-03T18:00:00Z",
+    "actualDelivery": null,
+    "invoice": {
+      "number": "FV/ASWO/2025/10/001",
+      "amount": 135.70,
+      "paid": false,
+      "dueDate": "2025-10-17T23:59:59Z"
+    },
+    "notes": "EXPRESS - zamówienie pilne dla Marka Kowala. Kurier tego samego dnia.",
+    "createdAt": "2025-10-03T10:35:00Z",
+    "updatedAt": "2025-10-03T11:00:00Z"
+  },
+  {
+    "id": "SO-2025-10-002",
+    "orderedBy": "LOG001",
+    "orderedByName": "Jan Kowalski (Logistyk)",
+    "orderDate": "2025-10-02T15:30:00Z",
+    "supplier": {
+      "id": "SUP001",
+      "name": "ASWO Sp. z o.o.",
+      "code": "ASWO-001",
+      "contact": "zamowienia@aswo.pl",
+      "phone": "+48 12 345 6789"
+    },
+    "items": [
+      {
+        "partId": "PART001",
+        "partNumber": "DC97-16151A",
+        "name": "Łożysko bębna Samsung",
+        "quantity": 5,
+        "unitPrice": 65.00,
+        "totalPrice": 325.00,
+        "requestIds": [],
+        "assignTo": [
+          {
+            "employeeId": "EMP25189002",
+            "employeeName": "Adam Nowak",
+            "quantity": 2,
+            "delivery": {
+              "type": "paczkomat",
+              "address": "ul. Kwiatowa 12, 30-001 Kraków",
+              "paczkomatId": "KRA01M"
+            }
+          },
+          {
+            "employeeId": "EMP25189001",
+            "employeeName": "Jan Kowalski",
+            "quantity": 3,
+            "delivery": {
+              "type": "work_address",
+              "address": "ul. Przemysłowa 10, 30-600 Kraków (Baza serwisu)",
+              "paczkomatId": null
+            }
+          }
+        ]
+      },
+      {
+        "partId": "PART002",
+        "partNumber": "DC96-01414G",
+        "name": "Pompa odpływowa Samsung",
+        "quantity": 3,
+        "unitPrice": 90.00,
+        "totalPrice": 270.00,
+        "requestIds": [],
+        "assignTo": [
+          {
+            "employeeId": "EMP25189002",
+            "employeeName": "Adam Nowak",
+            "quantity": 1,
+            "delivery": {
+              "type": "paczkomat",
+              "address": "ul. Kwiatowa 12, 30-001 Kraków",
+              "paczkomatId": "KRA01M"
+            }
+          },
+          {
+            "employeeId": "EMP25189003",
+            "employeeName": "Tomek Wiśniewski",
+            "quantity": 2,
+            "delivery": {
+              "type": "paczkomat",
+              "address": "ul. Kwiatowa 12, 30-001 Kraków",
+              "paczkomatId": "KRA01M"
+            }
+          }
+        ]
+      }
+    ],
+    "totalValue": 595.00,
+    "totalValueWithVAT": 731.85,
+    "shippingCost": 0,
+    "deliveryMethod": "consolidated_paczkomat",
+    "deliveryAddresses": [
+      {
+        "type": "paczkomat",
+        "address": "ul. Kwiatowa 12, 30-001 Kraków",
+        "paczkomatId": "KRA01M",
+        "employeeIds": ["EMP25189002", "EMP25189003"],
+        "trackingNumber": "INPOST987654321PL"
+      },
+      {
+        "type": "work_address",
+        "address": "ul. Przemysłowa 10, 30-600 Kraków (Baza serwisu)",
+        "paczkomatId": null,
+        "employeeIds": ["EMP25189001"],
+        "trackingNumber": "DPD111222333PL"
+      }
+    ],
+    "status": "delivered",
+    "expectedDelivery": "2025-10-03T08:00:00Z",
+    "actualDelivery": "2025-10-03T07:45:00Z",
+    "invoice": {
+      "number": "FV/ASWO/2025/10/002",
+      "amount": 731.85,
+      "paid": false,
+      "dueDate": "2025-10-16T23:59:59Z"
+    },
+    "notes": "Konsolidacja: Adam + Tomek → jeden paczkomat KRA01M (oszczędność 15 zł na przesyłce). Jan odbiera na bazie.",
+    "createdAt": "2025-10-02T15:30:00Z",
+    "updatedAt": "2025-10-03T07:45:00Z"
+  }
+]

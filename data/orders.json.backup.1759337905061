@@ -1,0 +1,267 @@
+[
+  {
+    "id": 1001,
+    "visits": [
+      {
+        "id": 123456,
+        "date": "2025-10-02",
+        "time": "10:00",
+        "type": "diagnosis",
+        "assignedTo": "jan_kowalski"
+      }
+    ]
+  },
+  {
+    "id": 1002,
+    "orderNumber": "ORDA25271002",
+    "source": "phone",
+    "clientId": "CLI25271002",
+    "clientName": "Katarzyna Kowalska",
+    "category": "Serwis AGD",
+    "deviceType": "Zmywarka",
+    "brand": "Bosch",
+    "model": "SMS46KI03E",
+    "serialNumber": "BSH2024-456123",
+    "description": "Zmywarka nie grzeje wody, naczynia wychodzą zimne i nie są czyste.",
+    "symptoms": [
+      "Nie grzeje wody",
+      "Zimne naczynia",
+      "Słabe efekty mycia"
+    ],
+    "diagnosis": "",
+    "solution": "",
+    "status": "assigned",
+    "priority": "medium",
+    "estimatedCost": 220,
+    "partsCost": 0,
+    "laborCost": 0,
+    "totalCost": 0,
+    "partsUsed": [],
+    "visits": [
+      {
+        "visitId": "VIS25271001",
+        "visitNumber": 1,
+        "type": "diagnosis",
+        "scheduledDate": "2025-09-30T09:00:00Z",
+        "actualStartTime": null,
+        "actualEndTime": null,
+        "status": "completed",
+        "technicianId": "EMP25092002",
+        "technicianName": "Anna Technik",
+        "workDescription": "Diagnoza problemu z grzaniem wody w zmywarce",
+        "findings": "",
+        "duration": null,
+        "photos": [],
+        "updatedAt": "2025-10-01T13:39:24.164Z"
+      },
+      {
+        "date": "2025-10-02",
+        "time": "10:00",
+        "type": "repair",
+        "status": "completed",
+        "assignedTo": "jan_kowalski",
+        "notes": "",
+        "estimatedDuration": 60,
+        "id": 1759324540785,
+        "createdAt": "2025-10-01T13:15:40.785Z",
+        "updatedAt": "2025-10-01T13:15:46.047Z"
+      },
+      {
+        "visitId": "VIS1759337380720",
+        "visitNumber": 3,
+        "type": "diagnosis",
+        "scheduledDate": "2025-10-03T00:00:00.000Z",
+        "scheduledTime": "09:00",
+        "actualStartTime": null,
+        "actualEndTime": null,
+        "status": "scheduled",
+        "technicianId": "EMP25092003",
+        "technicianName": "Piotr Chłodnictwo",
+        "workDescription": "Diagnoza zmywarki - test z panelu",
+        "findings": "",
+        "duration": null,
+        "photos": [],
+        "createdAt": "2025-10-01T16:49:40.720Z",
+        "updatedAt": "2025-10-01T16:50:03.372Z",
+        "reassignedAt": "2025-10-01T16:50:03.372Z",
+        "reassignedReason": "Zmiana przydzialu - test"
+      }
+    ],
+    "address": "ul. Krakowska 25/10, Kraków",
+    "clientPhone": "+48 606 789 123",
+    "clientNotes": "Mieszkanie na 3 piętrze, winda często nie działa. Lepiej rano.",
+    "internalNotes": "Nowy klient, zmywarka ok. 2 lata",
+    "workNotes": "",
+    "warrantyMonths": 6,
+    "warrantyNotes": "Standardowa gwarancja serwisowa",
+    "photos": [],
+    "statusHistory": [
+      {
+        "status": "pending",
+        "timestamp": "2025-09-28T14:22:00Z",
+        "user": "system",
+        "note": "Zamówienie utworzone telefonicznie"
+      },
+      {
+        "status": "assigned",
+        "timestamp": "2025-09-28T16:45:00Z",
+        "user": "EMP25092002",
+        "note": "Przypisano technika Anna Technik, wizyta zaplanowana na 30.09"
+      }
+    ],
+    "clientFeedback": null,
+    "createdAt": "2025-09-28T14:22:00Z",
+    "updatedAt": "2025-10-01T16:50:03.372Z",
+    "completedAt": null,
+    "clientEmail": "k.kowalska@email.pl"
+  },
+  {
+    "id": 1003,
+    "orderNumber": "ORDA25263003",
+    "source": "web",
+    "clientId": "CLI25166003",
+    "clientName": "Kręgielnia Laguna",
+    "category": "Serwis AGD",
+    "deviceType": "Lodówka przemysłowa",
+    "brand": "Liebherr",
+    "model": "FKDv 4523",
+    "serialNumber": "LIE2023-789456",
+    "description": "Lodówka przemysłowa w barze nie utrzymuje temperatury, napoje są ciepłe.",
+    "symptoms": [
+      "Nie chłodzi",
+      "Ciepłe napoje",
+      "Kompresor pracuje ciągle"
+    ],
+    "diagnosis": "Wyciek czynnika chłodniczego, konieczna lokalizacja i uszczelnienie",
+    "solution": "Naprawa wycieku, uzupełnienie czynnika R134a",
+    "status": "completed",
+    "priority": "high",
+    "estimatedCost": 380,
+    "partsCost": 120,
+    "laborCost": 260,
+    "totalCost": 380,
+    "partsUsed": [
+      {
+        "name": "Czynnik chłodniczy R134a",
+        "partNumber": "R134A-1KG",
+        "quantity": 1,
+        "unitPrice": 85,
+        "totalPrice": 85
+      },
+      {
+        "name": "Uszczelki do układu chłodzenia",
+        "partNumber": "LIE-SEAL-4523",
+        "quantity": 1,
+        "unitPrice": 35,
+        "totalPrice": 35
+      }
+    ],
+    "visits": [
+      {
+        "visitId": "VIS25166001",
+        "visitNumber": 1,
+        "type": "diagnosis",
+        "scheduledDate": "2025-09-21T10:00:00Z",
+        "actualStartTime": "2025-09-21T10:15:00Z",
+        "actualEndTime": "2025-09-21T11:30:00Z",
+        "status": "completed",
+        "technicianId": "EMP25092003",
+        "technicianName": "Piotr Chłodnictwo",
+        "workDescription": "Diagnoza układu chłodzenia, pomiar ciśnienia, lokalizacja wycieku",
+        "findings": "Wyciek w połączeniu parownika, uszkodzona uszczelka",
+        "duration": 75,
+        "photos": [
+          "diag_leak.jpg",
+          "compressor_check.jpg"
+        ]
+      },
+      {
+        "visitId": "VIS25166002",
+        "visitNumber": 2,
+        "type": "repair",
+        "scheduledDate": "2025-09-23T08:00:00Z",
+        "actualStartTime": "2025-09-23T08:10:00Z",
+        "actualEndTime": "2025-09-23T11:45:00Z",
+        "status": "completed",
+        "technicianId": "EMP25092003",
+        "technicianName": "Piotr Chłodnictwo",
+        "workDescription": "Naprawa wycieku, wymiana uszczelek, uzupełnienie czynnika",
+        "findings": "Naprawa zakończona, lodówka chłodzi prawidłowo, temperatura -2°C",
+        "duration": 215,
+        "photos": [
+          "repair_progress.jpg",
+          "temp_test.jpg",
+          "final_check.jpg"
+        ]
+      }
+    ],
+    "address": "ul. Wielicka 259, Kraków",
+    "clientPhone": "+48 12 234 56 78",
+    "clientNotes": "Firma - dostęp przez recepcję, wystawić fakturę VAT",
+    "internalNotes": "Klient biznesowy, terminowość ważna dla działalności",
+    "workNotes": "Naprawa pilna z uwagi na działalność gastronomiczną",
+    "warrantyMonths": 12,
+    "warrantyNotes": "Rozszerzona gwarancja na naprawę układu chłodzenia",
+    "photos": [
+      {
+        "url": "/photos/orders/ORDA25263003/industrial_fridge.jpg",
+        "type": "before",
+        "description": "Lodówka przemysłowa - widok z zewnątrz",
+        "timestamp": "2025-09-21T10:20:00Z"
+      },
+      {
+        "url": "/photos/orders/ORDA25263003/temperature_ok.jpg",
+        "type": "after",
+        "description": "Test temperatury po naprawie",
+        "timestamp": "2025-09-23T11:40:00Z"
+      }
+    ],
+    "statusHistory": [
+      {
+        "status": "pending",
+        "timestamp": "2025-09-20T16:00:00Z",
+        "user": "system",
+        "note": "Pilne zamówienie - lodówka w restauracji"
+      },
+      {
+        "status": "assigned",
+        "timestamp": "2025-09-20T17:30:00Z",
+        "user": "EMP25092003",
+        "note": "Przypisano specjalistę od chłodnictwa"
+      },
+      {
+        "status": "in_progress",
+        "timestamp": "2025-09-21T10:15:00Z",
+        "user": "EMP25092003",
+        "note": "Rozpoczęto diagnozę"
+      },
+      {
+        "status": "waiting_parts",
+        "timestamp": "2025-09-21T11:30:00Z",
+        "user": "EMP25092003",
+        "note": "Zamówiono czynnik chłodniczy i uszczelki"
+      },
+      {
+        "status": "in_progress",
+        "timestamp": "2025-09-23T08:10:00Z",
+        "user": "EMP25092003",
+        "note": "Rozpoczęto naprawę z częściami"
+      },
+      {
+        "status": "completed",
+        "timestamp": "2025-09-23T11:45:00Z",
+        "user": "EMP25092003",
+        "note": "Naprawa zakończona, lodówka sprawna"
+      }
+    ],
+    "clientFeedback": {
+      "rating": 5,
+      "comment": "Bardzo szybka i profesjonalna naprawa. Lodówka działa jak nowa!",
+      "timestamp": "2025-09-23T14:00:00Z"
+    },
+    "createdAt": "2025-09-20T16:00:00Z",
+    "updatedAt": "2025-09-23T11:45:00Z",
+    "completedAt": "2025-09-23T11:45:00Z",
+    "clientEmail": "kontakt@kregielnia-laguna.pl"
+  }
+]

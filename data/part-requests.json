@@ -1,0 +1,164 @@
+[
+  {
+    "id": "PR-2025-10-001",
+    "requestedBy": "EMP25189002",
+    "requestedByName": "Adam Nowak",
+    "requestedFor": "EMP25189002",
+    "requestedForName": "Adam Nowak",
+    "createdBy": "EMP25189002",
+    "createdByName": "Adam Nowak",
+    "orderId": "ORD1024",
+    "client": "Pani Kowalska",
+    "deviceInfo": {
+      "brand": "Samsung",
+      "model": "WW90T4540AE",
+      "serialNumber": "SW2024001234",
+      "ocrId": "OCR-2025-10-001",
+      "detectedByAI": true,
+      "confidence": 0.95
+    },
+    "urgency": "tomorrow",
+    "requestDate": "2025-10-02T14:30:00Z",
+    "requestedParts": [
+      {
+        "partId": "PART001",
+        "partNumber": "DC97-16151A",
+        "name": "Łożysko bębna Samsung",
+        "quantity": 2,
+        "reason": "Użyłem ostatnie 2 szt podczas naprawy, potrzebuję uzupełnienia",
+        "compatibilityConfirmed": true,
+        "suggestedByAI": true
+      }
+    ],
+    "preferredDelivery": {
+      "type": "paczkomat",
+      "address": "ul. Kwiatowa 12, 30-001 Kraków",
+      "paczkomatId": "KRA01M",
+      "phone": "+48 123 456 789",
+      "notes": "Najlepiej do paczkomatu obok domu"
+    },
+    "status": "pending",
+    "notes": "Potrzebuję na jutro, mam kolejne zlecenie z podobnym problemem",
+    "reviewedBy": null,
+    "reviewedByName": null,
+    "reviewedAt": null,
+    "approvalNotes": null,
+    "consolidatedWith": [],
+    "supplierOrderId": null,
+    "finalDelivery": null,
+    "deliveredAt": null,
+    "completedAt": null
+  },
+  {
+    "id": "PR-2025-10-002",
+    "requestedBy": "EMP25189003",
+    "requestedByName": "Tomek Wiśniewski",
+    "requestedFor": "EMP25189003",
+    "requestedForName": "Tomek Wiśniewski",
+    "createdBy": "EMP25189003",
+    "createdByName": "Tomek Wiśniewski",
+    "orderId": "ORD1025",
+    "client": "Pan Nowak",
+    "deviceInfo": {
+      "brand": "Samsung",
+      "model": "WF80F5E5U4W",
+      "serialNumber": "SW2023005678",
+      "ocrId": "OCR-2025-10-002",
+      "detectedByAI": true,
+      "confidence": 0.92
+    },
+    "urgency": "standard",
+    "requestDate": "2025-10-02T16:45:00Z",
+    "requestedParts": [
+      {
+        "partId": "PART007",
+        "partNumber": "DC93-00155A",
+        "name": "Grzałka pralki Samsung 2000W",
+        "quantity": 1,
+        "reason": "Grzałka przepalona, wymiana konieczna",
+        "compatibilityConfirmed": true,
+        "suggestedByAI": false
+      }
+    ],
+    "preferredDelivery": {
+      "type": "home_address",
+      "address": "ul. Słoneczna 45, 31-500 Kraków",
+      "paczkomatId": null,
+      "phone": "+48 987 654 321",
+      "notes": "Dostarczyć pod wskazany adres domowy"
+    },
+    "status": "approved",
+    "notes": "W tym tygodniu wystarczy",
+    "reviewedBy": "LOG001",
+    "reviewedByName": "Jan Kowalski",
+    "reviewedAt": "2025-10-03T09:15:00Z",
+    "approvalNotes": "Zatwierdzone, zamówię dziś o 15:00",
+    "consolidatedWith": [],
+    "supplierOrderId": null,
+    "finalDelivery": {
+      "type": "home_address",
+      "address": "ul. Słoneczna 45, 31-500 Kraków",
+      "paczkomatId": null,
+      "consolidated": false,
+      "reason": "Standardowa dostawa pod adres"
+    },
+    "deliveredAt": null,
+    "completedAt": null
+  },
+  {
+    "id": "PR-2025-10-003",
+    "requestedBy": "EMP25189004",
+    "requestedByName": "Marek Kowal",
+    "requestedFor": "EMP25189004",
+    "requestedForName": "Marek Kowal",
+    "createdBy": "ADM001",
+    "createdByName": "Anna Admin",
+    "orderId": "ORD1026",
+    "client": "Pani Wiśniewska",
+    "deviceInfo": {
+      "brand": "Bosch",
+      "model": "WAG28461BY",
+      "serialNumber": "BS2024009876",
+      "ocrId": "OCR-2025-10-003",
+      "detectedByAI": true,
+      "confidence": 0.89
+    },
+    "urgency": "urgent",
+    "requestDate": "2025-10-03T10:20:00Z",
+    "requestedParts": [
+      {
+        "partId": "PART002",
+        "partNumber": "DC96-01414G",
+        "name": "Pompa odpływowa Samsung",
+        "quantity": 1,
+        "reason": "PILNE! Marek u klienta, pompa całkowicie niesprawna",
+        "compatibilityConfirmed": true,
+        "suggestedByAI": false
+      }
+    ],
+    "preferredDelivery": {
+      "type": "work_address",
+      "address": "ul. Przemysłowa 10, 30-600 Kraków (Baza serwisu)",
+      "paczkomatId": null,
+      "phone": "+48 111 222 333",
+      "notes": "PILNE! Potrzebne DZIŚ - kurier express"
+    },
+    "status": "approved",
+    "notes": "Zamówione przez Annę dla Marka - PILNY przypadek!",
+    "reviewedBy": "LOG001",
+    "reviewedByName": "Jan Kowalski",
+    "reviewedAt": "2025-10-03T10:30:00Z",
+    "approvalNotes": "EXPRESS - zamawiam natychmiast, kurier dziś po południu",
+    "consolidatedWith": [],
+    "supplierOrderId": "SO-2025-10-001",
+    "finalDelivery": {
+      "type": "work_address",
+      "address": "ul. Przemysłowa 10, 30-600 Kraków (Baza serwisu)",
+      "paczkomatId": null,
+      "consolidated": false,
+      "reason": "EXPRESS - kurier tego samego dnia (+25 zł)"
+    },
+    "deliveredAt": null,
+    "completedAt": null
+  }
+]

@@ -1,0 +1,254 @@
+[
+  {
+    "id": "PI-001",
+    "employeeId": "EMP25189001",
+    "employeeName": "Jan Kowalski",
+    "employeeRole": "LOGISTYK",
+    "vehicle": "Ford Transit Custom - KR 12345",
+    "parts": [
+      {
+        "partId": "PART001",
+        "partNumber": "DC97-16151A",
+        "name": "Łożysko bębna Samsung",
+        "quantity": 3,
+        "assignedDate": "2025-10-01T10:00:00Z",
+        "assignedBy": "LOG001",
+        "assignedByName": "Jan Kowalski (Logistyk)",
+        "location": "Schowek przedni",
+        "status": "available"
+      },
+      {
+        "partId": "PART002",
+        "partNumber": "DC96-01414G",
+        "name": "Pompa odpływowa Samsung",
+        "quantity": 2,
+        "assignedDate": "2025-09-30T14:30:00Z",
+        "assignedBy": "LOG001",
+        "assignedByName": "Jan Kowalski (Logistyk)",
+        "location": "Schowek boczny lewy",
+        "status": "available"
+      },
+      {
+        "partId": "PART005",
+        "partNumber": "DC66-00343A",
+        "name": "Amortyzator pralki Samsung",
+        "quantity": 4,
+        "assignedDate": "2025-09-28T14:30:00Z",
+        "assignedBy": "LOG001",
+        "assignedByName": "Jan Kowalski (Logistyk)",
+        "location": "Schowek boczny prawy",
+        "status": "available"
+      }
+    ],
+    "totalValue": 610.00,
+    "lastUpdated": "2025-10-01T10:00:00Z",
+    "statistics": {
+      "totalParts": 9,
+      "totalTypes": 3,
+      "usedThisMonth": 5,
+      "valueUsedThisMonth": 425.00
+    }
+  },
+  {
+    "id": "PI-002",
+    "employeeId": "EMP25189002",
+    "employeeName": "Adam Nowak",
+    "employeeRole": "SERWISANT",
+    "vehicle": "Volkswagen Caddy - KR 67890",
+    "parts": [
+      {
+        "partId": "PART001",
+        "partNumber": "DC97-16151A",
+        "name": "Łożysko bębna Samsung",
+        "quantity": 0,
+        "assignedDate": "2025-09-25T09:00:00Z",
+        "assignedBy": "LOG001",
+        "assignedByName": "Jan Kowalski (Logistyk)",
+        "location": "Schowek przedni",
+        "status": "available",
+        "notes": "Użyte ostatnie 2 szt wczoraj - wymaga uzupełnienia!"
+      },
+      {
+        "partId": "PART002",
+        "partNumber": "DC96-01414G",
+        "name": "Pompa odpływowa Samsung",
+        "quantity": 1,
+        "assignedDate": "2025-09-28T11:00:00Z",
+        "assignedBy": "LOG001",
+        "assignedByName": "Jan Kowalski (Logistyk)",
+        "location": "Schowek boczny",
+        "status": "available"
+      },
+      {
+        "partId": "PART005",
+        "partNumber": "DC66-00343A",
+        "name": "Amortyzator pralki Samsung",
+        "quantity": 2,
+        "assignedDate": "2025-09-26T13:00:00Z",
+        "assignedBy": "LOG001",
+        "assignedByName": "Jan Kowalski (Logistyk)",
+        "location": "Tylny bagażnik",
+        "status": "available"
+      },
+      {
+        "partId": "PART003",
+        "partNumber": "DC92-01622A",
+        "name": "Pasek napędowy HTD Samsung",
+        "quantity": 3,
+        "assignedDate": "2025-09-29T10:00:00Z",
+        "assignedBy": "LOG001",
+        "assignedByName": "Jan Kowalski (Logistyk)",
+        "location": "Schowek przedni",
+        "status": "available"
+      }
+    ],
+    "totalValue": 355.00,
+    "lastUpdated": "2025-10-02T14:30:00Z",
+    "statistics": {
+      "totalParts": 6,
+      "totalTypes": 4,
+      "usedThisMonth": 8,
+      "valueUsedThisMonth": 720.00
+    }
+  },
+  {
+    "id": "PI-003",
+    "employeeId": "EMP25189003",
+    "employeeName": "Tomek Wiśniewski",
+    "employeeRole": "SERWISANT",
+    "vehicle": "Fiat Ducato - KR 11223",
+    "parts": [
+      {
+        "partId": "PART002",
+        "partNumber": "DC96-01414G",
+        "name": "Pompa odpływowa Samsung",
+        "quantity": 3,
+        "assignedDate": "2025-10-01T08:00:00Z",
+        "assignedBy": "LOG001",
+        "assignedByName": "Jan Kowalski (Logistyk)",
+        "location": "Szuflada główna",
+        "status": "available"
+      },
+      {
+        "partId": "PART007",
+        "partNumber": "DC93-00155A",
+        "name": "Grzałka pralki Samsung 2000W",
+        "quantity": 2,
+        "assignedDate": "2025-09-30T12:00:00Z",
+        "assignedBy": "LOG001",
+        "assignedByName": "Jan Kowalski (Logistyk)",
+        "location": "Szuflada boczna",
+        "status": "available"
+      },
+      {
+        "partId": "PART004",
+        "partNumber": "DC63-00563A",
+        "name": "Uszczelka drzwi pralki",
+        "quantity": 5,
+        "assignedDate": "2025-09-27T15:00:00Z",
+        "assignedBy": "LOG001",
+        "assignedByName": "Jan Kowalski (Logistyk)",
+        "location": "Szuflada główna",
+        "status": "available"
+      }
+    ],
+    "totalValue": 735.00,
+    "lastUpdated": "2025-10-01T08:00:00Z",
+    "statistics": {
+      "totalParts": 10,
+      "totalTypes": 3,
+      "usedThisMonth": 6,
+      "valueUsedThisMonth": 540.00
+    }
+  },
+  {
+    "id": "PI-004",
+    "employeeId": "EMP25189004",
+    "employeeName": "Marek Kowal",
+    "employeeRole": "SERWISANT",
+    "vehicle": "Peugeot Partner - KR 44556",
+    "parts": [
+      {
+        "partId": "PART001",
+        "partNumber": "DC97-16151A",
+        "name": "Łożysko bębna Samsung",
+        "quantity": 2,
+        "assignedDate": "2025-09-29T09:00:00Z",
+        "assignedBy": "LOG001",
+        "assignedByName": "Jan Kowalski (Logistyk)",
+        "location": "Schowek tylny",
+        "status": "available"
+      },
+      {
+        "partId": "PART003",
+        "partNumber": "DC92-01622A",
+        "name": "Pasek napędowy HTD Samsung",
+        "quantity": 2,
+        "assignedDate": "2025-09-28T11:00:00Z",
+        "assignedBy": "LOG001",
+        "assignedByName": "Jan Kowalski (Logistyk)",
+        "location": "Schowek boczny",
+        "status": "available"
+      },
+      {
+        "partId": "PART005",
+        "partNumber": "DC66-00343A",
+        "name": "Amortyzator pralki Samsung",
+        "quantity": 3,
+        "assignedDate": "2025-09-30T14:00:00Z",
+        "assignedBy": "LOG001",
+        "assignedByName": "Jan Kowalski (Logistyk)",
+        "location": "Bagażnik",
+        "status": "available"
+      }
+    ],
+    "totalValue": 415.00,
+    "lastUpdated": "2025-09-30T14:00:00Z",
+    "statistics": {
+      "totalParts": 7,
+      "totalTypes": 3,
+      "usedThisMonth": 4,
+      "valueUsedThisMonth": 360.00
+    }
+  },
+  {
+    "id": "PI-005",
+    "employeeId": "ADM001",
+    "employeeName": "Anna Admin",
+    "employeeRole": "ADMIN",
+    "vehicle": "Opel Combo - KR 99887",
+    "parts": [
+      {
+        "partId": "PART002",
+        "partNumber": "DC96-01414G",
+        "name": "Pompa odpływowa Samsung",
+        "quantity": 2,
+        "assignedDate": "2025-10-02T10:00:00Z",
+        "assignedBy": "LOG001",
+        "assignedByName": "Jan Kowalski (Logistyk)",
+        "location": "Schowek przedni",
+        "status": "available"
+      },
+      {
+        "partId": "PART004",
+        "partNumber": "DC63-00563A",
+        "name": "Uszczelka drzwi pralki",
+        "quantity": 3,
+        "assignedDate": "2025-10-01T09:00:00Z",
+        "assignedBy": "LOG001",
+        "assignedByName": "Jan Kowalski (Logistyk)",
+        "location": "Schowek boczny",
+        "status": "available"
+      }
+    ],
+    "totalValue": 315.00,
+    "lastUpdated": "2025-10-02T10:00:00Z",
+    "statistics": {
+      "totalParts": 5,
+      "totalTypes": 2,
+      "usedThisMonth": 3,
+      "valueUsedThisMonth": 270.00
+    },
+    "notes": "Anna jako admin też pracuje w terenie i ma swój magazyn osobisty"
+  }
+]

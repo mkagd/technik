@@ -1,0 +1,2743 @@
+{
+  "schedules": {
+    "2025-10-01": {
+      "1": {
+        "employeeId": 1,
+        "date": "2025-10-01",
+        "timeSlots": [
+          {
+            "time": "07:00",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.623Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "07:15",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.623Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "07:30",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.623Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "07:45",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.623Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "08:00",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.623Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "08:15",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.623Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "08:30",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.623Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "08:45",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.623Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "09:00",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.623Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "09:15",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.623Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "09:30",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.623Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "09:45",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.623Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "10:00",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.623Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "10:15",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.623Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "10:30",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.623Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "10:45",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.623Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "11:00",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.623Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "11:15",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.623Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "11:30",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.623Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "11:45",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.623Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "12:00",
+            "status": "break",
+            "duration": 15,
+            "activity": "Przerwa",
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.623Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "12:15",
+            "status": "break",
+            "duration": 15,
+            "activity": "Przerwa",
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.623Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "12:30",
+            "status": "break",
+            "duration": 15,
+            "activity": "Przerwa",
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.623Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "12:45",
+            "status": "break",
+            "duration": 15,
+            "activity": "Przerwa",
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.623Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "13:00",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.623Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "13:15",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.623Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "13:30",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.623Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "13:45",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.623Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "14:00",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.623Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "14:15",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.623Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "14:30",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.623Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "14:45",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.623Z",
+            "updatedBy": "employee"
+          }
+        ],
+        "version": 4,
+        "lastSyncWithEmployee": "2025-10-02T07:59:31.623Z",
+        "statistics": {
+          "totalAvailableMinutes": 480,
+          "usedMinutes": 0,
+          "availableMinutes": 420,
+          "breaksMinutes": 60,
+          "travelMinutes": 0,
+          "totalSlots": 32,
+          "availableSlots": 28,
+          "busySlots": 0,
+          "breakSlots": 4,
+          "travelSlots": 0,
+          "utilizationPercentage": 0
+        }
+      },
+      "EMP25189001": {
+        "employeeId": "EMP25189001",
+        "employeeName": "Jan Kowalski",
+        "date": "2025-10-01",
+        "workingHours": "8:00-16:00",
+        "timeSlots": [
+          {
+            "time": "08:00",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-01T07:45:00Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "08:15",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-01T07:45:00Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "08:30",
+            "status": "busy",
+            "duration": 15,
+            "activity": "Wizyta u klienta - Naprawa pralki Samsung",
+            "location": "ul. Krakowska 15, Warszawa",
+            "orderId": "ORD25100001",
+            "visitId": "VIS25100001",
+            "canBeModified": false,
+            "lastUpdated": "2025-10-01T06:30:00Z",
+            "updatedBy": "admin"
+          },
+          {
+            "time": "08:45",
+            "status": "busy",
+            "duration": 15,
+            "activity": "Wizyta u klienta - Naprawa pralki Samsung (cd.)",
+            "location": "ul. Krakowska 15, Warszawa",
+            "orderId": "ORD25100001",
+            "visitId": "VIS25100001",
+            "canBeModified": false,
+            "lastUpdated": "2025-10-01T06:30:00Z",
+            "updatedBy": "admin"
+          },
+          {
+            "time": "09:00",
+            "status": "busy",
+            "duration": 15,
+            "activity": "Wizyta u klienta - Naprawa pralki Samsung (finalizacja)",
+            "location": "ul. Krakowska 15, Warszawa",
+            "orderId": "ORD25100001",
+            "visitId": "VIS25100001",
+            "canBeModified": false,
+            "lastUpdated": "2025-10-01T06:30:00Z",
+            "updatedBy": "admin"
+          },
+          {
+            "time": "09:15",
+            "status": "busy",
+            "duration": 15,
+            "activity": "Dokumentacja i rozliczenie wizyty",
+            "location": "ul. Krakowska 15, Warszawa",
+            "orderId": "ORD25100001",
+            "visitId": "VIS25100001",
+            "canBeModified": false,
+            "lastUpdated": "2025-10-01T06:30:00Z",
+            "updatedBy": "admin"
+          },
+          {
+            "time": "09:30",
+            "status": "travel",
+            "duration": 15,
+            "activity": "Przejazd do następnego klienta",
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-01T09:25:00Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "09:45",
+            "status": "travel",
+            "duration": 15,
+            "activity": "Przejazd do następnego klienta (cd.)",
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-01T09:25:00Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "10:00",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-01T07:45:00Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "10:15",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-01T07:45:00Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "10:30",
+            "status": "break",
+            "duration": 15,
+            "activity": "Przerwa kawowa",
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-01T09:58:00Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "10:45",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-01T07:45:00Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "11:00",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-01T07:45:00Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "11:15",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-01T07:45:00Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "11:30",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-01T07:45:00Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "11:45",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-01T07:45:00Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "12:00",
+            "status": "break",
+            "duration": 15,
+            "activity": "Przerwa obiadowa",
+            "location": null,
+            "canBeModified": false,
+            "lastUpdated": "2025-10-01T06:00:00Z",
+            "updatedBy": "admin"
+          },
+          {
+            "time": "12:15",
+            "status": "break",
+            "duration": 15,
+            "activity": "Przerwa obiadowa (cd.)",
+            "location": null,
+            "canBeModified": false,
+            "lastUpdated": "2025-10-01T06:00:00Z",
+            "updatedBy": "admin"
+          },
+          {
+            "time": "12:30",
+            "status": "break",
+            "duration": 15,
+            "activity": "Przerwa obiadowa (cd.)",
+            "location": null,
+            "canBeModified": false,
+            "lastUpdated": "2025-10-01T06:00:00Z",
+            "updatedBy": "admin"
+          },
+          {
+            "time": "12:45",
+            "status": "break",
+            "duration": 15,
+            "activity": "Przerwa obiadowa (końcowa)",
+            "location": null,
+            "canBeModified": false,
+            "lastUpdated": "2025-10-01T06:00:00Z",
+            "updatedBy": "admin"
+          },
+          {
+            "time": "13:00",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-01T07:45:00Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "13:15",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-01T07:45:00Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "13:30",
+            "status": "busy",
+            "duration": 15,
+            "activity": "Wizyta serwisowa - Lodówka Bosch",
+            "location": "ul. Mokotowska 45, Warszawa",
+            "orderId": "ORD25100002",
+            "visitId": "VIS25100002",
+            "canBeModified": false,
+            "lastUpdated": "2025-10-01T06:30:00Z",
+            "updatedBy": "admin"
+          },
+          {
+            "time": "13:45",
+            "status": "busy",
+            "duration": 15,
+            "activity": "Wizyta serwisowa - Lodówka Bosch (diagnostyka)",
+            "location": "ul. Mokotowska 45, Warszawa",
+            "orderId": "ORD25100002",
+            "visitId": "VIS25100002",
+            "canBeModified": false,
+            "lastUpdated": "2025-10-01T06:30:00Z",
+            "updatedBy": "admin"
+          },
+          {
+            "time": "14:00",
+            "status": "busy",
+            "duration": 15,
+            "activity": "Wizyta serwisowa - Lodówka Bosch (naprawa)",
+            "location": "ul. Mokotowska 45, Warszawa",
+            "orderId": "ORD25100002",
+            "visitId": "VIS25100002",
+            "canBeModified": false,
+            "lastUpdated": "2025-10-01T06:30:00Z",
+            "updatedBy": "admin"
+          },
+          {
+            "time": "14:15",
+            "status": "busy",
+            "duration": 15,
+            "activity": "Wizyta serwisowa - Lodówka Bosch (naprawa cd.)",
+            "location": "ul. Mokotowska 45, Warszawa",
+            "orderId": "ORD25100002",
+            "visitId": "VIS25100002",
+            "canBeModified": false,
+            "lastUpdated": "2025-10-01T06:30:00Z",
+            "updatedBy": "admin"
+          },
+          {
+            "time": "14:30",
+            "status": "busy",
+            "duration": 15,
+            "activity": "Wizyta serwisowa - Lodówka Bosch (testy)",
+            "location": "ul. Mokotowska 45, Warszawa",
+            "orderId": "ORD25100002",
+            "visitId": "VIS25100002",
+            "canBeModified": false,
+            "lastUpdated": "2025-10-01T06:30:00Z",
+            "updatedBy": "admin"
+          },
+          {
+            "time": "14:45",
+            "status": "busy",
+            "duration": 15,
+            "activity": "Wizyta serwisowa - Lodówka Bosch (finalizacja)",
+            "location": "ul. Mokotowska 45, Warszawa",
+            "orderId": "ORD25100002",
+            "visitId": "VIS25100002",
+            "canBeModified": false,
+            "lastUpdated": "2025-10-01T06:30:00Z",
+            "updatedBy": "admin"
+          },
+          {
+            "time": "15:00",
+            "status": "travel",
+            "duration": 15,
+            "activity": "Powrót do bazy",
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-01T14:45:00Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "15:15",
+            "status": "travel",
+            "duration": 15,
+            "activity": "Powrót do bazy (cd.)",
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-01T14:45:00Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "15:30",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-01T07:45:00Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "15:45",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-01T07:45:00Z",
+            "updatedBy": "employee"
+          }
+        ],
+        "dailyNotes": "Dziś skupiam się na naprawach pralek w rejonie Mokotowa",
+        "emergencyAvailable": true,
+        "maxOvertimeToday": 60,
+        "currentOvertimeUsed": 0,
+        "statistics": {
+          "totalAvailableMinutes": 480,
+          "usedMinutes": 150,
+          "availableMinutes": 225,
+          "utilizationPercentage": 31,
+          "breaksMinutes": 60,
+          "travelMinutes": 45,
+          "totalSlots": 32,
+          "availableSlots": 15,
+          "busySlots": 10,
+          "breakSlots": 4,
+          "travelSlots": 3
+        },
+        "lastSyncWithEmployee": "2025-10-01T10:15:30Z",
+        "version": 15
+      },
+      "EMP25189002": {
+        "employeeId": "EMP25189002",
+        "employeeName": "Anna Nowak",
+        "date": "2025-10-01",
+        "workingHours": "9:00-17:00",
+        "timeSlots": [
+          {
+            "time": "09:00",
+            "status": "available",
+            "duration": 60,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-01T08:45:00Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "10:00",
+            "status": "busy",
+            "duration": 120,
+            "activity": "Naprawa laptopa - diagnostyka",
+            "location": "ul. Floriańska 12, Kraków",
+            "orderId": "ORD25100003",
+            "visitId": "VIS25100003",
+            "canBeModified": false,
+            "lastUpdated": "2025-10-01T06:30:00Z",
+            "updatedBy": "admin"
+          },
+          {
+            "time": "12:00",
+            "status": "break",
+            "duration": 45,
+            "activity": "Przerwa obiadowa",
+            "location": null,
+            "canBeModified": false,
+            "lastUpdated": "2025-10-01T06:00:00Z",
+            "updatedBy": "admin"
+          },
+          {
+            "time": "12:45",
+            "status": "travel",
+            "duration": 30,
+            "activity": "Przejazd do kolejnego klienta",
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-01T12:40:00Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "13:15",
+            "status": "available",
+            "duration": 105,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-01T08:45:00Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "15:00",
+            "status": "break",
+            "duration": 15,
+            "activity": "Przerwa kawowa",
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-01T14:58:00Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "15:15",
+            "status": "available",
+            "duration": 105,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-01T08:45:00Z",
+            "updatedBy": "employee"
+          }
+        ],
+        "dailyNotes": "Dzień poświęcony naprawom sprzętu komputerowego w Krakowie",
+        "emergencyAvailable": true,
+        "maxOvertimeToday": 120,
+        "currentOvertimeUsed": 0,
+        "statistics": {
+          "totalAvailableMinutes": 480,
+          "usedMinutes": 120,
+          "availableMinutes": 270,
+          "utilizationPercentage": 25,
+          "breaksMinutes": 60,
+          "travelMinutes": 30
+        },
+        "lastSyncWithEmployee": "2025-10-01T14:58:00Z",
+        "version": 8
+      },
+      "EMP25092003": {
+        "employeeId": "EMP25092003",
+        "employeeName": "Piotr Chłodnictwo",
+        "date": "2025-10-01",
+        "workingHours": "8:00-16:00",
+        "timeSlots": [
+          {
+            "time": "08:00",
+            "status": "busy",
+            "duration": 90,
+            "activity": "Serwis lodówki Liebherr - wymiana kompresora",
+            "location": "ul. Długa 23, Kraków",
+            "orderId": "ORD25100004",
+            "visitId": "VIS25100004",
+            "canBeModified": false,
+            "lastUpdated": "2025-10-01T06:30:00Z",
+            "updatedBy": "admin"
+          },
+          {
+            "time": "09:30",
+            "status": "travel",
+            "duration": 45,
+            "activity": "Przejazd + transport części",
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-01T09:25:00Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "10:15",
+            "status": "busy",
+            "duration": 105,
+            "activity": "Naprawa zamrażarki Beko",
+            "location": "ul. Wielicka 78, Kraków",
+            "orderId": "ORD25100005",
+            "visitId": "VIS25100005",
+            "canBeModified": false,
+            "lastUpdated": "2025-10-01T06:30:00Z",
+            "updatedBy": "admin"
+          },
+          {
+            "time": "12:00",
+            "status": "break",
+            "duration": 60,
+            "activity": "Przerwa obiadowa",
+            "location": null,
+            "canBeModified": false,
+            "lastUpdated": "2025-10-01T06:00:00Z",
+            "updatedBy": "admin"
+          },
+          {
+            "time": "13:00",
+            "status": "travel",
+            "duration": 30,
+            "activity": "Przejazd na kontrolę",
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-01T12:55:00Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "13:30",
+            "status": "busy",
+            "duration": 60,
+            "activity": "Kontrola prac - lodówka Samsung",
+            "location": "ul. Kazimierza 15, Kraków",
+            "orderId": "ORD25100006",
+            "visitId": "VIS25100006",
+            "canBeModified": false,
+            "lastUpdated": "2025-10-01T06:30:00Z",
+            "updatedBy": "admin"
+          },
+          {
+            "time": "14:30",
+            "status": "available",
+            "duration": 30,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-01T07:45:00Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "15:00",
+            "status": "travel",
+            "duration": 30,
+            "activity": "Powrót do bazy",
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-01T14:55:00Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "15:30",
+            "status": "available",
+            "duration": 30,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-01T07:45:00Z",
+            "updatedBy": "employee"
+          }
+        ],
+        "dailyNotes": "Intensywny dzień z chłodnictwem - 3 naprawy zaplanowane",
+        "emergencyAvailable": false,
+        "maxOvertimeToday": 60,
+        "currentOvertimeUsed": 30,
+        "statistics": {
+          "totalAvailableMinutes": 480,
+          "usedMinutes": 255,
+          "availableMinutes": 60,
+          "utilizationPercentage": 53,
+          "breaksMinutes": 60,
+          "travelMinutes": 105
+        },
+        "lastSyncWithEmployee": "2025-10-01T14:55:00Z",
+        "version": 12
+      }
+    },
+    "2025-10-02": {
+      "1": {
+        "employeeId": 1,
+        "date": "2025-10-02",
+        "timeSlots": [
+          {
+            "time": "07:00",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.639Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "07:15",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.639Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "07:30",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.639Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "07:45",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.639Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "08:00",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.639Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "08:15",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.639Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "08:30",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.639Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "08:45",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.639Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "09:00",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.639Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "09:15",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.639Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "09:30",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.639Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "09:45",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.639Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "10:00",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.639Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "10:15",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.639Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "10:30",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.639Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "10:45",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.639Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "11:00",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.639Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "11:15",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.639Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "11:30",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.639Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "11:45",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.639Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "12:00",
+            "status": "break",
+            "duration": 15,
+            "activity": "Przerwa",
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.639Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "12:15",
+            "status": "break",
+            "duration": 15,
+            "activity": "Przerwa",
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.639Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "12:30",
+            "status": "break",
+            "duration": 15,
+            "activity": "Przerwa",
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.639Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "12:45",
+            "status": "break",
+            "duration": 15,
+            "activity": "Przerwa",
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.639Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "13:00",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.639Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "13:15",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.639Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "13:30",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.639Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "13:45",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.639Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "14:00",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.639Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "14:15",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.639Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "14:30",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.639Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "14:45",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.639Z",
+            "updatedBy": "employee"
+          }
+        ],
+        "version": 4,
+        "lastSyncWithEmployee": "2025-10-02T07:59:31.639Z",
+        "statistics": {
+          "totalAvailableMinutes": 480,
+          "usedMinutes": 0,
+          "availableMinutes": 420,
+          "breaksMinutes": 60,
+          "travelMinutes": 0,
+          "totalSlots": 32,
+          "availableSlots": 28,
+          "busySlots": 0,
+          "breakSlots": 4,
+          "travelSlots": 0,
+          "utilizationPercentage": 0
+        }
+      },
+      "EMP25189001": {
+        "employeeId": "EMP25189001",
+        "employeeName": "Jan Kowalski",
+        "date": "2025-10-02",
+        "workingHours": "8:00-16:00",
+        "timeSlots": [
+          {
+            "time": "08:00",
+            "status": "available",
+            "duration": 120,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-01T16:00:00Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "10:00",
+            "status": "available",
+            "duration": 120,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-01T16:00:00Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "12:00",
+            "status": "break",
+            "duration": 60,
+            "activity": "Przerwa obiadowa",
+            "location": null,
+            "canBeModified": false,
+            "lastUpdated": "2025-10-01T06:00:00Z",
+            "updatedBy": "admin"
+          },
+          {
+            "time": "13:00",
+            "status": "available",
+            "duration": 180,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-01T16:00:00Z",
+            "updatedBy": "employee"
+          }
+        ],
+        "dailyNotes": "Dzień wolny od zaplanowanych wizyt - dostępny na pilne zlecenia",
+        "emergencyAvailable": true,
+        "maxOvertimeToday": 120,
+        "currentOvertimeUsed": 0,
+        "statistics": {
+          "totalAvailableMinutes": 480,
+          "usedMinutes": 0,
+          "availableMinutes": 420,
+          "utilizationPercentage": 0,
+          "breaksMinutes": 60,
+          "travelMinutes": 0
+        },
+        "lastSyncWithEmployee": "2025-10-01T16:00:00Z",
+        "version": 1
+      }
+    },
+    "2025-09-29": {
+      "1": {
+        "employeeId": 1,
+        "date": "2025-09-29",
+        "timeSlots": [
+          {
+            "time": "07:00",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.581Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "07:15",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.581Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "07:30",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.581Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "07:45",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.581Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "08:00",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.581Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "08:15",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.581Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "08:30",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.581Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "08:45",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.581Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "09:00",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.581Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "09:15",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.581Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "12:00",
+            "status": "break",
+            "duration": 15,
+            "activity": "Przerwa",
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.581Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "12:15",
+            "status": "break",
+            "duration": 15,
+            "activity": "Przerwa",
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.581Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "12:30",
+            "status": "break",
+            "duration": 15,
+            "activity": "Przerwa",
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.581Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "12:45",
+            "status": "break",
+            "duration": 15,
+            "activity": "Przerwa",
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.581Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "13:00",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.581Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "13:15",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.581Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "13:30",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.581Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "13:45",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.581Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "14:00",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.581Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "14:15",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.581Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "14:30",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.581Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "14:45",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.581Z",
+            "updatedBy": "employee"
+          }
+        ],
+        "version": 4,
+        "lastSyncWithEmployee": "2025-10-02T07:59:31.581Z",
+        "statistics": {
+          "totalAvailableMinutes": 330,
+          "usedMinutes": 0,
+          "availableMinutes": 270,
+          "breaksMinutes": 60,
+          "travelMinutes": 0,
+          "totalSlots": 22,
+          "availableSlots": 18,
+          "busySlots": 0,
+          "breakSlots": 4,
+          "travelSlots": 0,
+          "utilizationPercentage": 0
+        }
+      }
+    },
+    "2025-09-30": {
+      "1": {
+        "employeeId": 1,
+        "date": "2025-09-30",
+        "timeSlots": [
+          {
+            "time": "07:00",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.605Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "07:15",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.605Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "07:30",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.605Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "07:45",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.605Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "08:00",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.605Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "08:15",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.605Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "08:30",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.605Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "08:45",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.605Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "09:00",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.605Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "09:15",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.605Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "10:00",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.605Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "10:15",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.605Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "11:00",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.605Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "11:15",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.605Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "11:30",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.605Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "11:45",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.605Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "12:00",
+            "status": "break",
+            "duration": 15,
+            "activity": "Przerwa",
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.605Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "12:15",
+            "status": "break",
+            "duration": 15,
+            "activity": "Przerwa",
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.605Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "12:30",
+            "status": "break",
+            "duration": 15,
+            "activity": "Przerwa",
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.605Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "12:45",
+            "status": "break",
+            "duration": 15,
+            "activity": "Przerwa",
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.605Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "13:00",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.605Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "13:15",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.605Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "13:30",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.605Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "13:45",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.605Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "14:00",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.605Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "14:15",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.605Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "14:30",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.605Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "14:45",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.605Z",
+            "updatedBy": "employee"
+          }
+        ],
+        "version": 4,
+        "lastSyncWithEmployee": "2025-10-02T07:59:31.605Z",
+        "statistics": {
+          "totalAvailableMinutes": 420,
+          "usedMinutes": 0,
+          "availableMinutes": 360,
+          "breaksMinutes": 60,
+          "travelMinutes": 0,
+          "totalSlots": 28,
+          "availableSlots": 24,
+          "busySlots": 0,
+          "breakSlots": 4,
+          "travelSlots": 0,
+          "utilizationPercentage": 0
+        }
+      }
+    },
+    "2025-10-03": {
+      "1": {
+        "employeeId": 1,
+        "date": "2025-10-03",
+        "timeSlots": [
+          {
+            "time": "07:00",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.654Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "07:15",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.654Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "07:30",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.654Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "07:45",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.654Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "08:00",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.654Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "08:15",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.654Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "08:30",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.654Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "08:45",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.654Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "09:00",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.654Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "09:15",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.654Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "09:30",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.654Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "09:45",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.654Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "10:00",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.654Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "10:15",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.654Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "10:30",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.654Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "10:45",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.654Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "11:00",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.654Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "11:15",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.654Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "11:30",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.654Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "11:45",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.654Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "12:00",
+            "status": "break",
+            "duration": 15,
+            "activity": "Przerwa",
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.654Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "12:15",
+            "status": "break",
+            "duration": 15,
+            "activity": "Przerwa",
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.654Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "12:30",
+            "status": "break",
+            "duration": 15,
+            "activity": "Przerwa",
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.654Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "12:45",
+            "status": "break",
+            "duration": 15,
+            "activity": "Przerwa",
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.654Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "13:00",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.654Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "13:15",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.654Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "13:30",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.654Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "13:45",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.654Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "14:00",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.654Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "14:15",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.654Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "14:30",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.654Z",
+            "updatedBy": "employee"
+          },
+          {
+            "time": "14:45",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-02T07:59:31.654Z",
+            "updatedBy": "employee"
+          }
+        ],
+        "version": 4,
+        "lastSyncWithEmployee": "2025-10-02T07:59:31.654Z",
+        "statistics": {
+          "totalAvailableMinutes": 480,
+          "usedMinutes": 0,
+          "availableMinutes": 420,
+          "breaksMinutes": 60,
+          "travelMinutes": 0,
+          "totalSlots": 32,
+          "availableSlots": 28,
+          "busySlots": 0,
+          "breakSlots": 4,
+          "travelSlots": 0,
+          "utilizationPercentage": 0
+        }
+      }
+    },
+    "2025-10-04": {
+      "1": {
+        "employeeId": 1,
+        "date": "2025-10-04",
+        "timeSlots": [],
+        "version": 4,
+        "lastSyncWithEmployee": "2025-10-02T07:59:31.675Z",
+        "statistics": {
+          "totalAvailableMinutes": 0,
+          "usedMinutes": 0,
+          "availableMinutes": 0,
+          "breaksMinutes": 0,
+          "travelMinutes": 0,
+          "totalSlots": 0,
+          "availableSlots": 0,
+          "busySlots": 0,
+          "breakSlots": 0,
+          "travelSlots": 0,
+          "utilizationPercentage": 0
+        }
+      }
+    },
+    "2025-10-05": {
+      "1": {
+        "employeeId": 1,
+        "date": "2025-10-05",
+        "timeSlots": [],
+        "version": 4,
+        "lastSyncWithEmployee": "2025-10-02T07:59:31.686Z",
+        "statistics": {
+          "totalAvailableMinutes": 0,
+          "usedMinutes": 0,
+          "availableMinutes": 0,
+          "breaksMinutes": 0,
+          "travelMinutes": 0,
+          "totalSlots": 0,
+          "availableSlots": 0,
+          "busySlots": 0,
+          "breakSlots": 0,
+          "travelSlots": 0,
+          "utilizationPercentage": 0
+        }
+      }
+    },
+    "2024-12-15": {
+      "EMP25189001": {
+        "employeeId": "EMP25189001",
+        "employeeName": "Jan Kowalski",
+        "date": "2024-12-15",
+        "workingHours": "8:00-16:00",
+        "timeSlots": [
+          {
+            "time": "08:00",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-01T18:40:56.637Z",
+            "updatedBy": "system"
+          },
+          {
+            "time": "08:15",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-01T18:40:56.637Z",
+            "updatedBy": "system"
+          },
+          {
+            "time": "08:30",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-01T18:40:56.637Z",
+            "updatedBy": "system"
+          },
+          {
+            "time": "08:45",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-01T18:40:56.637Z",
+            "updatedBy": "system"
+          },
+          {
+            "time": "09:00",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-01T18:40:56.637Z",
+            "updatedBy": "system"
+          },
+          {
+            "time": "09:15",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-01T18:40:56.637Z",
+            "updatedBy": "system"
+          },
+          {
+            "time": "09:30",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-01T18:40:56.637Z",
+            "updatedBy": "system"
+          },
+          {
+            "time": "09:45",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-01T18:40:56.637Z",
+            "updatedBy": "system"
+          },
+          {
+            "time": "10:00",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-01T18:40:56.637Z",
+            "updatedBy": "system"
+          },
+          {
+            "time": "10:15",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-01T18:40:56.637Z",
+            "updatedBy": "system"
+          },
+          {
+            "time": "10:30",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-01T18:40:56.637Z",
+            "updatedBy": "system"
+          },
+          {
+            "time": "10:45",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-01T18:40:56.637Z",
+            "updatedBy": "system"
+          },
+          {
+            "time": "11:00",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-01T18:40:56.637Z",
+            "updatedBy": "system"
+          },
+          {
+            "time": "11:15",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-01T18:40:56.637Z",
+            "updatedBy": "system"
+          },
+          {
+            "time": "11:30",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-01T18:40:56.637Z",
+            "updatedBy": "system"
+          },
+          {
+            "time": "11:45",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-01T18:40:56.637Z",
+            "updatedBy": "system"
+          },
+          {
+            "time": "12:00",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-01T18:40:56.637Z",
+            "updatedBy": "system"
+          },
+          {
+            "time": "12:15",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-01T18:40:56.637Z",
+            "updatedBy": "system"
+          },
+          {
+            "time": "12:30",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-01T18:40:56.637Z",
+            "updatedBy": "system"
+          },
+          {
+            "time": "12:45",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-01T18:40:56.637Z",
+            "updatedBy": "system"
+          },
+          {
+            "time": "13:00",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-01T18:40:56.637Z",
+            "updatedBy": "system"
+          },
+          {
+            "time": "13:15",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-01T18:40:56.637Z",
+            "updatedBy": "system"
+          },
+          {
+            "time": "13:30",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-01T18:40:56.637Z",
+            "updatedBy": "system"
+          },
+          {
+            "time": "13:45",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-01T18:40:56.637Z",
+            "updatedBy": "system"
+          },
+          {
+            "time": "14:00",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-01T18:40:56.637Z",
+            "updatedBy": "system"
+          },
+          {
+            "time": "14:15",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-01T18:40:56.637Z",
+            "updatedBy": "system"
+          },
+          {
+            "time": "14:30",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-01T18:40:56.637Z",
+            "updatedBy": "system"
+          },
+          {
+            "time": "14:45",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-01T18:40:56.637Z",
+            "updatedBy": "system"
+          },
+          {
+            "time": "15:00",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-01T18:40:56.637Z",
+            "updatedBy": "system"
+          },
+          {
+            "time": "15:15",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-01T18:40:56.637Z",
+            "updatedBy": "system"
+          },
+          {
+            "time": "15:30",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-01T18:40:56.637Z",
+            "updatedBy": "system"
+          },
+          {
+            "time": "15:45",
+            "status": "available",
+            "duration": 15,
+            "activity": null,
+            "location": null,
+            "canBeModified": true,
+            "lastUpdated": "2025-10-01T18:40:56.637Z",
+            "updatedBy": "system"
+          }
+        ],
+        "dailyNotes": "",
+        "emergencyAvailable": true,
+        "maxOvertimeToday": 60,
+        "currentOvertimeUsed": 0,
+        "lastSyncWithEmployee": "2025-10-01T18:40:56.637Z",
+        "version": 1,
+        "statistics": {
+          "totalAvailableMinutes": 480,
+          "usedMinutes": 0,
+          "availableMinutes": 480,
+          "breaksMinutes": 0,
+          "travelMinutes": 0,
+          "totalSlots": 32,
+          "availableSlots": 32,
+          "busySlots": 0,
+          "breakSlots": 0,
+          "travelSlots": 0,
+          "utilizationPercentage": 0
+        }
+      }
+    }
+  },
+  "employeePreferences": {
+    "EMP25189001": {
+      "preferredBreakTimes": [
+        "10:30",
+        "12:00",
+        "15:00"
+      ],
+      "maxContinuousWorkMinutes": 120,
+      "allowOvertimeBooking": true,
+      "emergencyContactPreference": "phone",
+      "autoBreakReminder": true,
+      "travelTimeBuffer": 15
+    },
+    "EMP25189002": {
+      "preferredBreakTimes": [
+        "10:15",
+        "12:45",
+        "15:00"
+      ],
+      "maxContinuousWorkMinutes": 90,
+      "allowOvertimeBooking": true,
+      "emergencyContactPreference": "phone",
+      "autoBreakReminder": true,
+      "travelTimeBuffer": 20
+    },
+    "EMP25092003": {
+      "preferredBreakTimes": [
+        "10:00",
+        "12:00",
+        "14:30"
+      ],
+      "maxContinuousWorkMinutes": 150,
+      "allowOvertimeBooking": false,
+      "emergencyContactPreference": "app",
+      "autoBreakReminder": false,
+      "travelTimeBuffer": 30
+    }
+  },
+  "systemSettings": {
+    "defaultSlotDuration": 15,
+    "minSlotDuration": 15,
+    "maxSlotDuration": 240,
+    "autoSyncInterval": 30,
+    "conflictResolutionStrategy": "admin-priority",
+    "emergencyOverbookingAllowed": true,
+    "weekendSchedulingEnabled": false,
+    "holidaySchedulingEnabled": false,
+    "slotGranularity": "15min",
+    "allowSlotMerging": true,
+    "allowSlotSplitting": true,
+    "quickBookingSlots": [
+      15,
+      30,
+      45,
+      60,
+      90,
+      120
+    ]
+  },
+  "statusDefinitions": {
+    "available": {
+      "label": "Dostępny",
+      "color": "#10B981",
+      "icon": "✅",
+      "canBeBooked": true,
+      "userModifiable": true
+    },
+    "busy": {
+      "label": "Zajęty",
+      "color": "#EF4444",
+      "icon": "🔴",
+      "canBeBooked": false,
+      "userModifiable": false
+    },
+    "break": {
+      "label": "Przerwa",
+      "color": "#F59E0B",
+      "icon": "☕",
+      "canBeBooked": false,
+      "userModifiable": true
+    },
+    "travel": {
+      "label": "Przejazd",
+      "color": "#3B82F6",
+      "icon": "🚗",
+      "canBeBooked": false,
+      "userModifiable": true
+    },
+    "overtime": {
+      "label": "Nadgodziny",
+      "color": "#8B5CF6",
+      "icon": "⏰",
+      "canBeBooked": true,
+      "userModifiable": false
+    },
+    "unavailable": {
+      "label": "Niedostępny",
+      "color": "#6B7280",
+      "icon": "❌",
+      "canBeBooked": false,
+      "userModifiable": false
+    }
+  },
+  "metadata": {
+    "version": "1.0.0",
+    "createdAt": "2025-10-01T10:00:00Z",
+    "lastUpdated": "2025-10-02T07:59:31.686Z",
+    "totalEmployees": 8,
+    "activeDates": [
+      "2025-10-01",
+      "2025-10-02"
+    ],
+    "dataIntegrity": {
+      "lastValidation": "2025-10-01T15:30:00Z",
+      "validationStatus": "passed",
+      "inconsistenciesFound": 0
+    },
+    "systemStats": {
+      "totalScheduledSlots": 624,
+      "totalAvailableSlots": 168,
+      "averageUtilization": 36.2,
+      "peakUtilizationHours": [
+        "10:00-12:00",
+        "13:00-15:00"
+      ],
+      "slotGranularity": "15-minute precision",
+      "averageSlotsPerEmployee": 32,
+      "quickBookingAvailability": 89.2
+    }
+  }
+}

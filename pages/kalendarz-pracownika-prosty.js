@@ -27,8 +27,271 @@ export default function KalendarzPracownikaProsty() {
   const [expandedDay, setExpandedDay] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [currentTime, setCurrentTime] = useState(new Date());
+  const [apiStatus, setApiStatus] = useState('connecting'); // connecting, connected, error, syncing
+  const [lastSync, setLastSync] = useState(null);
 
   const router = useRouter();
+
+  // ==========================================
+  // 🚀 INTEGRACJA Z API KALENDARZA
+  // ==========================================
+
+  // Załaduj harmonogram tygodnia z API
+  const loadWeekScheduleFromAPI = async (employeeId) => {
+    try {
+      setApiStatus('syncing');
+      const weekDates = getCurrentWeekDates();
+      const weekSchedule = {};
+      
+      console.log('📅 Ładuję harmonogram tygodnia z API...');
+      
+      // Pobierz harmonogramy dla każdego dnia tygodnia
+      for (const date of weekDates) {
+        const dateString = date.toISOString().split('T')[0];
+        const dayKey = getDayKeyFromDate(date);
+        
+        try {
+          const response = await fetch(
+            `/api/employee-calendar?action=get-schedule&employeeId=${employeeId}&date=${dateString}`
+          );
+          const data = await response.json();
+          
+          if (data.success && data.schedule && data.schedule.timeSlots) {
+            // Konwertuj harmonogram API na format prostego kalendarza
+            weekSchedule[dayKey] = convertAPIToSimpleFormat(data.schedule);
+            console.log(`✅ ${dayKey} (${dateString}) - załadowany z API`);
+          } else {
+            console.log(`⚠️ ${dayKey} - brak w API, generuję...`);
+            await generateDaySchedule(employeeId, dateString);
+            weekSchedule[dayKey] = getDefaultDaySchedule(dayKey);
+          }
+        } catch (dayError) {
+          console.warn(`❌ Błąd ładowania ${dayKey}:`, dayError);
+          weekSchedule[dayKey] = getDefaultDaySchedule(dayKey);
+        }
+      }
+      
+      setWorkSchedule(weekSchedule);
+      console.log('✅ Tydzień załadowany z API:', weekSchedule);
+      
+      // Backup w localStorage
+      const weekKey = getMonday(selectedWeek).toISOString().split('T')[0];
+      localStorage.setItem(`workSchedule_${employeeId}_${weekKey}_api`, JSON.stringify(weekSchedule));
+      
+      setApiStatus('connected');
+      setLastSync(new Date());
+      
+    } catch (error) {
+      console.error('❌ Błąd ładowania tygodnia z API:', error);
+      setApiStatus('error');
+      loadWeekScheduleFromLocalStorage(employeeId);
+    }
+  };
+
+  // Wygeneruj harmonogram dla pojedynczego dnia
+  const generateDaySchedule = async (employeeId, date) => {
+    try {
+      const response = await fetch('/api/employee-calendar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'generate-schedule',
+          employeeId,
+          date
+        })
+      });
+      
+      const data = await response.json();
+      if (data.success) {
+        console.log(`✅ Harmonogram wygenerowany dla ${date}`);
+        return data.schedule;
+      }
+    } catch (error) {
+      console.error(`❌ Błąd generowania harmonogramu dla ${date}:`, error);
+    }
+    return null;
+  };
+
+  // Konwertuj format API (15-min sloty) na format prostego kalendarza (30-min sloty)
+  const convertAPIToSimpleFormat = (apiSchedule) => {
+    if (!apiSchedule.timeSlots || apiSchedule.timeSlots.length === 0) {
+      return { enabled: false, slots: [], breaks: [] };
+    }
+    
+    const slots = [];
+    const breaks = [];
+    
+    // Grupuj 15-minutowe sloty w 30-minutowe
+    const groupedSlots = {};
+    
+    apiSchedule.timeSlots.forEach(slot => {
+      const [hour, minute] = slot.time.split(':').map(Number);
+      // Grupuj do 30-minutowych bloków (00 i 30)
+      const roundedMinute = minute < 30 ? '00' : '30';
+      const timeKey = `${hour}:${roundedMinute}`;
+      
+      if (!groupedSlots[timeKey]) {
+        groupedSlots[timeKey] = [];
+      }
+      groupedSlots[timeKey].push(slot);
+    });
+    
+    // Konwertuj zgrupowane sloty
+    Object.entries(groupedSlots).forEach(([timeKey, slotGroup]) => {
+      // Jeśli większość slotów w grupie to przerwy
+      const breakCount = slotGroup.filter(s => s.status === 'break').length;
+      const workCount = slotGroup.filter(s => s.status === 'available' || s.status === 'busy').length;
+      
+      if (breakCount > workCount) {
+        breaks.push(timeKey);
+      } else if (workCount > 0) {
+        slots.push(timeKey);
+      }
+    });
+    
+    return {
+      enabled: slots.length > 0,
+      slots: slots.sort(),
+      breaks: breaks.sort()
+    };
+  };
+
+  // Zapisz harmonogram do API
+  const saveScheduleToAPI = async (employeeId, dayKey, daySchedule, date) => {
+    try {
+      // Konwertuj prosty format na 15-minutowe sloty dla API
+      const apiTimeSlots = convertSimpleFormatToAPI(daySchedule, dayKey);
+      
+      const response = await fetch('/api/employee-calendar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'update-schedule',
+          employeeId,
+          date,
+          timeSlots: apiTimeSlots,
+          updatedBy: 'employee'
+        })
+      });
+      
+      const data = await response.json();
+      if (data.success) {
+        console.log(`✅ ${dayKey} (${date}) zapisany do API`);
+        return true;
+      } else {
+        console.error(`❌ Błąd zapisu ${dayKey}:`, data.message);
+        return false;
+      }
+    } catch (error) {
+      console.error(`❌ Błąd komunikacji z API dla ${dayKey}:`, error);
+      return false;
+    }
+  };
+
+  // Konwertuj prosty format (30-min sloty) na format API (15-min sloty) 
+  const convertSimpleFormatToAPI = (daySchedule, dayKey) => {
+    const timeSlots = [];
+    
+    if (!daySchedule.enabled) {
+      return timeSlots; // Pusty dzień
+    }
+    
+    // Generuj 15-minutowe sloty od 7:00 do 22:00
+    for (let hour = 7; hour < 22; hour++) {
+      for (let minute = 0; minute < 60; minute += 15) {
+        const timeString = `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
+        const halfHourKey = `${hour}:${minute < 30 ? '00' : '30'}`;
+        
+        let status = 'available';
+        let activity = null;
+        
+        if (daySchedule.breaks && daySchedule.breaks.includes(halfHourKey)) {
+          status = 'break';
+          activity = 'Przerwa';
+        } else if (daySchedule.slots && daySchedule.slots.includes(halfHourKey)) {
+          status = 'available';
+          activity = null;
+        } else {
+          // Poza godzinami pracy
+          continue;
+        }
+        
+        timeSlots.push({
+          time: timeString,
+          status: status,
+          duration: 15,
+          activity: activity,
+          location: null,
+          canBeModified: true,
+          lastUpdated: new Date().toISOString(),
+          updatedBy: 'employee'
+        });
+      }
+    }
+    
+    return timeSlots;
+  };
+
+  // Helper functions
+  const getDayKeyFromDate = (date) => {
+    const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+    return dayNames[date.getDay()];
+  };
+
+  const getDefaultDaySchedule = (dayKey) => {
+    const isWeekend = dayKey === 'saturday' || dayKey === 'sunday';
+    
+    if (isWeekend) {
+      return { enabled: false, slots: [], breaks: [] };
+    }
+    
+    // Pon-Pt 7:00-15:00 (domyślne godziny pracy)
+    const workSlots = [];
+    const breakSlots = [];
+    
+    for (let hour = 7; hour < 15; hour++) {
+      workSlots.push(`${hour}:00`);
+      workSlots.push(`${hour}:30`);
+      
+      // Przerwa obiadowa 12:00-13:00
+      if (hour === 12) {
+        breakSlots.push(`${hour}:00`);
+        breakSlots.push(`${hour}:30`);
+      }
+    }
+    
+    return {
+      enabled: true,
+      slots: workSlots,
+      breaks: breakSlots
+    };
+  };
+
+  const loadWeekScheduleFromLocalStorage = (employeeId) => {
+    console.log('⚠️ Fallback do localStorage...');
+    setApiStatus('error');
+    
+    const weekKey = getMonday(selectedWeek).toISOString().split('T')[0];
+    const weekScheduleKey = `workSchedule_${employeeId}_${weekKey}`;
+    let savedSchedule = localStorage.getItem(weekScheduleKey);
+    
+    if (!savedSchedule) {
+      savedSchedule = localStorage.getItem(`simpleWorkSchedule_${employeeId}`);
+    }
+    
+    if (savedSchedule) {
+      setWorkSchedule(JSON.parse(savedSchedule));
+      console.log('✅ Załadowano z localStorage');
+    } else {
+      // Domyślny harmonogram
+      const defaultSchedule = {};
+      ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].forEach(dayKey => {
+        defaultSchedule[dayKey] = getDefaultDaySchedule(dayKey);
+      });
+      setWorkSchedule(defaultSchedule);
+      console.log('✅ Użyto domyślnego harmonogramu');
+    }
+  };
 
   // Funkcje do zarządzania tygodniami
   const getMonday = (date) => {
@@ -183,16 +446,15 @@ export default function KalendarzPracownikaProsty() {
   // Efekt reagujący na zmianę tygodnia
   useEffect(() => {
     if (employee && selectedWeek) {
-      const weekKey = getMonday(selectedWeek).toISOString().split('T')[0];
-      const weekScheduleKey = `workSchedule_${employee.id}_${weekKey}`;
-      let savedSchedule = localStorage.getItem(weekScheduleKey);
+      console.log('🔄 Zmiana tygodnia - ładuję nowy harmonogram...');
       
-      if (!savedSchedule) {
-        savedSchedule = localStorage.getItem(`simpleWorkSchedule_${employee.id}`);
-      }
+      // Wybierz źródło danych: API > localStorage
+      const useAPI = true; // Ustaw na false aby używać tylko localStorage
       
-      if (savedSchedule) {
-        setWorkSchedule(JSON.parse(savedSchedule));
+      if (useAPI) {
+        loadWeekScheduleFromAPI(employee.id);
+      } else {
+        loadWeekScheduleFromLocalStorage(employee.id);
       }
     }
   }, [selectedWeek, employee]);
@@ -206,14 +468,76 @@ export default function KalendarzPracownikaProsty() {
     return () => clearInterval(timer);
   }, []);
 
-  const saveSchedule = () => {
-    if (employee) {
-      // Zapisuj harmonogram z datami tygodnia
+  // 🔄 Auto-sync z API co 30 sekund
+  useEffect(() => {
+    if (!employee || !employee.id) return;
+    
+    console.log('🚀 Włączam auto-sync kalendarza...');
+    
+    const autoSyncTimer = setInterval(() => {
+      console.log('🔄 Auto-sync: sprawdzam aktualizacje...');
+      loadWeekScheduleFromAPI(employee.id);
+    }, 30000); // Sync co 30 sekund
+    
+    return () => {
+      console.log('🛑 Wyłączam auto-sync kalendarza');
+      clearInterval(autoSyncTimer);
+    };
+  }, [employee]);
+
+  const saveSchedule = async () => {
+    if (!employee) return;
+    
+    const weekDates = getCurrentWeekDates();
+    const dayKeys = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+    let successCount = 0;
+    let totalDays = 0;
+    
+    console.log('💾 Zapisuję harmonogram tygodnia do API...');
+    
+    try {
+      // Zapisz każdy dzień do API
+      for (let i = 0; i < weekDates.length; i++) {
+        const date = weekDates[i];
+        const dateString = date.toISOString().split('T')[0];
+        const dayKey = dayKeys[i];
+        const daySchedule = workSchedule[dayKey];
+        
+        if (daySchedule) {
+          totalDays++;
+          const success = await saveScheduleToAPI(employee.id, dayKey, daySchedule, dateString);
+          if (success) {
+            successCount++;
+          }
+        }
+      }
+      
+      // Backup w localStorage
       const weekKey = getMonday(selectedWeek).toISOString().split('T')[0];
       const weekScheduleKey = `workSchedule_${employee.id}_${weekKey}`;
       localStorage.setItem(weekScheduleKey, JSON.stringify(workSchedule));
       localStorage.setItem(`simpleWorkSchedule_${employee.id}`, JSON.stringify(workSchedule));
-      alert('Harmonogram został zapisany!');
+      
+      if (successCount === totalDays && totalDays > 0) {
+        alert(`✅ Harmonogram tygodnia został zapisany! (${successCount}/${totalDays} dni)`);
+        console.log(`✅ Wszystkie dni zapisane do API (${successCount}/${totalDays})`);
+      } else if (successCount > 0) {
+        alert(`⚠️ Częściowo zapisano harmonogram (${successCount}/${totalDays} dni). Zobacz konsolę.`);
+        console.warn(`⚠️ Częściowy zapis: ${successCount}/${totalDays} dni`);
+      } else {
+        alert('❌ Błąd zapisu do API. Harmonogram zapisany lokalnie.');
+        console.error('❌ Błąd zapisu wszystkich dni do API');
+      }
+      
+    } catch (error) {
+      console.error('❌ Błąd zapisu harmonogramu:', error);
+      alert('❌ Błąd zapisu do API. Harmonogram zapisany lokalnie.');
+      
+      // Fallback do localStorage
+      const weekKey = getMonday(selectedWeek).toISOString().split('T')[0];
+      const weekScheduleKey = `workSchedule_${employee.id}_${weekKey}`;
+      localStorage.setItem(weekScheduleKey, JSON.stringify(workSchedule));
+      localStorage.setItem(`simpleWorkSchedule_${employee.id}`, JSON.stringify(workSchedule));
     }
   };
 
@@ -539,6 +863,20 @@ export default function KalendarzPracownikaProsty() {
             </div>
             
             <div className="flex items-center space-x-4">
+              {/* 🚀 WSKAŹNIK API */}
+              <div className="flex items-center space-x-2">
+                <div className={`w-3 h-3 rounded-full ${
+                  apiStatus === 'connected' ? 'bg-green-500' :
+                  apiStatus === 'syncing' ? 'bg-yellow-500 animate-pulse' :
+                  apiStatus === 'error' ? 'bg-red-500' : 'bg-gray-400'
+                }`}></div>
+                <span className="text-sm text-gray-600">
+                  {apiStatus === 'connected' ? `API połączone ${lastSync ? ` • ${lastSync.toLocaleTimeString()}` : ''}` :
+                   apiStatus === 'syncing' ? 'Synchronizacja...' :
+                   apiStatus === 'error' ? 'Tryb offline' : 'Łączenie...'}
+                </span>
+              </div>
+              
               <button
                 onClick={() => router.push('/pracownik-panel')}
                 className="flex items-center px-4 py-2 text-gray-600 hover:bg-gray-50 rounded-lg transition-colors"
@@ -549,9 +887,10 @@ export default function KalendarzPracownikaProsty() {
               <button
                 onClick={saveSchedule}
                 className="flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                title={apiStatus === 'connected' ? 'Zapisz do API i localStorage' : 'Zapisz tylko lokalnie (API niedostępne)'}
               >
                 <FiSave className="h-5 w-5 mr-2" />
-                Zapisz
+                Zapisz {apiStatus === 'connected' ? '(API)' : '(Local)'}
               </button>
               <button
                 onClick={handleLogout}

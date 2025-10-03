@@ -1,0 +1,37 @@
+{
+  "timestamp": "2025-09-30T21:04:21.195Z",
+  "totalTests": 17,
+  "passedTests": 17,
+  "failedTests": 0,
+  "successRate": "100.0%",
+  "details": {
+    "folders": {
+      "passed": 6,
+      "failed": 0
+    },
+    "api": {
+      "passed": 3,
+      "failed": 0
+    },
+    "utils": {
+      "passed": 2,
+      "failed": 0
+    },
+    "components": {
+      "passed": 1,
+      "failed": 0
+    },
+    "orders": {
+      "passed": 2,
+      "failed": 0
+    },
+    "dependencies": {
+      "passed": 2,
+      "failed": 0
+    },
+    "nextConfig": {
+      "passed": 1,
+      "failed": 0
+    }
+  }
+}

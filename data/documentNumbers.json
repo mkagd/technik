@@ -1,17 +1,16 @@
 {
   "invoices": {
-    "prefix": "S",
-    "currentNumber": 12,
-    "year": 2025,
-    "month": 9,
-    "format": "S/{number:04d}/{month:02d}/{year:02d}"
+    "currentNumber": 5,
+    "format": "FV-{number:04d}/{month:02d}/{year:02d}",
+    "month": 10,
+    "year": 2025
   },
   "protocols": {
-    "prefix": "P",
-    "currentNumber": 9,
-    "year": 2025,
-    "month": 9,
-    "format": "P/{number:04d}/{month:02d}/{year:02d}"
+    "currentNumber": 3,
+    "format": "PROT-{number:04d}/{month:02d}/{year:02d}",
+    "month": 10,
+    "year": 2025
   },
-  "lastUpdate": "2025-09-29T19:53:41.781Z"
+  "lastReset": "2025-09-30T21:13:42.421Z",
+  "lastUpdate": "2025-10-01T11:30:16.786Z"
 }

@@ -14,7 +14,22 @@ export default async function handler(req, res) {
 
     if (req.method === 'GET') {
         try {
-            const clients = readClients();
+            const { id } = req.query;
+            const clients = await readClients();
+            
+            // Jeśli podano ID, zwróć pojedynczego klienta
+            if (id) {
+                const client = clients.find(c => c.id == id || c.clientId == id);
+                if (client) {
+                    console.log(`✅ Returning client: ${client.name}`);
+                    return res.status(200).json(client);
+                } else {
+                    console.log(`❌ Client not found: ${id}`);
+                    return res.status(404).json({ message: 'Klient nie znaleziony' });
+                }
+            }
+            
+            // Zwróć wszystkich klientów
             console.log(`✅ Returning ${clients.length} clients`);
             return res.status(200).json({ clients });
         } catch (error) {
@@ -31,7 +46,7 @@ export default async function handler(req, res) {
                 return res.status(400).json({ message: 'Brak wymaganych danych (name, phone)' });
             }
 
-            const newClient = addClient(clientData);
+            const newClient = await addClient(clientData);
             if (newClient) {
                 console.log(`✅ Client added: ${newClient.id} - ${newClient.name}`);
                 return res.status(201).json({ client: newClient });
@@ -52,7 +67,7 @@ export default async function handler(req, res) {
                 return res.status(400).json({ message: 'Brak ID klienta' });
             }
 
-            const updatedClient = updateClient({ id, ...updateData });
+            const updatedClient = await updateClient({ id, ...updateData });
             if (updatedClient) {
                 console.log(`✅ Client updated: ${updatedClient.id}`);
                 return res.status(200).json({ client: updatedClient });
@@ -73,7 +88,7 @@ export default async function handler(req, res) {
                 return res.status(400).json({ message: 'Brak ID klienta' });
             }
 
-            const success = deleteClient(id);
+            const success = await deleteClient(id);
             if (success) {
                 console.log(`✅ Client deleted: ${id}`);
                 return res.status(200).json({ message: 'Klient usunięty' });

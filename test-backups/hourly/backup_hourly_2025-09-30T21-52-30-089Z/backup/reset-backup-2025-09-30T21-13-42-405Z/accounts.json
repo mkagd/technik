@@ -1,0 +1,54 @@
+[
+  {
+    "id": "ACC1758912910637",
+    "name": "Oliwia bielaszka",
+    "email": "Bielaszkam2@gmail.com",
+    "phone": "789456789",
+    "password": "e4457f35e94546bce591836d63cf1078",
+    "address": "",
+    "city": "",
+    "street": "",
+    "createdAt": "2025-09-26T18:55:10.637Z",
+    "lastLogin": null,
+    "isActive": true
+  },
+  {
+    "id": "ACC1758913264437",
+    "name": "Mariusz bielaszka",
+    "email": "bielaszkam2@gmail.com",
+    "phone": "789456789",
+    "password": "e4457f35e94546bce591836d63cf1078",
+    "address": "",
+    "city": "",
+    "street": "",
+    "createdAt": "2025-09-26T19:01:04.437Z",
+    "lastLogin": "2025-09-26T20:39:14.535Z",
+    "isActive": true
+  },
+  {
+    "id": "ACC1758913761875",
+    "name": "Test User",
+    "email": "test@example.com",
+    "phone": "123456789",
+    "password": "179ad45c6ce2cb97cf1029e212046e81",
+    "address": "",
+    "city": "",
+    "street": "",
+    "createdAt": "2025-09-26T19:09:21.875Z",
+    "lastLogin": "2025-09-26T19:09:41.767Z",
+    "isActive": true
+  },
+  {
+    "id": "ACC1758913971388",
+    "name": "Oliwia bielaszka ",
+    "email": "bjedjejej@jejejej.pl",
+    "phone": "793392870",
+    "password": "e4457f35e94546bce591836d63cf1078",
+    "address": "",
+    "city": "",
+    "street": "",
+    "createdAt": "2025-09-26T19:12:51.388Z",
+    "lastLogin": null,
+    "isActive": true
+  }
+]

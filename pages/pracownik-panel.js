@@ -44,120 +44,104 @@ export default function PracownikPanel() {
   const [activeTab, setActiveTab] = useState('dashboard');
   const router = useRouter();
 
+  // 🚀 API Functions
+  const loadEmployeeTasks = async (employeeId) => {
+    try {
+      const today = new Date().toISOString().split('T')[0];
+      const response = await fetch(`/api/employee-tasks?employeeId=${employeeId}&date=${today}`);
+      const data = await response.json();
+      
+      if (data.success) {
+        setTodayTasks(data.tasks);
+        
+        // Aktualizuj statystyki na podstawie prawdziwych danych
+        setWeeklyStats({
+          completedTasks: data.stats.completedTasks,
+          totalEarnings: data.stats.completedTasks * 195, // średnia cena za zlecenie
+          averageRating: 4.8,
+          workingHours: Math.min(data.stats.totalTasks * 2, 40), // 2h na zlecenie
+          efficiency: Math.round((data.stats.completedTasks / Math.max(data.stats.totalTasks, 1)) * 100)
+        });
+
+        console.log(`✅ Załadowano ${data.tasks.length} zadań dla pracownika ${employeeId}`);
+      } else {
+        console.error('❌ Błąd ładowania zadań:', data.message);
+        setTodayTasks([]);
+      }
+    } catch (error) {
+      console.error('❌ Błąd API employee-tasks:', error);
+      setTodayTasks([]);
+    }
+  };
+
+  const updateTaskStatus = async (taskId, newStatus) => {
+    try {
+      const response = await fetch('/api/employee-tasks', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'update-status',
+          taskId: taskId,
+          status: newStatus
+        })
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        // Odśwież listę zadań
+        if (employee) {
+          await loadEmployeeTasks(employee.id);
+        }
+        console.log(`✅ Status zlecenia ${taskId} zaktualizowany na: ${newStatus}`);
+      } else {
+        console.error('❌ Błąd aktualizacji statusu:', data.message);
+      }
+    } catch (error) {
+      console.error('❌ Błąd aktualizacji statusu:', error);
+    }
+  };
+
   useEffect(() => {
     // Sprawdź czy pracownik jest zalogowany
-    if (typeof window !== 'undefined') {
-      const employeeSession = localStorage.getItem('employeeSession');
-      if (!employeeSession) {
-        router.push('/pracownik-logowanie');
-        return;
+    const initializePanel = async () => {
+      if (typeof window !== 'undefined') {
+        const employeeSession = localStorage.getItem('employeeSession');
+        if (!employeeSession) {
+          router.push('/pracownik-logowanie');
+          return;
+        }
+
+        const employeeData = JSON.parse(employeeSession);
+        setEmployee(employeeData);
+
+        // 🚀 Ładuj prawdziwe zadania z API
+        await loadEmployeeTasks(employeeData.id);
+
+        // Statystyki miesięczne (będą aktualizowane gdy API zwróci więcej danych)
+        setMonthlyStats({
+          completedTasks: 0,
+          totalEarnings: 0,
+          newClients: 0,
+          returnClients: 0,
+          averageTaskTime: 120
+        });
+
+        // Podstawowe powiadomienia (można rozszerzyć o API notifications)
+        setNotifications([
+          {
+            id: 1,
+            type: 'info',
+            message: 'Panel pracownika został zaktualizowany - teraz używa prawdziwych danych!',
+            time: 'teraz',
+            urgent: false
+          }
+        ]);
+
+        setIsLoading(false);
       }
+    };
 
-      const employeeData = JSON.parse(employeeSession);
-      setEmployee(employeeData);
-
-      // Załaduj zadania na dzisiaj (mock data)
-      const mockTasks = [
-        {
-          id: 1,
-          time: '08:30',
-          customerName: 'Jan Kowalski',
-          address: 'ul. Długa 5, Warszawa',
-          phone: '+48 123 456 789',
-          description: 'Pralka nie włącza się, brak reakcji na przyciski',
-          device: 'Pralka Samsung WW70J5346MW',
-          status: 'pending',
-          estimatedDuration: 90,
-          priority: 'normal',
-          serviceType: 'naprawa'
-        },
-        {
-          id: 2,
-          time: '10:00',
-          customerName: 'Anna Nowak',
-          address: 'ul. Krótka 12, Kraków',
-          phone: '+48 987 654 321',
-          description: 'Zmywarka nie myje naczyń, słaba cyrkulacja wody',
-          device: 'Zmywarka Bosch SMS46GI01E',
-          status: 'in_progress',
-          estimatedDuration: 120,
-          priority: 'high',
-          serviceType: 'serwis'
-        },
-        {
-          id: 3,
-          time: '14:30',
-          customerName: 'Piotr Wiśniewski',
-          address: 'ul. Główna 8, Gdańsk',
-          phone: '+48 555 123 456',
-          description: 'Wymiana filtra w lodówce, przegląd ogólny',
-          device: 'Lodówka LG GBB60PZJZS',
-          status: 'completed',
-          estimatedDuration: 45,
-          priority: 'low',
-          serviceType: 'przegląd'
-        },
-        {
-          id: 4,
-          time: '16:00',
-          customerName: 'Maria Kowalczyk',
-          address: 'ul. Nowa 3, Wrocław',
-          phone: '+48 666 789 123',
-          description: 'Kuchenka nie grzeje, problem z palnikiem',
-          device: 'Kuchenka gazowa Amica',
-          status: 'pending',
-          estimatedDuration: 75,
-          priority: 'high',
-          serviceType: 'naprawa'
-        }
-      ];
-      setTodayTasks(mockTasks);
-
-      // Statystyki tygodniowe
-      setWeeklyStats({
-        completedTasks: 12,
-        totalEarnings: 2340,
-        averageRating: 4.8,
-        workingHours: 38,
-        efficiency: 95
-      });
-
-      // Statystyki miesięczne
-      setMonthlyStats({
-        completedTasks: 48,
-        totalEarnings: 9680,
-        newClients: 15,
-        returnClients: 33,
-        averageTaskTime: 85
-      });
-
-      // Powiadomienia
-      setNotifications([
-        {
-          id: 1,
-          type: 'task',
-          message: 'Nowe zlecenie na jutro - 09:00',
-          time: '10 min temu',
-          urgent: false
-        },
-        {
-          id: 2,
-          type: 'achievement',
-          message: 'Osiągnięto 50 napraw w tym miesiącu!',
-          time: '2 godziny temu',
-          urgent: false
-        },
-        {
-          id: 3,
-          type: 'warning',
-          message: 'Brak części do naprawy - zamów do magazynu',
-          time: '1 dzień temu',
-          urgent: true
-        }
-      ]);
-
-      setIsLoading(false);
-    }
+    initializePanel();
   }, [router]);
 
   // Aktualizuj czas co minutę
@@ -536,12 +520,34 @@ export default function PracownikPanel() {
                         
                         <div className="flex justify-between items-center mt-3 pt-3 border-t border-gray-100">
                           <div className="flex space-x-2">
-                            <button className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded hover:bg-blue-200 transition-colors">
+                            <button 
+                              onClick={() => window.open(`tel:${task.phone}`, '_self')}
+                              className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded hover:bg-blue-200 transition-colors"
+                            >
                               📞 Zadzwoń
                             </button>
-                            <button className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded hover:bg-green-200 transition-colors">
+                            <button 
+                              onClick={() => window.open(`https://www.google.com/maps/search/${encodeURIComponent(task.address)}`, '_blank')}
+                              className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded hover:bg-green-200 transition-colors"
+                            >
                               🗺️ Nawigacja
                             </button>
+                            {task.status === 'pending' && (
+                              <button 
+                                onClick={() => updateTaskStatus(task.id, 'in_progress')}
+                                className="text-xs bg-yellow-100 text-yellow-700 px-2 py-1 rounded hover:bg-yellow-200 transition-colors"
+                              >
+                                ▶️ Rozpocznij
+                              </button>
+                            )}
+                            {task.status === 'in_progress' && (
+                              <button 
+                                onClick={() => updateTaskStatus(task.id, 'completed')}
+                                className="text-xs bg-emerald-100 text-emerald-700 px-2 py-1 rounded hover:bg-emerald-200 transition-colors"
+                              >
+                                ✅ Zakończ
+                              </button>
+                            )}
                           </div>
                           <span className="text-xs text-gray-500 capitalize bg-gray-100 px-2 py-1 rounded">
                             {task.serviceType}

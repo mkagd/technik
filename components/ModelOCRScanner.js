@@ -77,8 +77,11 @@ export default function ModelOCRScanner({ isOpen, onClose, onModelDetected }) {
     }
   };
 
-  // Zapisywanie zdjęcia lokalnie
-  const saveImageLocally = (imageData, metadata = {}) => {
+  // Zapisywanie zdjęcia lokalnie i na serwerze
+  const saveImageLocally = async (imageData, metadata = {}) => {
+    // Import funkcji (dynamiczny import dla komponentów)
+    const { saveDualStorage } = await import('../utils/scanner-server-integration');
+    
     const imageInfo = {
       id: Date.now(),
       imageData: imageData,
@@ -90,11 +93,32 @@ export default function ModelOCRScanner({ isOpen, onClose, onModelDetected }) {
     };
     
     try {
+      // Stara metoda (kompatybilność)
       const existingImages = JSON.parse(localStorage.getItem('scannerImages') || '[]');
       const updatedImages = [imageInfo, ...existingImages.slice(0, 9)]; // Zachowaj max 10 zdjęć
       localStorage.setItem('scannerImages', JSON.stringify(updatedImages));
       setSavedImages(updatedImages);
       console.log('💾 Zdjęcie zapisane lokalnie:', imageInfo.id);
+      
+      // Nowa metoda - zapis na serwerze
+      try {
+        const dualResult = await saveDualStorage(imageData, {
+          orderId: metadata.orderId || 'SCANNER',
+          category: 'model',
+          userId: metadata.userId || 'OCR_SCANNER',
+          description: `OCR Scanner - ${metadata.source || 'Camera'}`,
+          ...metadata
+        });
+        
+        if (dualResult.server.success) {
+          console.log('✅ Zdjęcie również zapisane na serwerze:', dualResult.server.serverUrl);
+        } else {
+          console.log('⚠️ Zdjęcie zapisane tylko lokalnie, serwer niedostępny');
+        }
+      } catch (serverError) {
+        console.log('⚠️ Fallback: zapis tylko lokalny, błąd serwera:', serverError);
+      }
+      
     } catch (error) {
       console.error('Błąd zapisywania zdjęcia:', error);
     }

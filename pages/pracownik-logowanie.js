@@ -14,6 +14,8 @@ export default function PracownikLogowanie() {
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [availableEmployees, setAvailableEmployees] = useState([]);
+  const [showEmployeeList, setShowEmployeeList] = useState(false);
   const router = useRouter();
 
   // Sprawdź czy pracownik jest już zalogowany
@@ -27,45 +29,39 @@ export default function PracownikLogowanie() {
     }
   }, [router]);
 
-  // Mock dane pracowników - w rzeczywistej aplikacji byłyby z bazy danych
-  const employees = [
-    {
-      id: 1,
-      email: 'marek.kowalski@techserwis.pl',
-      password: 'haslo123',
-      firstName: 'Marek',
-      lastName: 'Kowalski',
-      specialization: ['Naprawa AGD', 'Elektronika'],
-      isActive: true
-    },
-    {
-      id: 2,
-      email: 'anna.nowak@techserwis.pl',
-      password: 'haslo123',
-      firstName: 'Anna',
-      lastName: 'Nowak',
-      specialization: ['Elektryk', 'Instalacje'],
-      isActive: true
-    },
-    {
-      id: 3,
-      email: 'piotr.wisniewski@techserwis.pl',
-      password: 'haslo123',
-      firstName: 'Piotr',
-      lastName: 'Wiśniewski',
-      specialization: ['Hydraulik', 'Instalacje wodne'],
-      isActive: true
-    },
-    {
-      id: 4,
-      email: 'jan.kowalczyk@techserwis.pl',
-      password: 'haslo123',
-      firstName: 'Jan',
-      lastName: 'Kowalczyk',
-      specialization: ['Instalacje gazowe', 'Hydraulik'],
-      isActive: false
-    }
-  ];
+  // Pobierz listę dostępnych pracowników dla podpowiedzi
+  useEffect(() => {
+    const fetchEmployees = async () => {
+      try {
+        const response = await fetch('/api/employee-auth', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'get-employees' })
+        });
+        
+        const data = await response.json();
+        if (data.success) {
+          setAvailableEmployees(data.employees);
+        }
+      } catch (error) {
+        console.error('❌ Błąd pobierania pracowników:', error);
+      }
+    };
+
+    fetchEmployees();
+  }, []);
+
+  // 🚀 Pracownicy ładowani dynamicznie z data/employees.json przez API
+  // Usunięto hardkodowanych pracowników - teraz używamy prawdziwej bazy danych
+
+  // Funkcja szybkiego logowania dla demo
+  const quickLogin = (employee) => {
+    setFormData({
+      email: employee.email,
+      password: 'haslo123', // Domyślne hasło dla wszystkich pracowników
+      rememberMe: false
+    });
+  };
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -107,43 +103,47 @@ export default function PracownikLogowanie() {
 
     setIsLoading(true);
 
-    // Symulacja opóźnienia logowania
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    try {
+      // 🚀 Logowanie przez API zamiast hardkodowanych pracowników
+      const response = await fetch('/api/employee-auth', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          action: 'login',
+          email: formData.email,
+          password: formData.password
+        }),
+      });
 
-    // Znajdź pracownika
-    const employee = employees.find(emp =>
-      emp.email === formData.email && emp.password === formData.password
-    );
+      const data = await response.json();
 
-    if (!employee) {
-      setErrors({ general: 'Nieprawidłowy email lub hasło' });
+      if (!response.ok || !data.success) {
+        setErrors({ general: data.message || 'Błąd logowania' });
+        setIsLoading(false);
+        return;
+      }
+
+      // Zapisz sesję pracownika z danymi z API
+      const sessionData = {
+        ...data.employee,
+        rememberMe: formData.rememberMe
+      };
+
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('employeeSession', JSON.stringify(sessionData));
+      }
+
+      console.log('✅ Logowanie udane:', sessionData);
       setIsLoading(false);
-      return;
-    }
+      router.push('/pracownik-panel');
 
-    if (!employee.isActive) {
-      setErrors({ general: 'Konto zostało dezaktywowane. Skontaktuj się z administratorem.' });
+    } catch (error) {
+      console.error('❌ Błąd logowania:', error);
+      setErrors({ general: 'Błąd połączenia z serwerem' });
       setIsLoading(false);
-      return;
     }
-
-    // Zapisz sesję pracownika
-    const sessionData = {
-      id: employee.id,
-      email: employee.email,
-      firstName: employee.firstName,
-      lastName: employee.lastName,
-      specialization: employee.specialization,
-      loginTime: new Date().toISOString(),
-      rememberMe: formData.rememberMe
-    };
-
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('employeeSession', JSON.stringify(sessionData));
-    }
-
-    setIsLoading(false);
-    router.push('/pracownik-panel');
   };
 
   if (isLoggedIn) {
@@ -260,10 +260,46 @@ export default function PracownikLogowanie() {
           </button>
         </form>
 
-        <div className="mt-6 text-center">
-          <p className="text-sm text-gray-600">
-            Dane testowe: marek.kowalski@techserwis.pl / haslo123
-          </p>
+        {/* 🚀 Lista dostępnych pracowników */}
+        <div className="mt-6">
+          <button 
+            onClick={() => setShowEmployeeList(!showEmployeeList)}
+            className="w-full text-sm text-blue-600 hover:text-blue-800 font-medium"
+          >
+            {showEmployeeList ? '▲ Ukryj' : '▼ Pokaż'} dostępnych pracowników ({availableEmployees.length})
+          </button>
+          
+          {showEmployeeList && availableEmployees.length > 0 && (
+            <div className="mt-3 bg-gray-50 rounded-lg p-4 max-h-60 overflow-y-auto">
+              <p className="text-xs text-gray-600 mb-3">Kliknij pracownika aby wypełnić formularz:</p>
+              <div className="space-y-2">
+                {availableEmployees.map((employee) => (
+                  <div 
+                    key={employee.id}
+                    onClick={() => quickLogin(employee)}
+                    className="cursor-pointer p-3 bg-white rounded-md hover:bg-blue-50 transition-colors border"
+                  >
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <p className="font-medium text-sm text-gray-900">{employee.name}</p>
+                        <p className="text-xs text-gray-600">{employee.email}</p>
+                        <p className="text-xs text-blue-600">{employee.specializations?.slice(0, 2).join(', ')}</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-xs text-gray-500">ID: {employee.id}</p>
+                        {employee.rating && (
+                          <p className="text-xs text-yellow-600">⭐ {employee.rating}</p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <p className="text-xs text-gray-500 mt-3 text-center">
+                Hasło dla wszystkich: <code className="bg-gray-200 px-1 rounded">haslo123</code>
+              </p>
+            </div>
+          )}
         </div>
 
         <div className="mt-8 text-center">

@@ -270,15 +270,19 @@ export default function MojeZamowienie() {
         }
     };
 
-    const filteredOrders = orders.filter(order =>
-        order.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        order.service.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        order.status.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (order.reportNumber && order.reportNumber.toLowerCase().includes(searchQuery.toLowerCase())) ||
-        order.phone.includes(searchQuery) ||
-        (order.email && order.email.toLowerCase().includes(searchQuery.toLowerCase())) ||
-        order.description.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    const filteredOrders = orders.filter(order => {
+        const searchLower = searchQuery.toLowerCase();
+        return (
+            (order.id && String(order.id).toLowerCase().includes(searchLower)) ||
+            (order.orderNumber && order.orderNumber.toLowerCase().includes(searchLower)) ||
+            (order.service && order.service.toLowerCase().includes(searchLower)) ||
+            (order.status && order.status.toLowerCase().includes(searchLower)) ||
+            (order.reportNumber && order.reportNumber.toLowerCase().includes(searchLower)) ||
+            (order.phone && order.phone.includes(searchQuery)) ||
+            (order.email && order.email.toLowerCase().includes(searchLower)) ||
+            (order.description && order.description.toLowerCase().includes(searchLower))
+        );
+    });
 
     const getStatusIcon = (status) => {
         switch (status) {
@@ -294,7 +298,7 @@ export default function MojeZamowienie() {
     };
 
     // Funkcja uwierzytelniania dla niezalogowanych użytkowników
-    const handleGuestLogin = (e) => {
+    const handleGuestLogin = async (e) => {
         e.preventDefault();
         setIsLoading(true);
         setLoginError('');
@@ -312,37 +316,86 @@ export default function MojeZamowienie() {
 
         // Sprawdź format numeru zamówienia - akceptuj różne prefiksy
         const validFormats = [
-            /^(ZG|US|RZ|ZL)-\d{4}-\d{4}$/, // Nowe formaty: ZG, US, RZ + stary ZL
-            /^\d{13}$/ // Stary format (timestamp)
+            /^ORD[WUATCQPEMRVFNSIX]\d{9}$/, // Nowy format: ORDW252750001 (13 znaków: ORD + W + 9 cyfr)
+            /^CLI[WUATCQPEMRVFNSIX]\d{9}$/, // Format klienta: CLIW252750001 (13 znaków)
+            /^VIS[WUATCQPEMRVFNSIX]\d{9}$/, // Format wizyty: VISW252750001 (13 znaków)
+            /^(ZG|US|RZ|ZL)-\d{4}-\d{4}$/, // Stare formaty: ZG, US, RZ, ZL
+            /^\d{13}$/ // Bardzo stary format (timestamp)
         ];
 
         const isValidFormat = validFormats.some(format => cleanOrderNumber.match(format));
 
         if (!isValidFormat) {
-            setLoginError('Nieprawidłowy format numeru zamówienia (np. ZG-2025-0001, US-2025-0001, RZ-2025-0001)');
+            setLoginError('Nieprawidłowy format numeru zamówienia (np. ORDW252750001, ZG-2025-0001)');
             setIsLoading(false);
             return;
         }
 
-        // Sprawdź czy zamówienie istnieje i czy numer telefonu się zgadza
-        const foundOrder = orders.find(order => {
-            const orderCleanPhone = order.phone.replace(/[\s\-\(\)]/g, '');
-            const orderMatchId = order.id === cleanOrderNumber;
-            const orderMatchReportNumber = order.reportNumber === cleanOrderNumber;
+        try {
+            // 🆕 NOWY SPOSÓB: Zapytaj API
+            if (cleanOrderNumber.match(/^ORD[WUATCQPEMRVFNSIX]\d{9}$/)) {
+                console.log('🔍 Searching in API:', cleanOrderNumber);
+                
+                const response = await fetch(`/api/orders/search?orderNumber=${cleanOrderNumber}&phone=${encodeURIComponent(cleanPhoneNumber)}`);
+                const data = await response.json();
 
-            return (orderMatchId || orderMatchReportNumber) && orderCleanPhone === cleanPhoneNumber;
-        });
+                if (response.ok) {
+                    // Przekształć odpowiedź API na format używany przez komponent
+                    const orderForDisplay = {
+                        id: data.order.orderNumber,
+                        type: 'Rezerwacja online',
+                        service: data.order.deviceType || 'Usługa serwisowa',
+                        status: getStatusLabel(data.order.status),
+                        statusColor: getStatusColor(getStatusLabel(data.order.status)),
+                        date: data.order.dateAdded ? data.order.dateAdded.split('T')[0] : new Date().toISOString().split('T')[0],
+                        address: data.order.address || 'Nie podano',
+                        phone: data.order.clientPhone || 'Nie podano',
+                        email: data.order.email || 'Nie podano',
+                        description: data.order.description || 'Brak opisu',
+                        estimatedTime: getEstimatedTime(data.order.status, 'ORD'),
+                        price: getPrice(data.order.status),
+                        orderNumber: data.order.orderNumber,
+                        clientName: data.order.clientName,
+                        deviceType: data.order.deviceType,
+                        brand: data.order.brand,
+                        model: data.order.model,
+                        visits: data.order.visits || [],
+                        isNewSystem: true
+                    };
 
-        setTimeout(() => {
+                    console.log('✅ Order found in API:', orderForDisplay);
+                    setIsAuthenticated(true);
+                    setOrders([orderForDisplay]);
+                } else {
+                    console.error('❌ API error:', data);
+                    setLoginError(data.error || 'Nie znaleziono zamówienia z podanym numerem i telefonem');
+                }
+                setIsLoading(false);
+                return;
+            }
+
+            // 📦 STARY SPOSÓB: Szukaj w localStorage (dla kompatybilności)
+            console.log('🔍 Searching in localStorage (legacy):', cleanOrderNumber);
+            const foundOrder = orders.find(order => {
+                const orderCleanPhone = order.phone.replace(/[\s\-\(\)]/g, '');
+                const orderMatchId = order.id === cleanOrderNumber;
+                const orderMatchReportNumber = order.reportNumber === cleanOrderNumber;
+
+                return (orderMatchId || orderMatchReportNumber) && orderCleanPhone === cleanPhoneNumber;
+            });
+
             if (foundOrder) {
                 setIsAuthenticated(true);
-                // Pokaż tylko to konkretne zamówienie
                 setOrders([foundOrder]);
             } else {
                 setLoginError('Nie znaleziono zamówienia z podanym numerem i telefonem');
             }
+        } catch (error) {
+            console.error('❌ Error during search:', error);
+            setLoginError('Wystąpił błąd podczas wyszukiwania. Spróbuj ponownie.');
+        } finally {
             setIsLoading(false);
-        }, 1000);
+        }
     };
 
     const handleLogout = () => {
@@ -491,6 +544,79 @@ export default function MojeZamowienie() {
         }
     }, []);
 
+    // Obsługa parametrów URL z emaila (auto-login)
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            const urlParams = new URLSearchParams(window.location.search);
+            const orderFromUrl = urlParams.get('order');
+            const phoneFromUrl = urlParams.get('phone');
+
+            if (orderFromUrl && phoneFromUrl) {
+                // Wypełnij formularz danymi z URL
+                setLoginForm({
+                    orderNumber: orderFromUrl,
+                    phoneNumber: phoneFromUrl
+                });
+
+                // Automatycznie zaloguj
+                setTimeout(() => {
+                    handleOrderLogin(orderFromUrl, phoneFromUrl);
+                }, 500);
+            }
+        }
+    }, []);
+
+    // Funkcja pomocnicza do logowania z parametrów
+    const handleOrderLogin = async (orderNum, phone) => {
+        try {
+            setIsLoading(true);
+            setLoginError('');
+
+            // Sprawdź czy to nowy format (ORDW...)
+            const isNewFormat = /^ORD[A-Z]\d{9}$/.test(orderNum);
+
+            if (isNewFormat) {
+                // Wywołaj endpoint wyszukiwania
+                const response = await fetch(`/api/orders/search?orderNumber=${encodeURIComponent(orderNum)}&phone=${encodeURIComponent(phone)}`);
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Nie znaleziono zamówienia');
+                }
+
+                const data = await response.json();
+
+                if (data.order) {
+                    // Znaleziono zamówienie - zaloguj użytkownika
+                    setIsAuthenticated(true);
+                    setOrders([data.order]);
+                    setSelectedOrder(data.order);
+                } else {
+                    throw new Error('Nie znaleziono zamówienia o podanych danych');
+                }
+            } else {
+                // Stary format - przeszukaj lokalnie
+                const allOrders = getAllOrders();
+                const foundOrder = allOrders.find(order =>
+                    order.id === orderNum && order.phone === phone
+                );
+
+                if (foundOrder) {
+                    setIsAuthenticated(true);
+                    setOrders([foundOrder]);
+                    setSelectedOrder(foundOrder);
+                } else {
+                    throw new Error('Nie znaleziono zamówienia o podanych danych');
+                }
+            }
+        } catch (error) {
+            console.error('Błąd automatycznego logowania:', error);
+            setLoginError(error.message || 'Nie udało się załadować zamówienia. Spróbuj zalogować się ręcznie.');
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
     return (
         <div className="min-h-screen bg-gray-50">
             {/* Header */}
@@ -570,7 +696,7 @@ export default function MojeZamowienie() {
                                             <input
                                                 type="text"
                                                 id="orderNumber"
-                                                placeholder="np. ZG-2024-0001 lub ZL-2024-0001"
+                                                placeholder="np. ORDW252750001 lub ZG-2024-0001"
                                                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                                 value={loginForm.orderNumber}
                                                 onChange={(e) => setLoginForm(prev => ({ ...prev, orderNumber: e.target.value.toUpperCase() }))}
@@ -629,8 +755,9 @@ export default function MojeZamowienie() {
                                         <h4 className="font-medium text-blue-900 mb-2">💡 Wskazówki:</h4>
                                         <ul className="text-blue-800 text-sm space-y-1">
                                             <li>• Numer zamówienia znajdziesz w e-mailu potwierdzającym lub SMS-ie</li>
-                                            <li>• Szybkie zgłoszenia zaczynają się od "ZG-"</li>
-                                            <li>• Pełne rezerwacje zaczynają się od "ZL-"</li>
+                                            <li>• <strong>Nowe zamówienia</strong> zaczynają się od "ORD" (np. ORDW252750001)</li>
+                                            <li>• Szybkie zgłoszenia zaczynają się od "ZG-" (stary format)</li>
+                                            <li>• Pełne rezerwacje zaczynają się od "ZL-" (stary format)</li>
                                             <li>• Podaj dokładnie ten sam numer telefonu co przy zgłoszeniu</li>
                                         </ul>
                                     </div>
@@ -885,12 +1012,13 @@ export default function MojeZamowienie() {
                                                     <span className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-xs font-medium">
                                                         {order.type}
                                                     </span>
-                                                    {(order.isUnified || order.isLegacy || order.isOldBooking || order.isOldOrder) && (
+                                                    {(order.isNewSystem || order.isUnified || order.isLegacy || order.isOldBooking || order.isOldOrder) && (
                                                         <span className="px-2 py-1 bg-blue-50 text-blue-700 rounded text-xs">
-                                                            {order.isUnified ? '🆕 Nowy system' :
-                                                                order.isLegacy ? '📋 Zgłoszenie' :
-                                                                    order.isOldBooking ? '📱 Szybkie' :
-                                                                        '📝 Rezerwacja'}
+                                                            {order.isNewSystem ? '🆕 Nowy format' :
+                                                                order.isUnified ? '🆕 Nowy system' :
+                                                                    order.isLegacy ? '📋 Zgłoszenie' :
+                                                                        order.isOldBooking ? '📱 Szybkie' :
+                                                                            '📝 Rezerwacja'}
                                                         </span>
                                                     )}
                                                 </div>
@@ -987,13 +1115,32 @@ export default function MojeZamowienie() {
 
                                 <div>
                                     <div className="text-sm text-gray-500 mb-1">Typ zamówienia</div>
-                                    <div className="font-medium text-gray-900">{selectedOrder.type}</div>
+                                    <div className="font-medium text-gray-900">
+                                        {selectedOrder.type}
+                                        {selectedOrder.isNewSystem && (
+                                            <span className="ml-2 px-2 py-0.5 bg-blue-100 text-blue-700 rounded text-xs">
+                                                🆕 Nowy format
+                                            </span>
+                                        )}
+                                    </div>
                                 </div>
 
                                 <div>
-                                    <div className="text-sm text-gray-500 mb-1">Usługa</div>
-                                    <div className="font-medium text-gray-900">{selectedOrder.service}</div>
+                                    <div className="text-sm text-gray-500 mb-1">Typ urządzenia</div>
+                                    <div className="font-medium text-gray-900">
+                                        {selectedOrder.deviceType || selectedOrder.service}
+                                        {selectedOrder.brand && selectedOrder.brand !== 'Nie określono' && (
+                                            <span className="ml-2 text-gray-500">({selectedOrder.brand})</span>
+                                        )}
+                                    </div>
                                 </div>
+
+                                {selectedOrder.model && selectedOrder.model !== 'Nie określono' && (
+                                    <div>
+                                        <div className="text-sm text-gray-500 mb-1">Model urządzenia</div>
+                                        <div className="font-medium text-gray-900">{selectedOrder.model}</div>
+                                    </div>
+                                )}
 
                                 <div>
                                     <div className="text-sm text-gray-500 mb-1">Opis problemu</div>

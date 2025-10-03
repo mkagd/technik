@@ -1,0 +1,411 @@
+[
+  {
+    "id": "EMP25189001",
+    "name": "Jan Kowalski",
+    "email": "jan.kowalski@techserwis.pl",
+    "phone": "+48 123 456 789",
+    "specializations": [
+      "Serwis AGD",
+      "Naprawa pralek"
+    ],
+    "isActive": true,
+    "dateAdded": "2025-07-08T22:25:15.180Z",
+    "address": "Warszawa",
+    "workingHours": "8:00-16:00",
+    "experience": "5 lat",
+    "rating": 4.8,
+    "completedJobs": 245,
+    "oldId": "EMP25189001",
+    "migrationDate": "2025-09-28T22:12:00.370Z",
+    "migrationSource": "unified-id-system",
+    "agdSpecializations": {
+      "primaryCategory": "AGD",
+      "devices": [
+        {
+          "type": "pralka",
+          "brands": [
+            "Samsung",
+            "LG"
+          ],
+          "experienceYears": 8,
+          "level": "beginner",
+          "certifications": [
+            "Samsung Service Professional",
+            "LG Authorized Service"
+          ]
+        },
+        {
+          "type": "zmywarka",
+          "brands": [
+            "Samsung",
+            "LG",
+            "Bosch",
+            "Whirlpool"
+          ],
+          "experienceYears": 1,
+          "level": "beginner",
+          "certifications": [
+            "Samsung Service Professional",
+            "LG Authorized Service",
+            "Bosch Technical Expert"
+          ]
+        },
+        {
+          "type": "lodówka",
+          "brands": [
+            "Samsung",
+            "LG",
+            "Bosch",
+            "Whirlpool"
+          ],
+          "experienceYears": 3,
+          "level": "expert",
+          "certifications": [
+            "Samsung Service Professional"
+          ]
+        },
+        {
+          "type": "piekarnik",
+          "brands": [
+            "Samsung",
+            "LG",
+            "Bosch",
+            "Whirlpool"
+          ],
+          "experienceYears": 6,
+          "level": "expert",
+          "certifications": [
+            "Samsung Service Professional",
+            "LG Authorized Service"
+          ]
+        }
+      ],
+      "specialSkills": [
+        "Diagnostyka elektroniczna",
+        "Naprawa układów chłodniczych"
+      ]
+    },
+    "equipment": {
+      "personalTools": [
+        "Multimetr Fluke 117",
+        "Zestaw kluczy do AGD",
+        "Pompa kontroli ciśnienia",
+        "Tester izolacji",
+        "Walizka narzędziowa 150 elementów",
+        "Klucze dynamometryczne",
+        "Oscyloskop cyfrowy"
+      ],
+      "specializedEquipment": [
+        "Analizator parametrów sieci",
+        "Tester silników elektrycznych",
+        "Zestaw do obsługi układów chłodniczych"
+      ],
+      "mobileWorkshop": true,
+      "toolsValue": 6301,
+      "lastInventoryCheck": "2025-08-21"
+    },
+    "vehicle": {
+      "make": "Ford",
+      "model": "Sprinter",
+      "year": 2021,
+      "licensePlate": "WA76927",
+      "fuelType": "diesel",
+      "capacity": {
+        "volume": "15m³",
+        "weight": "1716kg"
+      },
+      "features": [
+        "Klimatyzacja",
+        "Regały na narzędzia",
+        "Oświetlenie LED",
+        "Gniazdka 230V"
+      ],
+      "mileage": 41339,
+      "nextService": "2025-10-18"
+    },
+    "serviceArea": {
+      "primaryCity": "Warszawa",
+      "radius": 30,
+      "preferredDistricts": [
+        "Mokotów",
+        "Ursynów",
+        "Wilanów",
+        "Ochota",
+        "Wola"
+      ],
+      "maxDistanceKm": 40,
+      "avoidAreas": [
+        "Centrum w godzinach szczytu"
+      ],
+      "travelTimePreference": "minimize"
+    },
+    "performance": {
+      "monthlyStats": {
+        "completedOrders": 32,
+        "averageTimePerOrder": 139,
+        "customerSatisfaction": "4.7",
+        "onTimeArrival": 98,
+        "firstTimeFixRate": 74,
+        "repeatCustomers": 50
+      },
+      "specialtyMetrics": {
+        "agdRepairSuccess": 82,
+        "complexRepairCapability": 68,
+        "partsOrderAccuracy": 97,
+        "diagnosticAccuracy": 87
+      }
+    },
+    "availability": {
+      "vacationDays": {
+        "total": 26,
+        "used": 0,
+        "planned": []
+      },
+      "overtime": {
+        "maxHoursPerWeek": 10,
+        "currentWeekHours": 5,
+        "overtimeRate": 1.5
+      },
+      "emergencyAvailability": true
+    },
+    "certifications": {
+      "current": [
+        {
+          "name": "Uprawnienia elektryczne do 1kV",
+          "issuer": "UDT",
+          "validUntil": "2026-05-15",
+          "level": "E"
+        },
+        {
+          "name": "Obsługa urządzeń gazowych",
+          "issuer": "Gazownictwo",
+          "validUntil": "2025-12-20",
+          "level": "II"
+        }
+      ],
+      "required": [
+        "Uprawnienia elektryczne",
+        "Bezpieczeństwo pracy"
+      ],
+      "inProgress": [
+        "Nowe technologie AGD 2025"
+      ]
+    },
+    "metadata": {
+      "createdAt": "2025-07-08T22:25:15.180Z",
+      "updatedAt": "2025-09-30T20:21:02.155Z",
+      "lastModifiedBy": "enhancement-script-v2",
+      "version": 2,
+      "dataCompleteness": "enhanced",
+      "enhancementDate": "2025-09-30T20:21:02.155Z",
+      "profileCompleteness": 95
+    }
+  },
+  {
+    "id": "EMP25189002",
+    "name": "Anna Nowak",
+    "email": "anna.nowak@techserwis.pl",
+    "phone": "+48 987 654 321",
+    "specializations": [
+      "Serwis komputerowy",
+      "Naprawa laptopów"
+    ],
+    "isActive": true,
+    "dateAdded": "2025-07-08T22:25:15.180Z",
+    "address": "Kraków",
+    "workingHours": "9:00-17:00",
+    "experience": "3 lata",
+    "rating": 4.9,
+    "completedJobs": 189,
+    "oldId": "EMP25189002",
+    "migrationDate": "2025-09-28T22:12:00.371Z",
+    "migrationSource": "unified-id-system",
+    "agdSpecializations": null,
+    "equipment": {
+      "personalTools": [
+        "Multimetr Fluke 117",
+        "Zestaw kluczy do AGD",
+        "Pompa kontroli ciśnienia",
+        "Tester izolacji",
+        "Walizka narzędziowa 150 elementów",
+        "Klucze dynamometryczne",
+        "Oscyloskop cyfrowy"
+      ],
+      "specializedEquipment": [],
+      "mobileWorkshop": true,
+      "toolsValue": 9949,
+      "lastInventoryCheck": "2025-08-16"
+    },
+    "vehicle": {
+      "make": "Fiat",
+      "model": "Crafter",
+      "year": 2023,
+      "licensePlate": "WA77112",
+      "fuelType": "diesel",
+      "capacity": {
+        "volume": "14m³",
+        "weight": "1085kg"
+      },
+      "features": [
+        "Klimatyzacja",
+        "Regały na narzędzia"
+      ],
+      "mileage": 61281,
+      "nextService": "2025-11-22"
+    },
+    "serviceArea": {
+      "primaryCity": "Kraków",
+      "radius": 15,
+      "preferredDistricts": [
+        "Mokotów",
+        "Ursynów"
+      ],
+      "maxDistanceKm": 32,
+      "avoidAreas": [
+        "Centrum w godzinach szczytu"
+      ],
+      "travelTimePreference": "minimize"
+    },
+    "performance": {
+      "monthlyStats": {
+        "completedOrders": 22,
+        "averageTimePerOrder": 135,
+        "customerSatisfaction": "5.0",
+        "onTimeArrival": 94,
+        "firstTimeFixRate": 72,
+        "repeatCustomers": 48
+      },
+      "specialtyMetrics": null
+    },
+    "availability": {
+      "vacationDays": {
+        "total": 26,
+        "used": 10,
+        "planned": []
+      },
+      "overtime": {
+        "maxHoursPerWeek": 10,
+        "currentWeekHours": 1,
+        "overtimeRate": 1.5
+      },
+      "emergencyAvailability": true
+    },
+    "certifications": {
+      "current": [],
+      "required": [],
+      "inProgress": []
+    },
+    "metadata": {
+      "createdAt": "2025-07-08T22:25:15.180Z",
+      "updatedAt": "2025-09-30T20:21:02.155Z",
+      "lastModifiedBy": "enhancement-script-v2",
+      "version": 2,
+      "dataCompleteness": "enhanced",
+      "enhancementDate": "2025-09-30T20:21:02.155Z",
+      "profileCompleteness": 75
+    }
+  },
+  {
+    "id": "EMP25189003",
+    "name": "asf",
+    "email": "bielaszkm2@gmail.com",
+    "phone": "123123123",
+    "specializations": [
+      "123"
+    ],
+    "isActive": true,
+    "dateAdded": "2025-07-08T22:25:15.182Z",
+    "address": "12",
+    "workingHours": "123",
+    "experience": "123",
+    "rating": 5,
+    "completedJobs": 0,
+    "oldId": "EMP25189003",
+    "migrationDate": "2025-09-28T22:12:00.371Z",
+    "migrationSource": "unified-id-system",
+    "agdSpecializations": null,
+    "equipment": {
+      "personalTools": [
+        "Multimetr Fluke 117",
+        "Zestaw kluczy do AGD",
+        "Pompa kontroli ciśnienia",
+        "Tester izolacji",
+        "Walizka narzędziowa 150 elementów",
+        "Klucze dynamometryczne"
+      ],
+      "specializedEquipment": [],
+      "mobileWorkshop": true,
+      "toolsValue": 13377,
+      "lastInventoryCheck": "2025-09-04"
+    },
+    "vehicle": {
+      "make": "Ford",
+      "model": "Sprinter",
+      "year": 2023,
+      "licensePlate": "WA92808",
+      "fuelType": "electric",
+      "capacity": {
+        "volume": "13m³",
+        "weight": "1691kg"
+      },
+      "features": [
+        "Klimatyzacja",
+        "Regały na narzędzia",
+        "Oświetlenie LED",
+        "Gniazdka 230V"
+      ],
+      "mileage": 42182,
+      "nextService": "2025-11-24"
+    },
+    "serviceArea": {
+      "primaryCity": "12",
+      "radius": 25,
+      "preferredDistricts": [
+        "Mokotów",
+        "Ursynów",
+        "Wilanów"
+      ],
+      "maxDistanceKm": 35,
+      "avoidAreas": [],
+      "travelTimePreference": "minimize"
+    },
+    "performance": {
+      "monthlyStats": {
+        "completedOrders": 32,
+        "averageTimePerOrder": 104,
+        "customerSatisfaction": "4.4",
+        "onTimeArrival": 93,
+        "firstTimeFixRate": 90,
+        "repeatCustomers": 31
+      },
+      "specialtyMetrics": null
+    },
+    "availability": {
+      "vacationDays": {
+        "total": 26,
+        "used": 6,
+        "planned": []
+      },
+      "overtime": {
+        "maxHoursPerWeek": 10,
+        "currentWeekHours": 5,
+        "overtimeRate": 1.5
+      },
+      "emergencyAvailability": true
+    },
+    "certifications": {
+      "current": [],
+      "required": [],
+      "inProgress": []
+    },
+    "metadata": {
+      "createdAt": "2025-07-08T22:25:15.182Z",
+      "updatedAt": "2025-09-30T20:21:02.155Z",
+      "lastModifiedBy": "enhancement-script-v2",
+      "version": 2,
+      "dataCompleteness": "enhanced",
+      "enhancementDate": "2025-09-30T20:21:02.155Z",
+      "profileCompleteness": 75
+    }
+  }
+]

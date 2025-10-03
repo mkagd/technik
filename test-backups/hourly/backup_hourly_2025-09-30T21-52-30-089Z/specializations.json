@@ -1,0 +1,30 @@
+[
+  {
+    "id": "spec-001",
+    "name": "Serwis AGD",
+    "description": "Naprawa sprzętu AGD",
+    "category": "agd",
+    "isActive": true
+  },
+  {
+    "id": "spec-002",
+    "name": "Naprawa pralek",
+    "description": "Specjalizacja w pralnikach",
+    "category": "agd",
+    "isActive": true
+  },
+  {
+    "id": "spec-003",
+    "name": "Serwis komputerowy",
+    "description": "Naprawa komputerów stacjonarnych",
+    "category": "it",
+    "isActive": true
+  },
+  {
+    "id": "spec-004",
+    "name": "Naprawa laptopów",
+    "description": "Serwis laptopów i notebooków",
+    "category": "it",
+    "isActive": true
+  }
+]

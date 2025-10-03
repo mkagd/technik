@@ -102,28 +102,45 @@ export default function ModelAIScanner({ isOpen, onClose, onModelDetected }) {
 
   // Funkcjonalność latarki
   const toggleFlashlight = async () => {
-    if (!stream) return;
+    if (!stream) {
+      console.warn('🔦 Brak dostępu do stream - resetuję stan latarki');
+      setFlashlightOn(false);
+      return;
+    }
     
     try {
       const videoTrack = stream.getVideoTracks()[0];
+      if (!videoTrack) {
+        console.warn('🔦 Brak video track - resetuję stan latarki');
+        setFlashlightOn(false);
+        return;
+      }
+      
       const capabilities = videoTrack.getCapabilities();
       
       if (capabilities.torch) {
+        const newFlashlightState = !flashlightOn;
         await videoTrack.applyConstraints({
-          advanced: [{ torch: !flashlightOn }]
+          advanced: [{ torch: newFlashlightState }]
         });
-        setFlashlightOn(!flashlightOn);
+        setFlashlightOn(newFlashlightState);
+        console.log(`🔦 Latarka ${newFlashlightState ? 'włączona' : 'wyłączona'}`);
       } else {
         alert('Latarka nie jest dostępna na tym urządzeniu');
+        setFlashlightOn(false);
       }
     } catch (error) {
       console.error('Błąd obsługi latarki:', error);
-      alert('Nie można włączyć latarki');
+      setFlashlightOn(false); // Reset stanu przy błędzie
+      alert('Nie można zmienić stanu latarki');
     }
   };
 
-  // Zapisywanie zdjęcia lokalnie
-  const saveImageLocally = (imageData, metadata = {}) => {
+  // Zapisywanie zdjęcia lokalnie i na serwerze
+  const saveImageLocally = async (imageData, metadata = {}) => {
+    // Import funkcji (dynamiczny import dla komponentów)
+    const { saveDualStorage } = await import('../utils/scanner-server-integration');
+    
     const imageInfo = {
       id: Date.now(),
       imageData: imageData,
@@ -135,11 +152,32 @@ export default function ModelAIScanner({ isOpen, onClose, onModelDetected }) {
     };
     
     try {
+      // Stara metoda (kompatybilność)
       const existingImages = JSON.parse(localStorage.getItem('scannerImages') || '[]');
       const updatedImages = [imageInfo, ...existingImages.slice(0, 9)]; // Zachowaj max 10 zdjęć
       localStorage.setItem('scannerImages', JSON.stringify(updatedImages));
       setSavedImages(updatedImages);
       console.log('💾 Zdjęcie zapisane lokalnie:', imageInfo.id);
+      
+      // Nowa metoda - zapis na serwerze
+      try {
+        const dualResult = await saveDualStorage(imageData, {
+          orderId: metadata.orderId || 'SCANNER',
+          category: 'model',
+          userId: metadata.userId || 'AI_SCANNER',
+          description: `AI Scanner - ${metadata.source || 'Camera'}`,
+          ...metadata
+        });
+        
+        if (dualResult.server.success) {
+          console.log('✅ Zdjęcie również zapisane na serwerze:', dualResult.server.serverUrl);
+        } else {
+          console.log('⚠️ Zdjęcie zapisane tylko lokalnie, serwer niedostępny');
+        }
+      } catch (serverError) {
+        console.log('⚠️ Fallback: zapis tylko lokalny, błąd serwera:', serverError);
+      }
+      
     } catch (error) {
       console.error('Błąd zapisywania zdjęcia:', error);
     }
@@ -209,7 +247,7 @@ export default function ModelAIScanner({ isOpen, onClose, onModelDetected }) {
   };
 
   // Przechwycenie zdjęcia
-  const capturePhoto = () => {
+  const capturePhoto = async () => {
     if (!videoRef.current || !canvasRef.current) return;
 
     const video = videoRef.current;
@@ -222,6 +260,23 @@ export default function ModelAIScanner({ isOpen, onClose, onModelDetected }) {
     context.drawImage(video, 0, 0);
     const compressedImageDataUrl = compressImage(canvas, 0.6, 600);
     
+    // NAJPIERW wyłącz latarkę (zanim zatrzymamy kamerę)
+    if (flashlightOn && stream) {
+      try {
+        const videoTrack = stream.getVideoTracks()[0];
+        if (videoTrack && videoTrack.getCapabilities().torch) {
+          await videoTrack.applyConstraints({
+            advanced: [{ torch: false }]
+          });
+        }
+        setFlashlightOn(false);
+        console.log('🔦 Latarka wyłączona po zrobieniu zdjęcia');
+      } catch (error) {
+        console.error('Błąd wyłączania latarki:', error);
+        setFlashlightOn(false); // Wymuś reset stanu
+      }
+    }
+    
     // Zapisz zdjęcie lokalnie z metadanymi
     saveImageLocally(compressedImageDataUrl, {
       resolution: `${canvas.width}x${canvas.height}`,
@@ -230,12 +285,6 @@ export default function ModelAIScanner({ isOpen, onClose, onModelDetected }) {
     });
     
     setCapturedImage(compressedImageDataUrl);
-    
-    // Wyłącz latarkę po zrobieniu zdjęcia
-    if (flashlightOn) {
-      toggleFlashlight();
-    }
-    
     stopCamera();
   };
 
@@ -712,6 +761,7 @@ export default function ModelAIScanner({ isOpen, onClose, onModelDetected }) {
     setCapturedImage(null);
     setAiResult('');
     setDetectedModels([]);
+    setFlashlightOn(false); // Reset stanu latarki
     initCamera();
   };
 
@@ -729,6 +779,7 @@ export default function ModelAIScanner({ isOpen, onClose, onModelDetected }) {
 
     return () => {
       stopCamera();
+      setFlashlightOn(false); // Reset stanu latarki przy zamykaniu
     };
   }, [isOpen]);
 

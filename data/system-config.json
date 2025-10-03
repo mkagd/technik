@@ -1,0 +1,50 @@
+{
+  "id": "CONFIG-001",
+  "ordering": {
+    "defaultDeadline": "15:00",
+    "deadlineEnabled": true,
+    "allowAfterDeadline": true,
+    "afterDeadlineCharge": 25,
+    "consolidationEnabled": true,
+    "minConsolidationTime": 24,
+    "autoApprovalThreshold": 100,
+    "notifyBeforeDeadline": 30
+  },
+  "delivery": {
+    "defaultMethod": "paczkomat",
+    "allowedMethods": ["home_address", "work_address", "paczkomat", "pickup"],
+    "consolidationSavings": 15,
+    "paczkomatProvider": "InPost",
+    "preferPaczkomats": true,
+    "paczkomatSearchRadius": 5
+  },
+  "suppliers": {
+    "primarySupplierId": "SUP001",
+    "autoSelectSupplier": true,
+    "fallbackSuppliers": ["SUP002", "SUP003"],
+    "preferredSuppliers": {
+      "Samsung": "SUP002",
+      "LG": "SUP001",
+      "Bosch": "SUP001",
+      "Whirlpool": "SUP003",
+      "Electrolux": "SUP003"
+    }
+  },
+  "notifications": {
+    "emailEnabled": true,
+    "pushEnabled": true,
+    "smsEnabled": false,
+    "notifyDeadline": 30,
+    "notifyLowStock": true,
+    "notifyDelivery": true,
+    "notifyNewRequest": true
+  },
+  "inventory": {
+    "lowStockThreshold": 2,
+    "autoReorderEnabled": false,
+    "reorderQuantity": 5,
+    "maxStockPerEmployee": 50
+  },
+  "createdAt": "2025-01-01T00:00:00Z",
+  "updatedAt": "2025-10-03T09:00:00Z"
+}

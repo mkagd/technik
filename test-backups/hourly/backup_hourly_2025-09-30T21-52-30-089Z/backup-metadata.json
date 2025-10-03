@@ -1,0 +1,113 @@
+{
+  "version": "1.0.0",
+  "timestamp": "2025-09-30T21:52:30.089Z",
+  "type": "hourly",
+  "files": [
+    {
+      "path": "D:\\Projekty\\Technik\\Technik\\data\\accounts.json",
+      "size": 2
+    },
+    {
+      "path": "D:\\Projekty\\Technik\\Technik\\data\\ai-settings.json",
+      "size": 188
+    },
+    {
+      "path": "D:\\Projekty\\Technik\\Technik\\data\\backup\\reset-backup-2025-09-30T21-13-42-405Z\\accounts.json",
+      "size": 1351
+    },
+    {
+      "path": "D:\\Projekty\\Technik\\Technik\\data\\backup\\reset-backup-2025-09-30T21-13-42-405Z\\clients.json",
+      "size": 62351
+    },
+    {
+      "path": "D:\\Projekty\\Technik\\Technik\\data\\backup\\reset-backup-2025-09-30T21-13-42-405Z\\daily-counters.json",
+      "size": 367
+    },
+    {
+      "path": "D:\\Projekty\\Technik\\Technik\\data\\backup\\reset-backup-2025-09-30T21-13-42-405Z\\documentNumbers.json",
+      "size": 352
+    },
+    {
+      "path": "D:\\Projekty\\Technik\\Technik\\data\\backup\\reset-backup-2025-09-30T21-13-42-405Z\\employee_todos.json",
+      "size": 11391
+    },
+    {
+      "path": "D:\\Projekty\\Technik\\Technik\\data\\backup\\reset-backup-2025-09-30T21-13-42-405Z\\enhanced_employee_todos.json",
+      "size": 5065
+    },
+    {
+      "path": "D:\\Projekty\\Technik\\Technik\\data\\backup\\reset-backup-2025-09-30T21-13-42-405Z\\orders.json",
+      "size": 14079
+    },
+    {
+      "path": "D:\\Projekty\\Technik\\Technik\\data\\clients.json",
+      "size": 2
+    },
+    {
+      "path": "D:\\Projekty\\Technik\\Technik\\data\\daily-counters.json",
+      "size": 186
+    },
+    {
+      "path": "D:\\Projekty\\Technik\\Technik\\data\\device-categories.json",
+      "size": 5675
+    },
+    {
+      "path": "D:\\Projekty\\Technik\\Technik\\data\\distanceSettings.json",
+      "size": 212
+    },
+    {
+      "path": "D:\\Projekty\\Technik\\Technik\\data\\documentNumbers.json",
+      "size": 316
+    },
+    {
+      "path": "D:\\Projekty\\Technik\\Technik\\data\\employees.json",
+      "size": 10260
+    },
+    {
+      "path": "D:\\Projekty\\Technik\\Technik\\data\\employee_todos.json",
+      "size": 2
+    },
+    {
+      "path": "D:\\Projekty\\Technik\\Technik\\data\\enhanced_employee_todos.json",
+      "size": 2
+    },
+    {
+      "path": "D:\\Projekty\\Technik\\Technik\\data\\modelsDatabase.json",
+      "size": 8151
+    },
+    {
+      "path": "D:\\Projekty\\Technik\\Technik\\data\\orders.json",
+      "size": 2
+    },
+    {
+      "path": "D:\\Projekty\\Technik\\Technik\\data\\parts-inventory.json",
+      "size": 11745
+    },
+    {
+      "path": "D:\\Projekty\\Technik\\Technik\\data\\postalCodes.js",
+      "size": 32209
+    },
+    {
+      "path": "D:\\Projekty\\Technik\\Technik\\data\\pricingRules.json",
+      "size": 4222
+    },
+    {
+      "path": "D:\\Projekty\\Technik\\Technik\\data\\specializations.json",
+      "size": 624
+    },
+    {
+      "path": "D:\\Projekty\\Technik\\Technik\\data\\status-definitions.json",
+      "size": 2681
+    },
+    {
+      "path": "D:\\Projekty\\Technik\\Technik\\data\\technical-database.json",
+      "size": 19068
+    }
+  ],
+  "totalSize": 190503,
+  "compressionRatio": 0,
+  "checksum": "files:25-size:190503",
+  "startTime": 1759269150089,
+  "endTime": 1759269150110,
+  "duration": 21
+}

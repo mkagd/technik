@@ -1,0 +1,36 @@
+# Vercel - ignoruj te pliki podczas deploymentu
+
+# Pliki lokalne
+.env.local
+.env*.local
+
+# Dane lokalne
+data/
+*.json
+
+# Logi
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Testing
+coverage/
+.nyc_output/
+
+# Dokumentacja i instrukcje (opcjonalnie)
+INSTRUKCJA_*.md
+*.md
+
+# Mobile (Expo)
+.expo/
+android/
+ios/

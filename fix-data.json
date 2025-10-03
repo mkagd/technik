@@ -1,0 +1,76 @@
+{
+  "clients": [
+    {
+      "currentId": "CLI25186001",
+      "correctId": "CLI25186001",
+      "needsFix": false
+    },
+    {
+      "currentId": "CLI25186002",
+      "correctId": "CLI25271002",
+      "needsFix": true
+    },
+    {
+      "currentId": "CLI25186003",
+      "correctId": "CLI25166003",
+      "needsFix": true
+    },
+    {
+      "currentId": "CLI25186004",
+      "correctId": "CLI25069004",
+      "needsFix": true
+    }
+  ],
+  "orders": [
+    {
+      "id": 1001,
+      "currentOrderNumber": "ORDA25092001",
+      "correctOrderNumber": "ORDA25261001",
+      "needsFix": true
+    },
+    {
+      "id": 1002,
+      "currentOrderNumber": "ORDA25092801",
+      "correctOrderNumber": "ORDA25271002",
+      "needsFix": true
+    },
+    {
+      "id": 1003,
+      "currentOrderNumber": "ORDA25092003",
+      "correctOrderNumber": "ORDA25263003",
+      "needsFix": true
+    }
+  ],
+  "visits": [
+    {
+      "orderNumber": "ORDA25092001",
+      "currentVisitId": "VIS25092001",
+      "correctVisitId": "VIS25261001",
+      "needsFix": true
+    },
+    {
+      "orderNumber": "ORDA25092001",
+      "currentVisitId": "VIS25092002",
+      "correctVisitId": "VIS25261002",
+      "needsFix": true
+    },
+    {
+      "orderNumber": "ORDA25092801",
+      "currentVisitId": "VIS25092801",
+      "correctVisitId": "VIS25271001",
+      "needsFix": true
+    },
+    {
+      "orderNumber": "ORDA25092003",
+      "currentVisitId": "VIS25092003",
+      "correctVisitId": "VIS25263001",
+      "needsFix": true
+    },
+    {
+      "orderNumber": "ORDA25092003",
+      "currentVisitId": "VIS25092004",
+      "correctVisitId": "VIS25263002",
+      "needsFix": true
+    }
+  ]
+}

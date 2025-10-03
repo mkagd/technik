@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🔧 Podgląd Email - Potwierdzenie Wizyty Serwisowej</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; line-height: 1.6; color: #1a1a1a; background-color: #f0f2f5; }
+    .email-wrapper { width: 100%; padding: 20px 0; background-color: #f0f2f5; }
+    .container { max-width: 640px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); overflow: hidden; }
+    
+    /* Header z logo */
+    .header { background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%); color: white; padding: 32px 24px; text-align: center; position: relative; }
+    .header::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="rgba(255,255,255,0.05)" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,112C672,96,768,96,864,112C960,128,1056,160,1152,165.3C1248,171,1344,149,1392,138.7L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>'); background-size: cover; opacity: 0.1; }
+    .logo-area { font-size: 48px; margin-bottom: 12px; position: relative; z-index: 1; }
+    .header h1 { margin: 8px 0 4px; font-size: 26px; font-weight: 700; position: relative; z-index: 1; }
+    .header p { font-size: 15px; opacity: 0.95; font-weight: 400; position: relative; z-index: 1; }
+    
+    /* Content */
+    .content { padding: 36px 28px; }
+    
+    /* Success message */
+    .success-banner { background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; padding: 20px 24px; border-radius: 10px; margin-bottom: 28px; text-align: center; }
+    .success-banner .icon { font-size: 42px; margin-bottom: 8px; }
+    .success-banner h2 { font-size: 20px; font-weight: 600; margin-bottom: 6px; }
+    .success-banner p { font-size: 14px; opacity: 0.95; }
+    
+    /* Order number box */
+    .order-box { background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border: 2px solid #3b82f6; padding: 24px; margin: 24px 0; border-radius: 12px; text-align: center; }
+    .order-box-label { font-size: 13px; color: #1e40af; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+    .order-number { font-size: 32px; font-weight: 800; color: #1e40af; font-family: 'Courier New', Courier, monospace; letter-spacing: 3px; margin: 10px 0; text-shadow: 0 2px 4px rgba(59,130,246,0.1); }
+    .order-box-hint { font-size: 12px; color: #1e40af; margin-top: 8px; }
+    
+    /* Device info section */
+    .section { margin: 28px 0; }
+    .section-title { font-size: 16px; font-weight: 700; color: #1a1a1a; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 2px solid #e5e7eb; display: flex; align-items: center; gap: 8px; }
+    .device-list { background-color: #f9fafb; padding: 16px 20px; border-radius: 10px; border-left: 4px solid #3b82f6; }
+    .device-item { display: flex; align-items: flex-start; gap: 12px; margin: 12px 0; padding: 12px; background: white; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    .device-icon { font-size: 28px; flex-shrink: 0; }
+    .device-info { flex: 1; }
+    .device-name { font-weight: 600; color: #1a1a1a; font-size: 15px; margin-bottom: 4px; }
+    .device-details { font-size: 13px; color: #6b7280; line-height: 1.5; }
+    
+    /* Info rows */
+    .info-grid { display: grid; gap: 12px; margin: 20px 0; }
+    .info-row { background-color: #f9fafb; padding: 14px 18px; border-radius: 8px; display: flex; align-items: center; gap: 12px; }
+    .info-icon { font-size: 20px; flex-shrink: 0; }
+    .info-content { flex: 1; }
+    .info-label { font-size: 12px; color: #6b7280; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 2px; }
+    .info-value { font-size: 15px; color: #1a1a1a; font-weight: 500; }
+    
+    /* CTA Button */
+    .cta-section { text-align: center; margin: 32px 0; padding: 24px 0; }
+    .button { display: inline-block; background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%); color: white; padding: 16px 40px; text-decoration: none; border-radius: 10px; font-weight: 700; font-size: 16px; box-shadow: 0 4px 12px rgba(37,99,235,0.3); transition: all 0.3s; }
+    .button:hover { box-shadow: 0 6px 16px rgba(37,99,235,0.4); transform: translateY(-2px); }
+    
+    /* Next steps */
+    .steps-box { background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-left: 4px solid #f59e0b; padding: 20px 24px; border-radius: 10px; margin: 24px 0; }
+    .steps-title { font-size: 16px; font-weight: 700; color: #92400e; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .steps-list { list-style: none; padding: 0; }
+    .steps-list li { padding: 8px 0; color: #78350f; font-size: 14px; line-height: 1.6; display: flex; align-items: flex-start; gap: 10px; }
+    .steps-list li::before { content: '✓'; color: #f59e0b; font-weight: bold; font-size: 18px; flex-shrink: 0; }
+    
+    /* Contact section */
+    .contact-box { background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%); padding: 24px; border-radius: 10px; margin: 28px 0; text-align: center; }
+    .contact-title { font-size: 16px; font-weight: 700; color: #1a1a1a; margin-bottom: 16px; }
+    .contact-methods { display: flex; flex-wrap: wrap; justify-content: center; gap: 16px; }
+    .contact-item { display: flex; align-items: center; gap: 8px; font-size: 14px; color: #374151; }
+    .contact-item .icon { font-size: 18px; }
+    .contact-item a { color: #2563eb; text-decoration: none; font-weight: 600; }
+    .contact-item a:hover { text-decoration: underline; }
+    
+    /* Footer */
+    .footer { background-color: #f9fafb; padding: 24px 28px; text-align: center; font-size: 12px; color: #6b7280; border-top: 1px solid #e5e7eb; }
+    .footer p { margin: 6px 0; }
+    .footer-links { margin: 12px 0; }
+    .footer-links a { color: #2563eb; text-decoration: none; margin: 0 8px; }
+    .footer-links a:hover { text-decoration: underline; }
+    
+    /* Mobile responsive */
+    @media only screen and (max-width: 600px) {
+      .email-wrapper { padding: 10px 0; }
+      .container { border-radius: 0; }
+      .content { padding: 24px 20px; }
+      .header { padding: 24px 20px; }
+      .order-number { font-size: 26px; letter-spacing: 2px; }
+      .device-item { flex-direction: column; text-align: center; }
+      .contact-methods { flex-direction: column; align-items: center; }
+    }
+  </style>
+</head>
+<body>
+  <div class="email-wrapper">
+    <div class="container">
+      <!-- Header -->
+      <div class="header">
+        <div class="logo-area">🔧⚡</div>
+        <h1>Technik Serwis AGD</h1>
+        <p>Profesjonalna naprawa sprzętu AGD</p>
+      </div>
+      
+      <!-- Content -->
+      <div class="content">
+        <!-- Success banner -->
+        <div class="success-banner">
+          <div class="icon">✅</div>
+          <h2>Rezerwacja przyjęta pomyślnie!</h2>
+          <p>Dziękujemy za zaufanie. Twoje zgłoszenie jest już w naszym systemie.</p>
+        </div>
+        
+        <!-- Order number -->
+        <div class="order-box">
+          <div class="order-box-label">🎫 Twój numer zlecenia</div>
+          <div class="order-number">ORDW252750001</div>
+          <div class="order-box-hint">💾 Zapisz ten numer - będzie potrzebny do śledzenia statusu</div>
+        </div>
+        
+        <!-- Device info -->
+        <div class="section">
+          <div class="section-title">
+            <span>📦</span>
+            <span>Zgłoszone urządzenia (2)</span>
+          </div>
+          <div class="device-list">
+            <div class="device-item">
+              <div class="device-icon">🌀</div>
+              <div class="device-info">
+                <div class="device-name">Pralka</div>
+                <div class="device-details">
+                  <strong>Marka:</strong> Samsung<br/>
+                  <strong>Model:</strong> WW90T4040CE<br/>
+                  <strong>Problem:</strong> Nie odpompowuje wody, bęben nie kręci się
+                </div>
+              </div>
+            </div>
+            
+            <div class="device-item">
+              <div class="device-icon">❄️</div>
+              <div class="device-info">
+                <div class="device-name">Lodówka</div>
+                <div class="device-details">
+                  <strong>Marka:</strong> Bosch<br/>
+                  <strong>Model:</strong> KGN39VL35<br/>
+                  <strong>Problem:</strong> Hałasuje, zamrażalnik nie chłodzi wystarczająco
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Visit info -->
+        <div class="section">
+          <div class="section-title">
+            <span>📋</span>
+            <span>Szczegóły wizyty</span>
+          </div>
+          <div class="info-grid">
+            <div class="info-row">
+              <div class="info-icon">📅</div>
+              <div class="info-content">
+                <div class="info-label">Preferowany termin</div>
+                <div class="info-value">poniedziałek, 6 stycznia 2025, 14:30</div>
+              </div>
+            </div>
+            
+            <div class="info-row">
+              <div class="info-icon">🚦</div>
+              <div class="info-content">
+                <div class="info-label">Status zgłoszenia</div>
+                <div class="info-value" style="color: #f59e0b; font-weight: 700;">⏳ Oczekuje na kontakt</div>
+              </div>
+            </div>
+            
+            <div class="info-row">
+              <div class="info-icon">📱</div>
+              <div class="info-content">
+                <div class="info-label">Telefon kontaktowy</div>
+                <div class="info-value">+48 123 456 789</div>
+              </div>
+            </div>
+            
+            <div class="info-row">
+              <div class="info-icon">📍</div>
+              <div class="info-content">
+                <div class="info-label">Adres wizyty</div>
+                <div class="info-value">ul. Przykładowa 123, 00-001 Warszawa</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- CTA Button -->
+        <div class="cta-section">
+          <a href="http://localhost:3000/moje-zamowienie?order=ORDW252750001&phone=123456789" class="button">
+            🔍 Sprawdź Status Online
+          </a>
+          <p style="margin-top: 12px; font-size: 13px; color: #6b7280;">Kliknij, aby od razu zobaczyć szczegóły swojego zamówienia (bez wpisywania danych)</p>
+        </div>
+        
+        <!-- Next steps -->
+        <div class="steps-box">
+          <div class="steps-title">
+            <span>🎯</span>
+            <span>Co teraz się wydarzy?</span>
+          </div>
+          <ul class="steps-list">
+            <li><strong>Za maksymalnie 2 godziny robocze</strong> skontaktuje się z Tobą nasz konsultant</li>
+            <li><strong>Omówimy szczegóły</strong> naprawy i przedstawimy wstępną wycenę</li>
+            <li><strong>Ustalimy dokładny termin</strong> wizyty serwisanta w dogodnym dla Ciebie czasie</li>
+            <li><strong>Technik przyjedzie z częściami</strong> i wykona naprawę na miejscu (jeśli to możliwe)</li>
+          </ul>
+        </div>
+        
+        <!-- Contact box -->
+        <div class="contact-box">
+          <div class="contact-title">💬 Masz pytania? Skontaktuj się z nami!</div>
+          <div class="contact-methods">
+            <div class="contact-item">
+              <span class="icon">📞</span>
+              <span>Tel: <a href="tel:+48221202459">+48 22 120 24 59</a></span>
+            </div>
+            <div class="contact-item">
+              <span class="icon">✉️</span>
+              <span>Email: <a href="mailto:kontakt@technik.pl">kontakt@technik.pl</a></span>
+            </div>
+            <div class="contact-item">
+              <span class="icon">⏰</span>
+              <span>Pn-Pt: 8:00-18:00, Sob: 9:00-14:00</span>
+            </div>
+          </div>
+        </div>
+        
+        <p style="font-size: 13px; color: #9ca3af; text-align: center; margin-top: 24px;">
+          💡 <strong>Wskazówka:</strong> Dodaj nasz adres email do kontaktów, aby nie przegapić ważnych wiadomości
+        </p>
+      </div>
+      
+      <!-- Footer -->
+      <div class="footer">
+        <p style="font-weight: 600; color: #374151; margin-bottom: 8px;">Technik Serwis AGD - Twój ekspert od napraw</p>
+        <div class="footer-links">
+          <a href="http://localhost:3000">Strona główna</a> |
+          <a href="http://localhost:3000/moje-zamowienie">Sprawdź status</a> |
+          <a href="http://localhost:3000/kontakt">Kontakt</a>
+        </div>
+        <p style="margin-top: 12px;">© 2025 Technik Serwis AGD. Wszelkie prawa zastrzeżone.</p>
+        <p style="font-size: 11px; color: #9ca3af; margin-top: 8px;">
+          Otrzymujesz tego maila, ponieważ dokonałeś/aś rezerwacji wizyty serwisowej.<br/>
+          Numer zlecenia: <strong>ORDW252750001</strong>
+        </p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

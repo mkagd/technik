@@ -1,0 +1,598 @@
+{
+  "knowledgeBase": {
+    "devices": {
+      "pralka": {
+        "commonIssues": {
+          "not_spinning": {
+            "symptoms": [
+              "Bęben nie wiruje podczas ostatniego etapu prania",
+              "Ubrania pozostają mokre po zakończeniu cyklu",
+              "Słychać pracę silnika, ale bęben się nie obraca"
+            ],
+            "probableCauses": [
+              {
+                "cause": "Zużyte łożysko bębna",
+                "probability": 40,
+                "partNeeded": "PART001",
+                "severity": "high"
+              },
+              {
+                "cause": "Uszkodzony pasek napędowy",
+                "probability": 35,
+                "partNeeded": "PART003", 
+                "severity": "medium"
+              },
+              {
+                "cause": "Zablokowana pompa odpływowa",
+                "probability": 20,
+                "partNeeded": "PART002",
+                "severity": "medium"
+              },
+              {
+                "cause": "Uszkodzony silnik",
+                "probability": 5,
+                "partNeeded": null,
+                "severity": "high"
+              }
+            ],
+            "diagnosticSteps": [
+              {
+                "step": 1,
+                "action": "Sprawdź czy drzwi są prawidłowo zamknięte",
+                "expectedResult": "Drzwi powinny być całkowicie zamknięte",
+                "timeMinutes": 2
+              },
+              {
+                "step": 2,
+                "action": "Sprawdź poziom wody w bębnie",
+                "expectedResult": "Woda powinna być odpompowana",
+                "timeMinutes": 3
+              },
+              {
+                "step": 3,
+                "action": "Sprawdź napięcie paska napędowego",
+                "expectedResult": "Pasek powinien być naprężony i nieuszkodzony",
+                "timeMinutes": 10
+              },
+              {
+                "step": 4,
+                "action": "Sprawdź łożyska przez obrót bębna ręcznie",
+                "expectedResult": "Bęben powinien obracać się płynnie",
+                "timeMinutes": 15
+              }
+            ],
+            "repairComplexity": "medium",
+            "estimatedTime": 90,
+            "requiredTools": [
+              "klucze do AGD",
+              "multimetr",
+              "klucz dynamometryczny"
+            ],
+            "safetyPrecautions": [
+              "Wyłącz zasilanie",
+              "Sprawdź brak napięcia",
+              "Odłącz dopływ wody"
+            ]
+          },
+          "water_leak": {
+            "symptoms": [
+              "Woda pod pralką",
+              "Mokra podłoga wokół urządzenia",
+              "Widoczny wyciek podczas prania"
+            ],
+            "probableCauses": [
+              {
+                "cause": "Uszkodzone uszczelnienie drzwi",
+                "probability": 45,
+                "severity": "medium"
+              },
+              {
+                "cause": "Zużyte łożysko z uszczelką",
+                "probability": 30,
+                "partNeeded": "PART001",
+                "severity": "high"
+              },
+              {
+                "cause": "Uszkodzony wąż dopływowy",
+                "probability": 15,
+                "severity": "low"
+              },
+              {
+                "cause": "Pęknięty bęben",
+                "probability": 10,
+                "severity": "critical"
+              }
+            ],
+            "diagnosticSteps": [
+              {
+                "step": 1,
+                "action": "Zlokalizuj źródło wycieku",
+                "expectedResult": "Określenie miejsca wycieku",
+                "timeMinutes": 10
+              },
+              {
+                "step": 2,
+                "action": "Sprawdź uszczelnienie drzwi",
+                "expectedResult": "Uszczelka powinna być elastyczna i nienaruszona",
+                "timeMinutes": 5
+              },
+              {
+                "step": 3,
+                "action": "Sprawdź wszystkie połączenia węży",
+                "expectedResult": "Połączenia powinny być szczelne",
+                "timeMinutes": 15
+              }
+            ],
+            "repairComplexity": "medium",
+            "estimatedTime": 60
+          },
+          "excessive_noise": {
+            "symptoms": [
+              "Głośny hałas podczas wirowania",
+              "Metaliczne dźwięki",
+              "Wibracje całego urządzenia"
+            ],
+            "probableCauses": [
+              {
+                "cause": "Zużyte łożyska bębna",
+                "probability": 50,
+                "partNeeded": "PART001",
+                "severity": "high"
+              },
+              {
+                "cause": "Uszkodzone amortyzatory",
+                "probability": 30,
+                "partNeeded": "PART005",
+                "severity": "medium"
+              },
+              {
+                "cause": "Niewyrównowana pralka",
+                "probability": 15,
+                "severity": "low"
+              },
+              {
+                "cause": "Obce przedmioty w bębnie",
+                "probability": 5,
+                "severity": "low"
+              }
+            ],
+            "repairComplexity": "high",
+            "estimatedTime": 120
+          }
+        },
+        "maintenanceSchedule": {
+          "monthly": [
+            "Czyszczenie filtra pompy",
+            "Sprawdzenie węży dopływowych",
+            "Kontrola poziomu"
+          ],
+          "quarterly": [
+            "Czyszczenie komory na proszek",
+            "Sprawdzenie uszczelnienia drzwi",
+            "Test funkcji wirowania"
+          ],
+          "yearly": [
+            "Kontrola łożysk",
+            "Sprawdzenie amortyzatorów",
+            "Kalibracja elektroniki"
+          ]
+        },
+        "troubleshootingGuide": {
+          "no_power": {
+            "checkList": [
+              "Sprawdź połączenie z gniazdkiem",
+              "Sprawdź bezpieczniki",
+              "Sprawdź przewód zasilający",
+              "Sprawdź zamek drzwi"
+            ]
+          },
+          "door_wont_open": {
+            "checkList": [
+              "Poczekaj 2-3 minuty po zakończeniu cyklu",
+              "Sprawdź czy jest woda w bębnie",
+              "Sprawdź zamek elektromagnetyczny",
+              "Użyj awaryjnego odblokowywania"
+            ]
+          }
+        }
+      },
+      "zmywarka": {
+        "commonIssues": {
+          "poor_cleaning": {
+            "symptoms": [
+              "Naczynia pozostają brudne po myciu",
+              "Pozostałości jedzenia na talerzyach",
+              "Plamy na szkłach"
+            ],
+            "probableCauses": [
+              {
+                "cause": "Zablokowany filtr",
+                "probability": 40,
+                "partNeeded": "PART008",
+                "severity": "low"
+              },
+              {
+                "cause": "Uszkodzona pompa myjąca",
+                "probability": 25,
+                "partNeeded": "PART006",
+                "severity": "high"
+              },
+              {
+                "cause": "Zablokowane ramiona spryskujące",
+                "probability": 20,
+                "partNeeded": "PART007",
+                "severity": "low"
+              },
+              {
+                "cause": "Nieprawidłowe dozowanie detergentu",
+                "probability": 15,
+                "severity": "low"
+              }
+            ],
+            "diagnosticSteps": [
+              {
+                "step": 1,
+                "action": "Sprawdź i wyczyść filtr",
+                "timeMinutes": 10
+              },
+              {
+                "step": 2,
+                "action": "Sprawdź ramiona spryskujące",
+                "timeMinutes": 15
+              },
+              {
+                "step": 3,
+                "action": "Test pompy myjącej",
+                "timeMinutes": 20
+              }
+            ],
+            "repairComplexity": "low",
+            "estimatedTime": 45
+          },
+          "water_not_draining": {
+            "symptoms": [
+              "Woda pozostaje na dnie po cyklu",
+              "Komunikat błędu odpływu",
+              "Nieprzyjemny zapach"
+            ],
+            "probableCauses": [
+              {
+                "cause": "Zablokowany filtr pompy",
+                "probability": 60,
+                "partNeeded": "PART008",
+                "severity": "medium"
+              },
+              {
+                "cause": "Zablokowany syfon odpływowy",
+                "probability": 25,
+                "severity": "low"
+              },
+              {
+                "cause": "Uszkodzona pompa odpływowa",
+                "probability": 15,
+                "severity": "high"
+              }
+            ],
+            "repairComplexity": "low",
+            "estimatedTime": 30
+          }
+        }
+      },
+      "lodówka": {
+        "commonIssues": {
+          "not_cooling": {
+            "symptoms": [
+              "Temperatura wewnętrzna za wysoka",
+              "Jedzenie się psuje szybko",
+              "Lód topi się w zamrażalniku"
+            ],
+            "probableCauses": [
+              {
+                "cause": "Uszkodzony termostat",
+                "probability": 40,
+                "partNeeded": "PART009",
+                "severity": "medium"
+              },
+              {
+                "cause": "Uszkodzony wentylator",
+                "probability": 30,
+                "severity": "medium"
+              },
+              {
+                "cause": "Nieszczelność systemu chłodniczego",
+                "probability": 20,
+                "severity": "high"
+              },
+              {
+                "cause": "Brudny kondensator",
+                "probability": 10,
+                "severity": "low"
+              }
+            ],
+            "diagnosticSteps": [
+              {
+                "step": 1,
+                "action": "Sprawdź ustawienia temperatury",
+                "timeMinutes": 2
+              },
+              {
+                "step": 2,
+                "action": "Sprawdź czy wentylator pracuje",
+                "timeMinutes": 5
+              },
+              {
+                "step": 3,
+                "action": "Sprawdź termostat",
+                "timeMinutes": 20
+              }
+            ],
+            "repairComplexity": "medium",
+            "estimatedTime": 90
+          }
+        }
+      },
+      "piekarnik": {
+        "commonIssues": {
+          "not_heating": {
+            "symptoms": [
+              "Piekarnik nie nagrzewa się",
+              "Jedzenie nie jest upieczone",
+              "Wskaźnik temperatury nie wzrasta"
+            ],
+            "probableCauses": [
+              {
+                "cause": "Uszkodzony element grzejny górny",
+                "probability": 40,
+                "partNeeded": "PART010",
+                "severity": "medium"
+              },
+              {
+                "cause": "Uszkodzony element grzejny dolny",
+                "probability": 35,
+                "severity": "medium"
+              },
+              {
+                "cause": "Uszkodzony termostat",
+                "probability": 20,
+                "severity": "medium"
+              },
+              {
+                "cause": "Problem z kontrolerem",
+                "probability": 5,
+                "severity": "high"
+              }
+            ],
+            "repairComplexity": "medium",
+            "estimatedTime": 75
+          }
+        }
+      }
+    },
+    "diagnosticProcedures": {
+      "electrical_testing": {
+        "voltageTest": {
+          "procedure": "Sprawdź napięcie zasilania multimetrem",
+          "expectedValues": {
+            "mainSupply": "230V ±10%",
+            "controlCircuits": "12V lub 24V"
+          },
+          "safetyNotes": "Zawsze sprawdzaj brak napięcia przed rozpoczęciem prac"
+        },
+        "continuityTest": {
+          "procedure": "Sprawdź ciągłość obwodów",
+          "tools": ["multimetr", "sondy pomiarowe"],
+          "interpretation": "0Ω = ciągłość, ∞Ω = przerwanie"
+        },
+        "insulationTest": {
+          "procedure": "Test izolacji względem masy",
+          "minValue": "1MΩ",
+          "testVoltage": "500V DC"
+        }
+      },
+      "mechanical_inspection": {
+        "bearingCheck": {
+          "procedure": "Sprawdź łużność i hałas łożysk",
+          "tools": ["stetoskop mechaniczny"],
+          "indicators": ["nadmierna luz", "hałas", "wibracje"]
+        },
+        "beltInspection": {
+          "procedure": "Sprawdź napięcie i stan paska",
+          "checkPoints": ["pęknięcia", "nadmierne rozciągnięcie", "zużycie"],
+          "tensionTest": "Pasek powinien uginać się o 10-15mm"
+        }
+      }
+    },
+    "repairProcedures": {
+      "bearing_replacement": {
+        "difficulty": "high",
+        "estimatedTime": 180,
+        "requiredTools": [
+          "ściągacz łożysk",
+          "klucz dynamometryczny",
+          "smar do łożysk",
+          "młotek z miękką końcówką"
+        ],
+        "steps": [
+          {
+            "step": 1,
+            "description": "Odłącz urządzenie od zasilania i wody",
+            "timeMinutes": 5,
+            "safetyNote": "Sprawdź brak napięcia"
+          },
+          {
+            "step": 2,
+            "description": "Demontuj obudowę i wyciągnij bęben",
+            "timeMinutes": 30,
+            "tools": ["klucze płaskie", "szczypce"]
+          },
+          {
+            "step": 3,
+            "description": "Usuń stare łożysko ściągaczem",
+            "timeMinutes": 20,
+            "caution": "Nie uszkodzić gniazda łożyska"
+          },
+          {
+            "step": 4,
+            "description": "Zainstaluj nowe łożysko",
+            "timeMinutes": 15,
+            "note": "Użyj odpowiedniego smaru"
+          },
+          {
+            "step": 5,
+            "description": "Złóż urządzenie w odwrotnej kolejności",
+            "timeMinutes": 45
+          },
+          {
+            "step": 6,
+            "description": "Test funkcjonalności",
+            "timeMinutes": 15,
+            "testPoints": ["hałas", "wibracje", "wirowanie"]
+          }
+        ],
+        "qualityChecks": [
+          "Sprawdź płynność obrotu bębna",
+          "Uruchom test wirowania",
+          "Sprawdź szczelność po montażu"
+        ]
+      }
+    },
+    "safetyProcedures": {
+      "electrical_safety": [
+        "Zawsze wyłącz zasilanie przed rozpoczęciem prac",
+        "Sprawdź brak napięcia testerem",
+        "Użyj sprzętu z izolacją",
+        "Pracuj w suchych warunkach"
+      ],
+      "mechanical_safety": [
+        "Noś rękawice ochronne",
+        "Używaj okularów ochronnych",
+        "Zabezpiecz obszar pracy",
+        "Uważaj na ruchome części"
+      ],
+      "chemical_safety": [
+        "Używaj rękawic przy kontakcie z chemiikaliami",
+        "Zapewnij dobrą wentylację",
+        "Przechowuj środki chemiczne bezpiecznie"
+      ]
+    },
+    "errorCodes": {
+      "samsung": {
+        "E01": {
+          "description": "Problem z pompą odpływową",
+          "action": "Sprawdź filtr i pompę",
+          "severity": "medium"
+        },
+        "E04": {
+          "description": "Błąd czujnika temperatury",
+          "action": "Sprawdź połączenia czujnika",
+          "severity": "low"
+        },
+        "E06": {
+          "description": "Problem z grzaniem wody",
+          "action": "Sprawdź element grzejny",
+          "severity": "medium"
+        }
+      },
+      "lg": {
+        "PE": {
+          "description": "Błąd poziomu wody",
+          "action": "Sprawdź czujnik poziomu",
+          "severity": "medium"
+        },
+        "FE": {
+          "description": "Przepełnienie",
+          "action": "Sprawdź elektrozawór",
+          "severity": "high"
+        }
+      },
+      "bosch": {
+        "F01": {
+          "description": "Problem z drzwiami",
+          "action": "Sprawdź zamek drzwi",
+          "severity": "low"
+        },
+        "F04": {
+          "description": "Problem z odpływem",
+          "action": "Sprawdź pompę i filtry",
+          "severity": "medium"
+        }
+      }
+    }
+  },
+  "training": {
+    "basicSkills": [
+      {
+        "skill": "Podstawy elektrotechniki",
+        "level": "required",
+        "topics": ["prąd", "napięcie", "opór", "moc"],
+        "certificationRequired": true
+      },
+      {
+        "skill": "Mechanika urządzeń AGD",
+        "level": "required", 
+        "topics": ["łożyska", "pasy", "silniki", "przekładnie"]
+      },
+      {
+        "skill": "Diagnostyka elektroniczna",
+        "level": "advanced",
+        "topics": ["multimetry", "oscyloskopy", "analizatory"]
+      }
+    ],
+    "brandSpecific": {
+      "samsung": {
+        "certification": "Samsung Service Professional",
+        "validFor": "24 months",
+        "topics": ["systemy sterowania", "kody błędów", "procedury serwisowe"]
+      },
+      "lg": {
+        "certification": "LG Authorized Technician",
+        "validFor": "12 months",
+        "topics": ["technologia ThinQ", "diagnostyka SmartThinQ"]
+      }
+    }
+  },
+  "tools": {
+    "essential": [
+      {
+        "name": "Multimetr",
+        "model": "Fluke 117",
+        "functions": ["napięcie AC/DC", "prąd", "opór", "ciągłość"],
+        "priceRange": "800-1200 PLN"
+      },
+      {
+        "name": "Zestaw kluczy do AGD",
+        "includes": ["klucze płaskie", "nasadki", "adaptery"],
+        "priceRange": "200-400 PLN"
+      },
+      {
+        "name": "Tester izolacji",
+        "voltageRange": "50-1000V",
+        "application": "test bezpieczeństwa elektrycznego"
+      }
+    ],
+    "specialized": [
+      {
+        "name": "Ściągacz łożysk",
+        "sizes": ["20-50mm", "30-75mm", "50-100mm"],
+        "application": "wymiana łożysk w pralkach"
+      },
+      {
+        "name": "Manometr do systemów wodnych",
+        "range": "0-10 bar",
+        "application": "test ciśnienia w zmywarkach"
+      }
+    ]
+  },
+  "metadata": {
+    "version": "1.0",
+    "lastUpdated": "2025-09-30T13:00:00Z",
+    "createdBy": "technical-database-script-v1",
+    "totalIssues": 12,
+    "totalProcedures": 8,
+    "coverage": {
+      "devices": 4,
+      "brands": 3,
+      "errorCodes": 8
+    }
+  }
+}

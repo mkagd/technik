@@ -1,0 +1,155 @@
+[
+  {
+    "id": 1759467786996,
+    "title": "Nowy klient",
+    "message": "Zarejestrowano nowego klienta: Olgier Klich",
+    "type": "info",
+    "link": "/admin/klienci",
+    "userId": null,
+    "read": true,
+    "createdAt": "2025-10-03T05:03:06.621Z",
+    "readAt": "2025-10-03T05:03:23.978Z"
+  },
+  {
+    "id": 1759467787167,
+    "title": "Nowe zamówienie",
+    "message": "Utworzono zamówienie ORDS252760001 - Pralki",
+    "type": "success",
+    "link": "/admin/zamowienia",
+    "userId": null,
+    "read": true,
+    "createdAt": "2025-10-03T05:03:06.639Z",
+    "readAt": "2025-10-03T05:04:23.241Z"
+  },
+  {
+    "id": 1759467786862,
+    "title": "Nowa rezerwacja",
+    "message": "Olgier Klich zgłosił rezerwację: Pralki",
+    "type": "info",
+    "link": "/admin/rezerwacje",
+    "userId": null,
+    "read": true,
+    "createdAt": "2025-10-03T05:03:06.641Z",
+    "readAt": "2025-10-03T05:05:47.283Z"
+  },
+  {
+    "id": 1759468062928,
+    "title": "Nowy klient",
+    "message": "Zarejestrowano nowego klienta: Technik B",
+    "type": "info",
+    "link": "/admin/klienci",
+    "userId": null,
+    "read": false,
+    "createdAt": "2025-10-03T05:07:42.101Z"
+  },
+  {
+    "id": 1759468062499,
+    "title": "Nowe zamówienie",
+    "message": "Utworzono zamówienie ORDS252760002 - Suszarka",
+    "type": "success",
+    "link": "/admin/zamowienia",
+    "userId": null,
+    "read": false,
+    "createdAt": "2025-10-03T05:07:42.116Z"
+  },
+  {
+    "id": 1759468062806,
+    "title": "Nowa rezerwacja",
+    "message": "Technik B zgłosił rezerwację: Suszarka",
+    "type": "info",
+    "link": "/admin/rezerwacje",
+    "userId": null,
+    "read": false,
+    "createdAt": "2025-10-03T05:07:42.118Z"
+  },
+  {
+    "id": 1759468087585,
+    "title": "Nowy klient",
+    "message": "Zarejestrowano nowego klienta: Technik B",
+    "type": "info",
+    "link": "/admin/klienci",
+    "userId": null,
+    "read": false,
+    "createdAt": "2025-10-03T05:08:07.485Z"
+  },
+  {
+    "id": 1759468088022,
+    "title": "Nowe zamówienie",
+    "message": "Utworzono zamówienie ORDS252760003 - Suszarka",
+    "type": "success",
+    "link": "/admin/zamowienia",
+    "userId": null,
+    "read": false,
+    "createdAt": "2025-10-03T05:08:07.503Z"
+  },
+  {
+    "id": 1759468087994,
+    "title": "Nowa rezerwacja",
+    "message": "Technik B zgłosił rezerwację: Suszarka",
+    "type": "info",
+    "link": "/admin/rezerwacje",
+    "userId": null,
+    "read": false,
+    "createdAt": "2025-10-03T05:08:07.506Z"
+  },
+  {
+    "id": 1759469730870,
+    "title": "Nowy klient",
+    "message": "Zarejestrowano nowego klienta: Technik B",
+    "type": "info",
+    "link": "/admin/klienci",
+    "userId": null,
+    "read": false,
+    "createdAt": "2025-10-03T05:35:30.504Z"
+  },
+  {
+    "id": 1759469731365,
+    "title": "Nowe zamówienie",
+    "message": "Utworzono zamówienie ORDS252760004 - Lodówki",
+    "type": "success",
+    "link": "/admin/zamowienia",
+    "userId": null,
+    "read": false,
+    "createdAt": "2025-10-03T05:35:30.523Z"
+  },
+  {
+    "id": 1759469730995,
+    "title": "Nowa rezerwacja",
+    "message": "Technik B zgłosił rezerwację: Lodówki",
+    "type": "info",
+    "link": "/admin/rezerwacje",
+    "userId": null,
+    "read": false,
+    "createdAt": "2025-10-03T05:35:30.525Z"
+  },
+  {
+    "id": 1759471073729,
+    "title": "Nowy klient",
+    "message": "Zarejestrowano nowego klienta: kooo",
+    "type": "info",
+    "link": "/admin/klienci",
+    "userId": null,
+    "read": false,
+    "createdAt": "2025-10-03T05:57:52.991Z"
+  },
+  {
+    "id": 1759471073575,
+    "title": "Nowe zamówienie",
+    "message": "Utworzono zamówienie ORDS252760005 - Lodówki",
+    "type": "success",
+    "link": "/admin/zamowienia",
+    "userId": null,
+    "read": false,
+    "createdAt": "2025-10-03T05:57:53.010Z"
+  },
+  {
+    "id": 1759471073027,
+    "title": "Nowa rezerwacja",
+    "message": "kooo zgłosił rezerwację: Lodówki",
+    "type": "info",
+    "link": "/admin/rezerwacje",
+    "userId": null,
+    "read": false,
+    "createdAt": "2025-10-03T05:57:53.012Z"
+  }
+]

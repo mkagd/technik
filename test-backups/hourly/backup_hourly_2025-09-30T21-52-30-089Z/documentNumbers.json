@@ -1,0 +1,15 @@
+{
+  "invoices": {
+    "currentNumber": 1,
+    "format": "FV-{number:04d}/{month:02d}/{year:02d}",
+    "month": 9,
+    "year": 2025
+  },
+  "protocols": {
+    "currentNumber": 1,
+    "format": "PROT-{number:04d}/{month:02d}/{year:02d}",
+    "month": 9,
+    "year": 2025
+  },
+  "lastReset": "2025-09-30T21:13:42.421Z"
+}

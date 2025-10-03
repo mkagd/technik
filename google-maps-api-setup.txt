@@ -1,0 +1,14 @@
+# Google Maps API Configuration
+# Ustaw swój klucz Google Maps API tutaj
+# Instrukcja: https://developers.google.com/maps/documentation/javascript/get-api-key
+
+# GOOGLE_MAPS_API_KEY=AIzaSyC-tw4rfgtawgwgdwfre34frerfa4frg345
+
+# Bez tego klucza system użyje symulowanych czasów dojazdu
+# Z kluczem system będzie używał rzeczywistych czasów z Google Maps Distance Matrix API
+
+# Przykład użycia w systemie:
+# 1. Skopiuj ten plik jako .env.local
+# 2. Wklej swój prawdziwy klucz API
+# 3. Zrestartuj aplikację Next.js
+# 4. System automatycznie przełączy się na prawdziwe czasy dojazdu

@@ -1,0 +1,149 @@
+[
+  {
+    "id": "OCR-2025-10-001",
+    "orderId": "ORD1024",
+    "employeeId": "EMP25189002",
+    "employeeName": "Adam Nowak",
+    "photoUrl": "/uploads/plates/ORD1024_plate_20251002_143000.jpg",
+    "capturedAt": "2025-10-02T14:30:00Z",
+    "ocrResult": {
+      "success": true,
+      "confidence": 0.95,
+      "brand": "Samsung",
+      "model": "WW90T4540AE",
+      "serialNumber": "SW2024001234",
+      "productionDate": "2024-03",
+      "power": "2200W",
+      "voltage": "230V",
+      "capacity": "9 kg",
+      "energyClass": "A+++",
+      "spinSpeed": "1400 rpm",
+      "rawText": "SAMSUNG WW90T4540AE AddWash EcoBubble 9kg 1400rpm A+++ S/N: SW2024001234 Made in Poland 2024/03"
+    },
+    "manualCorrection": null,
+    "suggestedParts": [
+      {
+        "partId": "PART001",
+        "partNumber": "DC97-16151A",
+        "name": "Łożysko bębna Samsung",
+        "price": 85.00,
+        "compatibility": 100,
+        "reason": "Kompatybilne z modelem WW90T4540AE",
+        "inPersonalInventory": false,
+        "personalInventoryQuantity": 0,
+        "needToOrder": true
+      },
+      {
+        "partId": "PART002",
+        "partNumber": "DC96-01414G",
+        "name": "Pompa odpływowa Samsung",
+        "price": 90.00,
+        "compatibility": 95,
+        "reason": "Kompatybilne z większością pralek Samsung 9kg",
+        "inPersonalInventory": true,
+        "personalInventoryQuantity": 1,
+        "needToOrder": false
+      },
+      {
+        "partId": "PART005",
+        "partNumber": "DC66-00343A",
+        "name": "Amortyzator pralki Samsung",
+        "price": 45.00,
+        "compatibility": 98,
+        "reason": "Pasuje do modeli WW90*",
+        "inPersonalInventory": true,
+        "personalInventoryQuantity": 2,
+        "needToOrder": false
+      }
+    ],
+    "usedInRequest": "PR-2025-10-001",
+    "createdAt": "2025-10-02T14:30:00Z"
+  },
+  {
+    "id": "OCR-2025-10-002",
+    "orderId": "ORD1025",
+    "employeeId": "EMP25189003",
+    "employeeName": "Tomek Wiśniewski",
+    "photoUrl": "/uploads/plates/ORD1025_plate_20251002_164500.jpg",
+    "capturedAt": "2025-10-02T16:45:00Z",
+    "ocrResult": {
+      "success": true,
+      "confidence": 0.92,
+      "brand": "Samsung",
+      "model": "WF80F5E5U4W",
+      "serialNumber": "SW2023005678",
+      "productionDate": "2023-11",
+      "power": "2100W",
+      "voltage": "230V",
+      "capacity": "8 kg",
+      "energyClass": "A+++",
+      "spinSpeed": "1400 rpm",
+      "rawText": "SAMSUNG WF80F5E5U4W ecobubble 8kg 1400rpm A+++ S/N: SW2023005678 2023/11"
+    },
+    "manualCorrection": null,
+    "suggestedParts": [
+      {
+        "partId": "PART007",
+        "partNumber": "DC93-00155A",
+        "name": "Grzałka pralki Samsung 2000W",
+        "price": 120.00,
+        "compatibility": 100,
+        "reason": "Grzałka dedykowana dla modelu WF80F5E5U4W",
+        "inPersonalInventory": true,
+        "personalInventoryQuantity": 2,
+        "needToOrder": false
+      },
+      {
+        "partId": "PART001",
+        "partNumber": "DC97-16151A",
+        "name": "Łożysko bębna Samsung",
+        "price": 85.00,
+        "compatibility": 90,
+        "reason": "Kompatybilne z większością pralek Samsung 8kg",
+        "inPersonalInventory": false,
+        "personalInventoryQuantity": 0,
+        "needToOrder": true
+      }
+    ],
+    "usedInRequest": "PR-2025-10-002",
+    "createdAt": "2025-10-02T16:45:00Z"
+  },
+  {
+    "id": "OCR-2025-10-003",
+    "orderId": "ORD1026",
+    "employeeId": "EMP25189004",
+    "employeeName": "Marek Kowal",
+    "photoUrl": "/uploads/plates/ORD1026_plate_20251003_102000.jpg",
+    "capturedAt": "2025-10-03T10:20:00Z",
+    "ocrResult": {
+      "success": true,
+      "confidence": 0.89,
+      "brand": "Bosch",
+      "model": "WAG28461BY",
+      "serialNumber": "BS2024009876",
+      "productionDate": "2024-05",
+      "power": "2400W",
+      "voltage": "230V",
+      "capacity": "9 kg",
+      "energyClass": "A+++",
+      "spinSpeed": "1400 rpm",
+      "rawText": "BOSCH WAG28461BY Serie 6 VarioPerfect 9kg 1400rpm A+++ FD: 2405 S/N: BS2024009876"
+    },
+    "manualCorrection": null,
+    "suggestedParts": [
+      {
+        "partId": "PART002",
+        "partNumber": "DC96-01414G",
+        "name": "Pompa odpływowa Samsung",
+        "price": 90.00,
+        "compatibility": 75,
+        "reason": "Pompa uniwersalna, może pasować do Bosch (wymaga weryfikacji)",
+        "inPersonalInventory": false,
+        "personalInventoryQuantity": 0,
+        "needToOrder": true
+      }
+    ],
+    "usedInRequest": "PR-2025-10-003",
+    "createdAt": "2025-10-03T10:20:00Z"
+  }
+]
