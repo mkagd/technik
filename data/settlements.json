@@ -1,0 +1,14 @@
+[
+  {
+    "id": "STL-1759522993449-69ffq30z5",
+    "employeeId": "EMP25189001",
+    "period": "2025-10",
+    "amount": 5000,
+    "settlementMethod": "cash",
+    "notes": "",
+    "status": "settled",
+    "settledAt": "2025-10-03T20:23:13.449Z",
+    "settledBy": "ADMIN-001",
+    "createdAt": "2025-10-03T20:23:13.449Z"
+  }
+]

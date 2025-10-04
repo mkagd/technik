@@ -1,0 +1,43 @@
+[
+  {
+    "id": "SCH-1759518075740-ckcm4rn0q",
+    "employeeId": "EMP25189001",
+    "weekStart": "2025-09-29",
+    "workSlots": [
+      {
+        "id": "SLOT-1759551643182-mryproat1",
+        "dayOfWeek": 1,
+        "startTime": "08:00",
+        "endTime": "18:30",
+        "type": "work",
+        "duration": 630,
+        "notes": "Praca",
+        "createdAt": "2025-10-04T04:20:43.182Z"
+      }
+    ],
+    "breaks": [
+      {
+        "id": "SLOT-1759551674850-9bhefmljn",
+        "dayOfWeek": 3,
+        "startTime": "13:45",
+        "endTime": "14:30",
+        "type": "break",
+        "duration": 45,
+        "notes": "Przerwa",
+        "createdAt": "2025-10-04T04:21:14.850Z"
+      },
+      {
+        "id": "SLOT-1759551726121-9xfzkxobi",
+        "dayOfWeek": 1,
+        "startTime": "13:45",
+        "endTime": "14:30",
+        "type": "break",
+        "duration": 45,
+        "notes": "",
+        "createdAt": "2025-10-04T04:22:06.121Z"
+      }
+    ],
+    "createdAt": "2025-10-03T19:01:15.740Z",
+    "updatedAt": "2025-10-04T04:22:06.121Z"
+  }
+]

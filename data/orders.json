@@ -15,7 +15,32 @@
     "description": "Nie pobiera wody",
     "priority": "normal",
     "status": "nowe",
-    "visits": [],
+    "visits": [
+      {
+        "visitId": "VIS834186050001",
+        "type": "diagnosis",
+        "status": "scheduled",
+        "date": "2025-10-02",
+        "time": "08:30",
+        "scheduledDate": "2025-10-02",
+        "scheduledTime": "08:30",
+        "assignedTo": "EMP25092001",
+        "technicianId": "EMP25092001",
+        "technicianName": "Jan Serwisant",
+        "diagnosis": "Wstępna diagnoza - wymaga części",
+        "technicianNotes": "Sprawdzono urządzenie",
+        "estimatedDuration": 93,
+        "partsUsed": [],
+        "estimatedCost": 80,
+        "totalCost": null,
+        "beforePhotos": [],
+        "afterPhotos": [],
+        "workSessions": [],
+        "createdAt": "2025-10-02T08:55:01.100Z",
+        "completedAt": null,
+        "priority": "normal"
+      }
+    ],
     "category": "Zmywarka",
     "serviceType": "",
     "scheduledDate": "2025-10-02T07:51:08.050Z",
@@ -68,7 +93,9 @@
     "dateAdded": "2025-10-02T07:51:08.061Z",
     "createdAt": "2025-10-02T07:51:08.061Z",
     "updatedAt": "2025-10-02T07:51:08.061Z",
-    "updatedBy": null
+    "updatedBy": null,
+    "assignedTo": "EMP25092001",
+    "technicianId": "EMP25092001"
   },
   {
     "clientId": "CLIW252750002",
@@ -86,7 +113,74 @@
     "description": "Nie pobiera wody",
     "priority": "normal",
     "status": "nowe",
-    "visits": [],
+    "visits": [
+      {
+        "visitId": "VIS834186050011",
+        "type": "diagnosis",
+        "status": "scheduled",
+        "date": "2025-10-07",
+        "time": "11:30",
+        "scheduledDate": "2025-10-07",
+        "scheduledTime": "11:30",
+        "assignedTo": "EMP25092001",
+        "technicianId": "EMP25092001",
+        "technicianName": "Jan Serwisant",
+        "diagnosis": "Wstępna diagnoza - wymaga części",
+        "technicianNotes": "Sprawdzono urządzenie",
+        "estimatedDuration": 113,
+        "partsUsed": [],
+        "estimatedCost": 80,
+        "totalCost": null,
+        "beforePhotos": [],
+        "afterPhotos": [],
+        "workSessions": [],
+        "createdAt": "2025-10-02T06:15:42.822Z",
+        "completedAt": null,
+        "priority": "normal"
+      },
+      {
+        "visitId": "VIS834186050012",
+        "type": "repair",
+        "status": "completed",
+        "date": "2025-10-04",
+        "time": "09:00",
+        "scheduledDate": "2025-10-04",
+        "scheduledTime": "09:00",
+        "assignedTo": "EMP25092001",
+        "technicianId": "EMP25092001",
+        "technicianName": "Jan Serwisant",
+        "diagnosis": "",
+        "technicianNotes": "",
+        "estimatedDuration": 133,
+        "partsUsed": [
+          {
+            "name": "Pompa wody",
+            "partNumber": "PUMP-123",
+            "quantity": 1,
+            "price": 150
+          }
+        ],
+        "estimatedCost": 250,
+        "totalCost": 250,
+        "beforePhotos": [
+          "/api/placeholder-image?text=Przed"
+        ],
+        "afterPhotos": [
+          "/api/placeholder-image?text=Po"
+        ],
+        "workSessions": [
+          {
+            "startTime": "2025-10-04T09:00:00.000Z",
+            "endTime": "2025-10-04T11:00:00.000Z",
+            "duration": 120,
+            "pauseDuration": 0
+          }
+        ],
+        "createdAt": "2025-09-26T09:56:10.166Z",
+        "completedAt": "2025-10-04T11:00:00.000Z",
+        "priority": "normal"
+      }
+    ],
     "category": "Zmywarka",
     "serviceType": "",
     "scheduledDate": "2025-10-02T07:51:09.883Z",
@@ -139,7 +233,9 @@
     "dateAdded": "2025-10-02T07:51:09.892Z",
     "createdAt": "2025-10-02T07:51:09.892Z",
     "updatedAt": "2025-10-02T07:51:09.892Z",
-    "updatedBy": null
+    "updatedBy": null,
+    "assignedTo": "EMP25092001",
+    "technicianId": "EMP25092001"
   },
   {
     "clientId": "CLIW252750003",
@@ -157,7 +253,74 @@
     "description": "Nie myje naczyń",
     "priority": "normal",
     "status": "nowe",
-    "visits": [],
+    "visits": [
+      {
+        "visitId": "VIS834186050021",
+        "type": "diagnosis",
+        "status": "scheduled",
+        "date": "2025-10-01",
+        "time": "10:00",
+        "scheduledDate": "2025-10-01",
+        "scheduledTime": "10:00",
+        "assignedTo": "EMP25092001",
+        "technicianId": "EMP25092001",
+        "technicianName": "Jan Serwisant",
+        "diagnosis": "Wstępna diagnoza - wymaga części",
+        "technicianNotes": "Sprawdzono urządzenie",
+        "estimatedDuration": 111,
+        "partsUsed": [],
+        "estimatedCost": 80,
+        "totalCost": null,
+        "beforePhotos": [],
+        "afterPhotos": [],
+        "workSessions": [],
+        "createdAt": "2025-10-01T21:34:14.300Z",
+        "completedAt": null,
+        "priority": "normal"
+      },
+      {
+        "visitId": "VIS834186050022",
+        "type": "repair",
+        "status": "completed",
+        "date": "2025-10-07",
+        "time": "12:30",
+        "scheduledDate": "2025-10-07",
+        "scheduledTime": "12:30",
+        "assignedTo": "EMP25092001",
+        "technicianId": "EMP25092001",
+        "technicianName": "Jan Serwisant",
+        "diagnosis": "",
+        "technicianNotes": "",
+        "estimatedDuration": 149,
+        "partsUsed": [
+          {
+            "name": "Pompa wody",
+            "partNumber": "PUMP-123",
+            "quantity": 1,
+            "price": 150
+          }
+        ],
+        "estimatedCost": 250,
+        "totalCost": 250,
+        "beforePhotos": [
+          "/api/placeholder-image?text=Przed"
+        ],
+        "afterPhotos": [
+          "/api/placeholder-image?text=Po"
+        ],
+        "workSessions": [
+          {
+            "startTime": "2025-10-07T12:30:00.000Z",
+            "endTime": "2025-10-07T14:30:00.000Z",
+            "duration": 120,
+            "pauseDuration": 0
+          }
+        ],
+        "createdAt": "2025-09-27T06:13:10.978Z",
+        "completedAt": "2025-10-07T14:30:00.000Z",
+        "priority": "normal"
+      }
+    ],
     "category": "Zmywarka",
     "serviceType": "qweqwe",
     "scheduledDate": "2025-10-02T07:55:34.903Z",
@@ -210,7 +373,9 @@
     "dateAdded": "2025-10-02T07:55:34.914Z",
     "createdAt": "2025-10-02T07:55:34.914Z",
     "updatedAt": "2025-10-02T07:55:34.914Z",
-    "updatedBy": null
+    "updatedBy": null,
+    "assignedTo": "EMP25092001",
+    "technicianId": "EMP25092001"
   },
   {
     "clientId": "CLIW252750004",
@@ -228,7 +393,63 @@
     "description": "Nie myje naczyń",
     "priority": "normal",
     "status": "nowe",
-    "visits": [],
+    "visits": [
+      {
+        "visitId": "VIS834186050031",
+        "type": "diagnosis",
+        "status": "scheduled",
+        "date": "2025-10-03",
+        "time": "11:00",
+        "scheduledDate": "2025-10-03",
+        "scheduledTime": "11:00",
+        "assignedTo": "EMP25092001",
+        "technicianId": "EMP25092001",
+        "technicianName": "Jan Serwisant",
+        "diagnosis": "Wstępna diagnoza - wymaga części",
+        "technicianNotes": "Sprawdzono urządzenie",
+        "estimatedDuration": 119,
+        "partsUsed": [],
+        "estimatedCost": 80,
+        "totalCost": null,
+        "beforePhotos": [],
+        "afterPhotos": [],
+        "workSessions": [],
+        "createdAt": "2025-10-03T06:55:26.587Z",
+        "completedAt": null,
+        "priority": "normal"
+      },
+      {
+        "visitId": "VIS834186050032",
+        "type": "repair",
+        "status": "in_progress",
+        "date": "2025-10-04",
+        "time": "15:30",
+        "scheduledDate": "2025-10-04",
+        "scheduledTime": "15:30",
+        "assignedTo": "EMP25092001",
+        "technicianId": "EMP25092001",
+        "technicianName": "Jan Serwisant",
+        "diagnosis": "",
+        "technicianNotes": "",
+        "estimatedDuration": 133,
+        "partsUsed": [
+          {
+            "name": "Pompa wody",
+            "partNumber": "PUMP-123",
+            "quantity": 1,
+            "price": 150
+          }
+        ],
+        "estimatedCost": 250,
+        "totalCost": null,
+        "beforePhotos": [],
+        "afterPhotos": [],
+        "workSessions": [],
+        "createdAt": "2025-10-03T05:10:34.686Z",
+        "completedAt": null,
+        "priority": "normal"
+      }
+    ],
     "category": "Zmywarka",
     "serviceType": "qweqwe",
     "scheduledDate": "2025-10-02T07:55:49.542Z",
@@ -281,7 +502,9 @@
     "dateAdded": "2025-10-02T07:55:49.554Z",
     "createdAt": "2025-10-02T07:55:49.554Z",
     "updatedAt": "2025-10-02T07:55:49.554Z",
-    "updatedBy": null
+    "updatedBy": null,
+    "assignedTo": "EMP25092001",
+    "technicianId": "EMP25092001"
   },
   {
     "clientId": "CLIW252750005",
@@ -299,7 +522,74 @@
     "description": "Nie odpompowuje wody",
     "priority": "normal",
     "status": "nowe",
-    "visits": [],
+    "visits": [
+      {
+        "visitId": "VIS834186050041",
+        "type": "diagnosis",
+        "status": "scheduled",
+        "date": "2025-10-07",
+        "time": "10:30",
+        "scheduledDate": "2025-10-07",
+        "scheduledTime": "10:30",
+        "assignedTo": "EMP25189002",
+        "technicianId": "EMP25189002",
+        "technicianName": "Anna Nowak",
+        "diagnosis": "Wstępna diagnoza - wymaga części",
+        "technicianNotes": "Sprawdzono urządzenie",
+        "estimatedDuration": 108,
+        "partsUsed": [],
+        "estimatedCost": 80,
+        "totalCost": null,
+        "beforePhotos": [],
+        "afterPhotos": [],
+        "workSessions": [],
+        "createdAt": "2025-09-27T04:51:39.248Z",
+        "completedAt": null,
+        "priority": "normal"
+      },
+      {
+        "visitId": "VIS834186050042",
+        "type": "repair",
+        "status": "completed",
+        "date": "2025-10-02",
+        "time": "08:00",
+        "scheduledDate": "2025-10-02",
+        "scheduledTime": "08:00",
+        "assignedTo": "EMP25189002",
+        "technicianId": "EMP25189002",
+        "technicianName": "Anna Nowak",
+        "diagnosis": "",
+        "technicianNotes": "",
+        "estimatedDuration": 108,
+        "partsUsed": [
+          {
+            "name": "Pompa wody",
+            "partNumber": "PUMP-123",
+            "quantity": 1,
+            "price": 150
+          }
+        ],
+        "estimatedCost": 250,
+        "totalCost": 250,
+        "beforePhotos": [
+          "/api/placeholder-image?text=Przed"
+        ],
+        "afterPhotos": [
+          "/api/placeholder-image?text=Po"
+        ],
+        "workSessions": [
+          {
+            "startTime": "2025-10-02T08:00:00.000Z",
+            "endTime": "2025-10-02T10:00:00.000Z",
+            "duration": 120,
+            "pauseDuration": 0
+          }
+        ],
+        "createdAt": "2025-10-02T21:57:56.095Z",
+        "completedAt": "2025-10-02T10:00:00.000Z",
+        "priority": "normal"
+      }
+    ],
     "category": "Zmywarka",
     "serviceType": "",
     "scheduledDate": "2025-10-02T08:14:19.341Z",
@@ -352,7 +642,9 @@
     "dateAdded": "2025-10-02T08:14:19.351Z",
     "createdAt": "2025-10-02T08:14:19.351Z",
     "updatedAt": "2025-10-02T08:14:19.351Z",
-    "updatedBy": null
+    "updatedBy": null,
+    "assignedTo": "EMP25189002",
+    "technicianId": "EMP25189002"
   },
   {
     "clientId": "CLIW252750006",
@@ -370,7 +662,63 @@
     "description": "Nie odpompowuje wody",
     "priority": "normal",
     "status": "nowe",
-    "visits": [],
+    "visits": [
+      {
+        "visitId": "VIS834186050051",
+        "type": "diagnosis",
+        "status": "scheduled",
+        "date": "2025-10-05",
+        "time": "15:00",
+        "scheduledDate": "2025-10-05",
+        "scheduledTime": "15:00",
+        "assignedTo": "EMP25189002",
+        "technicianId": "EMP25189002",
+        "technicianName": "Anna Nowak",
+        "diagnosis": "Wstępna diagnoza - wymaga części",
+        "technicianNotes": "Sprawdzono urządzenie",
+        "estimatedDuration": 142,
+        "partsUsed": [],
+        "estimatedCost": 80,
+        "totalCost": null,
+        "beforePhotos": [],
+        "afterPhotos": [],
+        "workSessions": [],
+        "createdAt": "2025-09-28T08:30:04.406Z",
+        "completedAt": null,
+        "priority": "normal"
+      },
+      {
+        "visitId": "VIS834186050052",
+        "type": "repair",
+        "status": "in_progress",
+        "date": "2025-10-05",
+        "time": "14:00",
+        "scheduledDate": "2025-10-05",
+        "scheduledTime": "14:00",
+        "assignedTo": "EMP25189002",
+        "technicianId": "EMP25189002",
+        "technicianName": "Anna Nowak",
+        "diagnosis": "",
+        "technicianNotes": "",
+        "estimatedDuration": 139,
+        "partsUsed": [
+          {
+            "name": "Pompa wody",
+            "partNumber": "PUMP-123",
+            "quantity": 1,
+            "price": 150
+          }
+        ],
+        "estimatedCost": 250,
+        "totalCost": null,
+        "beforePhotos": [],
+        "afterPhotos": [],
+        "workSessions": [],
+        "createdAt": "2025-09-29T12:12:20.734Z",
+        "completedAt": null,
+        "priority": "normal"
+      }
+    ],
     "category": "Zmywarka",
     "serviceType": "",
     "scheduledDate": "2025-10-02T08:14:20.822Z",
@@ -423,7 +771,9 @@
     "dateAdded": "2025-10-02T08:14:20.834Z",
     "createdAt": "2025-10-02T08:14:20.834Z",
     "updatedAt": "2025-10-02T08:14:20.834Z",
-    "updatedBy": null
+    "updatedBy": null,
+    "assignedTo": "EMP25189002",
+    "technicianId": "EMP25189002"
   },
   {
     "clientId": "CLIW252750007",
@@ -441,7 +791,64 @@
     "description": "Nie odpompowuje wody",
     "priority": "normal",
     "status": "nowe",
-    "visits": [],
+    "visits": [
+      {
+        "visitId": "VIS834186050061",
+        "type": "diagnosis",
+        "status": "in_progress",
+        "date": "2025-10-03",
+        "time": "09:00",
+        "scheduledDate": "2025-10-03",
+        "scheduledTime": "09:00",
+        "assignedTo": "EMP25189001",
+        "technicianId": "EMP25189001",
+        "technicianName": "Jan Kowalski",
+        "diagnosis": "Wstępna diagnoza - wymaga części",
+        "technicianNotes": "Sprawdzono urządzenie",
+        "estimatedDuration": 120,
+        "partsUsed": [],
+        "estimatedCost": 80,
+        "totalCost": null,
+        "beforePhotos": [],
+        "afterPhotos": [],
+        "workSessions": [
+          {
+            "id": "SESS-1759484083942-b33i96sio",
+            "startTime": "2025-10-03T09:34:43.942Z",
+            "endTime": "2025-10-03T09:34:51.010Z",
+            "duration": 0,
+            "pauseDuration": 0,
+            "pauses": [
+              {
+                "startTime": "2025-10-03T09:34:46.964Z",
+                "endTime": "2025-10-03T09:34:48.994Z",
+                "duration": 0,
+                "reason": "Lunch break"
+              }
+            ],
+            "startedBy": "EMP25189001",
+            "location": null,
+            "notes": "Wymieniono termostat",
+            "endedBy": "EMP25189001"
+          }
+        ],
+        "createdAt": "2025-09-26T15:12:33.927Z",
+        "completedAt": null,
+        "priority": "normal",
+        "startTime": "2025-10-03T09:34:43.942Z",
+        "statusHistory": [
+          {
+            "from": "scheduled",
+            "to": "in_progress",
+            "changedBy": "EMP25189001",
+            "changedAt": "2025-10-03T09:34:43.942Z",
+            "notes": "Auto: Started work session"
+          }
+        ],
+        "updatedAt": "2025-10-03T09:34:51.010Z",
+        "actualDuration": 0
+      }
+    ],
     "category": "Zmywarka",
     "serviceType": "",
     "scheduledDate": "2025-10-02T08:15:13.701Z",
@@ -494,7 +901,9 @@
     "dateAdded": "2025-10-02T08:15:13.708Z",
     "createdAt": "2025-10-02T08:15:13.708Z",
     "updatedAt": "2025-10-02T08:15:13.708Z",
-    "updatedBy": null
+    "updatedBy": null,
+    "assignedTo": "EMP25189001",
+    "technicianId": "EMP25189001"
   },
   {
     "clientId": "CLIW252750008",
@@ -512,7 +921,76 @@
     "description": "Nie pobiera wody",
     "priority": "normal",
     "status": "nowe",
-    "visits": [],
+    "visits": [
+      {
+        "visitId": "VIS834186050071",
+        "type": "diagnosis",
+        "status": "scheduled",
+        "date": "2025-10-06",
+        "time": "08:00",
+        "scheduledDate": "2025-10-06",
+        "scheduledTime": "08:00",
+        "assignedTo": "EMP25189002",
+        "technicianId": "EMP25189002",
+        "technicianName": "Anna Nowak",
+        "diagnosis": "Wstępna diagnoza - wymaga części",
+        "technicianNotes": "Sprawdzono urządzenie",
+        "estimatedDuration": 125,
+        "partsUsed": [],
+        "estimatedCost": 80,
+        "totalCost": null,
+        "beforePhotos": [],
+        "afterPhotos": [],
+        "workSessions": [],
+        "createdAt": "2025-09-28T13:00:15.471Z",
+        "completedAt": null,
+        "priority": "normal"
+      },
+      {
+        "visitId": "VIS834186050072",
+        "type": "repair",
+        "status": "completed",
+        "date": "2025-10-07",
+        "time": "13:30",
+        "scheduledDate": "2025-10-07",
+        "scheduledTime": "13:30",
+        "assignedTo": "EMP25189002",
+        "technicianId": "EMP25189002",
+        "technicianName": "Anna Nowak",
+        "diagnosis": "",
+        "technicianNotes": "",
+        "estimatedDuration": 140,
+        "partsUsed": [
+          {
+            "name": "Pompa wody",
+            "partNumber": "PUMP-123",
+            "quantity": 1,
+            "price": 150
+          }
+        ],
+        "estimatedCost": 250,
+        "totalCost": 250,
+        "beforePhotos": [
+          "/api/placeholder-image?text=Przed"
+        ],
+        "afterPhotos": [
+          "/api/placeholder-image?text=Po"
+        ],
+        "workSessions": [
+          {
+            "startTime": "2025-10-07T13:30:00.000Z",
+            "endTime": "2025-10-07T15:30:00.000Z",
+            "duration": 120,
+            "pauseDuration": 0
+          }
+        ],
+        "createdAt": "2025-09-29T05:41:05.724Z",
+        "completedAt": "2025-10-07T15:30:00.000Z",
+        "priority": "normal",
+        "updatedAt": "2025-10-04T04:58:04.185Z",
+        "lastModifiedBy": "admin"
+      }
+    ],
     "category": "Zmywarka",
     "serviceType": "",
     "scheduledDate": "2025-10-02T08:15:38.829Z",
@@ -565,7 +1043,9 @@
     "dateAdded": "2025-10-02T08:15:38.842Z",
     "createdAt": "2025-10-02T08:15:38.842Z",
     "updatedAt": "2025-10-02T08:15:38.842Z",
-    "updatedBy": null
+    "updatedBy": null,
+    "assignedTo": "EMP25189002",
+    "technicianId": "EMP25189002"
   },
   {
     "clientId": "CLIW252750009",
@@ -583,7 +1063,74 @@
     "description": "Nie pobiera wody",
     "priority": "normal",
     "status": "nowe",
-    "visits": [],
+    "visits": [
+      {
+        "visitId": "VIS834186050081",
+        "type": "diagnosis",
+        "status": "scheduled",
+        "date": "2025-10-01",
+        "time": "12:00",
+        "scheduledDate": "2025-10-01",
+        "scheduledTime": "12:00",
+        "assignedTo": "EMP25189002",
+        "technicianId": "EMP25189002",
+        "technicianName": "Anna Nowak",
+        "diagnosis": "Wstępna diagnoza - wymaga części",
+        "technicianNotes": "Sprawdzono urządzenie",
+        "estimatedDuration": 107,
+        "partsUsed": [],
+        "estimatedCost": 80,
+        "totalCost": null,
+        "beforePhotos": [],
+        "afterPhotos": [],
+        "workSessions": [],
+        "createdAt": "2025-10-02T15:17:49.617Z",
+        "completedAt": null,
+        "priority": "normal"
+      },
+      {
+        "visitId": "VIS834186050082",
+        "type": "repair",
+        "status": "completed",
+        "date": "2025-10-01",
+        "time": "15:00",
+        "scheduledDate": "2025-10-01",
+        "scheduledTime": "15:00",
+        "assignedTo": "EMP25189002",
+        "technicianId": "EMP25189002",
+        "technicianName": "Anna Nowak",
+        "diagnosis": "",
+        "technicianNotes": "",
+        "estimatedDuration": 115,
+        "partsUsed": [
+          {
+            "name": "Pompa wody",
+            "partNumber": "PUMP-123",
+            "quantity": 1,
+            "price": 150
+          }
+        ],
+        "estimatedCost": 250,
+        "totalCost": 250,
+        "beforePhotos": [
+          "/api/placeholder-image?text=Przed"
+        ],
+        "afterPhotos": [
+          "/api/placeholder-image?text=Po"
+        ],
+        "workSessions": [
+          {
+            "startTime": "2025-10-01T15:00:00.000Z",
+            "endTime": "2025-10-01T17:00:00.000Z",
+            "duration": 120,
+            "pauseDuration": 0
+          }
+        ],
+        "createdAt": "2025-10-01T16:35:03.616Z",
+        "completedAt": "2025-10-01T17:00:00.000Z",
+        "priority": "normal"
+      }
+    ],
     "category": "Zmywarka",
     "serviceType": "",
     "scheduledDate": "2025-10-02T08:15:40.372Z",
@@ -636,7 +1183,9 @@
     "dateAdded": "2025-10-02T08:15:40.384Z",
     "createdAt": "2025-10-02T08:15:40.384Z",
     "updatedAt": "2025-10-02T08:15:40.384Z",
-    "updatedBy": null
+    "updatedBy": null,
+    "assignedTo": "EMP25189002",
+    "technicianId": "EMP25189002"
   },
   {
     "clientId": "CLIW252750010",
@@ -654,7 +1203,76 @@
     "description": "Nie włącza się",
     "priority": "normal",
     "status": "nowe",
-    "visits": [],
+    "visits": [
+      {
+        "visitId": "VIS834186050091",
+        "type": "diagnosis",
+        "status": "scheduled",
+        "date": "2025-10-04",
+        "time": "13:30",
+        "scheduledDate": "2025-10-04",
+        "scheduledTime": "13:30",
+        "assignedTo": "EMP25189001",
+        "technicianId": "EMP25189001",
+        "technicianName": "Jan Kowalski",
+        "diagnosis": "Wstępna diagnoza - wymaga części",
+        "technicianNotes": "Sprawdzono urządzenie",
+        "estimatedDuration": 133,
+        "partsUsed": [],
+        "estimatedCost": 80,
+        "totalCost": null,
+        "beforePhotos": [],
+        "afterPhotos": [],
+        "workSessions": [],
+        "createdAt": "2025-10-03T07:30:57.507Z",
+        "completedAt": null,
+        "priority": "normal"
+      },
+      {
+        "visitId": "VIS834186050092",
+        "type": "repair",
+        "status": "completed",
+        "date": "2025-10-07",
+        "time": "15:30",
+        "scheduledDate": "2025-10-07",
+        "scheduledTime": "15:30",
+        "assignedTo": "EMP25092003",
+        "technicianId": "EMP25092003",
+        "technicianName": "Piotr Chłodnictwo",
+        "diagnosis": "",
+        "technicianNotes": "",
+        "estimatedDuration": 140,
+        "partsUsed": [
+          {
+            "name": "Pompa wody",
+            "partNumber": "PUMP-123",
+            "quantity": 1,
+            "price": 150
+          }
+        ],
+        "estimatedCost": 250,
+        "totalCost": 250,
+        "beforePhotos": [
+          "/api/placeholder-image?text=Przed"
+        ],
+        "afterPhotos": [
+          "/api/placeholder-image?text=Po"
+        ],
+        "workSessions": [
+          {
+            "startTime": "2025-10-07T15:30:00.000Z",
+            "endTime": "2025-10-07T17:30:00.000Z",
+            "duration": 120,
+            "pauseDuration": 0
+          }
+        ],
+        "createdAt": "2025-09-28T09:56:06.001Z",
+        "completedAt": "2025-10-07T17:30:00.000Z",
+        "priority": "normal",
+        "updatedAt": "2025-10-04T04:58:44.521Z",
+        "lastModifiedBy": "admin"
+      }
+    ],
     "category": "Piekarnik",
     "serviceType": "kjhjftyd",
     "scheduledDate": "2025-10-02T08:41:58.186Z",
@@ -707,7 +1325,9 @@
     "dateAdded": "2025-10-02T08:41:58.208Z",
     "createdAt": "2025-10-02T08:41:58.208Z",
     "updatedAt": "2025-10-02T08:41:58.208Z",
-    "updatedBy": null
+    "updatedBy": null,
+    "assignedTo": "EMP25189001",
+    "technicianId": "EMP25189001"
   },
   {
     "clientId": "CLIW252750011",
@@ -725,7 +1345,247 @@
     "description": "Nie włącza się",
     "priority": "normal",
     "status": "nowe",
-    "visits": [],
+    "visits": [
+      {
+        "visitId": "VIS834186050101",
+        "type": "diagnosis",
+        "status": "in_progress",
+        "date": "2025-10-01",
+        "time": "08:00",
+        "scheduledDate": "2025-10-01",
+        "scheduledTime": "08:00",
+        "assignedTo": "EMP25189001",
+        "technicianId": "EMP25189001",
+        "technicianName": "Jan Kowalski",
+        "diagnosis": "Wstępna diagnoza - wymaga części\nUszkodzony termostat - wymaga wymiany. Grzalka g�rna dziala prawidlowo.",
+        "technicianNotes": "Sprawdzono urządzenie\n[2025-10-03T09:26:49.456Z] W drodze: Jade do klienta, ETA 15 min\n[2025-10-03T09:27:08.820Z] Rozpoczęto pracę: Rozpoczynam diagnostyke piekarnika\n[2025-10-03T09:30:24.759Z] 🔍 DIAGNOZA: Uszkodzony termostat - wymaga wymiany. Grzalka g�rna dziala prawidlowo.\n[2025-10-03T09:30:38.760Z] 🛠️ CZĘŚCI: Termostat piekarnika - nr katalogowy THM-500",
+        "estimatedDuration": 125,
+        "partsUsed": [],
+        "estimatedCost": 80,
+        "totalCost": null,
+        "beforePhotos": [
+          {
+            "id": "PHOTO-1759483901707-e0ef9zl9v",
+            "type": "before",
+            "url": "https://placehold.co/800x600/blue/white?text=Przed",
+            "filename": "photo-1759483901705.jpg",
+            "originalName": "uploaded-photo.jpg",
+            "mimeType": "image/jpeg",
+            "size": 1024000,
+            "caption": "Piekarnik przed naprawa",
+            "description": "Widok uszkodzonego termostatu",
+            "tags": [],
+            "location": null,
+            "uploadedBy": "EMP25189001",
+            "uploadedAt": "2025-10-03T09:31:41.706Z",
+            "relatedTo": null,
+            "isPrivate": false
+          }
+        ],
+        "afterPhotos": [
+          {
+            "id": "PHOTO-1759554388407-arxrsfhhm",
+            "type": "after",
+            "url": "/uploads/visits/visit-1759554388382-3ur0fbers.jpg",
+            "filename": "visit-1759554388382-3ur0fbers.jpg",
+            "originalName": "IMG_20250410_152309.jpg",
+            "mimeType": "image/jpeg",
+            "size": 3474644,
+            "caption": "",
+            "description": "",
+            "tags": [],
+            "location": null,
+            "uploadedBy": "EMP25189001",
+            "uploadedAt": "2025-10-04T05:06:28.407Z",
+            "relatedTo": null,
+            "isPrivate": false
+          }
+        ],
+        "workSessions": [
+          {
+            "startTime": "2025-10-03T09:27:08.820Z",
+            "startedBy": "EMP25189001",
+            "pauseDuration": 0,
+            "endTime": "2025-10-04T04:44:07.024Z",
+            "pauseReason": "Przerwa",
+            "duration": 1156
+          },
+          {
+            "startTime": "2025-10-04T04:49:46.259Z",
+            "startedBy": "EMP25189001",
+            "pauseDuration": 0,
+            "endTime": "2025-10-04T05:06:43.962Z",
+            "duration": 16,
+            "endedBy": "EMP25189001"
+          },
+          {
+            "id": "SESS-1759554409855-kddurjfgg",
+            "startTime": "2025-10-04T05:06:49.855Z",
+            "endTime": null,
+            "duration": null,
+            "pauseDuration": 0,
+            "pauses": [],
+            "startedBy": "EMP25189001",
+            "location": null,
+            "notes": ""
+          }
+        ],
+        "createdAt": "2025-10-01T01:01:02.318Z",
+        "completedAt": null,
+        "priority": "normal",
+        "updatedAt": "2025-10-04T05:06:49.855Z",
+        "statusHistory": [
+          {
+            "from": "scheduled",
+            "to": "on_way",
+            "changedBy": "EMP25189001",
+            "changedAt": "2025-10-03T09:26:49.456Z",
+            "notes": "Jade do klienta, ETA 15 min"
+          },
+          {
+            "from": "on_way",
+            "to": "in_progress",
+            "changedBy": "EMP25189001",
+            "changedAt": "2025-10-03T09:27:08.820Z",
+            "notes": "Rozpoczynam diagnostyke piekarnika"
+          },
+          {
+            "from": "in_progress",
+            "to": "paused",
+            "changedBy": "EMP25189001",
+            "changedAt": "2025-10-04T04:44:07.024Z",
+            "notes": ""
+          },
+          {
+            "from": "paused",
+            "to": "in_progress",
+            "changedBy": "EMP25189001",
+            "changedAt": "2025-10-04T04:49:46.259Z",
+            "notes": ""
+          }
+        ],
+        "onWayStartedAt": "2025-10-03T09:26:49.456Z",
+        "startTime": "2025-10-03T09:27:08.820Z",
+        "notes": [
+          {
+            "id": "NOTE-1759483824759-vgur2hi6k",
+            "type": "diagnosis",
+            "content": "Uszkodzony termostat - wymaga wymiany. Grzalka g�rna dziala prawidlowo.",
+            "category": null,
+            "priority": "high",
+            "isPrivate": false,
+            "tags": [],
+            "createdBy": "EMP25189001",
+            "createdByName": "jan.kowalski@techserwis.pl",
+            "createdAt": "2025-10-03T09:30:24.759Z",
+            "relatedTo": null,
+            "isPinned": false,
+            "isResolved": false
+          },
+          {
+            "id": "NOTE-1759483838760-itveehqxj",
+            "type": "parts",
+            "content": "Termostat piekarnika - nr katalogowy THM-500",
+            "category": null,
+            "priority": "high",
+            "isPrivate": false,
+            "tags": [],
+            "createdBy": "EMP25189001",
+            "createdByName": "jan.kowalski@techserwis.pl",
+            "createdAt": "2025-10-03T09:30:38.760Z",
+            "relatedTo": null,
+            "isPinned": false,
+            "isResolved": false
+          }
+        ],
+        "diagnosisDate": "2025-10-03T09:30:24.759Z",
+        "diagnosedBy": "EMP25189001",
+        "partsNeeded": [
+          {
+            "estimatedPrice": 150,
+            "quantity": 1,
+            "name": "Termostat",
+            "partNumber": "THM-500"
+          }
+        ],
+        "allPhotos": [
+          {
+            "id": "PHOTO-1759483901707-e0ef9zl9v",
+            "type": "before",
+            "url": "https://placehold.co/800x600/blue/white?text=Przed",
+            "filename": "photo-1759483901705.jpg",
+            "originalName": "uploaded-photo.jpg",
+            "mimeType": "image/jpeg",
+            "size": 1024000,
+            "caption": "Piekarnik przed naprawa",
+            "description": "Widok uszkodzonego termostatu",
+            "tags": [],
+            "location": null,
+            "uploadedBy": "EMP25189001",
+            "uploadedAt": "2025-10-03T09:31:41.706Z",
+            "relatedTo": null,
+            "isPrivate": false
+          },
+          {
+            "id": "PHOTO-1759553775049-e8nqxbjn5",
+            "type": "during",
+            "url": "/uploads/visits/visit-1759553775035-ybvmmpg26.jpg",
+            "filename": "visit-1759553775035-ybvmmpg26.jpg",
+            "originalName": "IMG_20250410_152309.jpg",
+            "mimeType": "image/jpeg",
+            "size": 3474644,
+            "caption": "",
+            "description": "",
+            "tags": [],
+            "location": null,
+            "uploadedBy": "EMP25189001",
+            "uploadedAt": "2025-10-04T04:56:15.049Z",
+            "relatedTo": null,
+            "isPrivate": false
+          },
+          {
+            "id": "PHOTO-1759554388407-arxrsfhhm",
+            "type": "after",
+            "url": "/uploads/visits/visit-1759554388382-3ur0fbers.jpg",
+            "filename": "visit-1759554388382-3ur0fbers.jpg",
+            "originalName": "IMG_20250410_152309.jpg",
+            "mimeType": "image/jpeg",
+            "size": 3474644,
+            "caption": "",
+            "description": "",
+            "tags": [],
+            "location": null,
+            "uploadedBy": "EMP25189001",
+            "uploadedAt": "2025-10-04T05:06:28.407Z",
+            "relatedTo": null,
+            "isPrivate": false
+          }
+        ],
+        "photoCount": 3,
+        "pausedAt": "2025-10-04T04:44:07.024Z",
+        "pauseReason": "",
+        "duringPhotos": [
+          {
+            "id": "PHOTO-1759553775049-e8nqxbjn5",
+            "type": "during",
+            "url": "/uploads/visits/visit-1759553775035-ybvmmpg26.jpg",
+            "filename": "visit-1759553775035-ybvmmpg26.jpg",
+            "originalName": "IMG_20250410_152309.jpg",
+            "mimeType": "image/jpeg",
+            "size": 3474644,
+            "caption": "",
+            "description": "",
+            "tags": [],
+            "location": null,
+            "uploadedBy": "EMP25189001",
+            "uploadedAt": "2025-10-04T04:56:15.049Z",
+            "relatedTo": null,
+            "isPrivate": false
+          }
+        ],
+        "actualDuration": 1172
+      }
+    ],
     "category": "Piekarnik",
     "serviceType": "kjhjftyd",
     "scheduledDate": "2025-10-02T08:42:04.548Z",
@@ -777,8 +1637,10 @@
     "createdFromIP": "127.0.0.1",
     "dateAdded": "2025-10-02T08:42:04.565Z",
     "createdAt": "2025-10-02T08:42:04.565Z",
-    "updatedAt": "2025-10-02T08:42:04.565Z",
-    "updatedBy": null
+    "updatedAt": "2025-10-03T09:30:38.760Z",
+    "updatedBy": null,
+    "assignedTo": "EMP25189001",
+    "technicianId": "EMP25189001"
   },
   {
     "clientId": "CLIW252750012",
@@ -796,7 +1658,32 @@
     "description": "Za długo suszy",
     "priority": "normal",
     "status": "nowe",
-    "visits": [],
+    "visits": [
+      {
+        "visitId": "VIS834186060111",
+        "type": "diagnosis",
+        "status": "scheduled",
+        "date": "2025-10-05",
+        "time": "11:00",
+        "scheduledDate": "2025-10-05",
+        "scheduledTime": "11:00",
+        "assignedTo": "EMP25189001",
+        "technicianId": "EMP25189001",
+        "technicianName": "Jan Kowalski",
+        "diagnosis": "Wstępna diagnoza - wymaga części",
+        "technicianNotes": "Sprawdzono urządzenie",
+        "estimatedDuration": 139,
+        "partsUsed": [],
+        "estimatedCost": 80,
+        "totalCost": null,
+        "beforePhotos": [],
+        "afterPhotos": [],
+        "workSessions": [],
+        "createdAt": "2025-10-03T02:16:30.928Z",
+        "completedAt": null,
+        "priority": "normal"
+      }
+    ],
     "category": "Suszarka",
     "serviceType": "sasdfgh",
     "scheduledDate": "2025-10-02T08:52:58.006Z",
@@ -849,7 +1736,9 @@
     "dateAdded": "2025-10-02T08:52:58.037Z",
     "createdAt": "2025-10-02T08:52:58.037Z",
     "updatedAt": "2025-10-02T08:52:58.037Z",
-    "updatedBy": null
+    "updatedBy": null,
+    "assignedTo": "EMP25189001",
+    "technicianId": "EMP25189001"
   },
   {
     "clientId": "CLIW252750013",
@@ -867,7 +1756,32 @@
     "description": "Za długo suszy",
     "priority": "normal",
     "status": "nowe",
-    "visits": [],
+    "visits": [
+      {
+        "visitId": "VIS834186060121",
+        "type": "diagnosis",
+        "status": "scheduled",
+        "date": "2025-10-03",
+        "time": "15:30",
+        "scheduledDate": "2025-10-03",
+        "scheduledTime": "15:30",
+        "assignedTo": "EMP25189002",
+        "technicianId": "EMP25189002",
+        "technicianName": "Anna Nowak",
+        "diagnosis": "Wstępna diagnoza - wymaga części",
+        "technicianNotes": "Sprawdzono urządzenie",
+        "estimatedDuration": 130,
+        "partsUsed": [],
+        "estimatedCost": 80,
+        "totalCost": null,
+        "beforePhotos": [],
+        "afterPhotos": [],
+        "workSessions": [],
+        "createdAt": "2025-09-27T17:05:13.668Z",
+        "completedAt": null,
+        "priority": "normal"
+      }
+    ],
     "category": "Suszarka",
     "serviceType": "sasdfgh",
     "scheduledDate": "2025-10-02T08:53:08.432Z",
@@ -920,7 +1834,9 @@
     "dateAdded": "2025-10-02T08:53:08.466Z",
     "createdAt": "2025-10-02T08:53:08.466Z",
     "updatedAt": "2025-10-02T08:53:08.466Z",
-    "updatedBy": null
+    "updatedBy": null,
+    "assignedTo": "EMP25189002",
+    "technicianId": "EMP25189002"
   },
   {
     "clientId": "CLIW252750014",
@@ -938,7 +1854,32 @@
     "description": "Za długo suszy",
     "priority": "normal",
     "status": "nowe",
-    "visits": [],
+    "visits": [
+      {
+        "visitId": "VIS834186060131",
+        "type": "diagnosis",
+        "status": "scheduled",
+        "date": "2025-10-06",
+        "time": "10:30",
+        "scheduledDate": "2025-10-06",
+        "scheduledTime": "10:30",
+        "assignedTo": "EMP25092001",
+        "technicianId": "EMP25092001",
+        "technicianName": "Jan Serwisant",
+        "diagnosis": "Wstępna diagnoza - wymaga części",
+        "technicianNotes": "Sprawdzono urządzenie",
+        "estimatedDuration": 113,
+        "partsUsed": [],
+        "estimatedCost": 80,
+        "totalCost": null,
+        "beforePhotos": [],
+        "afterPhotos": [],
+        "workSessions": [],
+        "createdAt": "2025-09-30T18:33:01.658Z",
+        "completedAt": null,
+        "priority": "normal"
+      }
+    ],
     "category": "Suszarka",
     "serviceType": "sasdfgh",
     "scheduledDate": "2025-10-02T08:53:17.045Z",
@@ -991,7 +1932,9 @@
     "dateAdded": "2025-10-02T08:53:17.067Z",
     "createdAt": "2025-10-02T08:53:17.067Z",
     "updatedAt": "2025-10-02T08:53:17.067Z",
-    "updatedBy": null
+    "updatedBy": null,
+    "assignedTo": "EMP25092001",
+    "technicianId": "EMP25092001"
   },
   {
     "clientId": "CLIW252750015",
@@ -1009,7 +1952,74 @@
     "description": "Za długo suszy",
     "priority": "normal",
     "status": "nowe",
-    "visits": [],
+    "visits": [
+      {
+        "visitId": "VIS834186060141",
+        "type": "diagnosis",
+        "status": "scheduled",
+        "date": "2025-10-01",
+        "time": "12:30",
+        "scheduledDate": "2025-10-01",
+        "scheduledTime": "12:30",
+        "assignedTo": "EMP25092001",
+        "technicianId": "EMP25092001",
+        "technicianName": "Jan Serwisant",
+        "diagnosis": "Wstępna diagnoza - wymaga części",
+        "technicianNotes": "Sprawdzono urządzenie",
+        "estimatedDuration": 140,
+        "partsUsed": [],
+        "estimatedCost": 80,
+        "totalCost": null,
+        "beforePhotos": [],
+        "afterPhotos": [],
+        "workSessions": [],
+        "createdAt": "2025-09-29T05:19:17.657Z",
+        "completedAt": null,
+        "priority": "normal"
+      },
+      {
+        "visitId": "VIS834186060142",
+        "type": "repair",
+        "status": "completed",
+        "date": "2025-10-01",
+        "time": "08:30",
+        "scheduledDate": "2025-10-01",
+        "scheduledTime": "08:30",
+        "assignedTo": "EMP25092001",
+        "technicianId": "EMP25092001",
+        "technicianName": "Jan Serwisant",
+        "diagnosis": "",
+        "technicianNotes": "",
+        "estimatedDuration": 109,
+        "partsUsed": [
+          {
+            "name": "Pompa wody",
+            "partNumber": "PUMP-123",
+            "quantity": 1,
+            "price": 150
+          }
+        ],
+        "estimatedCost": 250,
+        "totalCost": 250,
+        "beforePhotos": [
+          "/api/placeholder-image?text=Przed"
+        ],
+        "afterPhotos": [
+          "/api/placeholder-image?text=Po"
+        ],
+        "workSessions": [
+          {
+            "startTime": "2025-10-01T08:30:00.000Z",
+            "endTime": "2025-10-01T10:30:00.000Z",
+            "duration": 120,
+            "pauseDuration": 0
+          }
+        ],
+        "createdAt": "2025-09-30T17:19:00.675Z",
+        "completedAt": "2025-10-01T10:30:00.000Z",
+        "priority": "normal"
+      }
+    ],
     "category": "Suszarka",
     "serviceType": "sasdfgh",
     "scheduledDate": "2025-10-02T08:53:40.776Z",
@@ -1062,7 +2072,9 @@
     "dateAdded": "2025-10-02T08:53:40.811Z",
     "createdAt": "2025-10-02T08:53:40.811Z",
     "updatedAt": "2025-10-02T08:53:40.811Z",
-    "updatedBy": null
+    "updatedBy": null,
+    "assignedTo": "EMP25092001",
+    "technicianId": "EMP25092001"
   },
   {
     "clientId": "CLIW252750016",
@@ -1080,7 +2092,32 @@
     "description": "Nie myje naczyń",
     "priority": "normal",
     "status": "nowe",
-    "visits": [],
+    "visits": [
+      {
+        "visitId": "VIS834186060151",
+        "type": "diagnosis",
+        "status": "scheduled",
+        "date": "2025-10-04",
+        "time": "09:30",
+        "scheduledDate": "2025-10-04",
+        "scheduledTime": "09:30",
+        "assignedTo": "EMP25189001",
+        "technicianId": "EMP25189001",
+        "technicianName": "Jan Kowalski",
+        "diagnosis": "Wstępna diagnoza - wymaga części",
+        "technicianNotes": "Sprawdzono urządzenie",
+        "estimatedDuration": 137,
+        "partsUsed": [],
+        "estimatedCost": 80,
+        "totalCost": null,
+        "beforePhotos": [],
+        "afterPhotos": [],
+        "workSessions": [],
+        "createdAt": "2025-09-30T20:43:14.792Z",
+        "completedAt": null,
+        "priority": "normal"
+      }
+    ],
     "category": "Zmywarka",
     "serviceType": "ydftyghjk",
     "scheduledDate": "2025-10-02T09:01:32.807Z",
@@ -1133,7 +2170,9 @@
     "dateAdded": "2025-10-02T09:01:32.843Z",
     "createdAt": "2025-10-02T09:01:32.843Z",
     "updatedAt": "2025-10-02T09:01:32.843Z",
-    "updatedBy": null
+    "updatedBy": null,
+    "assignedTo": "EMP25189001",
+    "technicianId": "EMP25189001"
   },
   {
     "clientId": "CLIW252750017",
@@ -1151,7 +2190,32 @@
     "description": "Nie myje naczyń",
     "priority": "normal",
     "status": "nowe",
-    "visits": [],
+    "visits": [
+      {
+        "visitId": "VIS834186060161",
+        "type": "diagnosis",
+        "status": "scheduled",
+        "date": "2025-10-01",
+        "time": "14:00",
+        "scheduledDate": "2025-10-01",
+        "scheduledTime": "14:00",
+        "assignedTo": "EMP25092001",
+        "technicianId": "EMP25092001",
+        "technicianName": "Jan Serwisant",
+        "diagnosis": "Wstępna diagnoza - wymaga części",
+        "technicianNotes": "Sprawdzono urządzenie",
+        "estimatedDuration": 96,
+        "partsUsed": [],
+        "estimatedCost": 80,
+        "totalCost": null,
+        "beforePhotos": [],
+        "afterPhotos": [],
+        "workSessions": [],
+        "createdAt": "2025-10-03T02:55:05.309Z",
+        "completedAt": null,
+        "priority": "normal"
+      }
+    ],
     "category": "Zmywarka",
     "serviceType": "ydftyghjk",
     "scheduledDate": "2025-10-02T09:01:40.480Z",
@@ -1204,7 +2268,9 @@
     "dateAdded": "2025-10-02T09:01:40.509Z",
     "createdAt": "2025-10-02T09:01:40.509Z",
     "updatedAt": "2025-10-02T09:01:40.509Z",
-    "updatedBy": null
+    "updatedBy": null,
+    "assignedTo": "EMP25092001",
+    "technicianId": "EMP25092001"
   },
   {
     "clientId": "CLIW252750018",
@@ -1222,7 +2288,32 @@
     "description": "Piekarnik nie grzeje",
     "priority": "normal",
     "status": "nowe",
-    "visits": [],
+    "visits": [
+      {
+        "visitId": "VIS834186060171",
+        "type": "diagnosis",
+        "status": "scheduled",
+        "date": "2025-10-06",
+        "time": "09:30",
+        "scheduledDate": "2025-10-06",
+        "scheduledTime": "09:30",
+        "assignedTo": "EMP25092001",
+        "technicianId": "EMP25092001",
+        "technicianName": "Jan Serwisant",
+        "diagnosis": "Wstępna diagnoza - wymaga części",
+        "technicianNotes": "Sprawdzono urządzenie",
+        "estimatedDuration": 109,
+        "partsUsed": [],
+        "estimatedCost": 80,
+        "totalCost": null,
+        "beforePhotos": [],
+        "afterPhotos": [],
+        "workSessions": [],
+        "createdAt": "2025-09-29T04:12:38.654Z",
+        "completedAt": null,
+        "priority": "normal"
+      }
+    ],
     "category": "Kuchenka",
     "serviceType": "kjhjkl",
     "scheduledDate": "2025-10-02T09:18:51.342Z",
@@ -1275,7 +2366,9 @@
     "dateAdded": "2025-10-02T09:18:51.375Z",
     "createdAt": "2025-10-02T09:18:51.375Z",
     "updatedAt": "2025-10-02T09:18:51.375Z",
-    "updatedBy": null
+    "updatedBy": null,
+    "assignedTo": "EMP25092001",
+    "technicianId": "EMP25092001"
   },
   {
     "clientId": "CLIW252750019",
@@ -1293,7 +2386,32 @@
     "description": "Piekarnik nie grzeje",
     "priority": "normal",
     "status": "nowe",
-    "visits": [],
+    "visits": [
+      {
+        "visitId": "VIS834186060181",
+        "type": "diagnosis",
+        "status": "scheduled",
+        "date": "2025-10-04",
+        "time": "08:30",
+        "scheduledDate": "2025-10-04",
+        "scheduledTime": "08:30",
+        "assignedTo": "EMP25189001",
+        "technicianId": "EMP25189001",
+        "technicianName": "Jan Kowalski",
+        "diagnosis": "Wstępna diagnoza - wymaga części",
+        "technicianNotes": "Sprawdzono urządzenie",
+        "estimatedDuration": 108,
+        "partsUsed": [],
+        "estimatedCost": 80,
+        "totalCost": null,
+        "beforePhotos": [],
+        "afterPhotos": [],
+        "workSessions": [],
+        "createdAt": "2025-09-29T12:20:08.781Z",
+        "completedAt": null,
+        "priority": "normal"
+      }
+    ],
     "category": "Kuchenka",
     "serviceType": "kjhjkl",
     "scheduledDate": "2025-10-02T09:18:55.883Z",
@@ -1346,7 +2464,9 @@
     "dateAdded": "2025-10-02T09:18:55.901Z",
     "createdAt": "2025-10-02T09:18:55.901Z",
     "updatedAt": "2025-10-02T09:18:55.901Z",
-    "updatedBy": null
+    "updatedBy": null,
+    "assignedTo": "EMP25189001",
+    "technicianId": "EMP25189001"
   },
   {
     "clientId": "CLIW252750020",
@@ -1364,7 +2484,74 @@
     "description": "Nie włącza się",
     "priority": "normal",
     "status": "nowe",
-    "visits": [],
+    "visits": [
+      {
+        "visitId": "VIS834186060191",
+        "type": "diagnosis",
+        "status": "scheduled",
+        "date": "2025-10-05",
+        "time": "13:00",
+        "scheduledDate": "2025-10-05",
+        "scheduledTime": "13:00",
+        "assignedTo": "EMP25092001",
+        "technicianId": "EMP25092001",
+        "technicianName": "Jan Serwisant",
+        "diagnosis": "Wstępna diagnoza - wymaga części",
+        "technicianNotes": "Sprawdzono urządzenie",
+        "estimatedDuration": 135,
+        "partsUsed": [],
+        "estimatedCost": 80,
+        "totalCost": null,
+        "beforePhotos": [],
+        "afterPhotos": [],
+        "workSessions": [],
+        "createdAt": "2025-09-26T14:22:48.797Z",
+        "completedAt": null,
+        "priority": "normal"
+      },
+      {
+        "visitId": "VIS834186060192",
+        "type": "repair",
+        "status": "completed",
+        "date": "2025-10-07",
+        "time": "12:00",
+        "scheduledDate": "2025-10-07",
+        "scheduledTime": "12:00",
+        "assignedTo": "EMP25092001",
+        "technicianId": "EMP25092001",
+        "technicianName": "Jan Serwisant",
+        "diagnosis": "",
+        "technicianNotes": "",
+        "estimatedDuration": 111,
+        "partsUsed": [
+          {
+            "name": "Pompa wody",
+            "partNumber": "PUMP-123",
+            "quantity": 1,
+            "price": 150
+          }
+        ],
+        "estimatedCost": 250,
+        "totalCost": 250,
+        "beforePhotos": [
+          "/api/placeholder-image?text=Przed"
+        ],
+        "afterPhotos": [
+          "/api/placeholder-image?text=Po"
+        ],
+        "workSessions": [
+          {
+            "startTime": "2025-10-07T12:00:00.000Z",
+            "endTime": "2025-10-07T14:00:00.000Z",
+            "duration": 120,
+            "pauseDuration": 0
+          }
+        ],
+        "createdAt": "2025-10-02T05:50:03.512Z",
+        "completedAt": "2025-10-07T14:00:00.000Z",
+        "priority": "normal"
+      }
+    ],
     "category": "Pralka",
     "serviceType": "",
     "scheduledDate": "2025-10-02T19:04:26.240Z",
@@ -1417,7 +2604,9 @@
     "dateAdded": "2025-10-02T19:04:26.268Z",
     "createdAt": "2025-10-02T19:04:26.268Z",
     "updatedAt": "2025-10-02T19:04:26.268Z",
-    "updatedBy": null
+    "updatedBy": null,
+    "assignedTo": "EMP25092001",
+    "technicianId": "EMP25092001"
   },
   {
     "clientId": "CLIW252750021",
@@ -1435,7 +2624,63 @@
     "description": "Nie włącza się",
     "priority": "normal",
     "status": "nowe",
-    "visits": [],
+    "visits": [
+      {
+        "visitId": "VIS834186060201",
+        "type": "diagnosis",
+        "status": "scheduled",
+        "date": "2025-10-01",
+        "time": "08:30",
+        "scheduledDate": "2025-10-01",
+        "scheduledTime": "08:30",
+        "assignedTo": "EMP25092001",
+        "technicianId": "EMP25092001",
+        "technicianName": "Jan Serwisant",
+        "diagnosis": "Wstępna diagnoza - wymaga części",
+        "technicianNotes": "Sprawdzono urządzenie",
+        "estimatedDuration": 135,
+        "partsUsed": [],
+        "estimatedCost": 80,
+        "totalCost": null,
+        "beforePhotos": [],
+        "afterPhotos": [],
+        "workSessions": [],
+        "createdAt": "2025-10-03T05:26:23.871Z",
+        "completedAt": null,
+        "priority": "normal"
+      },
+      {
+        "visitId": "VIS834186060202",
+        "type": "repair",
+        "status": "in_progress",
+        "date": "2025-10-05",
+        "time": "10:30",
+        "scheduledDate": "2025-10-05",
+        "scheduledTime": "10:30",
+        "assignedTo": "EMP25092001",
+        "technicianId": "EMP25092001",
+        "technicianName": "Jan Serwisant",
+        "diagnosis": "",
+        "technicianNotes": "",
+        "estimatedDuration": 99,
+        "partsUsed": [
+          {
+            "name": "Pompa wody",
+            "partNumber": "PUMP-123",
+            "quantity": 1,
+            "price": 150
+          }
+        ],
+        "estimatedCost": 250,
+        "totalCost": null,
+        "beforePhotos": [],
+        "afterPhotos": [],
+        "workSessions": [],
+        "createdAt": "2025-09-29T01:13:57.219Z",
+        "completedAt": null,
+        "priority": "normal"
+      }
+    ],
     "category": "Pralka",
     "serviceType": "",
     "scheduledDate": "2025-10-02T19:04:40.962Z",
@@ -1488,7 +2733,9 @@
     "dateAdded": "2025-10-02T19:04:40.990Z",
     "createdAt": "2025-10-02T19:04:40.990Z",
     "updatedAt": "2025-10-02T19:04:40.990Z",
-    "updatedBy": null
+    "updatedBy": null,
+    "assignedTo": "EMP25092001",
+    "technicianId": "EMP25092001"
   },
   {
     "clientId": "CLIW252750022",
@@ -1506,7 +2753,32 @@
     "description": "Nie włącza się",
     "priority": "normal",
     "status": "nowe",
-    "visits": [],
+    "visits": [
+      {
+        "visitId": "VIS834186060211",
+        "type": "diagnosis",
+        "status": "scheduled",
+        "date": "2025-10-06",
+        "time": "14:00",
+        "scheduledDate": "2025-10-06",
+        "scheduledTime": "14:00",
+        "assignedTo": "EMP25189002",
+        "technicianId": "EMP25189002",
+        "technicianName": "Anna Nowak",
+        "diagnosis": "Wstępna diagnoza - wymaga części",
+        "technicianNotes": "Sprawdzono urządzenie",
+        "estimatedDuration": 91,
+        "partsUsed": [],
+        "estimatedCost": 80,
+        "totalCost": null,
+        "beforePhotos": [],
+        "afterPhotos": [],
+        "workSessions": [],
+        "createdAt": "2025-10-03T01:52:07.217Z",
+        "completedAt": null,
+        "priority": "normal"
+      }
+    ],
     "category": "Zmywarka",
     "serviceType": "",
     "scheduledDate": "2025-10-02T19:12:35.871Z",
@@ -1559,7 +2831,9 @@
     "dateAdded": "2025-10-02T19:12:35.899Z",
     "createdAt": "2025-10-02T19:12:35.899Z",
     "updatedAt": "2025-10-02T19:12:35.899Z",
-    "updatedBy": null
+    "updatedBy": null,
+    "assignedTo": "EMP25189002",
+    "technicianId": "EMP25189002"
   },
   {
     "clientId": "CLIW252750023",
@@ -1577,7 +2851,74 @@
     "description": "Nie włącza się",
     "priority": "normal",
     "status": "nowe",
-    "visits": [],
+    "visits": [
+      {
+        "visitId": "VIS834186060221",
+        "type": "diagnosis",
+        "status": "scheduled",
+        "date": "2025-10-04",
+        "time": "11:00",
+        "scheduledDate": "2025-10-04",
+        "scheduledTime": "11:00",
+        "assignedTo": "EMP25092001",
+        "technicianId": "EMP25092001",
+        "technicianName": "Jan Serwisant",
+        "diagnosis": "Wstępna diagnoza - wymaga części",
+        "technicianNotes": "Sprawdzono urządzenie",
+        "estimatedDuration": 123,
+        "partsUsed": [],
+        "estimatedCost": 80,
+        "totalCost": null,
+        "beforePhotos": [],
+        "afterPhotos": [],
+        "workSessions": [],
+        "createdAt": "2025-10-02T13:19:31.716Z",
+        "completedAt": null,
+        "priority": "normal"
+      },
+      {
+        "visitId": "VIS834186060222",
+        "type": "repair",
+        "status": "completed",
+        "date": "2025-10-02",
+        "time": "15:00",
+        "scheduledDate": "2025-10-02",
+        "scheduledTime": "15:00",
+        "assignedTo": "EMP25092001",
+        "technicianId": "EMP25092001",
+        "technicianName": "Jan Serwisant",
+        "diagnosis": "",
+        "technicianNotes": "",
+        "estimatedDuration": 128,
+        "partsUsed": [
+          {
+            "name": "Pompa wody",
+            "partNumber": "PUMP-123",
+            "quantity": 1,
+            "price": 150
+          }
+        ],
+        "estimatedCost": 250,
+        "totalCost": 250,
+        "beforePhotos": [
+          "/api/placeholder-image?text=Przed"
+        ],
+        "afterPhotos": [
+          "/api/placeholder-image?text=Po"
+        ],
+        "workSessions": [
+          {
+            "startTime": "2025-10-02T15:00:00.000Z",
+            "endTime": "2025-10-02T17:00:00.000Z",
+            "duration": 120,
+            "pauseDuration": 0
+          }
+        ],
+        "createdAt": "2025-10-02T18:36:31.893Z",
+        "completedAt": "2025-10-02T17:00:00.000Z",
+        "priority": "normal"
+      }
+    ],
     "category": "Zmywarka",
     "serviceType": "",
     "scheduledDate": "2025-10-02T19:12:40.675Z",
@@ -1630,7 +2971,9 @@
     "dateAdded": "2025-10-02T19:12:40.696Z",
     "createdAt": "2025-10-02T19:12:40.696Z",
     "updatedAt": "2025-10-02T19:12:40.696Z",
-    "updatedBy": null
+    "updatedBy": null,
+    "assignedTo": "EMP25092001",
+    "technicianId": "EMP25092001"
   },
   {
     "id": 1759435572515,
@@ -1655,7 +2998,77 @@
     "dateAdded": "2025-10-02T20:06:12.515Z",
     "createdAt": "2025-10-02T20:06:12.515Z",
     "updatedAt": "2025-10-02T20:06:12.515Z",
-    "updatedBy": null
+    "updatedBy": null,
+    "assignedTo": "EMP25092001",
+    "technicianId": "EMP25092001",
+    "visits": [
+      {
+        "visitId": "VIS834186060231",
+        "type": "diagnosis",
+        "status": "scheduled",
+        "date": "2025-10-04",
+        "time": "13:30",
+        "scheduledDate": "2025-10-04",
+        "scheduledTime": "13:30",
+        "assignedTo": "EMP25092001",
+        "technicianId": "EMP25092001",
+        "technicianName": "Jan Serwisant",
+        "diagnosis": "Wstępna diagnoza - wymaga części",
+        "technicianNotes": "Sprawdzono urządzenie",
+        "estimatedDuration": 136,
+        "partsUsed": [],
+        "estimatedCost": 80,
+        "totalCost": null,
+        "beforePhotos": [],
+        "afterPhotos": [],
+        "workSessions": [],
+        "createdAt": "2025-10-02T23:51:17.310Z",
+        "completedAt": null,
+        "priority": "medium"
+      },
+      {
+        "visitId": "VIS834186060232",
+        "type": "repair",
+        "status": "completed",
+        "date": "2025-10-01",
+        "time": "14:00",
+        "scheduledDate": "2025-10-01",
+        "scheduledTime": "14:00",
+        "assignedTo": "EMP25092001",
+        "technicianId": "EMP25092001",
+        "technicianName": "Jan Serwisant",
+        "diagnosis": "",
+        "technicianNotes": "",
+        "estimatedDuration": 100,
+        "partsUsed": [
+          {
+            "name": "Pompa wody",
+            "partNumber": "PUMP-123",
+            "quantity": 1,
+            "price": 150
+          }
+        ],
+        "estimatedCost": 250,
+        "totalCost": 250,
+        "beforePhotos": [
+          "/api/placeholder-image?text=Przed"
+        ],
+        "afterPhotos": [
+          "/api/placeholder-image?text=Po"
+        ],
+        "workSessions": [
+          {
+            "startTime": "2025-10-01T14:00:00.000Z",
+            "endTime": "2025-10-01T16:00:00.000Z",
+            "duration": 120,
+            "pauseDuration": 0
+          }
+        ],
+        "createdAt": "2025-10-03T00:41:38.851Z",
+        "completedAt": "2025-10-01T16:00:00.000Z",
+        "priority": "medium"
+      }
+    ]
   },
   {
     "id": 1759435576360,
@@ -1680,7 +3093,77 @@
     "dateAdded": "2025-10-02T20:06:16.360Z",
     "createdAt": "2025-10-02T20:06:16.360Z",
     "updatedAt": "2025-10-02T20:06:16.360Z",
-    "updatedBy": null
+    "updatedBy": null,
+    "assignedTo": "EMP25189001",
+    "technicianId": "EMP25189001",
+    "visits": [
+      {
+        "visitId": "VIS834186060241",
+        "type": "diagnosis",
+        "status": "scheduled",
+        "date": "2025-10-05",
+        "time": "14:00",
+        "scheduledDate": "2025-10-05",
+        "scheduledTime": "14:00",
+        "assignedTo": "EMP25189001",
+        "technicianId": "EMP25189001",
+        "technicianName": "Jan Kowalski",
+        "diagnosis": "Wstępna diagnoza - wymaga części",
+        "technicianNotes": "Sprawdzono urządzenie",
+        "estimatedDuration": 143,
+        "partsUsed": [],
+        "estimatedCost": 80,
+        "totalCost": null,
+        "beforePhotos": [],
+        "afterPhotos": [],
+        "workSessions": [],
+        "createdAt": "2025-09-27T18:09:05.008Z",
+        "completedAt": null,
+        "priority": "medium"
+      },
+      {
+        "visitId": "VIS834186060242",
+        "type": "repair",
+        "status": "completed",
+        "date": "2025-10-02",
+        "time": "09:30",
+        "scheduledDate": "2025-10-02",
+        "scheduledTime": "09:30",
+        "assignedTo": "EMP25189001",
+        "technicianId": "EMP25189001",
+        "technicianName": "Jan Kowalski",
+        "diagnosis": "",
+        "technicianNotes": "",
+        "estimatedDuration": 135,
+        "partsUsed": [
+          {
+            "name": "Pompa wody",
+            "partNumber": "PUMP-123",
+            "quantity": 1,
+            "price": 150
+          }
+        ],
+        "estimatedCost": 250,
+        "totalCost": 250,
+        "beforePhotos": [
+          "/api/placeholder-image?text=Przed"
+        ],
+        "afterPhotos": [
+          "/api/placeholder-image?text=Po"
+        ],
+        "workSessions": [
+          {
+            "startTime": "2025-10-02T09:30:00.000Z",
+            "endTime": "2025-10-02T11:30:00.000Z",
+            "duration": 120,
+            "pauseDuration": 0
+          }
+        ],
+        "createdAt": "2025-09-29T21:36:43.989Z",
+        "completedAt": "2025-10-02T11:30:00.000Z",
+        "priority": "medium"
+      }
+    ]
   },
   {
     "id": 1759435792963,
@@ -1705,7 +3188,35 @@
     "dateAdded": "2025-10-02T20:09:52.963Z",
     "createdAt": "2025-10-02T20:09:52.963Z",
     "updatedAt": "2025-10-02T20:09:52.963Z",
-    "updatedBy": null
+    "updatedBy": null,
+    "assignedTo": "EMP25189001",
+    "technicianId": "EMP25189001",
+    "visits": [
+      {
+        "visitId": "VIS834186060251",
+        "type": "diagnosis",
+        "status": "scheduled",
+        "date": "2025-10-06",
+        "time": "13:00",
+        "scheduledDate": "2025-10-06",
+        "scheduledTime": "13:00",
+        "assignedTo": "EMP25189001",
+        "technicianId": "EMP25189001",
+        "technicianName": "Jan Kowalski",
+        "diagnosis": "Wstępna diagnoza - wymaga części",
+        "technicianNotes": "Sprawdzono urządzenie",
+        "estimatedDuration": 103,
+        "partsUsed": [],
+        "estimatedCost": 80,
+        "totalCost": null,
+        "beforePhotos": [],
+        "afterPhotos": [],
+        "workSessions": [],
+        "createdAt": "2025-09-26T14:40:22.708Z",
+        "completedAt": null,
+        "priority": "medium"
+      }
+    ]
   },
   {
     "clientId": "CLIS252750001",
@@ -1722,8 +3233,75 @@
     "serialNumber": "",
     "description": "Nie pobiera wody",
     "priority": "medium",
-    "status": "scheduled",
-    "visits": [],
+    "status": "contacted",
+    "visits": [
+      {
+        "visitId": "VIS834186060261",
+        "type": "diagnosis",
+        "status": "scheduled",
+        "date": "2025-10-03",
+        "time": "11:30",
+        "scheduledDate": "2025-10-03",
+        "scheduledTime": "11:30",
+        "assignedTo": "EMP25189002",
+        "technicianId": "EMP25189002",
+        "technicianName": "Anna Nowak",
+        "diagnosis": "Wstępna diagnoza - wymaga części",
+        "technicianNotes": "Sprawdzono urządzenie",
+        "estimatedDuration": 131,
+        "partsUsed": [],
+        "estimatedCost": 80,
+        "totalCost": null,
+        "beforePhotos": [],
+        "afterPhotos": [],
+        "workSessions": [],
+        "createdAt": "2025-09-27T21:07:35.291Z",
+        "completedAt": null,
+        "priority": "medium"
+      },
+      {
+        "visitId": "VIS834186060262",
+        "type": "repair",
+        "status": "completed",
+        "date": "2025-10-05",
+        "time": "12:00",
+        "scheduledDate": "2025-10-05",
+        "scheduledTime": "12:00",
+        "assignedTo": "EMP25189002",
+        "technicianId": "EMP25189002",
+        "technicianName": "Anna Nowak",
+        "diagnosis": "",
+        "technicianNotes": "",
+        "estimatedDuration": 102,
+        "partsUsed": [
+          {
+            "name": "Pompa wody",
+            "partNumber": "PUMP-123",
+            "quantity": 1,
+            "price": 150
+          }
+        ],
+        "estimatedCost": 250,
+        "totalCost": 250,
+        "beforePhotos": [
+          "/api/placeholder-image?text=Przed"
+        ],
+        "afterPhotos": [
+          "/api/placeholder-image?text=Po"
+        ],
+        "workSessions": [
+          {
+            "startTime": "2025-10-05T12:00:00.000Z",
+            "endTime": "2025-10-05T14:00:00.000Z",
+            "duration": 120,
+            "pauseDuration": 0
+          }
+        ],
+        "createdAt": "2025-09-28T21:16:53.381Z",
+        "completedAt": "2025-10-05T14:00:00.000Z",
+        "priority": "medium"
+      }
+    ],
     "category": "Pralka",
     "serviceType": "",
     "scheduledDate": "2025-10-02T20:34:37.213Z",
@@ -1775,8 +3353,10 @@
     "createdFromIP": null,
     "dateAdded": "2025-10-02T20:34:37.235Z",
     "createdAt": "2025-10-02T20:34:37.235Z",
-    "updatedAt": "2025-10-02T20:34:37.235Z",
-    "updatedBy": null
+    "updatedAt": "2025-10-03T07:01:55.462Z",
+    "updatedBy": "admin",
+    "assignedTo": "EMP25189002",
+    "technicianId": "EMP25189002"
   },
   {
     "clientId": "CLIS252750002",
@@ -1794,7 +3374,74 @@
     "description": "Nie pobiera wody",
     "priority": "medium",
     "status": "scheduled",
-    "visits": [],
+    "visits": [
+      {
+        "visitId": "VIS834186060271",
+        "type": "diagnosis",
+        "status": "scheduled",
+        "date": "2025-10-06",
+        "time": "10:30",
+        "scheduledDate": "2025-10-06",
+        "scheduledTime": "10:30",
+        "assignedTo": "EMP25189002",
+        "technicianId": "EMP25189002",
+        "technicianName": "Anna Nowak",
+        "diagnosis": "Wstępna diagnoza - wymaga części",
+        "technicianNotes": "Sprawdzono urządzenie",
+        "estimatedDuration": 123,
+        "partsUsed": [],
+        "estimatedCost": 80,
+        "totalCost": null,
+        "beforePhotos": [],
+        "afterPhotos": [],
+        "workSessions": [],
+        "createdAt": "2025-09-27T05:43:06.312Z",
+        "completedAt": null,
+        "priority": "medium"
+      },
+      {
+        "visitId": "VIS834186060272",
+        "type": "repair",
+        "status": "completed",
+        "date": "2025-10-03",
+        "time": "14:00",
+        "scheduledDate": "2025-10-03",
+        "scheduledTime": "14:00",
+        "assignedTo": "EMP25189002",
+        "technicianId": "EMP25189002",
+        "technicianName": "Anna Nowak",
+        "diagnosis": "",
+        "technicianNotes": "",
+        "estimatedDuration": 104,
+        "partsUsed": [
+          {
+            "name": "Pompa wody",
+            "partNumber": "PUMP-123",
+            "quantity": 1,
+            "price": 150
+          }
+        ],
+        "estimatedCost": 250,
+        "totalCost": 250,
+        "beforePhotos": [
+          "/api/placeholder-image?text=Przed"
+        ],
+        "afterPhotos": [
+          "/api/placeholder-image?text=Po"
+        ],
+        "workSessions": [
+          {
+            "startTime": "2025-10-03T14:00:00.000Z",
+            "endTime": "2025-10-03T16:00:00.000Z",
+            "duration": 120,
+            "pauseDuration": 0
+          }
+        ],
+        "createdAt": "2025-10-03T08:40:51.799Z",
+        "completedAt": "2025-10-03T16:00:00.000Z",
+        "priority": "medium"
+      }
+    ],
     "category": "Pralka",
     "serviceType": "",
     "scheduledDate": "2025-10-02T20:34:41.227Z",
@@ -1847,7 +3494,9 @@
     "dateAdded": "2025-10-02T20:34:41.252Z",
     "createdAt": "2025-10-02T20:34:41.252Z",
     "updatedAt": "2025-10-02T20:34:41.252Z",
-    "updatedBy": null
+    "updatedBy": null,
+    "assignedTo": "EMP25189002",
+    "technicianId": "EMP25189002"
   },
   {
     "id": 1759437737843,
@@ -1872,7 +3521,66 @@
     "dateAdded": "2025-10-02T20:42:17.843Z",
     "createdAt": "2025-10-02T20:42:17.843Z",
     "updatedAt": "2025-10-02T20:42:17.843Z",
-    "updatedBy": null
+    "updatedBy": null,
+    "assignedTo": "EMP25189001",
+    "technicianId": "EMP25189001",
+    "visits": [
+      {
+        "visitId": "VIS834186060281",
+        "type": "diagnosis",
+        "status": "scheduled",
+        "date": "2025-10-03",
+        "time": "13:30",
+        "scheduledDate": "2025-10-03",
+        "scheduledTime": "13:30",
+        "assignedTo": "EMP25189001",
+        "technicianId": "EMP25189001",
+        "technicianName": "Jan Kowalski",
+        "diagnosis": "Wstępna diagnoza - wymaga części",
+        "technicianNotes": "Sprawdzono urządzenie",
+        "estimatedDuration": 140,
+        "partsUsed": [],
+        "estimatedCost": 80,
+        "totalCost": null,
+        "beforePhotos": [],
+        "afterPhotos": [],
+        "workSessions": [],
+        "createdAt": "2025-10-02T00:40:51.069Z",
+        "completedAt": null,
+        "priority": "medium"
+      },
+      {
+        "visitId": "VIS834186060282",
+        "type": "repair",
+        "status": "in_progress",
+        "date": "2025-10-07",
+        "time": "12:00",
+        "scheduledDate": "2025-10-07",
+        "scheduledTime": "12:00",
+        "assignedTo": "EMP25189001",
+        "technicianId": "EMP25189001",
+        "technicianName": "Jan Kowalski",
+        "diagnosis": "",
+        "technicianNotes": "",
+        "estimatedDuration": 99,
+        "partsUsed": [
+          {
+            "name": "Pompa wody",
+            "partNumber": "PUMP-123",
+            "quantity": 1,
+            "price": 150
+          }
+        ],
+        "estimatedCost": 250,
+        "totalCost": null,
+        "beforePhotos": [],
+        "afterPhotos": [],
+        "workSessions": [],
+        "createdAt": "2025-09-30T06:45:48.576Z",
+        "completedAt": null,
+        "priority": "medium"
+      }
+    ]
   },
   {
     "clientId": "CLIS252750003",
@@ -1890,7 +3598,74 @@
     "description": "Wycieka woda",
     "priority": "medium",
     "status": "scheduled",
-    "visits": [],
+    "visits": [
+      {
+        "visitId": "VIS834186060291",
+        "type": "diagnosis",
+        "status": "scheduled",
+        "date": "2025-10-05",
+        "time": "12:30",
+        "scheduledDate": "2025-10-05",
+        "scheduledTime": "12:30",
+        "assignedTo": "EMP25092001",
+        "technicianId": "EMP25092001",
+        "technicianName": "Jan Serwisant",
+        "diagnosis": "Wstępna diagnoza - wymaga części",
+        "technicianNotes": "Sprawdzono urządzenie",
+        "estimatedDuration": 108,
+        "partsUsed": [],
+        "estimatedCost": 80,
+        "totalCost": null,
+        "beforePhotos": [],
+        "afterPhotos": [],
+        "workSessions": [],
+        "createdAt": "2025-09-26T17:42:04.491Z",
+        "completedAt": null,
+        "priority": "medium"
+      },
+      {
+        "visitId": "VIS834186060292",
+        "type": "repair",
+        "status": "completed",
+        "date": "2025-10-04",
+        "time": "08:00",
+        "scheduledDate": "2025-10-04",
+        "scheduledTime": "08:00",
+        "assignedTo": "EMP25092001",
+        "technicianId": "EMP25092001",
+        "technicianName": "Jan Serwisant",
+        "diagnosis": "",
+        "technicianNotes": "",
+        "estimatedDuration": 99,
+        "partsUsed": [
+          {
+            "name": "Pompa wody",
+            "partNumber": "PUMP-123",
+            "quantity": 1,
+            "price": 150
+          }
+        ],
+        "estimatedCost": 250,
+        "totalCost": 250,
+        "beforePhotos": [
+          "/api/placeholder-image?text=Przed"
+        ],
+        "afterPhotos": [
+          "/api/placeholder-image?text=Po"
+        ],
+        "workSessions": [
+          {
+            "startTime": "2025-10-04T08:00:00.000Z",
+            "endTime": "2025-10-04T10:00:00.000Z",
+            "duration": 120,
+            "pauseDuration": 0
+          }
+        ],
+        "createdAt": "2025-09-29T12:06:37.664Z",
+        "completedAt": "2025-10-04T10:00:00.000Z",
+        "priority": "medium"
+      }
+    ],
     "category": "Lodówka",
     "serviceType": "",
     "scheduledDate": "2025-10-02T20:44:41.346Z",
@@ -1943,7 +3718,9 @@
     "dateAdded": "2025-10-02T20:44:41.385Z",
     "createdAt": "2025-10-02T20:44:41.385Z",
     "updatedAt": "2025-10-02T20:44:41.385Z",
-    "updatedBy": null
+    "updatedBy": null,
+    "assignedTo": "EMP25092001",
+    "technicianId": "EMP25092001"
   },
   {
     "clientId": "CLIS252750004",
@@ -1961,7 +3738,63 @@
     "description": "Wycieka woda",
     "priority": "medium",
     "status": "scheduled",
-    "visits": [],
+    "visits": [
+      {
+        "visitId": "VIS834186060301",
+        "type": "diagnosis",
+        "status": "scheduled",
+        "date": "2025-10-04",
+        "time": "15:30",
+        "scheduledDate": "2025-10-04",
+        "scheduledTime": "15:30",
+        "assignedTo": "EMP25092001",
+        "technicianId": "EMP25092001",
+        "technicianName": "Jan Serwisant",
+        "diagnosis": "Wstępna diagnoza - wymaga części",
+        "technicianNotes": "Sprawdzono urządzenie",
+        "estimatedDuration": 130,
+        "partsUsed": [],
+        "estimatedCost": 80,
+        "totalCost": null,
+        "beforePhotos": [],
+        "afterPhotos": [],
+        "workSessions": [],
+        "createdAt": "2025-09-26T19:24:13.142Z",
+        "completedAt": null,
+        "priority": "medium"
+      },
+      {
+        "visitId": "VIS834186060302",
+        "type": "repair",
+        "status": "in_progress",
+        "date": "2025-10-01",
+        "time": "15:30",
+        "scheduledDate": "2025-10-01",
+        "scheduledTime": "15:30",
+        "assignedTo": "EMP25092001",
+        "technicianId": "EMP25092001",
+        "technicianName": "Jan Serwisant",
+        "diagnosis": "",
+        "technicianNotes": "",
+        "estimatedDuration": 132,
+        "partsUsed": [
+          {
+            "name": "Pompa wody",
+            "partNumber": "PUMP-123",
+            "quantity": 1,
+            "price": 150
+          }
+        ],
+        "estimatedCost": 250,
+        "totalCost": null,
+        "beforePhotos": [],
+        "afterPhotos": [],
+        "workSessions": [],
+        "createdAt": "2025-09-30T05:37:03.784Z",
+        "completedAt": null,
+        "priority": "medium"
+      }
+    ],
     "category": "Lodówka",
     "serviceType": "",
     "scheduledDate": "2025-10-02T20:44:59.958Z",
@@ -2014,7 +3847,9 @@
     "dateAdded": "2025-10-02T20:44:59.998Z",
     "createdAt": "2025-10-02T20:44:59.998Z",
     "updatedAt": "2025-10-02T20:44:59.998Z",
-    "updatedBy": null
+    "updatedBy": null,
+    "assignedTo": "EMP25092001",
+    "technicianId": "EMP25092001"
   },
   {
     "clientId": "CLIS252750005",
@@ -2032,7 +3867,32 @@
     "description": "qwd",
     "priority": "medium",
     "status": "scheduled",
-    "visits": [],
+    "visits": [
+      {
+        "visitId": "VIS834186060311",
+        "type": "diagnosis",
+        "status": "scheduled",
+        "date": "2025-10-03",
+        "time": "12:30",
+        "scheduledDate": "2025-10-03",
+        "scheduledTime": "12:30",
+        "assignedTo": "EMP25092001",
+        "technicianId": "EMP25092001",
+        "technicianName": "Jan Serwisant",
+        "diagnosis": "Wstępna diagnoza - wymaga części",
+        "technicianNotes": "Sprawdzono urządzenie",
+        "estimatedDuration": 94,
+        "partsUsed": [],
+        "estimatedCost": 80,
+        "totalCost": null,
+        "beforePhotos": [],
+        "afterPhotos": [],
+        "workSessions": [],
+        "createdAt": "2025-09-28T23:57:12.114Z",
+        "completedAt": null,
+        "priority": "medium"
+      }
+    ],
     "category": "Zmywarka",
     "serviceType": "",
     "scheduledDate": "2025-10-02T20:45:29.809Z",
@@ -2085,7 +3945,9 @@
     "dateAdded": "2025-10-02T20:45:29.835Z",
     "createdAt": "2025-10-02T20:45:29.835Z",
     "updatedAt": "2025-10-02T20:45:29.835Z",
-    "updatedBy": null
+    "updatedBy": null,
+    "assignedTo": "EMP25092001",
+    "technicianId": "EMP25092001"
   },
   {
     "clientId": "CLIS252750006",
@@ -2103,7 +3965,32 @@
     "description": "Nie pobiera wody",
     "priority": "medium",
     "status": "scheduled",
-    "visits": [],
+    "visits": [
+      {
+        "visitId": "VIS834186060321",
+        "type": "diagnosis",
+        "status": "scheduled",
+        "date": "2025-10-05",
+        "time": "11:30",
+        "scheduledDate": "2025-10-05",
+        "scheduledTime": "11:30",
+        "assignedTo": "EMP25189002",
+        "technicianId": "EMP25189002",
+        "technicianName": "Anna Nowak",
+        "diagnosis": "Wstępna diagnoza - wymaga części",
+        "technicianNotes": "Sprawdzono urządzenie",
+        "estimatedDuration": 110,
+        "partsUsed": [],
+        "estimatedCost": 80,
+        "totalCost": null,
+        "beforePhotos": [],
+        "afterPhotos": [],
+        "workSessions": [],
+        "createdAt": "2025-09-28T10:43:37.143Z",
+        "completedAt": null,
+        "priority": "medium"
+      }
+    ],
     "category": "Pralka",
     "serviceType": "",
     "scheduledDate": "2025-10-02T20:51:25.421Z",
@@ -2156,7 +4043,9 @@
     "dateAdded": "2025-10-02T20:51:25.443Z",
     "createdAt": "2025-10-02T20:51:25.443Z",
     "updatedAt": "2025-10-02T20:51:25.443Z",
-    "updatedBy": null
+    "updatedBy": null,
+    "assignedTo": "EMP25189002",
+    "technicianId": "EMP25189002"
   },
   {
     "clientId": "CLIS252750007",
@@ -2174,7 +4063,74 @@
     "description": "Nie pobiera wody",
     "priority": "medium",
     "status": "scheduled",
-    "visits": [],
+    "visits": [
+      {
+        "visitId": "VIS834186060331",
+        "type": "diagnosis",
+        "status": "scheduled",
+        "date": "2025-10-06",
+        "time": "14:30",
+        "scheduledDate": "2025-10-06",
+        "scheduledTime": "14:30",
+        "assignedTo": "EMP25189001",
+        "technicianId": "EMP25189001",
+        "technicianName": "Jan Kowalski",
+        "diagnosis": "Wstępna diagnoza - wymaga części",
+        "technicianNotes": "Sprawdzono urządzenie",
+        "estimatedDuration": 125,
+        "partsUsed": [],
+        "estimatedCost": 80,
+        "totalCost": null,
+        "beforePhotos": [],
+        "afterPhotos": [],
+        "workSessions": [],
+        "createdAt": "2025-09-29T12:55:10.982Z",
+        "completedAt": null,
+        "priority": "medium"
+      },
+      {
+        "visitId": "VIS834186060332",
+        "type": "repair",
+        "status": "completed",
+        "date": "2025-10-07",
+        "time": "08:00",
+        "scheduledDate": "2025-10-07",
+        "scheduledTime": "08:00",
+        "assignedTo": "EMP25189001",
+        "technicianId": "EMP25189001",
+        "technicianName": "Jan Kowalski",
+        "diagnosis": "",
+        "technicianNotes": "",
+        "estimatedDuration": 130,
+        "partsUsed": [
+          {
+            "name": "Pompa wody",
+            "partNumber": "PUMP-123",
+            "quantity": 1,
+            "price": 150
+          }
+        ],
+        "estimatedCost": 250,
+        "totalCost": 250,
+        "beforePhotos": [
+          "/api/placeholder-image?text=Przed"
+        ],
+        "afterPhotos": [
+          "/api/placeholder-image?text=Po"
+        ],
+        "workSessions": [
+          {
+            "startTime": "2025-10-07T08:00:00.000Z",
+            "endTime": "2025-10-07T10:00:00.000Z",
+            "duration": 120,
+            "pauseDuration": 0
+          }
+        ],
+        "createdAt": "2025-09-27T00:33:22.782Z",
+        "completedAt": "2025-10-07T10:00:00.000Z",
+        "priority": "medium"
+      }
+    ],
     "category": "Pralka",
     "serviceType": "",
     "scheduledDate": "2025-10-02T20:51:28.573Z",
@@ -2227,7 +4183,9 @@
     "dateAdded": "2025-10-02T20:51:28.582Z",
     "createdAt": "2025-10-02T20:51:28.582Z",
     "updatedAt": "2025-10-02T20:51:28.582Z",
-    "updatedBy": null
+    "updatedBy": null,
+    "assignedTo": "EMP25189001",
+    "technicianId": "EMP25189001"
   },
   {
     "clientId": "CLIS252750008",
@@ -2245,7 +4203,32 @@
     "description": "Nie świeci oświetlenie",
     "priority": "medium",
     "status": "scheduled",
-    "visits": [],
+    "visits": [
+      {
+        "visitId": "VIS834186060341",
+        "type": "diagnosis",
+        "status": "scheduled",
+        "date": "2025-10-01",
+        "time": "11:00",
+        "scheduledDate": "2025-10-01",
+        "scheduledTime": "11:00",
+        "assignedTo": "EMP25092001",
+        "technicianId": "EMP25092001",
+        "technicianName": "Jan Serwisant",
+        "diagnosis": "Wstępna diagnoza - wymaga części",
+        "technicianNotes": "Sprawdzono urządzenie",
+        "estimatedDuration": 142,
+        "partsUsed": [],
+        "estimatedCost": 80,
+        "totalCost": null,
+        "beforePhotos": [],
+        "afterPhotos": [],
+        "workSessions": [],
+        "createdAt": "2025-09-30T10:01:34.119Z",
+        "completedAt": null,
+        "priority": "medium"
+      }
+    ],
     "category": "Lodówka",
     "serviceType": "",
     "scheduledDate": "2025-10-02T20:59:25.193Z",
@@ -2298,7 +4281,9 @@
     "dateAdded": "2025-10-02T20:59:25.231Z",
     "createdAt": "2025-10-02T20:59:25.231Z",
     "updatedAt": "2025-10-02T20:59:25.231Z",
-    "updatedBy": null
+    "updatedBy": null,
+    "assignedTo": "EMP25092001",
+    "technicianId": "EMP25092001"
   },
   {
     "clientId": "CLIS252750009",
@@ -2316,7 +4301,63 @@
     "description": "Nie pobiera wody",
     "priority": "medium",
     "status": "scheduled",
-    "visits": [],
+    "visits": [
+      {
+        "visitId": "VIS834186060351",
+        "type": "diagnosis",
+        "status": "scheduled",
+        "date": "2025-10-04",
+        "time": "12:00",
+        "scheduledDate": "2025-10-04",
+        "scheduledTime": "12:00",
+        "assignedTo": "EMP25092001",
+        "technicianId": "EMP25092001",
+        "technicianName": "Jan Serwisant",
+        "diagnosis": "Wstępna diagnoza - wymaga części",
+        "technicianNotes": "Sprawdzono urządzenie",
+        "estimatedDuration": 144,
+        "partsUsed": [],
+        "estimatedCost": 80,
+        "totalCost": null,
+        "beforePhotos": [],
+        "afterPhotos": [],
+        "workSessions": [],
+        "createdAt": "2025-10-02T16:45:54.438Z",
+        "completedAt": null,
+        "priority": "medium"
+      },
+      {
+        "visitId": "VIS834186060352",
+        "type": "repair",
+        "status": "in_progress",
+        "date": "2025-10-01",
+        "time": "11:30",
+        "scheduledDate": "2025-10-01",
+        "scheduledTime": "11:30",
+        "assignedTo": "EMP25092001",
+        "technicianId": "EMP25092001",
+        "technicianName": "Jan Serwisant",
+        "diagnosis": "",
+        "technicianNotes": "",
+        "estimatedDuration": 122,
+        "partsUsed": [
+          {
+            "name": "Pompa wody",
+            "partNumber": "PUMP-123",
+            "quantity": 1,
+            "price": 150
+          }
+        ],
+        "estimatedCost": 250,
+        "totalCost": null,
+        "beforePhotos": [],
+        "afterPhotos": [],
+        "workSessions": [],
+        "createdAt": "2025-10-02T15:40:34.738Z",
+        "completedAt": null,
+        "priority": "medium"
+      }
+    ],
     "category": "Pralka",
     "serviceType": "",
     "scheduledDate": "2025-10-02T21:04:13.277Z",
@@ -2369,7 +4410,9 @@
     "dateAdded": "2025-10-02T21:04:13.309Z",
     "createdAt": "2025-10-02T21:04:13.309Z",
     "updatedAt": "2025-10-02T21:04:13.309Z",
-    "updatedBy": null
+    "updatedBy": null,
+    "assignedTo": "EMP25092001",
+    "technicianId": "EMP25092001"
   },
   {
     "clientId": "CLIS252750010",
@@ -2387,7 +4430,63 @@
     "description": "Nie odpompowuje wody",
     "priority": "medium",
     "status": "scheduled",
-    "visits": [],
+    "visits": [
+      {
+        "visitId": "VIS834186060361",
+        "type": "diagnosis",
+        "status": "scheduled",
+        "date": "2025-10-03",
+        "time": "13:30",
+        "scheduledDate": "2025-10-03",
+        "scheduledTime": "13:30",
+        "assignedTo": "EMP25092001",
+        "technicianId": "EMP25092001",
+        "technicianName": "Jan Serwisant",
+        "diagnosis": "Wstępna diagnoza - wymaga części",
+        "technicianNotes": "Sprawdzono urządzenie",
+        "estimatedDuration": 92,
+        "partsUsed": [],
+        "estimatedCost": 80,
+        "totalCost": null,
+        "beforePhotos": [],
+        "afterPhotos": [],
+        "workSessions": [],
+        "createdAt": "2025-09-28T02:08:02.416Z",
+        "completedAt": null,
+        "priority": "medium"
+      },
+      {
+        "visitId": "VIS834186060362",
+        "type": "repair",
+        "status": "in_progress",
+        "date": "2025-10-06",
+        "time": "15:00",
+        "scheduledDate": "2025-10-06",
+        "scheduledTime": "15:00",
+        "assignedTo": "EMP25092001",
+        "technicianId": "EMP25092001",
+        "technicianName": "Jan Serwisant",
+        "diagnosis": "",
+        "technicianNotes": "",
+        "estimatedDuration": 135,
+        "partsUsed": [
+          {
+            "name": "Pompa wody",
+            "partNumber": "PUMP-123",
+            "quantity": 1,
+            "price": 150
+          }
+        ],
+        "estimatedCost": 250,
+        "totalCost": null,
+        "beforePhotos": [],
+        "afterPhotos": [],
+        "workSessions": [],
+        "createdAt": "2025-10-01T03:45:06.698Z",
+        "completedAt": null,
+        "priority": "medium"
+      }
+    ],
     "category": "Zmywarka",
     "serviceType": "",
     "scheduledDate": "2025-10-02T21:10:56.894Z",
@@ -2440,7 +4539,9 @@
     "dateAdded": "2025-10-02T21:10:56.923Z",
     "createdAt": "2025-10-02T21:10:56.923Z",
     "updatedAt": "2025-10-02T21:10:56.923Z",
-    "updatedBy": null
+    "updatedBy": null,
+    "assignedTo": "EMP25092001",
+    "technicianId": "EMP25092001"
   },
   {
     "clientId": "CLIS252750011",
@@ -2458,7 +4559,32 @@
     "description": "Nie odpompowuje wody",
     "priority": "medium",
     "status": "scheduled",
-    "visits": [],
+    "visits": [
+      {
+        "visitId": "VIS834186060371",
+        "type": "diagnosis",
+        "status": "scheduled",
+        "date": "2025-10-02",
+        "time": "14:00",
+        "scheduledDate": "2025-10-02",
+        "scheduledTime": "14:00",
+        "assignedTo": "EMP25189002",
+        "technicianId": "EMP25189002",
+        "technicianName": "Anna Nowak",
+        "diagnosis": "Wstępna diagnoza - wymaga części",
+        "technicianNotes": "Sprawdzono urządzenie",
+        "estimatedDuration": 96,
+        "partsUsed": [],
+        "estimatedCost": 80,
+        "totalCost": null,
+        "beforePhotos": [],
+        "afterPhotos": [],
+        "workSessions": [],
+        "createdAt": "2025-09-30T08:37:20.669Z",
+        "completedAt": null,
+        "priority": "medium"
+      }
+    ],
     "category": "Zmywarka",
     "serviceType": "",
     "scheduledDate": "2025-10-02T21:10:59.879Z",
@@ -2511,7 +4637,9 @@
     "dateAdded": "2025-10-02T21:10:59.901Z",
     "createdAt": "2025-10-02T21:10:59.901Z",
     "updatedAt": "2025-10-02T21:10:59.901Z",
-    "updatedBy": null
+    "updatedBy": null,
+    "assignedTo": "EMP25189002",
+    "technicianId": "EMP25189002"
   },
   {
     "clientId": "CLIS252750012",
@@ -2532,7 +4660,63 @@
     "description": "Nie włącza się",
     "priority": "medium",
     "status": "scheduled",
-    "visits": [],
+    "visits": [
+      {
+        "visitId": "VIS834186060381",
+        "type": "diagnosis",
+        "status": "scheduled",
+        "date": "2025-10-03",
+        "time": "09:30",
+        "scheduledDate": "2025-10-03",
+        "scheduledTime": "09:30",
+        "assignedTo": "EMP25092001",
+        "technicianId": "EMP25092001",
+        "technicianName": "Jan Serwisant",
+        "diagnosis": "Wstępna diagnoza - wymaga części",
+        "technicianNotes": "Sprawdzono urządzenie",
+        "estimatedDuration": 147,
+        "partsUsed": [],
+        "estimatedCost": 80,
+        "totalCost": null,
+        "beforePhotos": [],
+        "afterPhotos": [],
+        "workSessions": [],
+        "createdAt": "2025-10-01T03:58:33.167Z",
+        "completedAt": null,
+        "priority": "medium"
+      },
+      {
+        "visitId": "VIS834186060382",
+        "type": "repair",
+        "status": "in_progress",
+        "date": "2025-10-02",
+        "time": "11:00",
+        "scheduledDate": "2025-10-02",
+        "scheduledTime": "11:00",
+        "assignedTo": "EMP25092001",
+        "technicianId": "EMP25092001",
+        "technicianName": "Jan Serwisant",
+        "diagnosis": "",
+        "technicianNotes": "",
+        "estimatedDuration": 109,
+        "partsUsed": [
+          {
+            "name": "Pompa wody",
+            "partNumber": "PUMP-123",
+            "quantity": 1,
+            "price": 150
+          }
+        ],
+        "estimatedCost": 250,
+        "totalCost": null,
+        "beforePhotos": [],
+        "afterPhotos": [],
+        "workSessions": [],
+        "createdAt": "2025-09-28T23:43:26.401Z",
+        "completedAt": null,
+        "priority": "medium"
+      }
+    ],
     "category": "Pralka",
     "serviceType": "",
     "scheduledDate": "2025-10-02T21:17:59.071Z",
@@ -2585,7 +4769,9 @@
     "dateAdded": "2025-10-02T21:17:59.110Z",
     "createdAt": "2025-10-02T21:17:59.110Z",
     "updatedAt": "2025-10-02T21:17:59.110Z",
-    "updatedBy": null
+    "updatedBy": null,
+    "assignedTo": "EMP25092001",
+    "technicianId": "EMP25092001"
   },
   {
     "clientId": "CLIS252750013",
@@ -2606,7 +4792,32 @@
     "description": "Nie włącza się",
     "priority": "medium",
     "status": "scheduled",
-    "visits": [],
+    "visits": [
+      {
+        "visitId": "VIS834186060391",
+        "type": "diagnosis",
+        "status": "scheduled",
+        "date": "2025-10-01",
+        "time": "15:30",
+        "scheduledDate": "2025-10-01",
+        "scheduledTime": "15:30",
+        "assignedTo": "EMP25189002",
+        "technicianId": "EMP25189002",
+        "technicianName": "Anna Nowak",
+        "diagnosis": "Wstępna diagnoza - wymaga części",
+        "technicianNotes": "Sprawdzono urządzenie",
+        "estimatedDuration": 134,
+        "partsUsed": [],
+        "estimatedCost": 80,
+        "totalCost": null,
+        "beforePhotos": [],
+        "afterPhotos": [],
+        "workSessions": [],
+        "createdAt": "2025-10-02T11:30:45.380Z",
+        "completedAt": null,
+        "priority": "medium"
+      }
+    ],
     "category": "Pralka",
     "serviceType": "",
     "scheduledDate": "2025-10-02T21:18:02.057Z",
@@ -2659,7 +4870,9 @@
     "dateAdded": "2025-10-02T21:18:02.080Z",
     "createdAt": "2025-10-02T21:18:02.080Z",
     "updatedAt": "2025-10-02T21:18:02.080Z",
-    "updatedBy": null
+    "updatedBy": null,
+    "assignedTo": "EMP25189002",
+    "technicianId": "EMP25189002"
   },
   {
     "clientId": "CLIS252750014",
@@ -2680,7 +4893,87 @@
     "description": "Nie włącza się",
     "priority": "medium",
     "status": "scheduled",
-    "visits": [],
+    "visits": [
+      {
+        "visitId": "VIS834186060401",
+        "type": "diagnosis",
+        "status": "scheduled",
+        "date": "2025-10-03",
+        "time": "15:30",
+        "scheduledDate": "2025-10-03",
+        "scheduledTime": "15:30",
+        "assignedTo": "EMP25189001",
+        "technicianId": "EMP25189001",
+        "technicianName": "Jan Kowalski",
+        "diagnosis": "Wstępna diagnoza - wymaga części",
+        "technicianNotes": "Sprawdzono urządzenie",
+        "estimatedDuration": 145,
+        "partsUsed": [],
+        "estimatedCost": 80,
+        "totalCost": null,
+        "beforePhotos": [],
+        "afterPhotos": [],
+        "workSessions": [],
+        "createdAt": "2025-09-26T12:37:45.193Z",
+        "completedAt": null,
+        "priority": "medium"
+      },
+      {
+        "visitId": "VIS834186060402",
+        "type": "repair",
+        "status": "completed",
+        "date": "2025-10-01",
+        "time": "13:30",
+        "scheduledDate": "2025-10-01",
+        "scheduledTime": "13:30",
+        "assignedTo": "EMP25189001",
+        "technicianId": "EMP25189001",
+        "technicianName": "Jan Kowalski",
+        "diagnosis": "",
+        "technicianNotes": "",
+        "estimatedDuration": 103,
+        "partsUsed": [
+          {
+            "name": "Pompa wody",
+            "partNumber": "PUMP-123",
+            "quantity": 1,
+            "price": 150
+          }
+        ],
+        "estimatedCost": 250,
+        "totalCost": 250,
+        "beforePhotos": [
+          "/api/placeholder-image?text=Przed"
+        ],
+        "afterPhotos": [
+          "/api/placeholder-image?text=Po"
+        ],
+        "workSessions": [
+          {
+            "startTime": "2025-10-01T13:30:00.000Z",
+            "endTime": "2025-10-01T15:30:00.000Z",
+            "duration": 120,
+            "pauseDuration": 0
+          },
+          {
+            "id": "SESS-1759525107020-8qwd7jrf4",
+            "startTime": "2025-10-03T20:58:27.019Z",
+            "endTime": null,
+            "duration": null,
+            "pauseDuration": 0,
+            "pauses": [],
+            "startedBy": "EMP25189001",
+            "location": null,
+            "notes": ""
+          }
+        ],
+        "createdAt": "2025-09-29T01:50:32.607Z",
+        "completedAt": "2025-10-01T15:30:00.000Z",
+        "priority": "medium",
+        "startTime": "2025-10-03T20:58:27.019Z",
+        "updatedAt": "2025-10-03T20:58:27.019Z"
+      }
+    ],
     "category": "Pralka",
     "serviceType": "",
     "scheduledDate": "2025-10-02T21:18:06.276Z",
@@ -2733,7 +5026,9 @@
     "dateAdded": "2025-10-02T21:18:06.299Z",
     "createdAt": "2025-10-02T21:18:06.299Z",
     "updatedAt": "2025-10-02T21:18:06.299Z",
-    "updatedBy": null
+    "updatedBy": null,
+    "assignedTo": "EMP25189001",
+    "technicianId": "EMP25189001"
   },
   {
     "clientId": "CLIS252750015",
@@ -2754,7 +5049,74 @@
     "description": "ad",
     "priority": "medium",
     "status": "pending",
-    "visits": [],
+    "visits": [
+      {
+        "visitId": "VIS834186060411",
+        "type": "diagnosis",
+        "status": "scheduled",
+        "date": "2025-10-02",
+        "time": "10:00",
+        "scheduledDate": "2025-10-02",
+        "scheduledTime": "10:00",
+        "assignedTo": "EMP25092001",
+        "technicianId": "EMP25092001",
+        "technicianName": "Jan Serwisant",
+        "diagnosis": "Wstępna diagnoza - wymaga części",
+        "technicianNotes": "Sprawdzono urządzenie",
+        "estimatedDuration": 140,
+        "partsUsed": [],
+        "estimatedCost": 80,
+        "totalCost": null,
+        "beforePhotos": [],
+        "afterPhotos": [],
+        "workSessions": [],
+        "createdAt": "2025-10-01T12:15:18.697Z",
+        "completedAt": null,
+        "priority": "medium"
+      },
+      {
+        "visitId": "VIS834186060412",
+        "type": "repair",
+        "status": "completed",
+        "date": "2025-10-06",
+        "time": "14:00",
+        "scheduledDate": "2025-10-06",
+        "scheduledTime": "14:00",
+        "assignedTo": "EMP25092001",
+        "technicianId": "EMP25092001",
+        "technicianName": "Jan Serwisant",
+        "diagnosis": "",
+        "technicianNotes": "",
+        "estimatedDuration": 105,
+        "partsUsed": [
+          {
+            "name": "Pompa wody",
+            "partNumber": "PUMP-123",
+            "quantity": 1,
+            "price": 150
+          }
+        ],
+        "estimatedCost": 250,
+        "totalCost": 250,
+        "beforePhotos": [
+          "/api/placeholder-image?text=Przed"
+        ],
+        "afterPhotos": [
+          "/api/placeholder-image?text=Po"
+        ],
+        "workSessions": [
+          {
+            "startTime": "2025-10-06T14:00:00.000Z",
+            "endTime": "2025-10-06T16:00:00.000Z",
+            "duration": 120,
+            "pauseDuration": 0
+          }
+        ],
+        "createdAt": "2025-10-01T04:14:07.677Z",
+        "completedAt": "2025-10-06T16:00:00.000Z",
+        "priority": "medium"
+      }
+    ],
     "category": "Pralki",
     "serviceType": "Pralki",
     "scheduledDate": "2025-10-09",
@@ -2809,7 +5171,9 @@
     "dateAdded": "2025-10-02T21:22:31.985Z",
     "createdAt": "2025-10-02T21:22:31.985Z",
     "updatedAt": "2025-10-02T21:22:31.985Z",
-    "updatedBy": null
+    "updatedBy": null,
+    "assignedTo": "EMP25092001",
+    "technicianId": "EMP25092001"
   },
   {
     "clientId": "CLIS252750016",
@@ -2838,7 +5202,74 @@
     "description": "Nie odpompowuje wody",
     "priority": "medium",
     "status": "scheduled",
-    "visits": [],
+    "visits": [
+      {
+        "visitId": "VIS834186060421",
+        "type": "diagnosis",
+        "status": "scheduled",
+        "date": "2025-10-04",
+        "time": "12:30",
+        "scheduledDate": "2025-10-04",
+        "scheduledTime": "12:30",
+        "assignedTo": "EMP25092001",
+        "technicianId": "EMP25092001",
+        "technicianName": "Jan Serwisant",
+        "diagnosis": "Wstępna diagnoza - wymaga części",
+        "technicianNotes": "Sprawdzono urządzenie",
+        "estimatedDuration": 120,
+        "partsUsed": [],
+        "estimatedCost": 80,
+        "totalCost": null,
+        "beforePhotos": [],
+        "afterPhotos": [],
+        "workSessions": [],
+        "createdAt": "2025-09-29T05:19:10.591Z",
+        "completedAt": null,
+        "priority": "medium"
+      },
+      {
+        "visitId": "VIS834186060422",
+        "type": "repair",
+        "status": "completed",
+        "date": "2025-10-04",
+        "time": "08:00",
+        "scheduledDate": "2025-10-04",
+        "scheduledTime": "08:00",
+        "assignedTo": "EMP25092001",
+        "technicianId": "EMP25092001",
+        "technicianName": "Jan Serwisant",
+        "diagnosis": "",
+        "technicianNotes": "",
+        "estimatedDuration": 96,
+        "partsUsed": [
+          {
+            "name": "Pompa wody",
+            "partNumber": "PUMP-123",
+            "quantity": 1,
+            "price": 150
+          }
+        ],
+        "estimatedCost": 250,
+        "totalCost": 250,
+        "beforePhotos": [
+          "/api/placeholder-image?text=Przed"
+        ],
+        "afterPhotos": [
+          "/api/placeholder-image?text=Po"
+        ],
+        "workSessions": [
+          {
+            "startTime": "2025-10-04T08:00:00.000Z",
+            "endTime": "2025-10-04T10:00:00.000Z",
+            "duration": 120,
+            "pauseDuration": 0
+          }
+        ],
+        "createdAt": "2025-09-30T16:39:20.163Z",
+        "completedAt": "2025-10-04T10:00:00.000Z",
+        "priority": "medium"
+      }
+    ],
     "category": "Pralka",
     "serviceType": "",
     "scheduledDate": "2025-10-02T21:43:09.447Z",
@@ -2891,7 +5322,9 @@
     "dateAdded": "2025-10-02T21:43:09.463Z",
     "createdAt": "2025-10-02T21:43:09.463Z",
     "updatedAt": "2025-10-02T21:43:09.463Z",
-    "updatedBy": null
+    "updatedBy": null,
+    "assignedTo": "EMP25092001",
+    "technicianId": "EMP25092001"
   },
   {
     "clientId": "CLIS252760001",
@@ -2912,7 +5345,74 @@
     "description": "Brak opisu problemu",
     "priority": "medium",
     "status": "pending",
-    "visits": [],
+    "visits": [
+      {
+        "visitId": "VIS834186060431",
+        "type": "diagnosis",
+        "status": "scheduled",
+        "date": "2025-10-02",
+        "time": "13:00",
+        "scheduledDate": "2025-10-02",
+        "scheduledTime": "13:00",
+        "assignedTo": "EMP25092001",
+        "technicianId": "EMP25092001",
+        "technicianName": "Jan Serwisant",
+        "diagnosis": "Wstępna diagnoza - wymaga części",
+        "technicianNotes": "Sprawdzono urządzenie",
+        "estimatedDuration": 137,
+        "partsUsed": [],
+        "estimatedCost": 80,
+        "totalCost": null,
+        "beforePhotos": [],
+        "afterPhotos": [],
+        "workSessions": [],
+        "createdAt": "2025-09-29T11:24:08.955Z",
+        "completedAt": null,
+        "priority": "medium"
+      },
+      {
+        "visitId": "VIS834186060432",
+        "type": "repair",
+        "status": "completed",
+        "date": "2025-10-01",
+        "time": "13:00",
+        "scheduledDate": "2025-10-01",
+        "scheduledTime": "13:00",
+        "assignedTo": "EMP25092001",
+        "technicianId": "EMP25092001",
+        "technicianName": "Jan Serwisant",
+        "diagnosis": "",
+        "technicianNotes": "",
+        "estimatedDuration": 125,
+        "partsUsed": [
+          {
+            "name": "Pompa wody",
+            "partNumber": "PUMP-123",
+            "quantity": 1,
+            "price": 150
+          }
+        ],
+        "estimatedCost": 250,
+        "totalCost": 250,
+        "beforePhotos": [
+          "/api/placeholder-image?text=Przed"
+        ],
+        "afterPhotos": [
+          "/api/placeholder-image?text=Po"
+        ],
+        "workSessions": [
+          {
+            "startTime": "2025-10-01T13:00:00.000Z",
+            "endTime": "2025-10-01T15:00:00.000Z",
+            "duration": 120,
+            "pauseDuration": 0
+          }
+        ],
+        "createdAt": "2025-09-30T04:38:45.635Z",
+        "completedAt": "2025-10-01T15:00:00.000Z",
+        "priority": "medium"
+      }
+    ],
     "category": "Pralki",
     "serviceType": "Pralki",
     "scheduledDate": "2025-10-07",
@@ -2967,7 +5467,9 @@
     "dateAdded": "2025-10-03T05:03:06.628Z",
     "createdAt": "2025-10-03T05:03:06.628Z",
     "updatedAt": "2025-10-03T05:03:06.628Z",
-    "updatedBy": null
+    "updatedBy": null,
+    "assignedTo": "EMP25092001",
+    "technicianId": "EMP25092001"
   },
   {
     "clientId": "CLIS252760002",
@@ -2996,7 +5498,32 @@
     "description": "Nie włącza się",
     "priority": "medium",
     "status": "scheduled",
-    "visits": [],
+    "visits": [
+      {
+        "visitId": "VIS834186060441",
+        "type": "diagnosis",
+        "status": "scheduled",
+        "date": "2025-10-06",
+        "time": "13:30",
+        "scheduledDate": "2025-10-06",
+        "scheduledTime": "13:30",
+        "assignedTo": "EMP25092001",
+        "technicianId": "EMP25092001",
+        "technicianName": "Jan Serwisant",
+        "diagnosis": "Wstępna diagnoza - wymaga części",
+        "technicianNotes": "Sprawdzono urządzenie",
+        "estimatedDuration": 137,
+        "partsUsed": [],
+        "estimatedCost": 80,
+        "totalCost": null,
+        "beforePhotos": [],
+        "afterPhotos": [],
+        "workSessions": [],
+        "createdAt": "2025-10-03T01:30:49.217Z",
+        "completedAt": null,
+        "priority": "medium"
+      }
+    ],
     "category": "Suszarka",
     "serviceType": "",
     "scheduledDate": "2025-10-03T05:07:42.084Z",
@@ -3049,7 +5576,9 @@
     "dateAdded": "2025-10-03T05:07:42.107Z",
     "createdAt": "2025-10-03T05:07:42.107Z",
     "updatedAt": "2025-10-03T05:07:42.107Z",
-    "updatedBy": null
+    "updatedBy": null,
+    "assignedTo": "EMP25092001",
+    "technicianId": "EMP25092001"
   },
   {
     "clientId": "CLIS252760003",
@@ -3078,7 +5607,63 @@
     "description": "Nie włącza się",
     "priority": "medium",
     "status": "scheduled",
-    "visits": [],
+    "visits": [
+      {
+        "visitId": "VIS834186060451",
+        "type": "diagnosis",
+        "status": "scheduled",
+        "date": "2025-10-06",
+        "time": "10:30",
+        "scheduledDate": "2025-10-06",
+        "scheduledTime": "10:30",
+        "assignedTo": "EMP25092001",
+        "technicianId": "EMP25092001",
+        "technicianName": "Jan Serwisant",
+        "diagnosis": "Wstępna diagnoza - wymaga części",
+        "technicianNotes": "Sprawdzono urządzenie",
+        "estimatedDuration": 105,
+        "partsUsed": [],
+        "estimatedCost": 80,
+        "totalCost": null,
+        "beforePhotos": [],
+        "afterPhotos": [],
+        "workSessions": [],
+        "createdAt": "2025-09-28T16:28:23.450Z",
+        "completedAt": null,
+        "priority": "medium"
+      },
+      {
+        "visitId": "VIS834186060452",
+        "type": "repair",
+        "status": "in_progress",
+        "date": "2025-10-03",
+        "time": "13:00",
+        "scheduledDate": "2025-10-03",
+        "scheduledTime": "13:00",
+        "assignedTo": "EMP25092001",
+        "technicianId": "EMP25092001",
+        "technicianName": "Jan Serwisant",
+        "diagnosis": "",
+        "technicianNotes": "",
+        "estimatedDuration": 116,
+        "partsUsed": [
+          {
+            "name": "Pompa wody",
+            "partNumber": "PUMP-123",
+            "quantity": 1,
+            "price": 150
+          }
+        ],
+        "estimatedCost": 250,
+        "totalCost": null,
+        "beforePhotos": [],
+        "afterPhotos": [],
+        "workSessions": [],
+        "createdAt": "2025-10-01T14:16:20.286Z",
+        "completedAt": null,
+        "priority": "medium"
+      }
+    ],
     "category": "Suszarka",
     "serviceType": "",
     "scheduledDate": "2025-10-03T05:08:07.462Z",
@@ -3131,7 +5716,9 @@
     "dateAdded": "2025-10-03T05:08:07.492Z",
     "createdAt": "2025-10-03T05:08:07.492Z",
     "updatedAt": "2025-10-03T05:08:07.492Z",
-    "updatedBy": null
+    "updatedBy": null,
+    "assignedTo": "EMP25092001",
+    "technicianId": "EMP25092001"
   },
   {
     "clientId": "CLIS252760004",
@@ -3151,8 +5738,33 @@
     "serialNumber": "",
     "description": "Brak opisu problemu",
     "priority": "medium",
-    "status": "pending",
-    "visits": [],
+    "status": "contacted",
+    "visits": [
+      {
+        "visitId": "VIS834186060461",
+        "type": "diagnosis",
+        "status": "scheduled",
+        "date": "2025-10-03",
+        "time": "13:00",
+        "scheduledDate": "2025-10-03",
+        "scheduledTime": "13:00",
+        "assignedTo": "EMP25092001",
+        "technicianId": "EMP25092001",
+        "technicianName": "Jan Serwisant",
+        "diagnosis": "Wstępna diagnoza - wymaga części",
+        "technicianNotes": "Sprawdzono urządzenie",
+        "estimatedDuration": 96,
+        "partsUsed": [],
+        "estimatedCost": 80,
+        "totalCost": null,
+        "beforePhotos": [],
+        "afterPhotos": [],
+        "workSessions": [],
+        "createdAt": "2025-09-29T12:32:33.819Z",
+        "completedAt": null,
+        "priority": "medium"
+      }
+    ],
     "category": "Lodówki",
     "serviceType": "Lodówki",
     "scheduledDate": "2025-10-11",
@@ -3206,8 +5818,10 @@
     "createdFromIP": null,
     "dateAdded": "2025-10-03T05:35:30.511Z",
     "createdAt": "2025-10-03T05:35:30.511Z",
-    "updatedAt": "2025-10-03T05:35:30.511Z",
-    "updatedBy": null
+    "updatedAt": "2025-10-04T04:59:31.330Z",
+    "updatedBy": "admin",
+    "assignedTo": "EMP25092001",
+    "technicianId": "EMP25092001"
   },
   {
     "clientId": "CLIS252760005",
@@ -3228,7 +5842,74 @@
     "description": "Brak opisu problemu",
     "priority": "medium",
     "status": "pending",
-    "visits": [],
+    "visits": [
+      {
+        "visitId": "VIS834186060471",
+        "type": "diagnosis",
+        "status": "scheduled",
+        "date": "2025-10-02",
+        "time": "14:30",
+        "scheduledDate": "2025-10-02",
+        "scheduledTime": "14:30",
+        "assignedTo": "EMP25189001",
+        "technicianId": "EMP25189001",
+        "technicianName": "Jan Kowalski",
+        "diagnosis": "Wstępna diagnoza - wymaga części",
+        "technicianNotes": "Sprawdzono urządzenie",
+        "estimatedDuration": 138,
+        "partsUsed": [],
+        "estimatedCost": 80,
+        "totalCost": null,
+        "beforePhotos": [],
+        "afterPhotos": [],
+        "workSessions": [],
+        "createdAt": "2025-10-01T13:13:18.610Z",
+        "completedAt": null,
+        "priority": "medium"
+      },
+      {
+        "visitId": "VIS834186060472",
+        "type": "repair",
+        "status": "completed",
+        "date": "2025-10-07",
+        "time": "13:00",
+        "scheduledDate": "2025-10-07",
+        "scheduledTime": "13:00",
+        "assignedTo": "EMP25189001",
+        "technicianId": "EMP25189001",
+        "technicianName": "Jan Kowalski",
+        "diagnosis": "",
+        "technicianNotes": "",
+        "estimatedDuration": 128,
+        "partsUsed": [
+          {
+            "name": "Pompa wody",
+            "partNumber": "PUMP-123",
+            "quantity": 1,
+            "price": 150
+          }
+        ],
+        "estimatedCost": 250,
+        "totalCost": 250,
+        "beforePhotos": [
+          "/api/placeholder-image?text=Przed"
+        ],
+        "afterPhotos": [
+          "/api/placeholder-image?text=Po"
+        ],
+        "workSessions": [
+          {
+            "startTime": "2025-10-07T13:00:00.000Z",
+            "endTime": "2025-10-07T15:00:00.000Z",
+            "duration": 120,
+            "pauseDuration": 0
+          }
+        ],
+        "createdAt": "2025-09-28T16:39:35.631Z",
+        "completedAt": "2025-10-07T15:00:00.000Z",
+        "priority": "medium"
+      }
+    ],
     "category": "Lodówki",
     "serviceType": "Lodówki",
     "scheduledDate": "2025-10-11",
@@ -3283,6 +5964,8 @@
     "dateAdded": "2025-10-03T05:57:52.998Z",
     "createdAt": "2025-10-03T05:57:52.998Z",
     "updatedAt": "2025-10-03T05:57:52.998Z",
-    "updatedBy": null
+    "updatedBy": null,
+    "assignedTo": "EMP25189001",
+    "technicianId": "EMP25189001"
   }
 ]

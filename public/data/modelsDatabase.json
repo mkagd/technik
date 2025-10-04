@@ -1,0 +1,275 @@
+{
+  "brands": {
+    "BOSCH": {
+      "washing_machines": {
+        "WAG28461BY": {
+          "name": "Serie 6 WAG28461BY",
+          "type": "Pralka ładowana od przodu",
+          "capacity": "9 kg",
+          "common_parts": [
+            {
+              "name": "Pompa odpływowa",
+              "part_number": "00144978",
+              "price": 89.99,
+              "supplier": "BSH Hausgeräte",
+              "availability": "Na stanie"
+            },
+            {
+              "name": "Łożysko bębna",
+              "part_number": "00172686",
+              "price": 45.50,
+              "supplier": "BSH Hausgeräte",
+              "availability": "Na stanie"
+            },
+            {
+              "name": "Uszczelka drzwi",
+              "part_number": "00354135",
+              "price": 125.00,
+              "supplier": "BSH Hausgeräte",
+              "availability": "2-3 dni"
+            },
+            {
+              "name": "Amortyzator",
+              "part_number": "00673541",
+              "price": 32.00,
+              "supplier": "BSH Hausgeräte",
+              "availability": "Na stanie"
+            }
+          ]
+        },
+        "WAT28461BY": {
+          "name": "Serie 6 WAT28461BY",
+          "type": "Pralka ładowana od góry",
+          "capacity": "8 kg",
+          "common_parts": [
+            {
+              "name": "Pompa odpływowa",
+              "part_number": "00144978",
+              "price": 89.99,
+              "supplier": "BSH Hausgeräte",
+              "availability": "Na stanie"
+            },
+            {
+              "name": "Zawór elektromagnetyczny",
+              "part_number": "00263330",
+              "price": 65.00,
+              "supplier": "BSH Hausgeräte",
+              "availability": "Na stanie"
+            }
+          ]
+        },
+        "WAE28461BY": {
+          "name": "Serie 6 WAE28461BY",
+          "type": "Pralka ładowana od przodu",
+          "capacity": "8 kg",
+          "common_parts": [
+            {
+              "name": "Pompa odpływowa",
+              "part_number": "00144978",
+              "price": 89.99,
+              "supplier": "BSH Hausgeräte",
+              "availability": "Na stanie"
+            }
+          ]
+        },
+        "WAK28261PL": {
+          "name": "Serie 4 WAK28261PL",
+          "type": "Pralka ładowana od przodu",
+          "capacity": "8 kg",
+          "common_parts": [
+            {
+              "name": "Pompa odpływowa",
+              "part_number": "00144978",
+              "price": 89.99,
+              "supplier": "BSH Hausgeräte",
+              "availability": "Na stanie"
+            }
+          ]
+        }
+      },
+      "dryers": {
+        "WTH85200PL": {
+          "name": "Serie 4 WTH85200PL",
+          "type": "Suszarka pompa ciepła",
+          "capacity": "8 kg",
+          "common_parts": [
+            {
+              "name": "Kondensator",
+              "part_number": "00648221",
+              "price": 145.00,
+              "supplier": "BSH Hausgeräte",
+              "availability": "1-2 dni"
+            },
+            {
+              "name": "Czujnik temperatury",
+              "part_number": "00625558",
+              "price": 28.50,
+              "supplier": "BSH Hausgeräte",
+              "availability": "Na stanie"
+            }
+          ]
+        }
+      },
+      "dishwashers": {
+        "SMS46JI10E": {
+          "name": "Serie 4 SMS46JI10E",
+          "type": "Zmywarka wolnostojąca",
+          "capacity": "13 kompletów",
+          "common_parts": [
+            {
+              "name": "Pompa myjąca",
+              "part_number": "00755078",
+              "price": 198.00,
+              "supplier": "BSH Hausgeräte",
+              "availability": "Na stanie"
+            },
+            {
+              "name": "Czujnik mętności",
+              "part_number": "00263297",
+              "price": 45.00,
+              "supplier": "BSH Hausgeräte",
+              "availability": "Na stanie"
+            }
+          ]
+        }
+      }
+    },
+    "SAMSUNG": {
+      "washing_machines": {
+        "WW90T4540AE": {
+          "name": "AddWash WW90T4540AE",
+          "type": "Pralka ładowana od przodu",
+          "capacity": "9 kg",
+          "common_parts": [
+            {
+              "name": "Pompa odpływowa",
+              "part_number": "DC31-00178A",
+              "price": 75.00,
+              "supplier": "Samsung Parts",
+              "availability": "Na stanie"
+            },
+            {
+              "name": "Łożysko bębna",
+              "part_number": "DC62-00156A",
+              "price": 42.00,
+              "supplier": "Samsung Parts",
+              "availability": "Na stanie"
+            }
+          ]
+        }
+      },
+      "refrigerators": {
+        "RB34T602EB1": {
+          "name": "Bespoke RB34T602EB1",
+          "type": "Lodówka NoFrost",
+          "capacity": "344L",
+          "common_parts": [
+            {
+              "name": "Wentylator NoFrost",
+              "part_number": "DA31-00287A",
+              "price": 85.00,
+              "supplier": "Samsung Parts",
+              "availability": "2-3 dni"
+            },
+            {
+              "name": "Termostat",
+              "part_number": "DA47-00244A",
+              "price": 35.00,
+              "supplier": "Samsung Parts",
+              "availability": "Na stanie"
+            }
+          ]
+        }
+      }
+    },
+    "WHIRLPOOL": {
+      "washing_machines": {
+        "FWDG97168WS": {
+          "name": "FreshCare+ FWDG97168WS",
+          "type": "Pralko-suszarka",
+          "capacity": "9/7 kg",
+          "common_parts": [
+            {
+              "name": "Pompa odpływowa",
+              "part_number": "481236018558",
+              "price": 92.00,
+              "supplier": "Whirlpool Service",
+              "availability": "Na stanie"
+            },
+            {
+              "name": "Grzałka suszenia",
+              "part_number": "481231018896",
+              "price": 125.00,
+              "supplier": "Whirlpool Service",
+              "availability": "1-2 dni"
+            }
+          ]
+        }
+      }
+    },
+    "ELECTROLUX": {
+      "washing_machines": {
+        "EW6F428WU": {
+          "name": "PerfectCare 600 EW6F428WU",
+          "type": "Pralka ładowana od przodu",
+          "capacity": "8 kg",
+          "common_parts": [
+            {
+              "name": "Pompa odpływowa",
+              "part_number": "1327184319",
+              "price": 78.00,
+              "supplier": "Electrolux Service",
+              "availability": "Na stanie"
+            }
+          ]
+        }
+      }
+    }
+  },
+  "ocr_patterns": [
+    {
+      "pattern": "Model[:\\s]*([A-Z0-9\\-\\/]+)",
+      "description": "Standardowy format Model: XXX"
+    },
+    {
+      "pattern": "Typ[:\\s]*([A-Z0-9\\-\\/]+)",
+      "description": "Format Typ: XXX-XXX"
+    },
+    {
+      "pattern": "Art\\.?\\s*Nr\\.?[:\\s]*([A-Z0-9\\.\\-\\/]+)",
+      "description": "Numer artykułu"
+    },
+    {
+      "pattern": "E-Nr\\.?[:\\s]*([A-Z0-9\\(\\)\\/\\-]+)",
+      "description": "Numer E (Bosch/Siemens)"
+    },
+    {
+      "pattern": "S-Nr\\.?[:\\s]*([A-Z0-9\\(\\)\\/\\-]+)",
+      "description": "Numer seryjny (S-Nr)"
+    },
+    {
+      "pattern": "([A-Z]{2,4}[0-9]{4,8}[A-Z]{0,4})",
+      "description": "Ogólny wzorzec modelu"
+    },
+    {
+      "pattern": "(WW[0-9]{2}[A-Z][0-9]{4}[A-Z]{2})",
+      "description": "Samsung pralka format"
+    },
+    {
+      "pattern": "(WA[A-Z][0-9]{5}[A-Z]{2})",
+      "description": "Bosch pralka format"
+    },
+    {
+      "pattern": "(SMS[0-9]{2}[A-Z][0-9]{2}[A-Z])",
+      "description": "Bosch zmywarka format"
+    },
+    {
+      "pattern": "(EW[0-9][A-Z][0-9]{3}[A-Z]{2})",
+      "description": "Electrolux format"
+    },
+    {
+      "pattern": "([A-Z]{3}[0-9]{5}[A-Z]{2})",
+      "description": "Format trzyliterowy + cyfry"
+    }
+  ]
+}

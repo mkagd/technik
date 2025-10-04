@@ -4,6 +4,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import AdminLayout from '../../../components/AdminLayout';
+import CommentsSection from '../../../components/CommentsSection';
 import { 
   FiSave, FiArrowLeft, FiUser, FiPhone, FiMail, FiMapPin, 
   FiTool, FiPackage, FiFileText, FiCalendar, FiClock, FiCheckCircle
@@ -476,6 +477,14 @@ export default function AdminZamowienieDetails() {
           </div>
 
         </div>
+      </div>
+
+      {/* Comments and Activity Log */}
+      <div className="mt-6">
+        <CommentsSection 
+          entityType="order" 
+          entityId={parseInt(id)} 
+        />
       </div>
     </AdminLayout>
   );

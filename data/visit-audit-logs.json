@@ -1,0 +1,39 @@
+{
+  "logs": [
+    {
+      "id": "VLOG_EXAMPLE_001",
+      "visitId": "VIS001",
+      "orderId": "ORD123",
+      "timestamp": "2025-10-04T10:00:00.000Z",
+      "userId": "admin",
+      "userName": "Administrator",
+      "action": "created",
+      "entity": "visit",
+      "changes": [
+        {
+          "field": "status",
+          "oldValue": null,
+          "newValue": "scheduled",
+          "displayName": "Status"
+        },
+        {
+          "field": "technicianId",
+          "oldValue": null,
+          "newValue": "TECH001",
+          "displayName": "Technik"
+        }
+      ],
+      "reason": "Utworzenie nowej wizyty",
+      "metadata": {
+        "ip": "192.168.1.100",
+        "userAgent": "Mozilla/5.0...",
+        "source": "admin_panel"
+      }
+    }
+  ],
+  "_metadata": {
+    "version": "1.0",
+    "created": "2025-10-04T10:00:00.000Z",
+    "description": "Visit audit log - niemutowalny dziennik zmian w wizytach"
+  }
+}

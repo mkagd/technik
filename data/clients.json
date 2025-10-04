@@ -524,8 +524,8 @@
     "isAuthenticated": false,
     "createdFromIP": null,
     "createdAt": "2025-10-02T20:34:37.223Z",
-    "updatedAt": "2025-10-02T20:34:37.223Z",
-    "updatedBy": null
+    "updatedAt": "2025-10-03T07:01:55.455Z",
+    "updatedBy": "admin"
   },
   {
     "name": "Technik B",
@@ -942,8 +942,8 @@
     "isAuthenticated": false,
     "createdFromIP": null,
     "createdAt": "2025-10-03T05:35:30.494Z",
-    "updatedAt": "2025-10-03T05:35:30.494Z",
-    "updatedBy": null
+    "updatedAt": "2025-10-04T04:59:31.323Z",
+    "updatedBy": "admin"
   },
   {
     "name": "kooo",

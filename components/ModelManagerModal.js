@@ -15,7 +15,7 @@ import {
   FiClock
 } from 'react-icons/fi';
 import ModelAIScanner from './ModelAIScanner';
-import modelsDatabase from '../data/modelsDatabase.json';
+// modelsDatabase will be loaded dynamically
 
 export default function ModelManagerModal({ 
   isOpen, 

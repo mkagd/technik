@@ -1,0 +1,91 @@
+// pages/api/activity-log.js
+// API dla historii zmian (activity log)
+
+import { readFile, writeFile } from '../../utils/fileOperations';
+import path from 'path';
+
+const ACTIVITY_LOG_FILE = path.join(process.cwd(), 'data', 'activity-log.json');
+
+// Inicjalizuj plik jeśli nie istnieje
+const initActivityLogFile = async () => {
+  try {
+    await readFile(ACTIVITY_LOG_FILE);
+  } catch (error) {
+    await writeFile(ACTIVITY_LOG_FILE, JSON.stringify({ activities: [] }, null, 2));
+  }
+};
+
+// Funkcja pomocnicza do logowania aktywności
+export const logActivity = async (type, entityId, action, user, details = null, oldValue = null, newValue = null, field = null) => {
+  try {
+    await initActivityLogFile();
+    
+    const data = JSON.parse(await readFile(ACTIVITY_LOG_FILE));
+    const activities = data.activities || [];
+    
+    const newActivity = {
+      id: Date.now(),
+      type,
+      entityId: parseInt(entityId),
+      action,
+      user: user || 'System',
+      details,
+      oldValue,
+      newValue,
+      field,
+      timestamp: new Date().toISOString()
+    };
+    
+    activities.push(newActivity);
+    
+    await writeFile(ACTIVITY_LOG_FILE, JSON.stringify({ activities }, null, 2));
+    
+    return newActivity;
+  } catch (error) {
+    console.error('Error logging activity:', error);
+  }
+};
+
+export default async function handler(req, res) {
+  await initActivityLogFile();
+
+  if (req.method === 'GET') {
+    try {
+      const { type, id } = req.query;
+      const data = JSON.parse(await readFile(ACTIVITY_LOG_FILE));
+      
+      let activities = data.activities || [];
+      
+      if (type && id) {
+        activities = activities.filter(a => a.type === type && a.entityId === parseInt(id));
+      }
+      
+      // Sortuj od najnowszych
+      activities.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+      
+      return res.status(200).json({ activities });
+    } catch (error) {
+      console.error('Error reading activity log:', error);
+      return res.status(500).json({ message: 'Błąd serwera' });
+    }
+  }
+
+  if (req.method === 'POST') {
+    try {
+      const { type, entityId, action, user, details, oldValue, newValue, field } = req.body;
+      
+      if (!type || !entityId || !action) {
+        return res.status(400).json({ message: 'Brak wymaganych danych' });
+      }
+
+      const activity = await logActivity(type, entityId, action, user, details, oldValue, newValue, field);
+      
+      return res.status(201).json({ activity });
+    } catch (error) {
+      console.error('Error logging activity:', error);
+      return res.status(500).json({ message: 'Błąd serwera' });
+    }
+  }
+
+  return res.status(405).json({ message: 'Method not allowed' });
+}

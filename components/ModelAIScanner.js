@@ -16,9 +16,10 @@ import {
   FiGrid,
   FiTrash2
 } from 'react-icons/fi';
-import modelsDatabase from '../data/modelsDatabase.json';
+// modelsDatabase will be loaded dynamically
 
 export default function ModelAIScanner({ isOpen, onClose, onModelDetected }) {
+  const [modelsDatabase, setModelsDatabase] = useState(null);
   const [isScanning, setIsScanning] = useState(false);
   const [capturedImage, setCapturedImage] = useState(null);
   const [aiResult, setAiResult] = useState('');
@@ -34,6 +35,21 @@ export default function ModelAIScanner({ isOpen, onClose, onModelDetected }) {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const fileInputRef = useRef(null);
+
+  // Load models database
+  useEffect(() => {
+    const loadModelsDatabase = async () => {
+      try {
+        const response = await fetch('/data/modelsDatabase.json');
+        const data = await response.json();
+        setModelsDatabase(data);
+      } catch (error) {
+        console.error('Failed to load models database:', error);
+      }
+    };
+    
+    loadModelsDatabase();
+  }, []);
 
   // Inicjalizacja kamery
   const initCamera = async () => {
@@ -658,6 +674,8 @@ export default function ModelAIScanner({ isOpen, onClose, onModelDetected }) {
 
   // Analiza tekstu OCR (z poprzedniej wersji)
   const analyzeOCRText = (text) => {
+    if (!modelsDatabase) return [];
+    
     const foundModels = [];
     const cleanText = text.toUpperCase().replace(/[^A-Z0-9\s\-\/.():]/g, ' ');
     
@@ -707,6 +725,8 @@ export default function ModelAIScanner({ isOpen, onClose, onModelDetected }) {
 
   // Wyszukiwanie w bazie danych
   const findModelInDatabase = (modelNumber) => {
+    if (!modelsDatabase) return null;
+    
     for (const [brandName, brandData] of Object.entries(modelsDatabase.brands)) {
       for (const [categoryName, categoryData] of Object.entries(brandData)) {
         if (categoryData[modelNumber]) {

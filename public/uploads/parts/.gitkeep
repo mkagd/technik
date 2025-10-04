@@ -1,0 +1,2 @@
+# Ten folder przechowuje zdjęcia części zamówionych przez serwisantów
+# Struktura: /uploads/parts/{requestId}/photo-{timestamp}.jpg

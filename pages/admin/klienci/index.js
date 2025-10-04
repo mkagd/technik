@@ -4,6 +4,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import AdminLayout from '../../../components/AdminLayout';
+import { useToast } from '../../../contexts/ToastContext';
 import { 
   FiEye, FiTrash2, FiEdit, FiSearch, FiFilter, FiX, FiPhone, 
   FiMail, FiMapPin, FiUser, FiDownload, FiRefreshCw, FiCalendar
@@ -11,6 +12,7 @@ import {
 
 export default function AdminKlienci() {
   const router = useRouter();
+  const toast = useToast();
   
   const [klienci, setKlienci] = useState([]);
   const [filteredKlienci, setFilteredKlienci] = useState([]);
@@ -143,12 +145,13 @@ export default function AdminKlienci() {
         await loadKlienci();
         setShowDeleteModal(false);
         setClientToDelete(null);
+        toast.success('Klient został usunięty');
       } else {
-        alert('Błąd podczas usuwania klienta');
+        toast.error('Błąd podczas usuwania klienta');
       }
     } catch (error) {
       console.error('Błąd:', error);
-      alert('Błąd połączenia z serwerem');
+      toast.error('Błąd połączenia z serwerem');
     }
   };
 

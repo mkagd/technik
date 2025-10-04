@@ -8,7 +8,24 @@
  * - Ręcznie wprowadzonego dodatkowego czasu
  */
 
-const repairTimeSettings = require('../data/repair-time-settings.json');
+const fs = require('fs');
+const path = require('path');
+
+let repairTimeSettings = null;
+
+// Load settings dynamically
+const loadSettings = () => {
+  if (!repairTimeSettings) {
+    try {
+      const settingsPath = path.join(process.cwd(), 'data', 'repair-time-settings.json');
+      repairTimeSettings = JSON.parse(fs.readFileSync(settingsPath, 'utf8'));
+    } catch (error) {
+      console.error('Failed to load repair time settings:', error);
+      repairTimeSettings = { additionalTimes: {}, deviceDefaults: {} };
+    }
+  }
+  return repairTimeSettings;
+};
 
 /**
  * Pobiera czas bazowy naprawy dla pracownika i typu urządzenia
@@ -19,7 +36,8 @@ const repairTimeSettings = require('../data/repair-time-settings.json');
 function getBaseRepairTime(employee, deviceType) {
   if (!employee) {
     // Jeśli brak pracownika, użyj czasu domyślnego z konfiguracji
-    const device = repairTimeSettings.deviceTypes.find(d => d.id === deviceType);
+    const settings = loadSettings();
+    const device = settings.deviceTypes.find(d => d.id === deviceType);
     return device ? device.defaultTime : 30;
   }
 
@@ -29,7 +47,7 @@ function getBaseRepairTime(employee, deviceType) {
   }
 
   // Fallback do czasu domyślnego
-  const device = repairTimeSettings.deviceTypes.find(d => d.id === deviceType);
+  const device = loadSettings().deviceTypes.find(d => d.id === deviceType);
   return device ? device.defaultTime : 30;
 }
 
@@ -46,15 +64,15 @@ function calculateAdditionalTime(additionalWork = {}) {
   let additionalTime = 0;
 
   if (additionalWork.hasDemontaz) {
-    additionalTime += repairTimeSettings.additionalTimes.demontaż.time;
+    additionalTime += loadSettings().additionalTimes.demontaż.time;
   }
 
   if (additionalWork.hasMontaz) {
-    additionalTime += repairTimeSettings.additionalTimes.montaż.time;
+    additionalTime += loadSettings().additionalTimes.montaż.time;
   }
 
   if (additionalWork.hasTrudnaZabudowa) {
-    additionalTime += repairTimeSettings.additionalTimes.trudnaZabudowa.time;
+    additionalTime += loadSettings().additionalTimes.trudnaZabudowa.time;
   }
 
   if (additionalWork.manualAdditionalTime && typeof additionalWork.manualAdditionalTime === 'number') {
@@ -85,9 +103,9 @@ function calculateRepairTime(params) {
     totalTime,
     breakdown: {
       base: baseTime,
-      demontaz: additionalWork.hasDemontaz ? repairTimeSettings.additionalTimes.demontaż.time : 0,
-      montaz: additionalWork.hasMontaz ? repairTimeSettings.additionalTimes.montaż.time : 0,
-      trudnaZabudowa: additionalWork.hasTrudnaZabudowa ? repairTimeSettings.additionalTimes.trudnaZabudowa.time : 0,
+      demontaz: additionalWork.hasDemontaz ? loadSettings().additionalTimes.demontaż.time : 0,
+      montaz: additionalWork.hasMontaz ? loadSettings().additionalTimes.montaż.time : 0,
+      trudnaZabudowa: additionalWork.hasTrudnaZabudowa ? loadSettings().additionalTimes.trudnaZabudowa.time : 0,
       manual: additionalWork.manualAdditionalTime || 0
     },
     deviceType,
@@ -101,7 +119,7 @@ function calculateRepairTime(params) {
  * @returns {boolean} Czy typ jest prawidłowy
  */
 function isValidDeviceType(deviceType) {
-  return repairTimeSettings.deviceTypes.some(d => d.id === deviceType);
+  return loadSettings().deviceTypes.some(d => d.id === deviceType);
 }
 
 /**
@@ -109,7 +127,7 @@ function isValidDeviceType(deviceType) {
  * @returns {Array} Tablica typów urządzeń
  */
 function getDeviceTypes() {
-  return repairTimeSettings.deviceTypes;
+  return loadSettings().deviceTypes;
 }
 
 /**
@@ -117,7 +135,7 @@ function getDeviceTypes() {
  * @returns {Object} Obiekt z ustawieniami dodatkowych czasów
  */
 function getAdditionalTimesSettings() {
-  return repairTimeSettings.additionalTimes;
+  return loadSettings().additionalTimes;
 }
 
 /**
@@ -163,7 +181,7 @@ function suggestVisitDuration(order, employee) {
   const title = (order.title || '').toLowerCase();
   const text = `${description} ${title}`;
 
-  for (const deviceType of repairTimeSettings.deviceTypes) {
+  for (const deviceType of loadSettings().deviceTypes) {
     if (text.includes(deviceType.id) || text.includes(deviceType.label.toLowerCase())) {
       return getBaseRepairTime(employee, deviceType.id);
     }

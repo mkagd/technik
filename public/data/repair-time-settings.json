@@ -1,0 +1,165 @@
+{
+  "additionalTimes": {
+    "demontaż": {
+      "label": "Demontaż zabudowy",
+      "time": 10,
+      "description": "Standardowy demontaż zabudowy AGD",
+      "unit": "min"
+    },
+    "montaż": {
+      "label": "Montaż zabudowy",
+      "time": 10,
+      "description": "Standardowy montaż zabudowy AGD",
+      "unit": "min"
+    },
+    "trudnaZabudowa": {
+      "label": "Trudna zabudowa",
+      "time": 30,
+      "description": "Skomplikowana zabudowa wymagająca dodatkowego czasu",
+      "unit": "min"
+    },
+    "dodatkowy": {
+      "label": "Dodatkowy czas (ręczny)",
+      "time": 0,
+      "description": "Ręcznie wprowadzony dodatkowy czas na niestandard owe sytuacje",
+      "unit": "min",
+      "editable": true
+    }
+  },
+  "deviceTypes": [
+    {
+      "id": "pralka",
+      "label": "Pralka automatyczna",
+      "icon": "🧺",
+      "category": "pralki",
+      "defaultTime": 30,
+      "supportsBuiltIn": true
+    },
+    {
+      "id": "lodówka",
+      "label": "Lodówka",
+      "icon": "🧊",
+      "category": "chłodnictwo",
+      "defaultTime": 40,
+      "supportsBuiltIn": true
+    },
+    {
+      "id": "zamrażarka",
+      "label": "Zamrażarka",
+      "icon": "❄️",
+      "category": "chłodnictwo",
+      "defaultTime": 40,
+      "supportsBuiltIn": true
+    },
+    {
+      "id": "zmywarka",
+      "label": "Zmywarka",
+      "icon": "🍽️",
+      "category": "zmywarki",
+      "defaultTime": 35,
+      "supportsBuiltIn": true
+    },
+    {
+      "id": "piekarnik",
+      "label": "Piekarnik",
+      "icon": "🔥",
+      "category": "piekarniki",
+      "defaultTime": 45,
+      "supportsBuiltIn": true
+    },
+    {
+      "id": "kuchenka",
+      "label": "Kuchenka elektryczna",
+      "icon": "🍳",
+      "category": "kuchenki",
+      "defaultTime": 40,
+      "supportsBuiltIn": true
+    },
+    {
+      "id": "płyta indukcyjna",
+      "label": "Płyta indukcyjna",
+      "icon": "⚡",
+      "category": "płyty",
+      "defaultTime": 35,
+      "supportsBuiltIn": true
+    },
+    {
+      "id": "suszarka",
+      "label": "Suszarka bębnowa",
+      "icon": "🌬️",
+      "category": "suszarki",
+      "defaultTime": 35,
+      "supportsBuiltIn": false
+    },
+    {
+      "id": "pralko-suszarka",
+      "label": "Pralko-suszarka",
+      "icon": "🧺🌬️",
+      "category": "pralki",
+      "defaultTime": 45,
+      "supportsBuiltIn": true
+    },
+    {
+      "id": "ekspres do kawy",
+      "label": "Ekspres do kawy",
+      "icon": "☕",
+      "category": "małe AGD",
+      "defaultTime": 25,
+      "supportsBuiltIn": false
+    },
+    {
+      "id": "robot kuchenny",
+      "label": "Robot kuchenny",
+      "icon": "🍲",
+      "category": "małe AGD",
+      "defaultTime": 30,
+      "supportsBuiltIn": false
+    },
+    {
+      "id": "blender",
+      "label": "Blender",
+      "icon": "🥤",
+      "category": "małe AGD",
+      "defaultTime": 20,
+      "supportsBuiltIn": false
+    },
+    {
+      "id": "sokowirówka",
+      "label": "Sokowirówka",
+      "icon": "🍊",
+      "category": "małe AGD",
+      "defaultTime": 20,
+      "supportsBuiltIn": false
+    },
+    {
+      "id": "mikrofalówka",
+      "label": "Kuchenka mikrofalowa",
+      "icon": "📻",
+      "category": "małe AGD",
+      "defaultTime": 25,
+      "supportsBuiltIn": true
+    },
+    {
+      "id": "okap",
+      "label": "Okap kuchenny",
+      "icon": "💨",
+      "category": "wentylacja",
+      "defaultTime": 30,
+      "supportsBuiltIn": true
+    },
+    {
+      "id": "inne AGD",
+      "label": "Inne urządzenie AGD",
+      "icon": "🔧",
+      "category": "inne",
+      "defaultTime": 30,
+      "supportsBuiltIn": false
+    }
+  ],
+  "metadata": {
+    "version": "1.0",
+    "createdAt": "2025-10-02T10:00:00.000Z",
+    "updatedAt": "2025-10-02T10:00:00.000Z",
+    "description": "Konfiguracja czasów napraw i typów urządzeń AGD"
+  }
+}

@@ -4,13 +4,16 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import AdminLayout from '../../../components/AdminLayout';
+import { useToast } from '../../../contexts/ToastContext';
 import { 
   FiEye, FiTrash2, FiEdit, FiSearch, FiFilter, FiX, FiPhone, 
-  FiMail, FiMapPin, FiClock, FiCalendar, FiDownload, FiRefreshCw, FiPlus
+  FiMail, FiMapPin, FiClock, FiCalendar, FiDownload, FiRefreshCw, FiPlus,
+  FiChevronUp, FiChevronDown
 } from 'react-icons/fi';
 
 export default function AdminRezerwacje() {
   const router = useRouter();
+  const toast = useToast();
   
   const [rezerwacje, setRezerwacje] = useState([]);
   const [filteredRezerwacje, setFilteredRezerwacje] = useState([]);
@@ -18,6 +21,12 @@ export default function AdminRezerwacje() {
   const [showFilters, setShowFilters] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [bookingToDelete, setBookingToDelete] = useState(null);
+  const [selectedIds, setSelectedIds] = useState([]);
+  const [showBulkActions, setShowBulkActions] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 20;
+  const [sortField, setSortField] = useState('date');
+  const [sortDirection, setSortDirection] = useState('desc');
 
   const [filters, setFilters] = useState({
     search: '',
@@ -111,23 +120,28 @@ export default function AdminRezerwacje() {
       filtered = filtered.filter(r => r.status === filters.status);
     }
 
-    // Sort
+    // Sort by selected field and direction
     filtered.sort((a, b) => {
-      switch (filters.sortBy) {
-        case 'date-asc':
-          return (a.date || '').localeCompare(b.date || '');
-        case 'date-desc':
-          return (b.date || '').localeCompare(a.date || '');
-        case 'name':
-          return (a.name || '').localeCompare(b.name || '');
-        case 'status':
-          return (a.status || '').localeCompare(b.status || '');
-        default:
-          return 0;
-      }
+      let aVal = a[sortField] || '';
+      let bVal = b[sortField] || '';
+      
+      const comparison = aVal.toString().localeCompare(bVal.toString());
+      return sortDirection === 'asc' ? comparison : -comparison;
     });
 
     setFilteredRezerwacje(filtered);
+    setCurrentPage(1); // Reset do pierwszej strony po zmianie filtrów
+  };
+
+  const handleSort = (field) => {
+    if (sortField === field) {
+      // Toggle direction jeśli to samo pole
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+    } else {
+      // Nowe pole, domyślnie desc
+      setSortField(field);
+      setSortDirection('desc');
+    }
   };
 
   const clearFilters = () => {
@@ -145,6 +159,37 @@ export default function AdminRezerwacje() {
     router.push(`/admin/rezerwacje/${id}`);
   };
 
+  const handleStatusChange = async (rezerwacjaId, newStatus) => {
+    try {
+      const rezerwacja = rezerwacje.find(r => r.id === rezerwacjaId);
+      if (!rezerwacja) return;
+
+      const response = await fetch('/api/rezerwacje', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          id: rezerwacjaId,
+          status: newStatus,
+          orderId: rezerwacja.orderId,
+          orderNumber: rezerwacja.orderNumber,
+          updatedAt: new Date().toISOString()
+        })
+      });
+
+      if (response.ok) {
+        await loadRezerwacje();
+        toast.success('Status rezerwacji został zaktualizowany');
+      } else {
+        toast.error('Błąd podczas aktualizacji statusu');
+      }
+    } catch (error) {
+      console.error('Błąd:', error);
+      toast.error('Błąd połączenia z serwerem');
+    }
+  };
+
   const handleDelete = async (id) => {
     try {
       const response = await fetch(`/api/rezerwacje/${id}`, {
@@ -155,17 +200,81 @@ export default function AdminRezerwacje() {
         await loadRezerwacje();
         setShowDeleteModal(false);
         setBookingToDelete(null);
+        toast.success('Rezerwacja została usunięta');
       } else {
-        alert('Błąd podczas usuwania rezerwacji');
+        toast.error('Błąd podczas usuwania rezerwacji');
       }
     } catch (error) {
       console.error('Błąd:', error);
-      alert('Błąd połączenia z serwerem');
+      toast.error('Błąd połączenia z serwerem');
     }
   };
 
   const getStatusInfo = (status) => {
     return bookingStatuses.find(s => s.value === status) || bookingStatuses[0];
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedIds.length === filteredRezerwacje.length) {
+      setSelectedIds([]);
+    } else {
+      setSelectedIds(filteredRezerwacje.map(r => r.id));
+    }
+  };
+
+  const toggleSelect = (id) => {
+    if (selectedIds.includes(id)) {
+      setSelectedIds(selectedIds.filter(sid => sid !== id));
+    } else {
+      setSelectedIds([...selectedIds, id]);
+    }
+  };
+
+  const handleBulkDelete = async () => {
+    if (!window.confirm(`Czy na pewno chcesz usunąć ${selectedIds.length} rezerwacji?`)) {
+      return;
+    }
+
+    try {
+      const deletePromises = selectedIds.map(id => 
+        fetch(`/api/rezerwacje/${id}`, { method: 'DELETE' })
+      );
+      
+      await Promise.all(deletePromises);
+      await loadRezerwacje();
+      setSelectedIds([]);
+      toast.success(`Usunięto ${selectedIds.length} rezerwacji`);
+    } catch (error) {
+      console.error('Błąd:', error);
+      toast.error('Błąd podczas usuwania rezerwacji');
+    }
+  };
+
+  const handleBulkStatusChange = async (newStatus) => {
+    try {
+      const updatePromises = selectedIds.map(id => {
+        const rezerwacja = rezerwacje.find(r => r.id === id);
+        return fetch('/api/rezerwacje', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            id,
+            status: newStatus,
+            orderId: rezerwacja?.orderId,
+            orderNumber: rezerwacja?.orderNumber,
+            updatedAt: new Date().toISOString()
+          })
+        });
+      });
+
+      await Promise.all(updatePromises);
+      await loadRezerwacje();
+      setSelectedIds([]);
+      toast.success(`Zaktualizowano status ${selectedIds.length} rezerwacji`);
+    } catch (error) {
+      console.error('Błąd:', error);
+      toast.error('Błąd podczas aktualizacji statusów');
+    }
   };
 
   const exportToCSV = () => {
@@ -188,6 +297,16 @@ export default function AdminRezerwacje() {
     a.href = url;
     a.download = `rezerwacje_${new Date().toISOString().split('T')[0]}.csv`;
     a.click();
+  };
+
+  // Paginacja
+  const totalPages = Math.ceil(filteredRezerwacje.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentPageData = filteredRezerwacje.slice(startIndex, endIndex);
+
+  const goToPage = (page) => {
+    setCurrentPage(Math.max(1, Math.min(page, totalPages)));
   };
 
   return (
@@ -330,6 +449,11 @@ export default function AdminRezerwacje() {
         <div className="mt-4 flex items-center justify-between text-sm text-gray-600">
           <div>
             Znaleziono: <span className="font-semibold">{filteredRezerwacje.length}</span> rezerwacji
+            {selectedIds.length > 0 && (
+              <span className="ml-3 text-blue-600 font-semibold">
+                • Zaznaczono: {selectedIds.length}
+              </span>
+            )}
           </div>
           <div className="flex items-center space-x-4">
             <span>
@@ -345,6 +469,47 @@ export default function AdminRezerwacje() {
           </div>
         </div>
       </div>
+
+      {/* Bulk Actions Bar */}
+      {selectedIds.length > 0 && (
+        <div className="bg-blue-50 border-2 border-blue-200 rounded-lg p-4 mb-6 flex items-center justify-between">
+          <div className="flex items-center space-x-4">
+            <span className="text-sm font-medium text-blue-900">
+              Zaznaczono: {selectedIds.length} rezerwacji
+            </span>
+            <button
+              onClick={() => setSelectedIds([])}
+              className="text-sm text-blue-600 hover:text-blue-800 underline"
+            >
+              Odznacz wszystkie
+            </button>
+          </div>
+          <div className="flex items-center space-x-3">
+            <select
+              onChange={(e) => {
+                if (e.target.value) {
+                  handleBulkStatusChange(e.target.value);
+                  e.target.value = '';
+                }
+              }}
+              className="px-3 py-1.5 border border-blue-300 rounded-lg text-sm font-medium text-blue-700 bg-white hover:bg-blue-50"
+            >
+              <option value="">Zmień status...</option>
+              {bookingStatuses.map(status => (
+                <option key={status.value} value={status.value}>
+                  {status.icon} {status.label}
+                </option>
+              ))}
+            </select>
+            <button
+              onClick={handleBulkDelete}
+              className="px-4 py-1.5 bg-red-600 text-white rounded-lg text-sm font-medium hover:bg-red-700 transition-colors"
+            >
+              Usuń zaznaczone
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Rezerwacje Table */}
       {loading ? (
@@ -369,20 +534,60 @@ export default function AdminRezerwacje() {
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Data
+                  <th className="px-6 py-3 text-left">
+                    <input
+                      type="checkbox"
+                      checked={selectedIds.length === filteredRezerwacje.length && filteredRezerwacje.length > 0}
+                      onChange={toggleSelectAll}
+                      className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                    />
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Klient
+                  <th 
+                    onClick={() => handleSort('date')}
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 select-none"
+                  >
+                    <div className="flex items-center space-x-1">
+                      <span>Data</span>
+                      {sortField === 'date' && (
+                        sortDirection === 'asc' ? <FiChevronUp className="h-4 w-4" /> : <FiChevronDown className="h-4 w-4" />
+                      )}
+                    </div>
+                  </th>
+                  <th 
+                    onClick={() => handleSort('name')}
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 select-none"
+                  >
+                    <div className="flex items-center space-x-1">
+                      <span>Klient</span>
+                      {sortField === 'name' && (
+                        sortDirection === 'asc' ? <FiChevronUp className="h-4 w-4" /> : <FiChevronDown className="h-4 w-4" />
+                      )}
+                    </div>
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Kontakt
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Kategoria
+                  <th 
+                    onClick={() => handleSort('category')}
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 select-none"
+                  >
+                    <div className="flex items-center space-x-1">
+                      <span>Kategoria</span>
+                      {sortField === 'category' && (
+                        sortDirection === 'asc' ? <FiChevronUp className="h-4 w-4" /> : <FiChevronDown className="h-4 w-4" />
+                      )}
+                    </div>
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Status
+                  <th 
+                    onClick={() => handleSort('status')}
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 select-none"
+                  >
+                    <div className="flex items-center space-x-1">
+                      <span>Status</span>
+                      {sortField === 'status' && (
+                        sortDirection === 'asc' ? <FiChevronUp className="h-4 w-4" /> : <FiChevronDown className="h-4 w-4" />
+                      )}
+                    </div>
                   </th>
                   <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Akcje
@@ -390,10 +595,19 @@ export default function AdminRezerwacje() {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {filteredRezerwacje.map((rezerwacja) => {
+                {currentPageData.map((rezerwacja) => {
                   const statusInfo = getStatusInfo(rezerwacja.status);
+                  const isSelected = selectedIds.includes(rezerwacja.id);
                   return (
-                    <tr key={rezerwacja.id} className="hover:bg-gray-50 transition-colors">
+                    <tr key={rezerwacja.id} className={`hover:bg-gray-50 transition-colors ${isSelected ? 'bg-blue-50' : ''}`}>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <input
+                          type="checkbox"
+                          checked={isSelected}
+                          onChange={() => toggleSelect(rezerwacja.id)}
+                          className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                        />
+                      </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
                           <FiCalendar className="h-5 w-5 text-gray-400 mr-2" />
@@ -432,10 +646,27 @@ export default function AdminRezerwacje() {
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusInfo.color}`}>
-                          <span className="mr-1">{statusInfo.icon}</span>
-                          {statusInfo.label}
-                        </span>
+                        <div className="relative inline-block">
+                          <select
+                            value={rezerwacja.status}
+                            onChange={(e) => handleStatusChange(rezerwacja.id, e.target.value)}
+                            className={`text-xs font-medium rounded-full px-3 py-1.5 pr-8 border-0 cursor-pointer focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all hover:shadow-md ${statusInfo.color}`}
+                            style={{ 
+                              appearance: 'none',
+                              backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%23374151' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E")`,
+                              backgroundPosition: 'right 0.5rem center',
+                              backgroundRepeat: 'no-repeat',
+                              backgroundSize: '1.2em 1.2em'
+                            }}
+                            title="Kliknij aby zmienić status"
+                          >
+                            {bookingStatuses.map(status => (
+                              <option key={status.value} value={status.value}>
+                                {status.icon} {status.label}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                         <div className="flex items-center justify-end space-x-2">
@@ -471,6 +702,65 @@ export default function AdminRezerwacje() {
               </tbody>
             </table>
           </div>
+
+          {/* Paginacja */}
+          {totalPages > 1 && (
+            <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
+              <div className="text-sm text-gray-600">
+                Strona {currentPage} z {totalPages} • Pokazano {startIndex + 1}-{Math.min(endIndex, filteredRezerwacje.length)} z {filteredRezerwacje.length}
+              </div>
+              <div className="flex items-center space-x-2">
+                <button
+                  onClick={() => goToPage(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Poprzednia
+                </button>
+                
+                {/* Numery stron */}
+                <div className="flex items-center space-x-1">
+                  {[...Array(totalPages)].map((_, i) => {
+                    const pageNum = i + 1;
+                    // Pokaż tylko niektóre strony jeśli jest ich dużo
+                    if (
+                      pageNum === 1 ||
+                      pageNum === totalPages ||
+                      (pageNum >= currentPage - 1 && pageNum <= currentPage + 1)
+                    ) {
+                      return (
+                        <button
+                          key={pageNum}
+                          onClick={() => goToPage(pageNum)}
+                          className={`px-3 py-1.5 rounded-lg text-sm font-medium ${
+                            pageNum === currentPage
+                              ? 'bg-blue-600 text-white'
+                              : 'text-gray-700 hover:bg-gray-100'
+                          }`}
+                        >
+                          {pageNum}
+                        </button>
+                      );
+                    } else if (
+                      pageNum === currentPage - 2 ||
+                      pageNum === currentPage + 2
+                    ) {
+                      return <span key={pageNum} className="px-2 text-gray-400">...</span>;
+                    }
+                    return null;
+                  })}
+                </div>
+
+                <button
+                  onClick={() => goToPage(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                  className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Następna
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       )}
 

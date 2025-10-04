@@ -376,7 +376,11 @@
     "oldId": "EMP25092001",
     "migrationDate": "2025-09-28T22:12:00.371Z",
     "migrationSource": "unified-id-system",
-    "agdSpecializations": null,
+    "agdSpecializations": {
+      "primaryCategory": "AGD",
+      "devices": [],
+      "specialSkills": []
+    },
     "equipment": {
       "personalTools": [
         "Multimetr Fluke 117",
@@ -453,8 +457,8 @@
     },
     "metadata": {
       "createdAt": "2025-07-08T22:25:15.182Z",
-      "updatedAt": "2025-09-30T20:21:02.155Z",
-      "lastModifiedBy": "enhancement-script-v2",
+      "updatedAt": "2025-10-03T06:52:56.161Z",
+      "lastModifiedBy": "admin-panel",
       "version": 2,
       "dataCompleteness": "enhanced",
       "enhancementDate": "2025-09-30T20:21:02.155Z",
@@ -482,7 +486,8 @@
       "demontaż": 10,
       "montaż": 10,
       "trudnaZabudowa": 30
-    }
+    },
+    "updated_at": "2025-10-03T06:52:56.162Z"
   },
   {
     "id": "EMP25092002",

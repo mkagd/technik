@@ -4,6 +4,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import AdminLayout from '../../../components/AdminLayout';
+import { useToast } from '../../../contexts/ToastContext';
 import { 
   FiEye, FiTrash2, FiEdit, FiSearch, FiFilter, FiX, FiPhone, 
   FiMapPin, FiShoppingBag, FiDownload, FiRefreshCw, FiCalendar, FiTool
@@ -11,6 +12,7 @@ import {
 
 export default function AdminZamowienia() {
   const router = useRouter();
+  const toast = useToast();
   
   const [orders, setOrders] = useState([]);
   const [filteredOrders, setFilteredOrders] = useState([]);
@@ -126,6 +128,35 @@ export default function AdminZamowienia() {
     router.push(`/admin/zamowienia/${id}`);
   };
 
+  const handleStatusChange = async (orderId, newStatus) => {
+    try {
+      const order = orders.find(o => o.id === orderId);
+      if (!order) return;
+
+      const response = await fetch('/api/orders', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          id: orderId,
+          status: newStatus,
+          updatedAt: new Date().toISOString()
+        })
+      });
+
+      if (response.ok) {
+        await loadOrders();
+        toast.success('Status zamówienia został zaktualizowany');
+      } else {
+        toast.error('Błąd podczas aktualizacji statusu');
+      }
+    } catch (error) {
+      console.error('Błąd:', error);
+      toast.error('Błąd połączenia z serwerem');
+    }
+  };
+
   const handleDelete = async (id) => {
     try {
       const response = await fetch(`/api/orders/${id}`, {
@@ -136,12 +167,13 @@ export default function AdminZamowienia() {
         await loadOrders();
         setShowDeleteModal(false);
         setOrderToDelete(null);
+        toast.success('Zamówienie zostało usunięte');
       } else {
-        alert('Błąd podczas usuwania zamówienia');
+        toast.error('Błąd podczas usuwania zamówienia');
       }
     } catch (error) {
       console.error('Błąd:', error);
-      alert('Błąd połączenia z serwerem');
+      toast.error('Błąd połączenia z serwerem');
     }
   };
 
@@ -303,9 +335,27 @@ export default function AdminZamowienia() {
                     <h3 className="text-lg font-semibold text-gray-900">{order.clientName}</h3>
                     <p className="text-xs text-gray-500">{order.orderNumber}</p>
                   </div>
-                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusInfo.color}`}>
-                    {statusInfo.label}
-                  </span>
+                  <div className="relative inline-block">
+                    <select
+                      value={order.status}
+                      onChange={(e) => handleStatusChange(order.id, e.target.value)}
+                      className={`text-xs font-medium rounded-full px-3 py-1.5 pr-8 border-0 cursor-pointer focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all hover:shadow-md ${statusInfo.color}`}
+                      style={{ 
+                        appearance: 'none',
+                        backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%23374151' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E")`,
+                        backgroundPosition: 'right 0.5rem center',
+                        backgroundRepeat: 'no-repeat',
+                        backgroundSize: '1.2em 1.2em'
+                      }}
+                      title="Kliknij aby zmienić status"
+                    >
+                      {orderStatuses.map(status => (
+                        <option key={status.value} value={status.value}>
+                          {status.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
 
                 <div className="space-y-2 mb-4">

@@ -6,7 +6,7 @@ import { useRouter } from 'next/router';
 import AdminLayout from '../../../components/AdminLayout';
 import { 
   FiSettings, FiCpu, FiShield, FiDatabase, FiMail, 
-  FiBell, FiMap, FiUsers, FiImage, FiKey, FiServer, FiCloud
+  FiBell, FiMap, FiUsers, FiImage, FiKey, FiServer, FiCloud, FiDollarSign
 } from 'react-icons/fi';
 
 export default function AdminUstawienia() {
@@ -108,6 +108,18 @@ export default function AdminUstawienia() {
         { label: 'Formaty zdjęć', value: 'JPG, PNG, WebP' },
         { label: 'Kompresja zdjęć', value: 'Automatyczna' }
       ]
+    },
+    {
+      id: 'payroll',
+      title: 'Wynagrodzenia',
+      icon: FiDollarSign,
+      description: 'Konfiguracja płac i prowizji',
+      color: 'orange',
+      items: [
+        { label: 'Prowizja technika', value: '30%' },
+        { label: 'Stawka godzinowa', value: '25 PLN' },
+        { label: 'Cykl rozliczeniowy', value: 'Miesięczny' }
+      ]
     }
   ];
 
@@ -119,7 +131,8 @@ export default function AdminUstawienia() {
     yellow: { bg: 'bg-yellow-50', border: 'border-yellow-200', icon: 'text-yellow-600', hover: 'hover:border-yellow-400' },
     red: { bg: 'bg-red-50', border: 'border-red-200', icon: 'text-red-600', hover: 'hover:border-red-400' },
     teal: { bg: 'bg-teal-50', border: 'border-teal-200', icon: 'text-teal-600', hover: 'hover:border-teal-400' },
-    pink: { bg: 'bg-pink-50', border: 'border-pink-200', icon: 'text-pink-600', hover: 'hover:border-pink-400' }
+    pink: { bg: 'bg-pink-50', border: 'border-pink-200', icon: 'text-pink-600', hover: 'hover:border-pink-400' },
+    orange: { bg: 'bg-orange-50', border: 'border-orange-200', icon: 'text-orange-600', hover: 'hover:border-orange-400' }
   };
 
   return (
@@ -146,7 +159,13 @@ export default function AdminUstawienia() {
             <div 
               key={section.id}
               className={`${colors.bg} rounded-lg border-2 ${colors.border} ${colors.hover} p-6 transition-all cursor-pointer`}
-              onClick={() => alert(`Sekcja "${section.title}" - wkrótce dostępna`)}
+              onClick={() => {
+                if (section.id === 'payroll') {
+                  router.push('/admin/rozliczenia');
+                } else {
+                  alert(`Sekcja "${section.title}" - wkrótce dostępna`);
+                }
+              }}
             >
               <div className="flex items-start justify-between mb-4">
                 <div className={`p-3 ${colors.bg} rounded-lg border ${colors.border}`}>

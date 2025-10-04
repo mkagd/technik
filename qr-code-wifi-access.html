@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Technik - Dostęp WiFi</title>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+        }
+        
+        h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+        
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+        
+        .qr-container {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+            margin: 30px 0;
+            display: inline-block;
+        }
+        
+        #qrcode {
+            display: inline-block;
+        }
+        
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            text-align: left;
+        }
+        
+        .info-box h3 {
+            color: #1976d2;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+        
+        .info-item {
+            margin: 10px 0;
+            padding: 10px;
+            background: white;
+            border-radius: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .info-label {
+            font-weight: 600;
+            color: #555;
+        }
+        
+        .info-value {
+            font-family: 'Courier New', monospace;
+            color: #667eea;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+        
+        .copy-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.3s;
+        }
+        
+        .copy-btn:hover {
+            background: #5568d3;
+            transform: scale(1.05);
+        }
+        
+        .copy-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .pages-list {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        
+        .pages-list h4 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+        
+        .page-link {
+            display: block;
+            padding: 12px;
+            margin: 8px 0;
+            background: white;
+            color: #667eea;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+        
+        .page-link:hover {
+            background: #667eea;
+            color: white;
+            transform: translateX(5px);
+        }
+        
+        .warning {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            text-align: left;
+        }
+        
+        .warning strong {
+            color: #856404;
+        }
+        
+        @media print {
+            body {
+                background: white;
+            }
+            .copy-btn {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📱 Technik System</h1>
+        <p class="subtitle">Dostęp przez WiFi</p>
+        
+        <div class="qr-container">
+            <div id="qrcode"></div>
+        </div>
+        
+        <div class="info-box">
+            <h3>📡 Informacje o połączeniu</h3>
+            
+            <div class="info-item">
+                <span class="info-label">Adres IP:</span>
+                <div>
+                    <span class="info-value" id="ip-address">192.168.0.2</span>
+                    <button class="copy-btn" onclick="copyToClipboard('192.168.0.2:3000')">Kopiuj</button>
+                </div>
+            </div>
+            
+            <div class="info-item">
+                <span class="info-label">Port:</span>
+                <span class="info-value">3000</span>
+            </div>
+            
+            <div class="info-item">
+                <span class="info-label">Pełny URL:</span>
+                <div>
+                    <span class="info-value">http://192.168.0.2:3000</span>
+                    <button class="copy-btn" onclick="copyToClipboard('http://192.168.0.2:3000')">Kopiuj</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="pages-list">
+            <h4>🔗 Szybki dostęp do stron:</h4>
+            <a href="http://192.168.0.2:3000/admin" class="page-link" target="_blank">👔 Panel Administratora</a>
+            <a href="http://192.168.0.2:3000/technician/login" class="page-link" target="_blank">🔧 Panel Technika (Login)</a>
+            <a href="http://192.168.0.2:3000/technician/schedule" class="page-link" target="_blank">📅 Harmonogram Technika</a>
+            <a href="http://192.168.0.2:3000/pracownik-logowanie" class="page-link" target="_blank">👷 Panel Pracownika (Login)</a>
+            <a href="http://192.168.0.2:3000/logowanie-wybor" class="page-link" target="_blank">🚪 Wybór Logowania</a>
+        </div>
+        
+        <div class="warning">
+            <strong>⚠️ Ważne:</strong>
+            <ul style="margin-left: 20px; margin-top: 10px;">
+                <li>Telefon i komputer muszą być w tej samej sieci WiFi</li>
+                <li>Serwer musi być uruchomiony (npm run dev)</li>
+                <li>Wyłącz VPN na telefonie, jeśli jest włączony</li>
+                <li>Zeskanuj kod QR aparatem telefonu</li>
+            </ul>
+        </div>
+    </div>
+    
+    <script>
+        // Generuj kod QR
+        const qrcode = new QRCode(document.getElementById("qrcode"), {
+            text: "http://192.168.0.2:3000",
+            width: 256,
+            height: 256,
+            colorDark: "#667eea",
+            colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.H
+        });
+        
+        // Funkcja kopiowania do schowka
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                // Pokaż informację o skopiowaniu
+                const btn = event.target;
+                const originalText = btn.textContent;
+                btn.textContent = '✓ Skopiowano!';
+                btn.style.background = '#4caf50';
+                
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.style.background = '#667eea';
+                }, 2000);
+            }).catch(err => {
+                alert('Nie udało się skopiować: ' + err);
+            });
+        }
+        
+        // Sprawdź czy serwer działa
+        async function checkServerStatus() {
+            try {
+                const response = await fetch('http://192.168.0.2:3000');
+                if (response.ok) {
+                    console.log('✅ Serwer działa!');
+                }
+            } catch (err) {
+                console.warn('⚠️ Serwer może nie działać:', err.message);
+            }
+        }
+        
+        checkServerStatus();
+        
+        // Opcjonalnie: Automatyczne wykrywanie IP (wymaga backend)
+        // fetch('/api/get-ip').then(r => r.json()).then(data => {
+        //     document.getElementById('ip-address').textContent = data.ip;
+        // });
+    </script>
+</body>
+</html>

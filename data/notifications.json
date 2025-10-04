@@ -99,8 +99,9 @@
     "type": "info",
     "link": "/admin/klienci",
     "userId": null,
-    "read": false,
-    "createdAt": "2025-10-03T05:35:30.504Z"
+    "read": true,
+    "createdAt": "2025-10-03T05:35:30.504Z",
+    "readAt": "2025-10-03T07:00:31.201Z"
   },
   {
     "id": 1759469731365,
@@ -109,8 +110,9 @@
     "type": "success",
     "link": "/admin/zamowienia",
     "userId": null,
-    "read": false,
-    "createdAt": "2025-10-03T05:35:30.523Z"
+    "read": true,
+    "createdAt": "2025-10-03T05:35:30.523Z",
+    "readAt": "2025-10-03T07:00:29.751Z"
   },
   {
     "id": 1759469730995,
@@ -129,8 +131,9 @@
     "type": "info",
     "link": "/admin/klienci",
     "userId": null,
-    "read": false,
-    "createdAt": "2025-10-03T05:57:52.991Z"
+    "read": true,
+    "createdAt": "2025-10-03T05:57:52.991Z",
+    "readAt": "2025-10-03T07:00:32.092Z"
   },
   {
     "id": 1759471073575,
@@ -151,5 +154,15 @@
     "userId": null,
     "read": false,
     "createdAt": "2025-10-03T05:57:53.012Z"
+  },
+  {
+    "id": 1759474205474,
+    "title": "🔴 PILNE Nowe zamówienie części",
+    "message": "Anna Nowak zamówił 1 części",
+    "type": "error",
+    "link": "/admin/logistyk/zamowienia?id=PR-2025-10-03-1943",
+    "userId": null,
+    "read": false,
+    "createdAt": "2025-10-03T06:50:05.474Z"
   }
 ]

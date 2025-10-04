@@ -30,6 +30,24 @@
         "suggestedByAI": true
       }
     ],
+    "attachedPhotos": [
+      {
+        "url": "/uploads/parts/PR-2025-10-001/photo-1727946000123.jpg",
+        "filename": "photo-1727946000123.jpg",
+        "originalName": "lożysko_uszkodzone.jpg",
+        "size": 234567,
+        "mimeType": "image/jpeg",
+        "uploadedAt": "2025-10-02T14:30:15Z"
+      },
+      {
+        "url": "/uploads/parts/PR-2025-10-001/photo-1727946000456.jpg",
+        "filename": "photo-1727946000456.jpg",
+        "originalName": "tabliczka_znamionowa.jpg",
+        "size": 189234,
+        "mimeType": "image/jpeg",
+        "uploadedAt": "2025-10-02T14:30:23Z"
+      }
+    ],
     "preferredDelivery": {
       "type": "paczkomat",
       "address": "ul. Kwiatowa 12, 30-001 Kraków",
@@ -38,7 +56,7 @@
       "notes": "Najlepiej do paczkomatu obok domu"
     },
     "status": "pending",
-    "notes": "Potrzebuję na jutro, mam kolejne zlecenie z podobnym problemem",
+    "notes": "Potrzebuję na jutro, mam kolejne zlecenie z podobnym problemem. Dodaję zdjęcia uszkodzonego łożyska oraz tabliczki znamionowej pralki.",
     "reviewedBy": null,
     "reviewedByName": null,
     "reviewedAt": null,
@@ -160,5 +178,38 @@
     },
     "deliveredAt": null,
     "completedAt": null
+  },
+  {
+    "requestId": "PR-2025-10-03-1943",
+    "requestedBy": "EMP25189002",
+    "requestedByName": "Anna Nowak",
+    "requestedFor": "EMP25189002",
+    "requestedForName": "Anna Nowak",
+    "createdBy": "EMP25189002",
+    "isAdminOrder": false,
+    "deviceInfo": null,
+    "ocrId": null,
+    "parts": [
+      {
+        "partId": "PART006",
+        "quantity": 1,
+        "preferredSupplierId": null
+      }
+    ],
+    "urgency": "urgent",
+    "afterDeadline": false,
+    "expressCharge": 0,
+    "preferredDelivery": "paczkomat",
+    "paczkomatId": "krakwakdf",
+    "deliveryAddress": null,
+    "finalDelivery": null,
+    "status": "pending",
+    "createdAt": "2025-10-03T06:50:05.472Z",
+    "updatedAt": "2025-10-03T06:50:05.472Z",
+    "approvedAt": null,
+    "approvedBy": null,
+    "consolidatedWith": [],
+    "notes": null,
+    "logisticianNotes": null
   }
 ]

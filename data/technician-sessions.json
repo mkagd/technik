@@ -1,0 +1,79 @@
+[
+  {
+    "token": "ddba751e2fb1aed74dcd8423c7f1d067296c1cf160365d5ac7ca1cbd0f1f7049",
+    "employeeId": "EMP25189001",
+    "email": "jan.kowalski@techserwis.pl",
+    "createdAt": "2025-10-03T09:17:06.042Z",
+    "lastActivity": "2025-10-03T09:17:13.814Z",
+    "isValid": true,
+    "rememberMe": false,
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT; Windows NT 10.0; pl-PL) WindowsPowerShell/5.1.26100.6584"
+  },
+  {
+    "token": "343b0beba859ff4bf87430ebf4aaa27cf9e0e1b0069cd848346486e5ffc941d1",
+    "employeeId": "EMP25189001",
+    "email": "jan.kowalski@techserwis.pl",
+    "createdAt": "2025-10-03T10:38:03.461Z",
+    "lastActivity": "2025-10-04T05:06:09.138Z",
+    "isValid": true,
+    "rememberMe": false,
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36"
+  },
+  {
+    "token": "f175afc3d2fee8a1a4d1f74b991eb8af50c74719593b4ce8a4d3473e4237f34b",
+    "employeeId": "EMP25189001",
+    "email": "jan.kowalski@techserwis.pl",
+    "createdAt": "2025-10-03T18:54:12.188Z",
+    "lastActivity": "2025-10-04T04:47:34.413Z",
+    "isValid": true,
+    "rememberMe": false,
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36"
+  },
+  {
+    "token": "c5472568406237b5814c2fb302cb0528bf62428b5081e9e5e921ff3c4d33c3d0",
+    "employeeId": "EMP25189001",
+    "email": "jan.kowalski@techserwis.pl",
+    "createdAt": "2025-10-03T19:52:30.878Z",
+    "lastActivity": "2025-10-03T19:56:54.986Z",
+    "isValid": true,
+    "rememberMe": false,
+    "ip": "192.168.0.9",
+    "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Mobile Safari/537.36"
+  },
+  {
+    "token": "c5d16a3daca54247fb9131b9edb7eec465a875aa5021db3ce984d5f16b84854f",
+    "employeeId": "EMP25189001",
+    "email": "jan.kowalski@techserwis.pl",
+    "createdAt": "2025-10-03T19:52:36.480Z",
+    "lastActivity": "2025-10-03T19:57:01.107Z",
+    "isValid": true,
+    "rememberMe": false,
+    "ip": "192.168.0.3",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 16_0_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 [FBAN/FBIOS;FBAV/527.0.0.32.107;FBBV/799104279;FBDV/iPhone13,1;FBMD/iPhone;FBSN/iOS;FBSV/16.0.2;FBSS/3;FBCR/;FBID/phone;FBLC/pl_PL;FBOP/80]"
+  },
+  {
+    "token": "b59cbb921249ff1c4ba037d6396149a219367393e2d8babe28538fffab752ba5",
+    "employeeId": "EMP25189001",
+    "email": "jan.kowalski@techserwis.pl",
+    "createdAt": "2025-10-03T19:56:03.469Z",
+    "lastActivity": "2025-10-03T19:56:15.004Z",
+    "isValid": true,
+    "rememberMe": false,
+    "ip": "192.168.0.2",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36"
+  },
+  {
+    "token": "42d0f38025dd8f6d8c2c83c6357dbdd4adbf9d1a2bf065884df44f219c4f6c8f",
+    "employeeId": "EMP25189001",
+    "email": "jan.kowalski@techserwis.pl",
+    "createdAt": "2025-10-03T20:46:57.094Z",
+    "lastActivity": "2025-10-03T20:58:36.635Z",
+    "isValid": true,
+    "rememberMe": false,
+    "ip": "192.168.0.2",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36"
+  }
+]

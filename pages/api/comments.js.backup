@@ -1,0 +1,92 @@
+// pages/api/comments.js
+// API dla systemu komentarzy
+
+import { readFile, writeFile } from '../../utils/fileOperations';
+import path from 'path';
+
+const COMMENTS_FILE = path.join(process.cwd(), 'data', 'comments.json');
+
+// Inicjalizuj plik jeśli nie istnieje
+const initCommentsFile = async () => {
+  try {
+    await readFile(COMMENTS_FILE);
+  } catch (error) {
+    await writeFile(COMMENTS_FILE, JSON.stringify({ comments: [] }, null, 2));
+  }
+};
+
+export default async function handler(req, res) {
+  await initCommentsFile();
+
+  if (req.method === 'GET') {
+    try {
+      const { type, id } = req.query;
+      const data = JSON.parse(await readFile(COMMENTS_FILE));
+      
+      let comments = data.comments || [];
+      
+      if (type && id) {
+        comments = comments.filter(c => c.type === type && c.entityId === parseInt(id));
+      }
+      
+      // Sortuj od najnowszych
+      comments.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      
+      return res.status(200).json({ comments });
+    } catch (error) {
+      console.error('Error reading comments:', error);
+      return res.status(500).json({ message: 'Błąd serwera' });
+    }
+  }
+
+  if (req.method === 'POST') {
+    try {
+      const { type, entityId, comment, author } = req.body;
+      
+      if (!type || !entityId || !comment) {
+        return res.status(400).json({ message: 'Brak wymaganych danych' });
+      }
+
+      const data = JSON.parse(await readFile(COMMENTS_FILE));
+      const comments = data.comments || [];
+      
+      const newComment = {
+        id: Date.now(),
+        type,
+        entityId: parseInt(entityId),
+        comment,
+        author: author || 'Administrator',
+        createdAt: new Date().toISOString()
+      };
+      
+      comments.push(newComment);
+      
+      await writeFile(COMMENTS_FILE, JSON.stringify({ comments }, null, 2));
+      
+      return res.status(201).json({ comment: newComment });
+    } catch (error) {
+      console.error('Error adding comment:', error);
+      return res.status(500).json({ message: 'Błąd serwera' });
+    }
+  }
+
+  if (req.method === 'DELETE') {
+    try {
+      const id = parseInt(req.query.id);
+      
+      const data = JSON.parse(await readFile(COMMENTS_FILE));
+      const comments = data.comments || [];
+      
+      const filtered = comments.filter(c => c.id !== id);
+      
+      await writeFile(COMMENTS_FILE, JSON.stringify({ comments: filtered }, null, 2));
+      
+      return res.status(200).json({ message: 'Komentarz usunięty' });
+    } catch (error) {
+      console.error('Error deleting comment:', error);
+      return res.status(500).json({ message: 'Błąd serwera' });
+    }
+  }
+
+  return res.status(405).json({ message: 'Method not allowed' });
+}

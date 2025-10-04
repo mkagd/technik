@@ -6,7 +6,7 @@ import { useRouter } from 'next/router';
 import AdminLayout from '../../components/AdminLayout';
 import { 
   FiUsers, FiCalendar, FiShoppingBag, FiTool, FiSettings,
-  FiTrendingUp, FiClock, FiCheckCircle, FiAlertCircle
+  FiTrendingUp, FiClock, FiCheckCircle, FiAlertCircle, FiClipboard, FiBarChart2
 } from 'react-icons/fi';
 
 export default function AdminDashboard() {
@@ -94,31 +94,59 @@ export default function AdminDashboard() {
 
   const quickActions = [
     {
+      title: 'Statystyki szczegółowe',
+      description: 'Wykresy, raporty i analizy',
+      icon: FiBarChart2,
+      href: '/admin/stats',
+      color: 'indigo'
+    },
+    {
+      title: 'Lista wizyt',
+      description: 'Zarządzaj wszystkimi wizytami',
+      icon: FiCalendar,
+      href: '/admin/wizyty',
+      color: 'teal'
+    },
+    {
+      title: 'Przydział zleceń',
+      description: 'Przydzielaj zlecenia do pracowników',
+      icon: FiClipboard,
+      href: '/panel-przydzial-zlecen',
+      color: 'purple'
+    },
+    {
+      title: 'Magazyn części',
+      description: 'Zarządzaj częściami i zamówieniami',
+      icon: FiShoppingBag,
+      href: '/admin/magazyn',
+      color: 'blue'
+    },
+    {
+      title: 'Rozliczenia',
+      description: 'Wypłaty pracowników i rozliczenia',
+      icon: FiAlertCircle,
+      href: '/admin/rozliczenia',
+      color: 'green'
+    },
+    {
       title: 'Nowa rezerwacja',
       description: 'Dodaj nową rezerwację wizyt',
       icon: FiCalendar,
       href: '/admin/rezerwacje/nowa',
-      color: 'blue'
-    },
-    {
-      title: 'Nowe zamówienie',
-      description: 'Utwórz zamówienie serwisowe',
-      icon: FiShoppingBag,
-      href: '/admin/zamowienia',
-      color: 'green'
-    },
-    {
-      title: 'Dodaj klienta',
-      description: 'Dodaj nowego klienta do bazy',
-      icon: FiUsers,
-      href: '/admin/klienci',
-      color: 'purple'
+      color: 'orange'
     },
     {
       title: 'Zarządzaj pracownikami',
       description: 'Edytuj dane i uprawnienia',
-      icon: FiTool,
+      icon: FiUsers,
       href: '/admin/pracownicy',
+      color: 'purple'
+    },
+    {
+      title: 'Alerty bezpieczeństwa',
+      description: 'Monitoruj płatności i działania',
+      icon: FiAlertCircle,
+      href: '/admin/alerty',
       color: 'orange'
     }
   ];
@@ -167,6 +195,8 @@ export default function AdminDashboard() {
           {quickActions.map((action, index) => {
             const Icon = action.icon;
             const colorClasses = {
+              indigo: 'bg-indigo-50 border-indigo-200 hover:border-indigo-400 text-indigo-600',
+              teal: 'bg-teal-50 border-teal-200 hover:border-teal-400 text-teal-600',
               blue: 'bg-blue-50 border-blue-200 hover:border-blue-400 text-blue-600',
               green: 'bg-green-50 border-green-200 hover:border-green-400 text-green-600',
               purple: 'bg-purple-50 border-purple-200 hover:border-purple-400 text-purple-600',

@@ -320,12 +320,12 @@ class AdvancedCache {
   
   // Metody ładowania danych (do nadpisania)
   async loadClients() {
-    const { readClients } = await import('../clientOrderStorage.js');
+    const { readClients } = await import('./clientOrderStorage.js');
     return await readClients();
   }
   
   async loadOrders() {
-    const { readOrders } = await import('../clientOrderStorage.js');
+    const { readOrders } = await import('./clientOrderStorage.js');
     return await readOrders();
   }
 }
@@ -349,7 +349,7 @@ class CacheHelpers {
   static async getClients() {
     const cache = getCache();
     return await cache.get('clients:all', async () => {
-      const { readClients } = await import('../clientOrderStorage.js');
+      const { readClients } = await import('./clientOrderStorage.js');
       return await readClients();
     });
   }

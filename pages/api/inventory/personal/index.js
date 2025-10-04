@@ -49,8 +49,10 @@ function findEmployee(employeeId) {
 }
 
 function findPart(partId) {
-  const parts = readJSON(partsInventoryPath);
-  if (!parts) return null;
+  const data = readJSON(partsInventoryPath);
+  if (!data) return null;
+  const parts = data.inventory || data; // Support both old and new structure
+  if (!Array.isArray(parts)) return null;
   return parts.find(p => p.id === partId);
 }
 

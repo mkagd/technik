@@ -4,6 +4,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import AdminLayout from '../../../components/AdminLayout';
+import CommentsSection from '../../../components/CommentsSection';
 import { 
   FiSave, FiX, FiChevronLeft, FiCalendar, FiClock, 
   FiUser, FiPhone, FiMail, FiMapPin, FiFileText, FiAlertCircle
@@ -446,6 +447,14 @@ export default function RezerwacjaDetale() {
             </div>
           </div>
         </div>
+      </div>
+
+      {/* Comments and Activity Log */}
+      <div className="mt-6">
+        <CommentsSection 
+          entityType="reservation" 
+          entityId={parseInt(id)} 
+        />
       </div>
     </AdminLayout>
   );

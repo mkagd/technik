@@ -80,20 +80,31 @@ export default async function handler(req, res) {
         // POST /api/inventory/parts - dodanie nowej części (tylko admin/logistyk)
         const newPart = req.body;
         
-        if (!newPart.id || !newPart.name || !newPart.partNumber) {
+        if (!newPart.name || !newPart.partNumber) {
           return res.status(400).json({
             success: false,
-            error: 'Brak wymaganych pól: id, name, partNumber'
+            error: 'Brak wymaganych pól: name, partNumber'
           });
         }
 
-        // Sprawdź czy część już istnieje
-        const existingPart = inventory.find(p => p.id === newPart.id);
-        if (existingPart) {
-          return res.status(409).json({
-            success: false,
-            error: 'Część o tym ID już istnieje'
+        // Auto-generuj ID jeśli nie podano
+        if (!newPart.id) {
+          // Znajdź największy numer ID
+          const existingIds = inventory.map(p => {
+            const match = p.id.match(/^PART(\d+)$/);
+            return match ? parseInt(match[1]) : 0;
           });
+          const maxId = Math.max(0, ...existingIds);
+          newPart.id = `PART${String(maxId + 1).padStart(3, '0')}`;
+        } else {
+          // Sprawdź czy część już istnieje
+          const existingPart = inventory.find(p => p.id === newPart.id);
+          if (existingPart) {
+            return res.status(409).json({
+              success: false,
+              error: 'Część o tym ID już istnieje'
+            });
+          }
         }
 
         // Dodaj metadata

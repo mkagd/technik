@@ -3,13 +3,13 @@
  * Enterprise-grade API protection system
  */
 
-import rateLimit from 'express-rate-limit';
-import slowDown from 'express-slow-down';
+import rateLimitLib from 'express-rate-limit';
+import slowDownLib from 'express-slow-down';
 
 // Rate limiting configurations
 const rateLimitConfigs = {
   // Strict rate limiting for authentication endpoints
-  auth: rateLimit({
+  auth: rateLimitLib({
     windowMs: 15 * 60 * 1000, // 15 minutes
     max: 5, // 5 attempts per window
     message: {
@@ -38,7 +38,7 @@ const rateLimitConfigs = {
   }),
 
   // Standard rate limiting for API endpoints
-  api: rateLimit({
+  api: rateLimitLib({
     windowMs: 15 * 60 * 1000, // 15 minutes
     max: 100, // 100 requests per window
     message: {
@@ -67,7 +67,7 @@ const rateLimitConfigs = {
   }),
 
   // Aggressive rate limiting for sensitive operations
-  sensitive: rateLimit({
+  sensitive: rateLimitLib({
     windowMs: 60 * 60 * 1000, // 1 hour
     max: 10, // 10 requests per hour
     message: {
@@ -90,7 +90,7 @@ const rateLimitConfigs = {
   }),
 
   // Generous rate limiting for public endpoints
-  public: rateLimit({
+  public: rateLimitLib({
     windowMs: 15 * 60 * 1000, // 15 minutes
     max: 500, // 500 requests per window
     message: {
@@ -107,7 +107,7 @@ const rateLimitConfigs = {
 // Slow down middleware for progressive delays
 const slowDownConfigs = {
   // Progressive slowdown for API endpoints
-  api: slowDown({
+  api: slowDownLib({
     windowMs: 15 * 60 * 1000, // 15 minutes
     delayAfter: 50, // Start slowing down after 50 requests
     delayMs: 500, // Increase delay by 500ms for each request
@@ -125,7 +125,7 @@ const slowDownConfigs = {
   }),
 
   // More aggressive slowdown for public endpoints
-  public: slowDown({
+  public: slowDownLib({
     windowMs: 15 * 60 * 1000,
     delayAfter: 100,
     delayMs: 250,

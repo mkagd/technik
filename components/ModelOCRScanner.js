@@ -15,7 +15,7 @@ import {
   FiGrid,
   FiTrash2
 } from 'react-icons/fi';
-import modelsDatabase from '../data/modelsDatabase.json';
+// modelsDatabase will be loaded dynamically
 
 export default function ModelOCRScanner({ isOpen, onClose, onModelDetected }) {
   const [isScanning, setIsScanning] = useState(false);

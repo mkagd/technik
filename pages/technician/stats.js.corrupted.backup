@@ -1,0 +1,724 @@
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
+import Link from 'next/link';
+import Head from 'next/head';
+import TechnicianLayout from '../../components/TechnicianLayout';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+  ArcElement,
+  PointElement,
+  LineElement
+} from 'chart.js';
+import { Bar, Pie, Line } from 'react-chartjs-2';
+
+// Register Chart.js components
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+  ArcElement,
+  PointElement,
+  LineElement
+);
+
+export default function TechnicianStats() {
+  const router = useRouter();
+  const [employee, setEmployee] = useState(null);
+  const [stats, setStats] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [timeRange, setTimeRange] = useState('month'); // week, month, quarter, year
+
+  // Check authentication
+  useEffect(() => {
+    const token = localStorage.getItem('technicianToken');
+    const employeeData = localStorage.getItem('technicianEmployee');
+    
+    if (!token || !employeeData) {
+      router.push('/technician/login');
+      return;
+    }
+
+    try {
+      setEmployee(JSON.parse(employeeData));
+    } catch (err) {
+      console.error('Error parsing employee data:', err);
+      router.push('/technician/login');
+    }
+  }, []);
+
+  // Load stats
+  useEffect(() => {
+    if (employee) {
+      loadStats();
+    }
+  }, [employee, timeRange]);
+
+  const loadStats = async () => {
+    setLoading(true);
+    setError('');
+
+    const token = localStorage.getItem('technicianToken');
+
+    try {
+      const response = await fetch(`/api/technician/stats?period=${timeRange}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Błąd pobierania statystyk');
+      }
+
+      setStats(data);
+    } catch (err) {
+      console.error('Error loading stats:', err);
+      setError(err.message || 'Błąd ładowania statystyk');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('technicianToken');
+    localStorage.removeItem('technicianEmployee');
+    router.push('/technician/login');
+  };
+
+  const formatCurrency = (amount) => {
+    return `${amount.toFixed(2)} PLN`;
+  };
+
+  const formatTime = (minutes) => {
+    const hours = Math.floor(minutes / 60);
+    const mins = minutes % 60;
+    return `${hours}h ${mins}min`;
+  };
+
+  if (loading) {
+    return (
+      <TechnicianLayout employee={employee} currentPage="stats">
+        <div className="flex items-center justify-center py-12">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto mb-4"></div>
+            <p className="text-gray-600">Ładowanie statystyk...</p>
+          </div>
+        </div>
+      </TechnicianLayout>
+    );
+  }
+
+  return (
+    <TechnicianLayout employee={employee} currentPage="stats">
+      <Head>
+        <title>Statystyki - Panel Pracownika | TechSerwis AGD</title>
+      </Head>
+
+      {/* Header */}
+      <div className="p-4 sm:p-6 lg:p-8">
+        <div className="mb-6">
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Twoja wydajność</h2>
+          <p className="text-gray-600">Osiągnięcia i statystyki</p>
+        </div>
+            <Link href="/technician/dashboard" className="flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors">
+              <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+              </svg>
+              Dashboard
+            </Link>
+
+            <Link href="/technician/visits" className="flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors">
+              <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+              </svg>
+              Wizyty
+            </Link>
+
+            <Link href="/technician/calendar" className="flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors">
+              <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              Kalendarz
+            </Link>
+
+            <Link href="/technician/stats" className="flex items-center px-4 py-3 text-white bg-blue-600 rounded-lg">
+              <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              </svg>
+              Statystyki
+            </Link>
+
+            <Link href="/technician/magazyn" className="flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors">
+              <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+              </svg>
+              Magazyn
+            </Link>
+
+            <Link href="/technician/payment" className="flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors">
+              <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+              </svg>
+              💰 Płatności
+            </Link>
+
+            <Link href="/technician/schedule" className="flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors">
+              <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              Harmonogram ⭐
+
+            <div className="flex items-center mb-4">
+              <div className="h-10 w-10 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white font-bold">
+                {employee?.name?.charAt(0) || 'U'}
+              </div>
+              <div className="ml-3 flex-1">
+                <p className="text-sm font-medium text-gray-900">{employee?.name}</p>
+                <p className="text-xs text-gray-500">⭐ {employee?.rating || '0.0'}</p>
+              </div>
+            </div>
+            <button
+              onClick={handleLogout}
+              className="w-full flex items-center justify-center px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+            >
+              <svg className="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+              </svg>
+              Wyloguj
+            </button>
+          </div>
+        </div>
+      </aside>
+
+      {/* Main Content */}
+      <div className="lg:pl-64">
+        {/* Top Bar */}
+        <header className="bg-white shadow-sm sticky top-0 z-30">
+          <div className="flex items-center justify-between h-16 px-4 sm:px-6 lg:px-8">
+            <button
+              onClick={() => setSidebarOpen(true)}
+              className="lg:hidden text-gray-500 hover:text-gray-700"
+            >
+              <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </button>
+
+            <h1 className="text-xl font-bold text-gray-900">Statystyki</h1>
+
+            <div className="flex items-center space-x-4">
+              <button className="text-gray-400 hover:text-gray-600 relative">
+                <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </header>
+
+        {/* Content */}
+        <main className="p-4 sm:p-6 lg:p-8">
+          {/* Header */}
+          <div className="mb-6">
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">Twoja wydajność</h2>
+            <p className="text-gray-600">Osiągnięcia i statystyki</p>
+          </div>
+
+          {/* Time range selector */}
+          <div className="bg-white rounded-lg shadow-sm p-4 mb-6">
+            <div className="flex items-center space-x-2">
+              <span className="text-sm font-medium text-gray-700 mr-2">Okres:</span>
+              <button
+                onClick={() => setTimeRange('week')}
+                className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
+                  timeRange === 'week'
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                Tydzień
+              </button>
+              <button
+                onClick={() => setTimeRange('month')}
+                className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
+                  timeRange === 'month'
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                Miesiąc
+              </button>
+              <button
+                onClick={() => setTimeRange('quarter')}
+                className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
+                  timeRange === 'quarter'
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                Kwartał
+              </button>
+              <button
+                onClick={() => setTimeRange('year')}
+                className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
+                  timeRange === 'year'
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                Rok
+              </button>
+            </div>
+          </div>
+
+          {error && (
+            <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+              <p className="text-red-800">{error}</p>
+            </div>
+          )}
+
+          {stats ? (
+            <>
+              {/* Summary cards */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+                <div className="bg-white rounded-lg shadow-sm p-6">
+                  <div className="flex items-center justify-between mb-2">
+                    <h3 className="text-sm font-medium text-gray-600">Wizyty</h3>
+                    <svg className="w-8 h-8 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                    </svg>
+                  </div>
+                  <p className="text-3xl font-bold text-gray-900">{stats.visits?.total || 0}</p>
+                  <p className="text-sm text-gray-500 mt-1">
+                    {stats.visits?.completed || 0} zakończonych
+                  </p>
+                </div>
+
+                <div className="bg-white rounded-lg shadow-sm p-6">
+                  <div className="flex items-center justify-between mb-2">
+                    <h3 className="text-sm font-medium text-gray-600">Czas pracy</h3>
+                    <svg className="w-8 h-8 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <p className="text-3xl font-bold text-gray-900">
+                    {Math.floor((stats.time?.totalMinutes || 0) / 60)}h
+                  </p>
+                  <p className="text-sm text-gray-500 mt-1">
+                    {formatTime(stats.time?.totalMinutes || 0)}
+                  </p>
+                </div>
+
+                <div className="bg-white rounded-lg shadow-sm p-6">
+                  <div className="flex items-center justify-between mb-2">
+                    <h3 className="text-sm font-medium text-gray-600">Przychody</h3>
+                    <svg className="w-8 h-8 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <p className="text-3xl font-bold text-gray-900">
+                    {(stats.revenue?.total || 0).toFixed(0)} PLN
+                  </p>
+                  <p className="text-sm text-gray-500 mt-1">
+                    Średnio: {(stats.revenue?.average || 0).toFixed(0)} PLN
+                  </p>
+                </div>
+
+                <div className="bg-white rounded-lg shadow-sm p-6">
+                  <div className="flex items-center justify-between mb-2">
+                    <h3 className="text-sm font-medium text-gray-600">Efektywność</h3>
+                    <svg className="w-8 h-8 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                    </svg>
+                  </div>
+                  <p className="text-3xl font-bold text-gray-900">
+                    {((stats.visits?.completed || 0) / (stats.visits?.total || 1) * 100).toFixed(0)}%
+                  </p>
+                  <p className="text-sm text-gray-500 mt-1">
+                    Wskaźnik ukończenia
+                  </p>
+                </div>
+              </div>
+
+              {/* Charts Section */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                {/* Status Distribution Pie Chart */}
+                {stats.statusDistribution && (
+                  <div className="bg-white rounded-lg shadow-sm p-6">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Rozkład statusów</h3>
+                    <div className="h-64">
+                      <Pie
+                        data={{
+                          labels: Object.keys(stats.statusDistribution).map(status => {
+                            const labels = {
+                              scheduled: 'Zaplanowane',
+                              in_progress: 'W trakcie',
+                              completed: 'Zakończone',
+                              cancelled: 'Anulowane',
+                              on_way: 'W drodze',
+                              paused: 'Wstrzymane'
+                            };
+                            return labels[status] || status;
+                          }),
+                          datasets: [{
+                            data: Object.values(stats.statusDistribution),
+                            backgroundColor: [
+                              '#3B82F6', // blue
+                              '#F59E0B', // orange
+                              '#10B981', // green
+                              '#EF4444', // red
+                              '#8B5CF6', // purple
+                              '#6B7280'  // gray
+                            ],
+                            borderWidth: 2,
+                            borderColor: '#ffffff'
+                          }]
+                        }}
+                        options={{
+                          responsive: true,
+                          maintainAspectRatio: false,
+                          plugins: {
+                            legend: {
+                              position: 'bottom',
+                              labels: {
+                                padding: 15,
+                                font: { size: 12 }
+                              }
+                            },
+                            tooltip: {
+                              callbacks: {
+                                label: function(context) {
+                                  const label = context.label || '';
+                                  const value = context.parsed || 0;
+                                  const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                  const percentage = ((value / total) * 100).toFixed(1);
+                                  return `${label}: ${value} (${percentage}%)`;
+                                }
+                              }
+                            }
+                          }
+                        }}
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {/* Top Devices Bar Chart */}
+                {stats.topDevices && stats.topDevices.length > 0 && (
+                  <div className="bg-white rounded-lg shadow-sm p-6">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Top urządzenia</h3>
+                    <div className="h-64">
+                      <Bar
+                        data={{
+                          labels: stats.topDevices.slice(0, 5).map(d => d.type),
+                          datasets: [{
+                            label: 'Liczba wizyt',
+                            data: stats.topDevices.slice(0, 5).map(d => d.count),
+                            backgroundColor: '#3B82F6',
+                            borderColor: '#2563EB',
+                            borderWidth: 1,
+                            borderRadius: 6
+                          }]
+                        }}
+                        options={{
+                          responsive: true,
+                          maintainAspectRatio: false,
+                          plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                              callbacks: {
+                                label: function(context) {
+                                  return `Wizyty: ${context.parsed.y}`;
+                                }
+                              }
+                            }
+                          },
+                          scales: {
+                            y: {
+                              beginAtZero: true,
+                              ticks: {
+                                stepSize: 1,
+                                font: { size: 11 }
+                              },
+                              grid: {
+                                color: '#F3F4F6'
+                              }
+                            },
+                            x: {
+                              ticks: {
+                                font: { size: 11 }
+                              },
+                              grid: {
+                                display: false
+                              }
+                            }
+                          }
+                        }}
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {/* Cities Bar Chart */}
+                {stats.topCities && stats.topCities.length > 0 && (
+                  <div className="bg-white rounded-lg shadow-sm p-6">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Top miasta</h3>
+                    <div className="h-64">
+                      <Bar
+                        data={{
+                          labels: stats.topCities.slice(0, 5).map(c => c.city),
+                          datasets: [{
+                            label: 'Liczba wizyt',
+                            data: stats.topCities.slice(0, 5).map(c => c.count),
+                            backgroundColor: '#10B981',
+                            borderColor: '#059669',
+                            borderWidth: 1,
+                            borderRadius: 6
+                          }]
+                        }}
+                        options={{
+                          responsive: true,
+                          maintainAspectRatio: false,
+                          plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                              callbacks: {
+                                label: function(context) {
+                                  return `Wizyty: ${context.parsed.y}`;
+                                }
+                              }
+                            }
+                          },
+                          scales: {
+                            y: {
+                              beginAtZero: true,
+                              ticks: {
+                                stepSize: 1,
+                                font: { size: 11 }
+                              },
+                              grid: {
+                                color: '#F3F4F6'
+                              }
+                            },
+                            x: {
+                              ticks: {
+                                font: { size: 11 }
+                              },
+                              grid: {
+                                display: false
+                              }
+                            }
+                          }
+                        }}
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {/* Revenue Timeline */}
+                {stats.revenueByDay && stats.revenueByDay.length > 0 && (
+                  <div className="bg-white rounded-lg shadow-sm p-6">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Przychody w czasie</h3>
+                    <div className="h-64">
+                      <Line
+                        data={{
+                          labels: stats.revenueByDay.map(d => {
+                            const date = new Date(d.date);
+                            return date.toLocaleDateString('pl-PL', { day: 'numeric', month: 'short' });
+                          }),
+                          datasets: [{
+                            label: 'Przychód (PLN)',
+                            data: stats.revenueByDay.map(d => d.amount),
+                            borderColor: '#F59E0B',
+                            backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                            borderWidth: 2,
+                            fill: true,
+                            tension: 0.4,
+                            pointRadius: 4,
+                            pointHoverRadius: 6,
+                            pointBackgroundColor: '#F59E0B',
+                            pointBorderColor: '#ffffff',
+                            pointBorderWidth: 2
+                          }]
+                        }}
+                        options={{
+                          responsive: true,
+                          maintainAspectRatio: false,
+                          plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                              callbacks: {
+                                label: function(context) {
+                                  return `${context.parsed.y.toFixed(2)} PLN`;
+                                }
+                              }
+                            }
+                          },
+                          scales: {
+                            y: {
+                              beginAtZero: true,
+                              ticks: {
+                                callback: function(value) {
+                                  return value + ' zł';
+                                },
+                                font: { size: 11 }
+                              },
+                              grid: {
+                                color: '#F3F4F6'
+                              }
+                            },
+                            x: {
+                              ticks: {
+                                maxRotation: 45,
+                                minRotation: 45,
+                                font: { size: 10 }
+                              },
+                              grid: {
+                                display: false
+                              }
+                            }
+                          }
+                        }}
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Top devices */}
+              {stats.topDevices && stats.topDevices.length > 0 && (
+                <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Najczęściej serwisowane urządzenia</h3>
+                  <div className="space-y-3">
+                    {stats.topDevices.map((device, index) => (
+                      <div key={index} className="flex items-center justify-between">
+                        <div className="flex items-center space-x-3">
+                          <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                            <span className="text-sm font-semibold text-blue-600">{index + 1}</span>
+                          </div>
+                          <div>
+                            <p className="font-medium text-gray-900">{device.type}</p>
+                            <p className="text-sm text-gray-500">{device.brand || 'Różne marki'}</p>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <p className="font-semibold text-gray-900">{device.count}</p>
+                          <p className="text-xs text-gray-500">wizyt</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Performance indicators */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Visit types */}
+                {stats.visitTypes && Object.keys(stats.visitTypes).length > 0 && (
+                  <div className="bg-white rounded-lg shadow-sm p-6">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Typy wizyt</h3>
+                    <div className="space-y-3">
+                      {Object.entries(stats.visitTypes).map(([type, count]) => {
+                        const typeLabels = {
+                          diagnosis: 'Diagnoza',
+                          repair: 'Naprawa',
+                          control: 'Kontrola',
+                          installation: 'Instalacja',
+                          warranty: 'Gwarancja'
+                        };
+                        const percentage = ((count / stats.visits.total) * 100).toFixed(0);
+                        
+                        return (
+                          <div key={type}>
+                            <div className="flex items-center justify-between mb-1">
+                              <span className="text-sm font-medium text-gray-700">
+                                {typeLabels[type] || type}
+                              </span>
+                              <span className="text-sm text-gray-600">{count} ({percentage}%)</span>
+                            </div>
+                            <div className="w-full bg-gray-200 rounded-full h-2">
+                              <div
+                                className="bg-blue-600 h-2 rounded-full transition-all"
+                                style={{ width: `${percentage}%` }}
+                              />
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                {/* Recent achievements */}
+                <div className="bg-white rounded-lg shadow-sm p-6">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Osiągnięcia</h3>
+                  <div className="space-y-3">
+                    <div className="flex items-center space-x-3 p-3 bg-yellow-50 rounded-lg">
+                      <svg className="w-8 h-8 text-yellow-500" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                      </svg>
+                      <div>
+                        <p className="font-medium text-gray-900">Wydajny technik</p>
+                        <p className="text-sm text-gray-600">
+                          {stats.visits?.completed || 0} ukończonych wizyt
+                        </p>
+                      </div>
+                    </div>
+
+                    {stats.time?.totalMinutes > 2400 && (
+                      <div className="flex items-center space-x-3 p-3 bg-green-50 rounded-lg">
+                        <svg className="w-8 h-8 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                        </svg>
+                        <div>
+                          <p className="font-medium text-gray-900">Pracowity</p>
+                          <p className="text-sm text-gray-600">
+                            Przepracowano ponad 40 godzin
+                          </p>
+                        </div>
+                      </div>
+                    )}
+
+                    {stats.revenue?.total > 5000 && (
+                      <div className="flex items-center space-x-3 p-3 bg-blue-50 rounded-lg">
+                        <svg className="w-8 h-8 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
+                          <path d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z" />
+                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z" clipRule="evenodd" />
+                        </svg>
+                        <div>
+                          <p className="font-medium text-gray-900">Top zarobki</p>
+                          <p className="text-sm text-gray-600">
+                            Przychody powyżej 5000 PLN
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </>
+          ) : (
+            <div className="bg-white rounded-lg shadow-sm p-12 text-center">
+              <svg className="w-16 h-16 mx-auto mb-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              </svg>
+              <p className="text-gray-600">Brak danych statystycznych</p>
+            </div>
+          )}
+        </main>
+      </div>
+    </div>
+  );
+}

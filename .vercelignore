@@ -6,7 +6,7 @@
 
 # Dane lokalne
 data/
-*.json
+fix-data.json
 
 # Logi
 *.log

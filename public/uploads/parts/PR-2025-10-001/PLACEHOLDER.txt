@@ -1,0 +1,3 @@
+# Przykładowy plik - placeholder dla zdjęcia części
+# W rzeczywistości tutaj będą rzeczywiste zdjęcia JPG/PNG uploadowane przez serwisantów
+# Ten plik służy jako przykład struktury folderów

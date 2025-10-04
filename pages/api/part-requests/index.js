@@ -315,6 +315,43 @@ export default function handler(req, res) {
       message: `Zamówienie ${requestId} utworzone pomyślnie`
     });
     
+  } else if (req.method === 'PUT') {
+    // UPDATE REQUEST - np. dodanie zdjęć
+    const { requestId, attachedPhotos } = req.body;
+    
+    if (!requestId) {
+      return res.status(400).json({ success: false, error: 'requestId is required' });
+    }
+    
+    const requests = readJSON(partRequestsPath);
+    if (!requests) {
+      return res.status(500).json({ success: false, error: 'Could not read requests' });
+    }
+    
+    const requestIndex = requests.findIndex(r => r.requestId === requestId);
+    if (requestIndex === -1) {
+      return res.status(404).json({ success: false, error: 'Request not found' });
+    }
+    
+    // Update attachedPhotos if provided
+    if (attachedPhotos) {
+      requests[requestIndex].attachedPhotos = attachedPhotos;
+    }
+    
+    // Update timestamp
+    requests[requestIndex].updatedAt = new Date().toISOString();
+    
+    // Save updated requests
+    if (!writeJSON(partRequestsPath, requests)) {
+      return res.status(500).json({ success: false, error: 'Could not save updated request' });
+    }
+    
+    return res.status(200).json({
+      success: true,
+      request: requests[requestIndex],
+      message: 'Request updated successfully'
+    });
+    
   } else {
     res.status(405).json({ success: false, error: 'Metoda niedozwolona' });
   }

@@ -2,17 +2,36 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
+import GlobalSearch from './GlobalSearch';
 import { 
   FiHome, FiCalendar, FiUsers, FiShoppingBag, FiSettings, 
-  FiMenu, FiX, FiBell, FiLogOut, FiUserCheck, FiChevronRight, FiClock
+  FiMenu, FiX, FiBell, FiLogOut, FiUserCheck, FiChevronRight, FiClock, FiSearch, FiPackage, FiDollarSign
 } from 'react-icons/fi';
 
 export default function AdminLayout({ children, title, breadcrumbs = [] }) {
   const router = useRouter();
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false); // Domyślnie zamknięty na mobile
   const [notificationCount, setNotificationCount] = useState(0);
   const [showNotifications, setShowNotifications] = useState(false);
   const [notifications, setNotifications] = useState([]);
+
+  // Set initial sidebar state based on screen size
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 1024) {
+        setSidebarOpen(true);
+      } else {
+        setSidebarOpen(false);
+      }
+    };
+
+    // Set initial state
+    handleResize();
+
+    // Listen for resize
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Check for unread notifications
   useEffect(() => {
@@ -55,6 +74,21 @@ export default function AdminLayout({ children, title, breadcrumbs = [] }) {
       return () => document.removeEventListener('mousedown', handleClickOutside);
     }
   }, [showNotifications]);
+
+  // Auto-close sidebar on mobile after navigation
+  useEffect(() => {
+    const handleRouteChange = () => {
+      // Sprawdź czy jesteśmy na mobile (szerokość < 1024px)
+      if (window.innerWidth < 1024) {
+        setSidebarOpen(false);
+      }
+    };
+
+    router.events?.on('routeChangeComplete', handleRouteChange);
+    return () => {
+      router.events?.off('routeChangeComplete', handleRouteChange);
+    };
+  }, [router]);
 
   const handleLogout = () => {
     localStorage.removeItem('adminAuth');
@@ -136,6 +170,18 @@ export default function AdminLayout({ children, title, breadcrumbs = [] }) {
       active: router.pathname.startsWith('/admin/zamowienia')
     },
     { 
+      icon: FiPackage, 
+      label: 'Magazyn', 
+      path: '/admin/magazyn',
+      active: router.pathname.startsWith('/admin/magazyn')
+    },
+    { 
+      icon: FiDollarSign, 
+      label: 'Rozliczenia', 
+      path: '/admin/rozliczenia',
+      active: router.pathname.startsWith('/admin/rozliczenia')
+    },
+    { 
       icon: FiSettings, 
       label: 'Ustawienia', 
       path: '/admin/ustawienia',
@@ -145,8 +191,18 @@ export default function AdminLayout({ children, title, breadcrumbs = [] }) {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Mobile overlay */}
+      {sidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-50 z-30 lg:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
       {/* Sidebar */}
-      <aside className={`fixed top-0 left-0 h-full bg-white border-r border-gray-200 transition-all duration-300 z-40 ${sidebarOpen ? 'w-64' : 'w-20'}`}>
+      <aside className={`fixed top-0 left-0 h-full bg-white border-r border-gray-200 transition-all duration-300 z-40 ${
+        sidebarOpen ? 'w-64' : 'w-20 -translate-x-full lg:translate-x-0'
+      } ${sidebarOpen ? 'translate-x-0' : ''}`}>
         {/* Logo */}
         <div className="h-16 flex items-center justify-between px-4 border-b border-gray-200">
           {sidebarOpen ? (
@@ -176,7 +232,13 @@ export default function AdminLayout({ children, title, breadcrumbs = [] }) {
           {navItems.map((item) => (
             <button
               key={item.path}
-              onClick={() => router.push(item.path)}
+              onClick={() => {
+                router.push(item.path);
+                // Zamknij sidebar na mobile po kliknięciu
+                if (window.innerWidth < 1024) {
+                  setTimeout(() => setSidebarOpen(false), 300);
+                }
+              }}
               className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 ${
                 item.active
                   ? 'bg-blue-50 text-blue-600 shadow-sm'
@@ -216,43 +278,90 @@ export default function AdminLayout({ children, title, breadcrumbs = [] }) {
       </aside>
 
       {/* Main content */}
-      <main className={`transition-all duration-300 ${sidebarOpen ? 'ml-64' : 'ml-20'}`}>
+      <main className={`transition-all duration-300 lg:ml-20 ${sidebarOpen ? 'lg:ml-64' : ''}`}>
         {/* Header */}
-        <header className="bg-white border-b border-gray-200 px-8 py-4 sticky top-0 z-30">
+        <header className="bg-white border-b border-gray-200 px-4 sm:px-6 lg:px-8 py-4 sticky top-0 z-30">
           <div className="flex items-center justify-between">
-            <div>
-              {/* Breadcrumbs */}
-              {breadcrumbs.length > 0 && (
-                <div className="flex items-center space-x-2 text-sm text-gray-600 mb-1">
-                  <button 
-                    onClick={() => router.push('/admin')}
-                    className="hover:text-blue-600 transition-colors"
-                  >
-                    Dashboard
-                  </button>
-                  {breadcrumbs.map((crumb, index) => (
-                    <div key={index} className="flex items-center space-x-2">
-                      <FiChevronRight className="h-4 w-4" />
-                      {crumb.path ? (
-                        <button 
-                          onClick={() => router.push(crumb.path)}
-                          className="hover:text-blue-600 transition-colors"
-                        >
-                          {crumb.label}
-                        </button>
-                      ) : (
-                        <span className="text-gray-900 font-medium">{crumb.label}</span>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              )}
-              
-              {/* Title */}
-              <h1 className="text-2xl font-bold text-gray-900">{title}</h1>
+            <div className="flex items-center space-x-3 flex-1 min-w-0">
+              {/* Mobile menu button */}
+              <button 
+                onClick={() => setSidebarOpen(!sidebarOpen)} 
+                className="lg:hidden p-2 hover:bg-gray-100 rounded-lg transition-colors flex-shrink-0"
+                title="Menu"
+              >
+                <FiMenu className="h-6 w-6 text-gray-600" />
+              </button>
+
+              <div className="min-w-0 flex-1">
+                {/* Breadcrumbs - hide on small screens */}
+                {breadcrumbs.length > 0 && (
+                  <div className="hidden sm:flex items-center space-x-2 text-sm text-gray-600 mb-1">
+                    <button 
+                      onClick={() => router.push('/admin')}
+                      className="hover:text-blue-600 transition-colors"
+                    >
+                      Dashboard
+                    </button>
+                    {breadcrumbs.map((crumb, index) => (
+                      <div key={index} className="flex items-center space-x-2">
+                        <FiChevronRight className="h-4 w-4" />
+                        {crumb.path ? (
+                          <button 
+                            onClick={() => router.push(crumb.path)}
+                            className="hover:text-blue-600 transition-colors truncate"
+                          >
+                            {crumb.label}
+                          </button>
+                        ) : (
+                          <span className="text-gray-900 font-medium truncate">{crumb.label}</span>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+                
+                {/* Title */}
+                <h1 className="text-lg sm:text-2xl font-bold text-gray-900 truncate">{title}</h1>
+              </div>
             </div>
             
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-2 sm:space-x-4">
+              {/* Global Search Button */}
+              <button 
+                onClick={() => {
+                  const searchEvent = new KeyboardEvent('keydown', {
+                    key: 'k',
+                    ctrlKey: true,
+                    bubbles: true
+                  });
+                  document.dispatchEvent(searchEvent);
+                }}
+                className="hidden sm:flex items-center space-x-2 px-3 py-2 text-sm text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+                title="Global Search (Ctrl+K)"
+              >
+                <FiSearch className="h-4 w-4" />
+                <span className="hidden md:inline">Szukaj...</span>
+                <kbd className="hidden md:inline-block px-1.5 py-0.5 text-xs bg-white border border-gray-300 rounded">
+                  Ctrl+K
+                </kbd>
+              </button>
+
+              {/* Mobile search button */}
+              <button 
+                onClick={() => {
+                  const searchEvent = new KeyboardEvent('keydown', {
+                    key: 'k',
+                    ctrlKey: true,
+                    bubbles: true
+                  });
+                  document.dispatchEvent(searchEvent);
+                }}
+                className="sm:hidden p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                title="Szukaj"
+              >
+                <FiSearch className="h-5 w-5 text-gray-600" />
+              </button>
+
               {/* Notifications */}
               <div className="relative notification-dropdown">
                 <button 
@@ -270,7 +379,7 @@ export default function AdminLayout({ children, title, breadcrumbs = [] }) {
 
                 {/* Notifications dropdown */}
                 {showNotifications && (
-                  <div className="absolute right-0 mt-2 w-96 bg-white rounded-lg shadow-xl border border-gray-200 z-50">
+                  <div className="absolute right-0 mt-2 w-80 sm:w-96 bg-white rounded-lg shadow-xl border border-gray-200 z-50 max-h-[80vh] overflow-y-auto">
                     <div className="p-4 border-b border-gray-200 flex items-center justify-between">
                       <h3 className="font-semibold text-gray-900">Powiadomienia</h3>
                       {notifications.length > 0 && (
@@ -327,8 +436,8 @@ export default function AdminLayout({ children, title, breadcrumbs = [] }) {
                 )}
               </div>
               
-              {/* User info */}
-              <div className="text-right">
+              {/* User info - hide on mobile */}
+              <div className="hidden md:block text-right">
                 <p className="text-sm font-semibold text-gray-900">Administrator</p>
                 <p className="text-xs text-gray-500">
                   {new Date().toLocaleDateString('pl-PL', { 
@@ -343,10 +452,13 @@ export default function AdminLayout({ children, title, breadcrumbs = [] }) {
         </header>
 
         {/* Page content */}
-        <div className="p-8">
+        <div className="p-4 sm:p-6 lg:p-8">
           {children}
         </div>
       </main>
+
+      {/* Global Search Modal */}
+      <GlobalSearch />
     </div>
   );
 }
