@@ -7,6 +7,7 @@ import TimeTracker from '../../../components/technician/TimeTracker';
 import PhotoUploader from '../../../components/technician/PhotoUploader';
 import ModelAIScanner from '../../../components/ModelAIScanner';
 import ModelManagerModal from '../../../components/ModelManagerModal';
+import AllegroQuickSearch from '../../../components/AllegroQuickSearch';
 
 export default function VisitDetailsPage() {
   const router = useRouter();
@@ -335,6 +336,26 @@ export default function VisitDetailsPage() {
             </div>
 
             <div className="flex items-center space-x-2">
+              {/* Przycisk Zamów część */}
+              <Link
+                href={{
+                  pathname: '/technician/magazyn/zamow',
+                  query: {
+                    orderNumber: visit.visitId,
+                    clientName: visit.client?.name || '',
+                    deviceBrand: visit.devices?.[selectedDeviceIndex]?.brand || visitModels?.[0]?.brand || '',
+                    deviceModel: visit.devices?.[selectedDeviceIndex]?.model || visitModels?.[0]?.finalModel || visitModels?.[0]?.model || '',
+                    issueDescription: visit.description || ''
+                  }
+                }}
+                className="hidden sm:flex items-center px-3 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+                Zamów część
+              </Link>
+              
               <span className={`px-2 sm:px-3 py-1 text-xs sm:text-sm font-medium rounded-full border ${getStatusColor(visit.status)}`}>
                 {getStatusLabel(visit.status)}
               </span>
@@ -582,6 +603,16 @@ export default function VisitDetailsPage() {
                     📸 Zdjęcia {visit.photoCount > 0 && `(${visit.photoCount})`}
                   </button>
                   <button
+                    onClick={() => setActiveTab('parts')}
+                    className={`py-3 sm:py-4 px-2 sm:px-1 border-b-2 font-medium text-xs sm:text-sm whitespace-nowrap ${
+                      activeTab === 'parts'
+                        ? 'border-blue-500 text-blue-600'
+                        : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                    }`}
+                  >
+                    🔧 Części
+                  </button>
+                  <button
                     onClick={() => setActiveTab('time')}
                     className={`py-3 sm:py-4 px-2 sm:px-1 border-b-2 font-medium text-xs sm:text-sm whitespace-nowrap ${
                       activeTab === 'time'
@@ -662,6 +693,121 @@ export default function VisitDetailsPage() {
                       }));
                     }}
                   />
+                )}
+
+                {/* Parts tab - NEW */}
+                {activeTab === 'parts' && (
+                  <div className="space-y-6">
+                    {/* Quick Search */}
+                    <div className="bg-gradient-to-br from-purple-50 to-white dark:from-purple-900/20 dark:to-gray-800 rounded-lg p-6 border-2 border-purple-200 dark:border-purple-700">
+                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+                        🔍 Szukaj części na Allegro
+                      </h3>
+                      <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                        Znajdź potrzebną część bezpośrednio z wizyty. System automatycznie wyszuka najlepsze oferty.
+                      </p>
+                      
+                      {/* Device model info */}
+                      {visit.device && (
+                        <div className="bg-white dark:bg-gray-900/50 rounded-lg p-4 mb-4">
+                          <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">Urządzenie w naprawie:</p>
+                          <p className="font-semibold text-gray-900 dark:text-white">
+                            {visit.device.brand} {visit.device.model}
+                          </p>
+                        </div>
+                      )}
+
+                      {/* Common parts suggestions */}
+                      {visitModels && visitModels.length > 0 && visitModels[0].commonParts && (
+                        <div className="mb-4">
+                          <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+                            💡 Sugerowane części dla tego modelu:
+                          </p>
+                          <div className="grid grid-cols-1 gap-2">
+                            {visitModels[0].commonParts.slice(0, 5).map((part, idx) => (
+                              <div key={idx} className="bg-white dark:bg-gray-900/50 rounded-lg p-3 flex items-center justify-between">
+                                <div>
+                                  <p className="font-medium text-gray-900 dark:text-white text-sm">{part.name}</p>
+                                  {part.partNumber && (
+                                    <p className="text-xs text-gray-500 dark:text-gray-400">{part.partNumber}</p>
+                                  )}
+                                </div>
+                                <AllegroQuickSearch
+                                  partName={part.name}
+                                  partNumber={part.partNumber}
+                                  compact={true}
+                                />
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Custom search */}
+                      <div>
+                        <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+                          🔧 Lub wyszukaj dowolną część:
+                        </p>
+                        <div className="flex gap-2">
+                          <input
+                            type="text"
+                            placeholder="np. Pompa odpływowa, Termostat, Uszczelka..."
+                            className="flex-1 px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                            onKeyPress={(e) => {
+                              if (e.key === 'Enter' && e.target.value.trim()) {
+                                // Trigger search via AllegroQuickSearch
+                                document.getElementById('custom-search-btn').click();
+                              }
+                            }}
+                            id="custom-part-input"
+                          />
+                          <div id="custom-search-btn">
+                            <AllegroQuickSearch
+                              partName={document.getElementById('custom-part-input')?.value || 'część'}
+                              compact={false}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Link to technician warehouse */}
+                    <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+                      <div className="flex items-start gap-3">
+                        <svg className="w-6 h-6 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <div>
+                          <h4 className="text-sm font-medium text-blue-900 dark:text-blue-300 mb-2">
+                            💡 Sprawdź najpierw swój magazyn
+                          </h4>
+                          <p className="text-sm text-blue-700 dark:text-blue-400 mb-3">
+                            Możliwe że masz potrzebną część w swoim magazynie w pojeździe.
+                          </p>
+                          <Link
+                            href="/technician/magazyn/moj-magazyn"
+                            className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
+                          >
+                            📦 Sprawdź mój magazyn
+                          </Link>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Info about ordering */}
+                    <div className="bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+                      <h4 className="text-sm font-medium text-gray-900 dark:text-white mb-2">
+                        📋 Jak zamówić część?
+                      </h4>
+                      <ol className="text-sm text-gray-600 dark:text-gray-400 space-y-2 list-decimal ml-5">
+                        <li>Znajdź część na Allegro używając przycisku 🛒</li>
+                        <li>Skopiuj link do oferty</li>
+                        <li>Wyślij link do logistyka (email/telefon)</li>
+                        <li>Lub kup bezpośrednio jeśli masz pilną wizytę</li>
+                        <li>Po otrzymaniu części - użyj jej przy kolejnej wizycie</li>
+                      </ol>
+                    </div>
+                  </div>
                 )}
 
                 {/* Time tracking tab */}

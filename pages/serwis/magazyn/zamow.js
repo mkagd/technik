@@ -56,6 +56,65 @@ export default function SerwisantZamow() {
   const [photoUrls, setPhotoUrls] = useState([]);
   const [uploadingPhotos, setUploadingPhotos] = useState(false);
   const [dragActive, setDragActive] = useState(false);
+  
+  // 🆕 Prawdziwe dane
+  const [recentOrders, setRecentOrders] = useState([]);
+  const [frequentParts, setFrequentParts] = useState([]);
+
+  // 🆕 Automatyczne wypełnianie z query params
+  useEffect(() => {
+    if (router.query.orderNumber) setOrderNumber(router.query.orderNumber);
+    if (router.query.clientName) setClientName(router.query.clientName);
+    if (router.query.deviceBrand) setDeviceBrand(router.query.deviceBrand);
+    if (router.query.deviceModel) setDeviceModel(router.query.deviceModel);
+    if (router.query.issueDescription) setIssueDescription(router.query.issueDescription);
+  }, [router.query]);
+
+  useEffect(() => {
+    loadParts();
+    if (employeeId) {
+      loadRecentOrders();
+      loadFrequentParts();
+    }
+  }, [employeeId]);
+
+  const loadRecentOrders = async () => {
+    try {
+      const res = await fetch(`/api/part-requests?requestedFor=${employeeId}&limit=3`);
+      const data = await res.json();
+      if (data.requests) {
+        setRecentOrders(data.requests.slice(0, 3));
+      }
+    } catch (error) {
+      console.error('Error loading recent orders:', error);
+    }
+  };
+
+  const loadFrequentParts = async () => {
+    try {
+      const res = await fetch(`/api/part-requests?requestedFor=${employeeId}`);
+      const data = await res.json();
+      if (data.requests) {
+        // Policz częstotliwość części
+        const partCount = {};
+        data.requests.forEach(req => {
+          req.parts.forEach(p => {
+            partCount[p.partId] = (partCount[p.partId] || 0) + 1;
+          });
+        });
+        
+        // Posortuj i weź top 4
+        const sorted = Object.entries(partCount)
+          .sort((a, b) => b[1] - a[1])
+          .slice(0, 4)
+          .map(([partId, count]) => ({ partId, count }));
+        
+        setFrequentParts(sorted);
+      }
+    } catch (error) {
+      console.error('Error loading frequent parts:', error);
+    }
+  };
 
   useEffect(() => {
     loadParts();
@@ -112,6 +171,14 @@ export default function SerwisantZamow() {
     }
     setSelectedParts([...selectedParts, { partId, quantity: 1 }]);
     setShowSuggestions(false);
+  };
+
+  // 🆕 Załaduj poprzednie zamówienie
+  const reorderFromHistory = (partId, partName) => {
+    if (confirm(`Zamówić ponownie: ${partName}?`)) {
+      setSelectedParts([{ partId, quantity: 1 }]);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   };
 
   // Photo handling functions
@@ -289,26 +356,68 @@ export default function SerwisantZamow() {
 
       {/* Main Content */}
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* 🆕 Quick Actions - Najczęściej zamawiane */}
+        {frequentParts.length > 0 && (
+          <div className="mb-6 bg-gray-50 border border-gray-200 rounded-lg p-4">
+            <h3 className="text-sm font-semibold text-gray-700 mb-3 flex items-center">
+              <span className="mr-2">⚡</span>
+              Twoje najczęściej zamawiane
+            </h3>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+              {frequentParts.map(item => {
+                const part = parts.find(p => p.id === item.partId);
+                if (!part) return null;
+                
+                return (
+                  <button
+                    key={part.id}
+                    type="button"
+                    onClick={() => {
+                      const newParts = [...selectedParts];
+                      newParts[0] = { partId: part.id, quantity: 1 };
+                      setSelectedParts(newParts);
+                    }}
+                    className="flex flex-col items-center p-3 bg-white rounded-lg border border-gray-200 hover:border-gray-400 hover:shadow transition-all"
+                  >
+                    <div className="text-2xl mb-1">
+                      {part.category === 'Łożyska' ? '⚙️' : 
+                       part.category === 'Pompy' ? '💧' : 
+                       part.category === 'Grzałki' ? '🔥' : '📦'}
+                    </div>
+                    <div className="text-xs font-medium text-gray-900 truncate w-full text-center">
+                      {part.name.split(' ')[0]}
+                    </div>
+                    <div className="text-xs text-gray-500">×{item.count}</div>
+                  </button>
+                );
+              })}
+            </div>
+            <p className="text-xs text-gray-500 mt-3">
+              💡 Kliknij aby dodać do zamówienia
+            </p>
+          </div>
+        )}
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Form */}
           <div className="lg:col-span-2">
             <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow p-6">
               {/* Quick Suggestions */}
-              <div className="mb-6 p-4 bg-blue-50 rounded-lg">
-                <h3 className="text-sm font-semibold text-blue-900 mb-2">💡 Szybkie sugestie</h3>
-                <p className="text-xs text-blue-700 mb-3">Wpisz markę i model urządzenia, aby otrzymać sugestie części:</p>
+              <div className="mb-6 p-4 bg-gray-50 border border-gray-200 rounded-lg">
+                <h3 className="text-sm font-semibold text-gray-700 mb-2">💡 Szybkie sugestie</h3>
+                <p className="text-xs text-gray-600 mb-3">Wpisz markę i model urządzenia, aby otrzymać sugestie części:</p>
                 <div className="flex space-x-2">
                   <input
                     type="text"
                     placeholder="Marka (np. Samsung)"
                     id="brand"
-                    className="flex-1 px-3 py-2 border border-blue-200 rounded text-sm"
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded text-sm"
                   />
                   <input
                     type="text"
                     placeholder="Model (np. WW90T4540AE)"
                     id="model"
-                    className="flex-1 px-3 py-2 border border-blue-200 rounded text-sm"
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded text-sm"
                   />
                   <button
                     type="button"
@@ -317,7 +426,7 @@ export default function SerwisantZamow() {
                       const model = document.getElementById('model').value;
                       if (brand && model) loadSuggestions(brand, model);
                     }}
-                    className="px-4 py-2 bg-blue-600 text-white rounded text-sm hover:bg-blue-700"
+                    className="px-4 py-2 bg-gray-700 text-white rounded text-sm hover:bg-gray-800"
                   >
                     Szukaj
                   </button>
@@ -326,13 +435,13 @@ export default function SerwisantZamow() {
 
               {/* Suggestions Results */}
               {showSuggestions && suggestions.length > 0 && (
-                <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+                <div className="mb-6 p-4 bg-gray-50 border border-gray-300 rounded-lg">
                   <div className="flex items-center justify-between mb-3">
-                    <h3 className="text-sm font-semibold text-green-900">✨ Sugerowane części ({suggestions.length})</h3>
+                    <h3 className="text-sm font-semibold text-gray-700">✨ Sugerowane części ({suggestions.length})</h3>
                     <button
                       type="button"
                       onClick={() => setShowSuggestions(false)}
-                      className="text-green-700 hover:text-green-900"
+                      className="text-gray-500 hover:text-gray-700"
                     >
                       ✕
                     </button>
@@ -361,8 +470,8 @@ export default function SerwisantZamow() {
               )}
 
               {/* 🆕 Kontekst naprawy */}
-              <div className="mb-6 p-4 bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-200 rounded-lg">
-                <h3 className="text-sm font-semibold text-purple-900 mb-3 flex items-center">
+              <div className="mb-6 p-4 bg-gray-50 border border-gray-200 rounded-lg">
+                <h3 className="text-sm font-semibold text-gray-700 mb-3 flex items-center">
                   <span className="mr-2">🔧</span>
                   Kontekst naprawy (opcjonalnie)
                 </h3>
@@ -374,7 +483,7 @@ export default function SerwisantZamow() {
                       value={orderNumber}
                       onChange={(e) => setOrderNumber(e.target.value)}
                       placeholder="np. ORD-2025-001"
-                      className="w-full px-3 py-2 border border-purple-200 rounded-lg text-sm focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-gray-400 focus:border-transparent"
                     />
                   </div>
                   <div>
@@ -384,7 +493,7 @@ export default function SerwisantZamow() {
                       value={clientName}
                       onChange={(e) => setClientName(e.target.value)}
                       placeholder="Jan Kowalski"
-                      className="w-full px-3 py-2 border border-purple-200 rounded-lg text-sm focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-gray-400 focus:border-transparent"
                     />
                   </div>
                   <div>
@@ -394,7 +503,7 @@ export default function SerwisantZamow() {
                       value={deviceBrand}
                       onChange={(e) => setDeviceBrand(e.target.value)}
                       placeholder="Samsung, Bosch..."
-                      className="w-full px-3 py-2 border border-purple-200 rounded-lg text-sm focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-gray-400 focus:border-transparent"
                     />
                   </div>
                   <div>
@@ -404,7 +513,7 @@ export default function SerwisantZamow() {
                       value={deviceModel}
                       onChange={(e) => setDeviceModel(e.target.value)}
                       placeholder="WW90T4540AE"
-                      className="w-full px-3 py-2 border border-purple-200 rounded-lg text-sm focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-gray-400 focus:border-transparent"
                     />
                   </div>
                   <div className="md:col-span-2">
@@ -490,9 +599,9 @@ export default function SerwisantZamow() {
                       label: 'Standard', 
                       icon: '📦',
                       desc: '2-3 dni robocze', 
-                      borderColor: 'border-blue-300',
-                      bgColor: 'bg-blue-50',
-                      selectedBorder: 'border-blue-600',
+                      borderColor: 'border-gray-300',
+                      bgColor: 'bg-white',
+                      selectedBorder: 'border-gray-700',
                       cost: 'Bez opłat'
                     },
                     { 
@@ -500,9 +609,9 @@ export default function SerwisantZamow() {
                       label: 'Pilne', 
                       icon: '⚠️',
                       desc: 'Na jutro', 
-                      borderColor: 'border-orange-300',
-                      bgColor: 'bg-orange-50',
-                      selectedBorder: 'border-orange-600',
+                      borderColor: 'border-gray-300',
+                      bgColor: 'bg-amber-50',
+                      selectedBorder: 'border-amber-700',
                       cost: 'Standardowa'
                     },
                     { 
@@ -510,9 +619,9 @@ export default function SerwisantZamow() {
                       label: 'Express', 
                       icon: '🔴',
                       desc: 'Dzisiaj!', 
-                      borderColor: 'border-red-300',
-                      bgColor: 'bg-red-50',
-                      selectedBorder: 'border-red-600',
+                      borderColor: 'border-gray-300',
+                      bgColor: 'bg-rose-50',
+                      selectedBorder: 'border-rose-700',
                       cost: '+25 zł po 15:00'
                     }
                   ].map(opt => (
@@ -612,18 +721,8 @@ export default function SerwisantZamow() {
                   Dodaj zdjęcia części, aby logistyk wiedział dokładnie czego potrzebujesz
                 </p>
 
-                {/* Drag & Drop Area */}
-                <div
-                  onDragEnter={handleDrag}
-                  onDragLeave={handleDrag}
-                  onDragOver={handleDrag}
-                  onDrop={handleDrop}
-                  className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
-                    dragActive 
-                      ? 'border-blue-500 bg-blue-50' 
-                      : 'border-gray-300 hover:border-gray-400'
-                  }`}
-                >
+                {/* Buttons for Photo/Camera */}
+                <div className="flex gap-3 mb-4">
                   <input
                     type="file"
                     id="photo-upload"
@@ -633,28 +732,68 @@ export default function SerwisantZamow() {
                     className="hidden"
                     disabled={photos.length >= 5}
                   />
+                  <input
+                    type="file"
+                    id="camera-capture"
+                    accept="image/*"
+                    capture="environment"
+                    onChange={handlePhotoChange}
+                    className="hidden"
+                    disabled={photos.length >= 5}
+                  />
+                  
                   <label
                     htmlFor="photo-upload"
-                    className="cursor-pointer"
+                    className={`flex-1 py-3 px-4 rounded-lg border-2 text-center cursor-pointer transition-all ${
+                      photos.length >= 5
+                        ? 'border-gray-300 bg-gray-100 text-gray-400 cursor-not-allowed'
+                        : 'border-gray-300 bg-white hover:border-blue-500 hover:bg-blue-50'
+                    }`}
                   >
-                    <div className="text-gray-600">
-                      <svg className="mx-auto h-12 w-12 text-gray-400 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div className="flex items-center justify-center gap-2">
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                       </svg>
-                      <p className="text-sm font-medium">
-                        {photos.length >= 5 ? (
-                          'Osiągnięto maksymalną liczbę zdjęć (5)'
-                        ) : (
-                          <>
-                            <span className="text-blue-600">Kliknij aby wybrać</span> lub przeciągnij zdjęcia tutaj
-                          </>
-                        )}
-                      </p>
-                      <p className="text-xs text-gray-500 mt-1">
-                        JPG, PNG, WebP (max 10MB każde)
-                      </p>
+                      <span className="font-medium text-sm">Wybierz z galerii</span>
                     </div>
                   </label>
+
+                  <label
+                    htmlFor="camera-capture"
+                    className={`flex-1 py-3 px-4 rounded-lg border-2 text-center cursor-pointer transition-all ${
+                      photos.length >= 5
+                        ? 'border-gray-300 bg-gray-100 text-gray-400 cursor-not-allowed'
+                        : 'border-blue-500 bg-blue-50 text-blue-700 hover:bg-blue-100'
+                    }`}
+                  >
+                    <div className="flex items-center justify-center gap-2">
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                      </svg>
+                      <span className="font-medium text-sm">Zrób zdjęcie</span>
+                    </div>
+                  </label>
+                </div>
+
+                {/* Drag & Drop Area */}
+                <div
+                  onDragEnter={handleDrag}
+                  onDragLeave={handleDrag}
+                  onDragOver={handleDrag}
+                  onDrop={handleDrop}
+                  className={`border-2 border-dashed rounded-lg p-4 text-center transition-colors ${
+                    dragActive 
+                      ? 'border-blue-400 bg-blue-50' 
+                      : 'border-gray-200'
+                  }`}
+                >
+                  <p className="text-xs text-gray-500">
+                    {photos.length >= 5 
+                      ? 'Osiągnięto maksymalną liczbę zdjęć (5)'
+                      : 'lub przeciągnij zdjęcia tutaj'
+                    }
+                  </p>
                 </div>
 
                 {/* Photo Previews */}
@@ -724,6 +863,62 @@ export default function SerwisantZamow() {
 
           {/* Sidebar - Quick Info */}
           <div className="space-y-6">
+            {/* 🆕 Historia zamówień */}
+            <div className="bg-white rounded-lg shadow p-4">
+              <h3 className="text-sm font-semibold text-gray-900 mb-3 flex items-center">
+                <span className="mr-2">📜</span>
+                Ostatnie zamówienia
+              </h3>
+              <div className="space-y-2">
+                {recentOrders.length > 0 ? recentOrders.map(order => {
+                  const firstPart = order.parts && order.parts[0];
+                  const part = firstPart ? parts.find(p => p.id === firstPart.partId) : null;
+                  const date = new Date(order.createdAt);
+                  const formattedDate = `${date.getDate()}.${date.getMonth() + 1}`;
+                  
+                  return (
+                    <div key={order.requestId} className="p-2 bg-gray-50 rounded border border-gray-200 hover:border-gray-400 transition-all group">
+                      <div className="flex items-center justify-between mb-1">
+                        <div className="text-xs font-mono text-gray-600">{order.requestId}</div>
+                        <div className={`text-xs px-2 py-0.5 rounded ${
+                          order.status === 'delivered' ? 'bg-green-100 text-green-800' :
+                          order.status === 'approved' || order.status === 'ordered' ? 'bg-blue-100 text-blue-800' :
+                          'bg-gray-200 text-gray-700'
+                        }`}>
+                          {order.status === 'delivered' ? '✓' : order.status === 'approved' || order.status === 'ordered' ? '✓' : '⏳'}
+                        </div>
+                      </div>
+                      <div className="text-xs font-medium text-gray-900 mb-1">
+                        {part ? part.name : firstPart?.partId || 'Część'}
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <div className="text-xs text-gray-500">{formattedDate}</div>
+                        {firstPart && (
+                          <button
+                            type="button"
+                            onClick={() => reorderFromHistory(firstPart.partId, part?.name || 'Część')}
+                            className="text-xs text-blue-600 hover:text-blue-700 font-medium opacity-0 group-hover:opacity-100 transition-opacity"
+                          >
+                            🔄 Zamów ponownie
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  );
+                }) : (
+                  <div className="text-xs text-gray-500 text-center py-4">
+                    Brak zamówień
+                  </div>
+                )}
+              </div>
+              <Link
+                href="/technician/magazyn/zamowienia"
+                className="block text-xs text-blue-600 hover:text-blue-700 mt-3 font-medium"
+              >
+                Zobacz wszystkie →
+              </Link>
+            </div>
+
             {/* My Inventory Quick View */}
             <div className="bg-white rounded-lg shadow p-6">
               <h3 className="text-sm font-semibold text-gray-900 mb-4">🚗 Szybki podgląd magazynu</h3>
@@ -735,10 +930,36 @@ export default function SerwisantZamow() {
               </Link>
             </div>
 
+            {/* 🆕 Podpowiedzi AI */}
+            <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+              <h3 className="text-sm font-semibold text-gray-700 mb-2 flex items-center">
+                <span className="mr-2">🤖</span>
+                Podpowiedzi AI
+              </h3>
+              <div className="text-xs text-gray-600 mb-3">
+                Inni serwisanci do <strong>Samsung WW90</strong> brali również:
+              </div>
+              <div className="space-y-2">
+                {[
+                  { part: 'Łożysko bębna', percent: 85 },
+                  { part: 'Pompa odpływowa', percent: 60 },
+                  { part: 'Amortyzator', percent: 45 }
+                ].map((item, idx) => (
+                  <div key={idx} className="flex items-center justify-between">
+                    <span className="text-xs font-medium text-gray-900">{item.part}</span>
+                    <span className="text-xs text-gray-600 font-bold">{item.percent}%</span>
+                  </div>
+                ))}
+              </div>
+              <p className="text-xs text-gray-500 mt-3">
+                💡 Na podstawie 150+ napraw
+              </p>
+            </div>
+
             {/* Info */}
-            <div className="bg-blue-50 border-l-4 border-blue-500 p-4">
-              <h3 className="text-sm font-semibold text-blue-900 mb-2">💡 Wskazówki</h3>
-              <ul className="space-y-2 text-xs text-blue-800">
+            <div className="bg-gray-50 border-l-4 border-gray-400 p-4 rounded">
+              <h3 className="text-sm font-semibold text-gray-700 mb-2">💡 Wskazówki</h3>
+              <ul className="space-y-2 text-xs text-gray-600">
                 <li>• Użyj sugestii, aby szybko znaleźć część</li>
                 <li>• Zamówienia standardowe: do 3 dni</li>
                 <li>• Pilne: do 24h (za dopłatą)</li>
