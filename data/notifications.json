@@ -680,5 +680,25 @@
     "userId": null,
     "read": false,
     "createdAt": "2025-10-05T11:39:39.823Z"
+  },
+  {
+    "id": 1759664696219,
+    "title": "🔴 PILNE Nowe zamówienie części",
+    "message": "Mariusz Bielaszka zamówił 1 części",
+    "type": "error",
+    "link": "/admin/logistyk/zamowienia?id=PR-2025-10-05-7358",
+    "userId": null,
+    "read": false,
+    "createdAt": "2025-10-05T11:44:56.219Z"
+  },
+  {
+    "id": 1759664878487,
+    "title": "🔴 PILNE Nowe zamówienie części",
+    "message": "Mariusz Bielaszka zamówił 1 części",
+    "type": "error",
+    "link": "/admin/logistyk/zamowienia?id=PR-2025-10-05-2142",
+    "userId": null,
+    "read": false,
+    "createdAt": "2025-10-05T11:47:58.487Z"
   }
 ]
