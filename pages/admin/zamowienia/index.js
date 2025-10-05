@@ -5,9 +5,10 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import AdminLayout from '../../../components/AdminLayout';
 import { useToast } from '../../../contexts/ToastContext';
+import { statusToUI } from '../../../utils/fieldMapping';
 import { 
   FiEye, FiTrash2, FiEdit, FiSearch, FiFilter, FiX, FiPhone, 
-  FiMapPin, FiShoppingBag, FiDownload, FiRefreshCw, FiCalendar, FiTool
+  FiMapPin, FiShoppingBag, FiDownload, FiRefreshCw, FiCalendar, FiTool, FiPlus
 } from 'react-icons/fi';
 
 export default function AdminZamowienia() {
@@ -30,13 +31,19 @@ export default function AdminZamowienia() {
     sortBy: 'date-desc'
   });
 
+  // Angielskie wartości w backend, polskie etykiety w UI
+  // Statusy zgodne z rezerwacjami dla spójności systemu
   const orderStatuses = [
-    { value: 'nowe', label: 'Nowe', color: 'bg-blue-100 text-blue-800' },
-    { value: 'zaplanowane', label: 'Zaplanowane', color: 'bg-purple-100 text-purple-800' },
-    { value: 'w-trakcie', label: 'W trakcie', color: 'bg-yellow-100 text-yellow-800' },
-    { value: 'oczekuje-na-czesci', label: 'Oczekuje na części', color: 'bg-orange-100 text-orange-800' },
-    { value: 'zakonczone', label: 'Zakończone', color: 'bg-green-100 text-green-800' },
-    { value: 'anulowane', label: 'Anulowane', color: 'bg-red-100 text-red-800' }
+    { value: 'pending', label: 'Oczekuje na kontakt', color: 'bg-yellow-100 text-yellow-800', icon: '⏳' },
+    { value: 'contacted', label: 'Skontaktowano się', color: 'bg-blue-100 text-blue-800', icon: '📞' },
+    { value: 'scheduled', label: 'Umówiona wizyta', color: 'bg-purple-100 text-purple-800', icon: '📅' },
+    { value: 'confirmed', label: 'Potwierdzona', color: 'bg-green-100 text-green-800', icon: '✅' },
+    { value: 'in-progress', label: 'W trakcie realizacji', color: 'bg-indigo-100 text-indigo-800', icon: '🔧' },
+    { value: 'waiting-parts', label: 'Oczekuje na części', color: 'bg-orange-100 text-orange-800', icon: '📦' },
+    { value: 'ready', label: 'Gotowe do odbioru', color: 'bg-teal-100 text-teal-800', icon: '🎉' },
+    { value: 'completed', label: 'Zakończone', color: 'bg-green-100 text-green-800', icon: '✔️' },
+    { value: 'cancelled', label: 'Anulowane', color: 'bg-red-100 text-red-800', icon: '❌' },
+    { value: 'no-show', label: 'Nie stawił się', color: 'bg-gray-100 text-gray-800', icon: '👻' }
   ];
 
   useEffect(() => {
@@ -50,19 +57,30 @@ export default function AdminZamowienia() {
   const loadOrders = async () => {
     try {
       setLoading(true);
+      console.log('📞 Fetching orders from API...');
       const response = await fetch('/api/orders');
       const data = await response.json();
+      
+      console.log('📦 API Response:', { 
+        ok: response.ok, 
+        status: response.status,
+        dataType: Array.isArray(data) ? 'array' : 'object',
+        hasOrders: !!data.orders,
+        count: Array.isArray(data) ? data.length : (data.orders?.length || 0)
+      });
       
       if (response.ok) {
         // API może zwrócić tablicę lub obiekt z polem orders/data
         const ordersArray = Array.isArray(data) ? data : (data.orders || data.data || []);
+        console.log(`✅ Loaded ${ordersArray.length} orders`);
+        console.log('📋 First order:', ordersArray[0]);
         setOrders(ordersArray);
       } else {
-        console.error('Błąd pobierania zamówień');
+        console.error('❌ Błąd pobierania zamówień:', data);
         setOrders([]);
       }
     } catch (error) {
-      console.error('Błąd:', error);
+      console.error('❌ Błąd:', error);
       setOrders([]);
     } finally {
       setLoading(false);
@@ -100,9 +118,11 @@ export default function AdminZamowienia() {
     filtered.sort((a, b) => {
       switch (filters.sortBy) {
         case 'date-asc':
-          return (a.createdAt || '').localeCompare(b.createdAt || '');
+          // Porównanie dat jako timestamp
+          return new Date(a.createdAt || 0).getTime() - new Date(b.createdAt || 0).getTime();
         case 'date-desc':
-          return (b.createdAt || '').localeCompare(a.createdAt || '');
+          // Porównanie dat jako timestamp (od najnowszej)
+          return new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime();
         case 'client':
           return (a.clientName || '').localeCompare(b.clientName || '');
         default:
@@ -196,6 +216,14 @@ export default function AdminZamowienia() {
           Zarządzaj zamówieniami serwisowymi - przeglądaj, edytuj i aktualizuj statusy
         </p>
         <div className="flex items-center space-x-3">
+          <button
+            onClick={() => router.push('/admin/zamowienia/nowe')}
+            className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors shadow-sm"
+          >
+            <FiPlus className="mr-2 h-4 w-4" />
+            Nowe zlecenie
+          </button>
+          
           <button
             onClick={loadOrders}
             className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors"
@@ -299,13 +327,18 @@ export default function AdminZamowienia() {
           </div>
           <div className="flex items-center space-x-4">
             <span>
-              Nowe: <span className="font-semibold text-blue-600">
-                {orders.filter(o => o.status === 'nowe').length}
+              Oczekuje: <span className="font-semibold text-yellow-600">
+                {orders.filter(o => o.status === 'pending').length}
               </span>
             </span>
             <span>
-              W trakcie: <span className="font-semibold text-yellow-600">
-                {orders.filter(o => o.status === 'w-trakcie').length}
+              W trakcie: <span className="font-semibold text-indigo-600">
+                {orders.filter(o => o.status === 'in-progress').length}
+              </span>
+            </span>
+            <span>
+              Zakończone: <span className="font-semibold text-green-600">
+                {orders.filter(o => o.status === 'completed').length}
               </span>
             </span>
           </div>
@@ -336,22 +369,19 @@ export default function AdminZamowienia() {
                     <p className="text-xs text-gray-500">{order.orderNumber}</p>
                   </div>
                   <div className="relative inline-block">
+                    <span className={`inline-flex items-center gap-1 text-xs font-medium rounded-full px-3 py-1.5 ${statusInfo.color}`}>
+                      <span>{statusInfo.icon}</span>
+                      <span>{statusInfo.label}</span>
+                    </span>
                     <select
                       value={order.status}
                       onChange={(e) => handleStatusChange(order.id, e.target.value)}
-                      className={`text-xs font-medium rounded-full px-3 py-1.5 pr-8 border-0 cursor-pointer focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all hover:shadow-md ${statusInfo.color}`}
-                      style={{ 
-                        appearance: 'none',
-                        backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%23374151' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E")`,
-                        backgroundPosition: 'right 0.5rem center',
-                        backgroundRepeat: 'no-repeat',
-                        backgroundSize: '1.2em 1.2em'
-                      }}
+                      className="absolute inset-0 w-full opacity-0 cursor-pointer"
                       title="Kliknij aby zmienić status"
                     >
                       {orderStatuses.map(status => (
                         <option key={status.value} value={status.value}>
-                          {status.label}
+                          {status.icon} {status.label}
                         </option>
                       ))}
                     </select>
@@ -363,18 +393,31 @@ export default function AdminZamowienia() {
                     <FiTool className="h-4 w-4 mr-2 text-gray-400" />
                     {order.deviceType}
                   </div>
-                  <div className="flex items-center text-sm text-gray-600">
-                    <FiPhone className="h-4 w-4 mr-2 text-gray-400" />
+                  <a 
+                    href={`tel:${order.clientPhone}`}
+                    className="flex items-center text-sm text-gray-600 hover:text-green-600 transition-colors cursor-pointer"
+                  >
+                    <FiPhone className="h-4 w-4 mr-2 text-green-500" />
                     {order.clientPhone}
-                  </div>
-                  <div className="flex items-center text-sm text-gray-600">
-                    <FiMapPin className="h-4 w-4 mr-2 text-gray-400" />
+                  </a>
+                  <a 
+                    href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(order.city)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center text-sm text-gray-600 hover:text-purple-600 transition-colors cursor-pointer"
+                  >
+                    <FiMapPin className="h-4 w-4 mr-2 text-purple-500" />
                     {order.city}
-                  </div>
+                  </a>
                   {order.createdAt && (
                     <div className="flex items-center text-sm text-gray-600">
                       <FiCalendar className="h-4 w-4 mr-2 text-gray-400" />
-                      {new Date(order.createdAt).toLocaleDateString('pl-PL')}
+                      <span className="font-medium">
+                        {new Date(order.createdAt).toLocaleDateString('pl-PL')}
+                      </span>
+                      <span className="ml-2 text-gray-400">
+                        {new Date(order.createdAt).toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' })}
+                      </span>
                     </div>
                   )}
                 </div>

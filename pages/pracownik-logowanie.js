@@ -24,7 +24,7 @@ export default function PracownikLogowanie() {
       const employeeData = localStorage.getItem('employeeSession');
       if (employeeData) {
         setIsLoggedIn(true);
-        router.push('/pracownik-panel');
+        router.push('/technician/dashboard'); // ✅ Nowy system
       }
     }
   }, [router]);
@@ -104,8 +104,8 @@ export default function PracownikLogowanie() {
     setIsLoading(true);
 
     try {
-      // 🚀 Logowanie przez API zamiast hardkodowanych pracowników
-      const response = await fetch('/api/employee-auth', {
+      // � Użyj nowego API technician (zgodne z /technician/dashboard)
+      const response = await fetch('/api/technician/auth', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -113,7 +113,8 @@ export default function PracownikLogowanie() {
         body: JSON.stringify({
           action: 'login',
           email: formData.email,
-          password: formData.password
+          password: formData.password,
+          rememberMe: formData.rememberMe
         }),
       });
 
@@ -125,19 +126,23 @@ export default function PracownikLogowanie() {
         return;
       }
 
-      // Zapisz sesję pracownika z danymi z API
-      const sessionData = {
-        ...data.employee,
-        rememberMe: formData.rememberMe
-      };
-
+      // Zapisz sesję w nowym formacie (zgodnie z systemem technician)
       if (typeof window !== 'undefined') {
+        // ✅ Główne klucze dla nowego systemu
+        localStorage.setItem('technicianToken', data.token); // Prawdziwy token JWT
+        localStorage.setItem('technicianEmployee', JSON.stringify(data.employee));
+        
+        // Zachowaj starą sesję dla backward compatibility
+        const sessionData = {
+          ...data.employee,
+          rememberMe: formData.rememberMe
+        };
         localStorage.setItem('employeeSession', JSON.stringify(sessionData));
       }
 
-      console.log('✅ Logowanie udane:', sessionData);
+      console.log('✅ Logowanie udane:', data.employee);
       setIsLoading(false);
-      router.push('/pracownik-panel');
+      router.push('/technician/dashboard'); // ✅ Nowy system
 
     } catch (error) {
       console.error('❌ Błąd logowania:', error);

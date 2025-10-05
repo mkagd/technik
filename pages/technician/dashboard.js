@@ -6,12 +6,15 @@ import { useRouter } from 'next/router';
 import Head from 'next/head';
 import Link from 'next/link';
 import TechnicianLayout from '../../components/TechnicianLayout';
+import ModelAIScanner from '../../components/ModelAIScanner';
 
 export default function TechnicianDashboard() {
   const router = useRouter();
   const [employee, setEmployee] = useState(null);
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [showAIScanner, setShowAIScanner] = useState(false);
+  const [scannedData, setScannedData] = useState(null);
 
   useEffect(() => {
     checkAuth();
@@ -88,6 +91,57 @@ export default function TechnicianDashboard() {
     localStorage.removeItem('technicianToken');
     localStorage.removeItem('technicianEmployee');
     router.push('/technician/login');
+  };
+
+  // Handler dla AI Scanner - pokazuje rozpoznane dane
+  const handleAIModelDetected = (models) => {
+    console.log('🔍 handleAIModelDetected - models:', models);
+    
+    if (!models || models.length === 0) {
+      alert('❌ Nie wykryto modelu na tabliczce');
+      setShowAIScanner(false);
+      return;
+    }
+
+    const detectedModel = models[0];
+    
+    // Walidacja modelu
+    if (!detectedModel || typeof detectedModel !== 'object') {
+      console.error('❌ Nieprawidłowy format modelu:', detectedModel);
+      alert('❌ Błąd: Nieprawidłowe dane z skanera');
+      setShowAIScanner(false);
+      return;
+    }
+
+    const deviceInfo = {
+      type: detectedModel.type || detectedModel.finalType || '',
+      brand: detectedModel.brand || '',
+      model: detectedModel.model || detectedModel.finalModel || '',
+      serialNumber: detectedModel.serialNumber || ''
+    };
+
+    // Sprawdź czy wykryto przynajmniej markę lub model
+    if (!deviceInfo.brand && !deviceInfo.model) {
+      alert('❌ Nie udało się rozpoznać marki ani modelu');
+      setShowAIScanner(false);
+      return;
+    }
+
+    // Zapisz dane i pokaż informację
+    setScannedData(deviceInfo);
+    alert(`✅ Rozpoznano:\n${deviceInfo.brand} ${deviceInfo.model}\nTyp: ${deviceInfo.type}\n\nDane zapisane w schowku. Możesz je wykorzystać podczas edycji wizyty.`);
+    
+    // Opcjonalnie skopiuj do schowka
+    const dataText = `${deviceInfo.brand} ${deviceInfo.model} (${deviceInfo.type})`;
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(dataText).then(() => {
+        console.log('✅ Dane skopiowane do schowka');
+      }).catch(err => {
+        console.error('Błąd kopiowania:', err);
+      });
+    }
+    
+    setShowAIScanner(false);
   };
 
   if (loading) {
@@ -183,7 +237,7 @@ export default function TechnicianDashboard() {
             {/* Quick Actions */}
             <div className="bg-white rounded-xl shadow p-6 mb-8">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Szybkie akcje</h3>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <Link href="/technician/visits?status=scheduled" className="flex flex-col items-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
                   <svg className="h-8 w-8 text-blue-600 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -204,8 +258,66 @@ export default function TechnicianDashboard() {
                   </svg>
                   <span className="text-sm font-medium text-gray-900">Wszystkie</span>
                 </Link>
+
+                <button
+                  onClick={() => setShowAIScanner(true)}
+                  className="flex flex-col items-center p-4 bg-gradient-to-br from-emerald-50 to-cyan-50 rounded-lg hover:from-emerald-100 hover:to-cyan-100 transition-colors border-2 border-emerald-200"
+                >
+                  <svg className="h-8 w-8 text-emerald-600 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                  <span className="text-sm font-medium text-emerald-900">🤖 Szybkie skanowanie</span>
+                </button>
               </div>
             </div>
+
+            {/* Scanned Data Display */}
+            {scannedData && (
+              <div className="bg-gradient-to-r from-emerald-50 to-cyan-50 border-2 border-emerald-200 rounded-xl shadow p-6 mb-8">
+                <div className="flex items-start justify-between mb-4">
+                  <h3 className="text-lg font-semibold text-gray-900 flex items-center">
+                    <svg className="h-6 w-6 text-emerald-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    Ostatnio zeskanowane urządzenie
+                  </h3>
+                  <button
+                    onClick={() => setScannedData(null)}
+                    className="text-gray-400 hover:text-gray-600"
+                  >
+                    <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                  <div className="bg-white rounded-lg p-4">
+                    <p className="text-xs text-gray-500 mb-1">Marka</p>
+                    <p className="text-lg font-semibold text-gray-900">{scannedData.brand || '-'}</p>
+                  </div>
+                  <div className="bg-white rounded-lg p-4">
+                    <p className="text-xs text-gray-500 mb-1">Model</p>
+                    <p className="text-lg font-semibold text-gray-900">{scannedData.model || '-'}</p>
+                  </div>
+                  <div className="bg-white rounded-lg p-4">
+                    <p className="text-xs text-gray-500 mb-1">Typ</p>
+                    <p className="text-lg font-semibold text-gray-900">{scannedData.type || '-'}</p>
+                  </div>
+                  <div className="bg-white rounded-lg p-4">
+                    <p className="text-xs text-gray-500 mb-1">Numer seryjny</p>
+                    <p className="text-sm font-mono text-gray-900">{scannedData.serialNumber || '-'}</p>
+                  </div>
+                </div>
+
+                <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                  <p className="text-sm text-blue-800">
+                    💡 <strong>Wskazówka:</strong> Dane zostały skopiowane do schowka. Możesz je wkleić podczas edycji wizyty.
+                  </p>
+                </div>
+              </div>
+            )}
 
             {/* Coming Soon */}
             <div className="bg-white rounded-xl shadow p-8 text-center">
@@ -217,6 +329,15 @@ export default function TechnicianDashboard() {
               <p className="text-sm text-gray-500 mt-2">Backend gotowy - UI w budowie 🚧</p>
             </div>
           </main>
+
+      {/* Modal AI Scanner */}
+      {showAIScanner && (
+        <ModelAIScanner
+          isOpen={showAIScanner}
+          onClose={() => setShowAIScanner(false)}
+          onModelDetected={handleAIModelDetected}
+        />
+      )}
     </TechnicianLayout>
   );
 }

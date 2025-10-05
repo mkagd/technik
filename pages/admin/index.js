@@ -94,11 +94,25 @@ export default function AdminDashboard() {
 
   const quickActions = [
     {
+      title: '👤 Panel Klienta',
+      description: 'Logowanie dla klientów',
+      icon: FiUsers,
+      href: '/client/login',
+      color: 'pink'
+    },
+    {
       title: 'Statystyki szczegółowe',
       description: 'Wykresy, raporty i analizy',
       icon: FiBarChart2,
       href: '/admin/stats',
       color: 'indigo'
+    },
+    {
+      title: '📅 Kalendarz wizyt',
+      description: 'Widok kalendarza tygodniowego',
+      icon: FiCalendar,
+      href: '/admin/kalendarz',
+      color: 'blue'
     },
     {
       title: 'Lista wizyt',
@@ -195,6 +209,7 @@ export default function AdminDashboard() {
           {quickActions.map((action, index) => {
             const Icon = action.icon;
             const colorClasses = {
+              pink: 'bg-pink-50 border-pink-200 hover:border-pink-400 text-pink-600',
               indigo: 'bg-indigo-50 border-indigo-200 hover:border-indigo-400 text-indigo-600',
               teal: 'bg-teal-50 border-teal-200 hover:border-teal-400 text-teal-600',
               blue: 'bg-blue-50 border-blue-200 hover:border-blue-400 text-blue-600',

@@ -1,0 +1,615 @@
+[
+  {
+    "id": 1759598648030,
+    "name": "Mariusz Bielaszka",
+    "phone": "792392870",
+    "email": "bielaszkam2@gmail.com",
+    "city": "Kraków",
+    "street": "Gliniana 17/30",
+    "address": "",
+    "category": "Pralki",
+    "device": "Pralki",
+    "problem": "nie dizałą",
+    "availability": "po 15",
+    "date": "2025-10-05",
+    "created_at": "2025-10-04T17:24:08.030Z",
+    "clientLocation": null,
+    "postalCode": "",
+    "time": "20:23",
+    "status": "pending",
+    "fullAddress": "Gliniana 17/30, Kraków",
+    "updatedAt": "2025-10-05T06:24:26.966Z",
+    "updatedBy": "admin"
+  },
+  {
+    "id": 1759599520671,
+    "name": "Mariusz Bielaszka",
+    "phone": "792392870",
+    "email": "Bielaszkam2@gmail.com",
+    "city": "Kraków",
+    "street": "Gliniana 17/30",
+    "address": "",
+    "category": "Pralki",
+    "device": "Bosch",
+    "problem": "Brak opisu problemu",
+    "availability": "po 14",
+    "date": "2025-10-07",
+    "created_at": "2025-10-04T17:38:40.671Z",
+    "clientLocation": null,
+    "postalCode": "",
+    "time": "",
+    "status": "pending",
+    "fullAddress": "Gliniana 17/30, 30-732 Kraków",
+    "phones": [
+      {
+        "number": "792392870",
+        "label": "Główny",
+        "isPrimary": true
+      }
+    ],
+    "addresses": [
+      {
+        "street": "Gliniana 17/30",
+        "city": "Kraków",
+        "postalCode": "30-732",
+        "label": "Główny",
+        "isPrimary": true
+      }
+    ],
+    "devices": [
+      {
+        "category": "Pralki",
+        "brand": "Bosch",
+        "model": "",
+        "problem": "",
+        "serialNumber": ""
+      },
+      {
+        "category": "Zmywarki",
+        "brand": "",
+        "model": "",
+        "problem": "",
+        "serialNumber": ""
+      }
+    ],
+    "multiDevice": true,
+    "multiPhone": false,
+    "multiAddress": false,
+    "updatedAt": "2025-10-05T06:24:26.985Z",
+    "updatedBy": "admin"
+  },
+  {
+    "id": 1759600719462,
+    "name": "qweqwe",
+    "phone": "123123123",
+    "email": "",
+    "city": "qwe",
+    "street": "qwe",
+    "address": "",
+    "category": "Pralki",
+    "device": "Pralki",
+    "problem": "Brak opisu problemu",
+    "availability": "8:00-13:00",
+    "date": "2025-10-11",
+    "created_at": "2025-10-04T17:58:39.462Z",
+    "clientLocation": null,
+    "postalCode": "",
+    "time": "",
+    "status": "pending",
+    "fullAddress": "qwe, qwe qwe",
+    "phones": [
+      {
+        "number": "123123123",
+        "label": "Główny",
+        "isPrimary": true
+      }
+    ],
+    "addresses": [
+      {
+        "street": "qwe",
+        "city": "qwe",
+        "postalCode": "qwe",
+        "label": "Główny",
+        "isPrimary": true
+      },
+      {
+        "street": "qwe",
+        "city": "qwe",
+        "postalCode": "qwe",
+        "label": "",
+        "isPrimary": false
+      }
+    ],
+    "devices": [
+      {
+        "category": "Pralki",
+        "brand": "",
+        "model": "",
+        "problem": "",
+        "serialNumber": ""
+      },
+      {
+        "category": "Płyty indukcyjne",
+        "brand": "",
+        "model": "",
+        "problem": "",
+        "serialNumber": ""
+      }
+    ],
+    "multiDevice": true,
+    "multiPhone": false,
+    "multiAddress": true,
+    "updatedAt": "2025-10-05T06:24:27.001Z",
+    "updatedBy": "admin"
+  },
+  {
+    "id": 1759602863848,
+    "name": "Oliwia Bielaszka",
+    "phone": "987654987",
+    "email": "Bielaszkam2@gmail.com",
+    "city": "Kraków",
+    "street": "Gliniana 17/30, 30-732 Kraków",
+    "address": "",
+    "category": "Pralki",
+    "device": "1242",
+    "problem": "1241242141",
+    "availability": "Po 15:00",
+    "date": "2025-10-05",
+    "created_at": "2025-10-04T18:34:23.848Z",
+    "clientLocation": null,
+    "postalCode": "",
+    "time": "",
+    "status": "pending",
+    "fullAddress": "Gliniana 17/30, 30-732 Kraków, 30-732 Kraków",
+    "phones": [
+      {
+        "number": "987654987",
+        "label": "Główny",
+        "isPrimary": true
+      }
+    ],
+    "addresses": [
+      {
+        "street": "Gliniana 17/30, 30-732 Kraków",
+        "city": "Kraków",
+        "postalCode": "30-732",
+        "label": "Główny",
+        "isPrimary": true
+      }
+    ],
+    "devices": [
+      {
+        "category": "Pralki",
+        "brand": "Bosch",
+        "model": "1242",
+        "problem": "1241242141",
+        "serialNumber": "12312"
+      },
+      {
+        "category": "Lodówki",
+        "brand": "Beko",
+        "model": "12424",
+        "problem": "124124",
+        "serialNumber": "1241242"
+      }
+    ],
+    "multiDevice": true,
+    "multiPhone": false,
+    "multiAddress": false,
+    "updatedAt": "2025-10-05T06:24:27.015Z",
+    "updatedBy": "admin"
+  },
+  {
+    "id": 1759610021868,
+    "name": "Konting",
+    "phone": "987987987",
+    "email": "",
+    "city": "Pacanow",
+    "street": "Słupia 114",
+    "address": "",
+    "category": "Pralki",
+    "device": "Beko",
+    "problem": "Brak opisu problemu",
+    "availability": "",
+    "date": "",
+    "created_at": "2025-10-04T20:33:41.868Z",
+    "clientLocation": null,
+    "postalCode": "",
+    "dateRange": {
+      "from": "2025-10-05",
+      "to": "2025-10-09",
+      "flexible": true
+    },
+    "dateMode": "range",
+    "time": "",
+    "status": "pending",
+    "physicalAvailability": {
+      "timeWindows": [
+        {
+          "days": [
+            "monday",
+            "tuesday",
+            "wednesday",
+            "thursday",
+            "saturday",
+            "sunday"
+          ],
+          "timeFrom": "08:00",
+          "timeTo": "20:00",
+          "label": "Cały dzień"
+        }
+      ],
+      "preferences": {
+        "flexibleSchedule": true,
+        "requiresAdvanceNotice": true,
+        "advanceNoticeHours": 24
+      },
+      "presenceHistory": [],
+      "stats": {},
+      "score": 96,
+      "category": "full-day",
+      "notes": [],
+      "lastUpdated": "2025-10-04T20:33:29.361Z"
+    },
+    "fullAddress": "Słupia 114, 28-133 Pacanow",
+    "phones": [
+      {
+        "number": "987987987",
+        "label": "Główny",
+        "isPrimary": true
+      },
+      {
+        "number": "654654654",
+        "label": "Mama kota",
+        "isPrimary": false
+      }
+    ],
+    "addresses": [
+      {
+        "street": "Słupia 114",
+        "city": "Pacanow",
+        "postalCode": "28-133",
+        "label": "Główny",
+        "isPrimary": true
+      },
+      {
+        "street": "Gliniana 17/30, 30-732 Kraków",
+        "city": "Kraków",
+        "postalCode": "30-732",
+        "label": "Buiro",
+        "isPrimary": false
+      }
+    ],
+    "devices": [
+      {
+        "category": "Pralki",
+        "brand": "Beko",
+        "model": "",
+        "problem": "",
+        "serialNumber": "",
+        "hasBuiltIn": true
+      }
+    ],
+    "isFlexibleDate": true,
+    "multiDevice": false,
+    "multiPhone": true,
+    "multiAddress": true,
+    "updatedAt": "2025-10-05T06:24:27.026Z",
+    "updatedBy": "admin"
+  },
+  {
+    "id": 1759642076747,
+    "name": "Mariusz Bielaszka",
+    "phone": "789654987",
+    "email": "Bielaszkam2@gmail.com",
+    "city": "Pacanow",
+    "street": "Słupia 114",
+    "address": "Słupia 114, 28-133 Pacanow",
+    "category": "Pralka",
+    "device": "",
+    "problem": "Nie odpompowuje wody",
+    "availability": "Nie określono",
+    "date": "2025-10-05T05:27:56.747Z",
+    "created_at": "2025-10-05T05:27:56.747Z",
+    "clientLocation": {
+      "address": "Słupia 114, 28-133 Pacanow (przybliżona lokalizacja, Kraków)",
+      "coordinates": {
+        "lat": 50.0647,
+        "lng": 19.945
+      },
+      "accuracy": "APPROXIMATE",
+      "confidence": 0.3
+    },
+    "postalCode": "28-133",
+    "categories": [
+      "Pralka"
+    ],
+    "devices": [],
+    "brands": [
+      "Beko"
+    ],
+    "problems": [
+      "Nie odpompowuje wody"
+    ],
+    "hasBuiltIn": true,
+    "hasDemontaz": true,
+    "hasMontaz": true,
+    "hasTrudnaZabudowa": true,
+    "timeSlot": "Po 15:00",
+    "additionalNotes": "",
+    "brand": "Beko",
+    "status": "pending",
+    "updatedAt": "2025-10-05T06:24:27.036Z",
+    "updatedBy": "admin"
+  },
+  {
+    "id": 1759642102016,
+    "name": "Technik B",
+    "phone": "987987987",
+    "email": "",
+    "city": "Pacanow",
+    "street": "Słupia 114",
+    "address": "Słupia 114, 28-133 Pacanow",
+    "category": "Zmywarka",
+    "device": "",
+    "problem": "Nie odpompowuje wody",
+    "availability": "Nie określono",
+    "date": "2025-10-05T05:28:22.016Z",
+    "created_at": "2025-10-05T05:28:22.016Z",
+    "clientLocation": {
+      "address": "Słupia 114, 28-133 Pacanow (przybliżona lokalizacja, Kraków)",
+      "coordinates": {
+        "lat": 50.0647,
+        "lng": 19.945
+      },
+      "accuracy": "APPROXIMATE",
+      "confidence": 0.3
+    },
+    "postalCode": "28-133",
+    "categories": [
+      "Zmywarka"
+    ],
+    "devices": [],
+    "brands": [
+      "Aeg"
+    ],
+    "problems": [
+      "Nie odpompowuje wody"
+    ],
+    "hasBuiltIn": false,
+    "hasDemontaz": false,
+    "hasMontaz": false,
+    "hasTrudnaZabudowa": false,
+    "timeSlot": "Cały dzień",
+    "additionalNotes": "",
+    "brand": "Aeg",
+    "status": "pending",
+    "updatedAt": "2025-10-05T06:24:27.045Z",
+    "updatedBy": "admin"
+  },
+  {
+    "id": 1759644726598,
+    "name": "Bruno Bielaszka",
+    "phone": "696969696969",
+    "email": "Bielaszkam2@gmail.com",
+    "city": "Kraków",
+    "street": "Gliniana 17/30, 30-732 Kraków",
+    "address": "Gliniana 17/30, 30-732 Kraków, 30-732 Kraków",
+    "category": "Lodówka",
+    "device": "",
+    "problem": "Nie świeci oświetlenie",
+    "availability": "Nie określono",
+    "date": "2025-10-05T06:12:06.598Z",
+    "created_at": "2025-10-05T06:12:06.598Z",
+    "clientLocation": {
+      "address": "Gliniana 17/30, 30-732 Kraków, 30-732 Kraków,  Polska",
+      "coordinates": {
+        "lat": 50.06525080997225,
+        "lng": 19.944747059057534
+      },
+      "accuracy": "APPROXIMATE",
+      "confidence": 0.7
+    },
+    "postalCode": "30-732",
+    "categories": [
+      "Lodówka"
+    ],
+    "devices": [],
+    "brands": [
+      "Beko"
+    ],
+    "problems": [
+      "Nie świeci oświetlenie"
+    ],
+    "hasBuiltIn": true,
+    "hasDemontaz": true,
+    "hasMontaz": true,
+    "hasTrudnaZabudowa": false,
+    "timeSlot": "12:00-16:00",
+    "additionalNotes": "",
+    "brand": "Beko",
+    "status": "pending",
+    "updatedAt": "2025-10-05T06:24:27.054Z",
+    "updatedBy": "admin"
+  },
+  {
+    "id": 1759644776879,
+    "name": "Bruno Bielaszka",
+    "phone": "696969696969",
+    "email": "Bielaszkam2@gmail.com",
+    "city": "Kraków",
+    "street": "Gliniana 17/69, 30-732 Kraków",
+    "address": "Gliniana 17/69, 30-732 Kraków, 30-732 Kraków",
+    "category": "Lodówka",
+    "device": "",
+    "problem": "Nie świeci oświetlenie",
+    "availability": "Nie określono",
+    "date": "2025-10-05T06:12:56.879Z",
+    "created_at": "2025-10-05T06:12:56.879Z",
+    "clientLocation": {
+      "address": "Gliniana 17/69, 30-732 Kraków, 30-732 Kraków,  Polska",
+      "coordinates": {
+        "lat": 50.06314242177787,
+        "lng": 19.944246781231225
+      },
+      "accuracy": "APPROXIMATE",
+      "confidence": 0.7
+    },
+    "postalCode": "30-732",
+    "categories": [
+      "Lodówka"
+    ],
+    "devices": [],
+    "brands": [
+      "Beko"
+    ],
+    "problems": [
+      "Nie świeci oświetlenie"
+    ],
+    "hasBuiltIn": true,
+    "hasDemontaz": true,
+    "hasMontaz": true,
+    "hasTrudnaZabudowa": false,
+    "timeSlot": "8:00-12:00",
+    "additionalNotes": "",
+    "brand": "Beko",
+    "status": "pending",
+    "updatedAt": "2025-10-05T06:24:27.063Z",
+    "updatedBy": "admin"
+  },
+  {
+    "id": 1759644788026,
+    "name": "Bruno Bielaszka",
+    "phone": "696969696969",
+    "email": "Bielaszkam2@gmail.com",
+    "city": "Kraków",
+    "street": "Gliniana 17/69, 30-732 Kraków",
+    "address": "Gliniana 17/69, 30-732 Kraków, 30-732 Kraków",
+    "category": "Lodówka",
+    "device": "",
+    "problem": "Nie świeci oświetlenie",
+    "availability": "Nie określono",
+    "date": "2025-10-05T06:13:08.026Z",
+    "created_at": "2025-10-05T06:13:08.026Z",
+    "clientLocation": {
+      "address": "Gliniana 17/69, 30-732 Kraków, 30-732 Kraków,  Polska",
+      "coordinates": {
+        "lat": 50.06113324501884,
+        "lng": 19.94207114754714
+      },
+      "accuracy": "APPROXIMATE",
+      "confidence": 0.7
+    },
+    "postalCode": "30-732",
+    "categories": [
+      "Lodówka"
+    ],
+    "devices": [],
+    "brands": [
+      "Beko"
+    ],
+    "problems": [
+      "Nie świeci oświetlenie"
+    ],
+    "hasBuiltIn": true,
+    "hasDemontaz": true,
+    "hasMontaz": true,
+    "hasTrudnaZabudowa": false,
+    "timeSlot": "8:00-12:00",
+    "additionalNotes": "",
+    "brand": "Beko",
+    "status": "pending",
+    "updatedAt": "2025-10-05T06:24:27.073Z",
+    "updatedBy": "admin"
+  },
+  {
+    "id": 1759644793193,
+    "name": "Bruno Bielaszka",
+    "phone": "696969696969",
+    "email": "Bielaszkam2@gmail.com",
+    "city": "Kraków",
+    "street": "Gliniana 17/69, 30-732 Kraków",
+    "address": "Gliniana 17/69, 30-732 Kraków, 30-732 Kraków",
+    "category": "Lodówka",
+    "device": "",
+    "problem": "Nie świeci oświetlenie",
+    "availability": "Nie określono",
+    "date": "2025-10-05T06:13:13.193Z",
+    "created_at": "2025-10-05T06:13:13.193Z",
+    "clientLocation": {
+      "address": "Gliniana 17/69, 30-732 Kraków, 30-732 Kraków,  Polska",
+      "coordinates": {
+        "lat": 50.06843599148388,
+        "lng": 19.9420432017694
+      },
+      "accuracy": "APPROXIMATE",
+      "confidence": 0.7
+    },
+    "postalCode": "30-732",
+    "categories": [
+      "Lodówka"
+    ],
+    "devices": [],
+    "brands": [
+      "Beko"
+    ],
+    "problems": [
+      "Nie świeci oświetlenie"
+    ],
+    "hasBuiltIn": true,
+    "hasDemontaz": true,
+    "hasMontaz": true,
+    "hasTrudnaZabudowa": false,
+    "timeSlot": "8:00-12:00",
+    "additionalNotes": "",
+    "brand": "Beko",
+    "status": "pending",
+    "updatedAt": "2025-10-05T06:24:27.082Z",
+    "updatedBy": "admin"
+  },
+  {
+    "id": 1759644796860,
+    "name": "Bruno Bielaszka",
+    "phone": "696969696969",
+    "email": "Bielaszkam2@gmail.com",
+    "city": "Kraków",
+    "street": "Gliniana 17/69, 30-732 Kraków",
+    "address": "Gliniana 17/69, 30-732 Kraków, 30-732 Kraków",
+    "category": "Lodówka",
+    "device": "",
+    "problem": "Nie świeci oświetlenie",
+    "availability": "Nie określono",
+    "date": "2025-10-05T06:13:16.860Z",
+    "created_at": "2025-10-05T06:13:16.860Z",
+    "clientLocation": {
+      "address": "Gliniana 17/69, 30-732 Kraków, 30-732 Kraków,  Polska",
+      "coordinates": {
+        "lat": 50.06059095114332,
+        "lng": 19.948664383885014
+      },
+      "accuracy": "APPROXIMATE",
+      "confidence": 0.7
+    },
+    "postalCode": "30-732",
+    "categories": [
+      "Lodówka"
+    ],
+    "devices": [],
+    "brands": [
+      "Beko"
+    ],
+    "problems": [
+      "Nie świeci oświetlenie"
+    ],
+    "hasBuiltIn": true,
+    "hasDemontaz": true,
+    "hasMontaz": true,
+    "hasTrudnaZabudowa": false,
+    "timeSlot": "8:00-12:00",
+    "additionalNotes": "",
+    "brand": "Beko",
+    "status": "pending",
+    "updatedAt": "2025-10-05T06:24:27.094Z",
+    "updatedBy": "admin"
+  }
+]

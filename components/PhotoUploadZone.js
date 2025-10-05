@@ -18,6 +18,8 @@ export default function PhotoUploadZone({
 
   // Upload pojedynczego pliku do API
   const uploadFile = async (file) => {
+    console.log('📤 Uploading file:', file.name, file.size, 'bytes');
+    
     const formData = new FormData();
     formData.append('photo', file);
     formData.append('category', uploadCategory);
@@ -29,18 +31,35 @@ export default function PhotoUploadZone({
     });
 
     if (!response.ok) {
+      console.error('❌ Upload failed:', response.status, response.statusText);
       throw new Error('Upload failed');
     }
 
     const data = await response.json();
-    return {
+    console.log('✅ Upload successful:', data);
+    
+    // Obsługa różnych struktur response
+    // API zwraca: { success: true, data: { url: "..." } }
+    const filePath = data.data?.url || data.filePath || data.url;
+    
+    if (!filePath) {
+      console.error('❌ No filePath in response:', data);
+      throw new Error('No file path returned from API');
+    }
+    
+    console.log('📁 Using file path:', filePath);
+    
+    const imageData = {
       id: 'IMG_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
-      url: data.filePath,
+      url: filePath,
       type: images.length === 0 ? 'main' : 'detail',
       order: images.length,
       caption: '',
       uploadedAt: new Date().toISOString()
     };
+    
+    console.log('📸 Image data created:', imageData);
+    return imageData;
   };
 
   // Obsługa uploadu wielu plików

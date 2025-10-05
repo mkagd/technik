@@ -5,10 +5,11 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import AdminLayout from '../../../components/AdminLayout';
 import { useToast } from '../../../contexts/ToastContext';
+import { statusToUI, statusToBackend } from '../../../utils/fieldMapping';
 import { 
   FiEye, FiTrash2, FiEdit, FiSearch, FiFilter, FiX, FiPhone, 
   FiMail, FiMapPin, FiClock, FiCalendar, FiDownload, FiRefreshCw, FiPlus,
-  FiChevronUp, FiChevronDown
+  FiChevronUp, FiChevronDown, FiCheck, FiPhoneCall, FiFileText
 } from 'react-icons/fi';
 
 export default function AdminRezerwacje() {
@@ -25,7 +26,7 @@ export default function AdminRezerwacje() {
   const [showBulkActions, setShowBulkActions] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 20;
-  const [sortField, setSortField] = useState('date');
+  const [sortField, setSortField] = useState('created_at');
   const [sortDirection, setSortDirection] = useState('desc');
 
   const [filters, setFilters] = useState({
@@ -62,7 +63,7 @@ export default function AdminRezerwacje() {
 
   useEffect(() => {
     applyFilters();
-  }, [rezerwacje, filters]);
+  }, [rezerwacje, filters, sortField, sortDirection]);
 
   const loadRezerwacje = async () => {
     try {
@@ -124,6 +125,13 @@ export default function AdminRezerwacje() {
     filtered.sort((a, b) => {
       let aVal = a[sortField] || '';
       let bVal = b[sortField] || '';
+      
+      // Specjalne traktowanie dla pól z datami
+      if (sortField === 'created_at' || sortField === 'date' || sortField === 'createdAt') {
+        const aDate = new Date(aVal || 0).getTime();
+        const bDate = new Date(bVal || 0).getTime();
+        return sortDirection === 'asc' ? aDate - bDate : bDate - aDate;
+      }
       
       const comparison = aVal.toString().localeCompare(bVal.toString());
       return sortDirection === 'asc' ? comparison : -comparison;
@@ -207,6 +215,39 @@ export default function AdminRezerwacje() {
     } catch (error) {
       console.error('Błąd:', error);
       toast.error('Błąd połączenia z serwerem');
+    }
+  };
+
+  // Nowa funkcja: Dodaj zlecenie (zmień status na contacted)
+  const handleCreateOrder = async (rezerwacjaId) => {
+    if (!confirm('Czy chcesz utworzyć zlecenie z tej rezerwacji?\nStatus zostanie zmieniony na "Skontaktowano się".')) {
+      return;
+    }
+
+    try {
+      await handleStatusChange(rezerwacjaId, 'contacted');
+      toast.success('✅ Zlecenie utworzone! Status zmieniony na "Skontaktowano się"');
+      setTimeout(() => {
+        router.push('/admin/zamowienia');
+      }, 1500);
+    } catch (error) {
+      console.error('Błąd:', error);
+      toast.error('Błąd podczas tworzenia zlecenia');
+    }
+  };
+
+  // Nowa funkcja: Umów wizytę (zmień status na scheduled)
+  const handleScheduleVisit = async (rezerwacjaId) => {
+    if (!confirm('Czy chcesz umówić wizytę?\nStatus zostanie zmieniony na "Umówiona wizyta".')) {
+      return;
+    }
+
+    try {
+      await handleStatusChange(rezerwacjaId, 'scheduled');
+      toast.success('📅 Wizyta umówiona! Status zmieniony na "Umówiona wizyta"');
+    } catch (error) {
+      console.error('Błąd:', error);
+      toast.error('Błąd podczas umawiania wizyty');
     }
   };
 
@@ -543,11 +584,22 @@ export default function AdminRezerwacje() {
                     />
                   </th>
                   <th 
+                    onClick={() => handleSort('created_at')}
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 select-none"
+                  >
+                    <div className="flex items-center space-x-1">
+                      <span>Data dodania</span>
+                      {sortField === 'created_at' && (
+                        sortDirection === 'asc' ? <FiChevronUp className="h-4 w-4" /> : <FiChevronDown className="h-4 w-4" />
+                      )}
+                    </div>
+                  </th>
+                  <th 
                     onClick={() => handleSort('date')}
                     className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 select-none"
                   >
                     <div className="flex items-center space-x-1">
-                      <span>Data</span>
+                      <span>Data wizyty</span>
                       {sortField === 'date' && (
                         sortDirection === 'asc' ? <FiChevronUp className="h-4 w-4" /> : <FiChevronDown className="h-4 w-4" />
                       )}
@@ -610,15 +662,54 @@ export default function AdminRezerwacje() {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
-                          <FiCalendar className="h-5 w-5 text-gray-400 mr-2" />
+                          <FiClock className="h-5 w-5 text-gray-400 mr-2" />
                           <div>
                             <div className="text-sm font-medium text-gray-900">
-                              {new Date(rezerwacja.date).toLocaleDateString('pl-PL')}
+                              {new Date(rezerwacja.created_at || rezerwacja.createdAt || rezerwacja.dateAdded || Date.now()).toLocaleDateString('pl-PL')}
                             </div>
-                            {rezerwacja.time && (
-                              <div className="text-xs text-gray-500">
-                                {rezerwacja.time}
-                              </div>
+                            <div className="text-xs text-gray-500">
+                              {new Date(rezerwacja.created_at || rezerwacja.createdAt || rezerwacja.dateAdded || Date.now()).toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' })}
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="flex items-center">
+                          <FiCalendar className="h-5 w-5 text-gray-400 mr-2" />
+                          <div>
+                            {/* Sprawdź czy to zakres dat czy pojedyncza data */}
+                            {(rezerwacja.dateMode === 'range' || rezerwacja.isFlexibleDate || (rezerwacja.dateRange?.from && rezerwacja.dateRange?.to)) ? (
+                              <>
+                                <div className="text-sm font-medium text-blue-700">
+                                  📅 Elastyczny zakres
+                                </div>
+                                <div className="text-xs text-gray-600">
+                                  {new Date(rezerwacja.dateRange.from + 'T00:00:00').toLocaleDateString('pl-PL', { day: 'numeric', month: 'short' })}
+                                  {' → '}
+                                  {new Date(rezerwacja.dateRange.to + 'T00:00:00').toLocaleDateString('pl-PL', { day: 'numeric', month: 'short' })}
+                                </div>
+                                {rezerwacja.time && (
+                                  <div className="text-xs text-gray-500">
+                                    🕐 {rezerwacja.time}
+                                  </div>
+                                )}
+                              </>
+                            ) : (
+                              <>
+                                <div className="text-sm font-medium text-gray-900">
+                                  {rezerwacja.date ? new Date(rezerwacja.date + 'T00:00:00').toLocaleDateString('pl-PL') : 'Nie ustalono'}
+                                </div>
+                                {rezerwacja.time && (
+                                  <div className="text-xs text-gray-500">
+                                    🕐 {rezerwacja.time}
+                                  </div>
+                                )}
+                                {rezerwacja.availability && !rezerwacja.time && (
+                                  <div className="text-xs text-gray-500">
+                                    {rezerwacja.availability}
+                                  </div>
+                                )}
+                              </>
                             )}
                           </div>
                         </div>
@@ -670,6 +761,50 @@ export default function AdminRezerwacje() {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                         <div className="flex items-center justify-end space-x-2">
+                          {/* Szybkie akcje według statusu */}
+                          {rezerwacja.status === 'pending' && (
+                            <button
+                              onClick={() => handleCreateOrder(rezerwacja.id)}
+                              className="px-2 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 text-xs font-medium"
+                              title="Utwórz zlecenie (zmień status na 'Skontaktowano się')"
+                            >
+                              <FiFileText className="inline h-4 w-4 mr-1" />
+                              Dodaj zlecenie
+                            </button>
+                          )}
+                          
+                          {rezerwacja.status === 'contacted' && (
+                            <button
+                              onClick={() => handleScheduleVisit(rezerwacja.id)}
+                              className="px-2 py-1 bg-purple-100 text-purple-700 rounded hover:bg-purple-200 text-xs font-medium"
+                              title="Umów wizytę (zmień status na 'Umówiona wizyta')"
+                            >
+                              <FiCalendar className="inline h-4 w-4 mr-1" />
+                              Umów wizytę
+                            </button>
+                          )}
+
+                          {/* Telefon - call link */}
+                          <a
+                            href={`tel:${rezerwacja.phone || rezerwacja.clientPhone}`}
+                            className="text-green-600 hover:text-green-900"
+                            title="Zadzwoń"
+                          >
+                            <FiPhoneCall className="h-5 w-5" />
+                          </a>
+
+                          {/* Adres - mapa */}
+                          <a
+                            href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(rezerwacja.address || rezerwacja.clientAddress || '')}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-purple-600 hover:text-purple-900"
+                            title="Zobacz na mapie"
+                          >
+                            <FiMapPin className="h-5 w-5" />
+                          </a>
+
+                          {/* Standardowe akcje */}
                           <button
                             onClick={() => handleView(rezerwacja.id)}
                             className="text-blue-600 hover:text-blue-900"
@@ -679,7 +814,7 @@ export default function AdminRezerwacje() {
                           </button>
                           <button
                             onClick={() => handleView(rezerwacja.id)}
-                            className="text-green-600 hover:text-green-900"
+                            className="text-gray-600 hover:text-gray-900"
                             title="Edytuj"
                           >
                             <FiEdit className="h-5 w-5" />

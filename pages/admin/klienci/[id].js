@@ -4,9 +4,10 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import AdminLayout from '../../../components/AdminLayout';
+import AvailabilityScheduler from '../../../components/AvailabilityScheduler';
 import { 
   FiSave, FiX, FiChevronLeft, FiUser, FiPhone, FiMail, 
-  FiMapPin, FiCalendar, FiAlertCircle, FiClock, FiTool
+  FiMapPin, FiCalendar, FiAlertCircle, FiClock, FiTool, FiHome
 } from 'react-icons/fi';
 
 export default function KlientDetale() {
@@ -33,7 +34,8 @@ export default function KlientDetale() {
     isAuthenticated: false,
     createdAt: '',
     updatedAt: '',
-    history: []
+    history: [],
+    physicalAvailability: null
   });
 
   useEffect(() => {
@@ -48,15 +50,31 @@ export default function KlientDetale() {
       const response = await fetch(`/api/clients?id=${id}`);
       const data = await response.json();
       
-      if (response.ok && data.length > 0) {
-        setKlient(data[0]);
+      console.log('📞 Odpowiedź z API clients:', data);
+      
+      // API zwraca obiekt klienta bezpośrednio, nie tablicę
+      if (response.ok && data && data.id) {
+        console.log('✅ Załadowano klienta:', data.name);
+        
+        // Jeśli address jest obiektem, wypełnij poszczególne pola
+        if (typeof data.address === 'object' && data.address !== null) {
+          data.city = data.address.city || '';
+          data.street = data.address.street || '';
+          data.postalCode = data.address.postalCode || '';
+        }
+        
+        setKlient(data);
+      } else if (response.status === 404) {
+        alert('Nie znaleziono klienta o ID: ' + id);
+        router.push('/admin/klienci');
       } else {
-        alert('Nie znaleziono klienta');
+        alert(data.message || 'Nie znaleziono klienta');
         router.push('/admin/klienci');
       }
     } catch (error) {
-      console.error('Błąd:', error);
-      alert('Błąd pobierania danych');
+      console.error('❌ Błąd pobierania klienta:', error);
+      alert('Błąd połączenia z serwerem');
+      router.push('/admin/klienci');
     } finally {
       setLoading(false);
     }
@@ -211,14 +229,13 @@ export default function KlientDetale() {
         )}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 gap-6">
         {/* Main form */}
-        <div className="lg:col-span-2">
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-              <FiUser className="mr-2 h-5 w-5" />
-              Dane klienta
-            </h3>
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+            <FiUser className="mr-2 h-5 w-5" />
+            Dane klienta
+          </h3>
 
             <div className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -317,9 +334,14 @@ export default function KlientDetale() {
                   </label>
                   <input
                     type="text"
-                    value={klient.address}
+                    value={
+                      typeof klient.address === 'object' && klient.address !== null
+                        ? `${klient.address.street || ''} ${klient.address.buildingNumber || ''}${klient.address.apartmentNumber ? '/' + klient.address.apartmentNumber : ''}, ${klient.address.postalCode || ''} ${klient.address.city || ''}`
+                        : klient.address || ''
+                    }
                     onChange={(e) => updateField('address', e.target.value)}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    placeholder="ul. Przykładowa 123/45, 00-000 Miasto"
                   />
                 </div>
               </div>
@@ -327,8 +349,28 @@ export default function KlientDetale() {
           </div>
         </div>
 
-        {/* Sidebar - Historia */}
-        <div className="lg:col-span-1">
+        {/* Sekcja dostępności fizycznej */}
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+            <FiHome className="mr-2 h-5 w-5 text-green-600" />
+            Dostępność fizyczna klienta
+          </h3>
+          <p className="text-sm text-gray-600 mb-6">
+            Określ, kiedy klient jest w domu i dostępny na wizytę technika.
+            System automatycznie podpowie najlepszy czas i ostrzeże przed wizytami w złych godzinach.
+          </p>
+          
+          <AvailabilityScheduler
+            value={klient.physicalAvailability}
+            onChange={(availability) => {
+              updateField('physicalAvailability', availability);
+            }}
+          />
+        </div>
+
+        {/* Grid z historią i metadanymi */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Historia wizyt */}
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
               <FiClock className="mr-2 h-5 w-5" />
@@ -364,7 +406,7 @@ export default function KlientDetale() {
           </div>
 
           {/* Metadata */}
-          <div className="mt-6 bg-gray-50 rounded-lg border border-gray-200 p-4">
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
             <h4 className="text-sm font-semibold text-gray-700 mb-3">Metadane</h4>
             <div className="space-y-2 text-xs text-gray-600">
               {klient.createdBy && (
@@ -386,7 +428,6 @@ export default function KlientDetale() {
             </div>
           </div>
         </div>
-      </div>
     </AdminLayout>
   );
 }

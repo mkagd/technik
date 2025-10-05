@@ -21,12 +21,15 @@ export default function ModelManagerModal({
   isOpen, 
   onClose, 
   visitId, 
-  currentModels = [], 
-  onModelsUpdate 
+  initialModels = [],
+  currentModels = [], // deprecated, use initialModels
+  onModelsUpdate, // deprecated, use onSave
+  onSave,
+  context
 }) {
   const [activeTab, setActiveTab] = useState('add'); // 'add', 'list', 'parts'
   const [showAIScanner, setShowAIScanner] = useState(false);
-  const [models, setModels] = useState(currentModels);
+  const [models, setModels] = useState(initialModels || currentModels);
   const [searchTerm, setSearchTerm] = useState('');
   const [manualModel, setManualModel] = useState({
     brand: '',
@@ -196,13 +199,21 @@ export default function ModelManagerModal({
 
   // Zapisz zmiany
   const handleSave = () => {
-    onModelsUpdate(models, cart);
+    // Support both old and new prop names
+    const saveFn = onSave || onModelsUpdate;
+    if (saveFn) {
+      saveFn(models, cart);
+    }
     onClose();
   };
 
+  // Initialize models only when modal opens (not on every prop change)
   useEffect(() => {
-    setModels(currentModels);
-  }, [currentModels]);
+    if (isOpen) {
+      const modelsToLoad = initialModels || currentModels || [];
+      setModels(modelsToLoad);
+    }
+  }, [isOpen]); // Only re-run when modal opens/closes
 
   if (!isOpen) return null;
 
@@ -211,7 +222,7 @@ export default function ModelManagerModal({
 
   return (
     <>
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-40 p-4">
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[70] p-4">
         <div className="bg-white rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden">
           {/* Header */}
           <div className="flex items-center justify-between p-6 border-b border-gray-200">
@@ -657,7 +668,7 @@ export default function ModelManagerModal({
 
       {/* Koszyk Modal */}
       {showPartsModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[75] p-4">
           <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl max-h-[80vh] overflow-hidden">
             <div className="flex items-center justify-between p-6 border-b border-gray-200">
               <h2 className="text-xl font-bold text-gray-800">

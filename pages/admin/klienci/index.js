@@ -5,9 +5,10 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import AdminLayout from '../../../components/AdminLayout';
 import { useToast } from '../../../contexts/ToastContext';
+import { getAvailabilityCategory } from '../../../utils/availabilityScore';
 import { 
   FiEye, FiTrash2, FiEdit, FiSearch, FiFilter, FiX, FiPhone, 
-  FiMail, FiMapPin, FiUser, FiDownload, FiRefreshCw, FiCalendar
+  FiMail, FiMapPin, FiUser, FiDownload, FiRefreshCw, FiCalendar, FiHome
 } from 'react-icons/fi';
 
 export default function AdminKlienci() {
@@ -112,6 +113,10 @@ export default function AdminKlienci() {
           return (a.name || '').localeCompare(b.name || '');
         case 'city':
           return (a.city || '').localeCompare(b.city || '');
+        case 'availability-desc':
+          return (b.physicalAvailability?.score || 0) - (a.physicalAvailability?.score || 0);
+        case 'availability-asc':
+          return (a.physicalAvailability?.score || 0) - (b.physicalAvailability?.score || 0);
         default:
           return 0;
       }
@@ -299,6 +304,8 @@ export default function AdminKlienci() {
                 <option value="date-asc">Najstarsi</option>
                 <option value="name">Imię A-Z</option>
                 <option value="city">Miasto A-Z</option>
+                <option value="availability-desc">🏠 Dostępność (wysoka → niska)</option>
+                <option value="availability-asc">⚠️ Dostępność (niska → wysoka)</option>
               </select>
             </div>
 
@@ -349,9 +356,32 @@ export default function AdminKlienci() {
             <div key={klient.id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
               <div className="flex items-start justify-between mb-4">
                 <div className="flex-1">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-1">
-                    {klient.name}
-                  </h3>
+                  {/* Nazwa klienta lub firmy */}
+                  <div className="flex items-center gap-2 mb-1">
+                    <h3 className="text-lg font-semibold text-gray-900">
+                      {klient.name}
+                    </h3>
+                    {klient.clientType === 'company' && (
+                      <span className="px-2 py-0.5 bg-purple-100 text-purple-700 text-xs font-medium rounded">
+                        Firma
+                      </span>
+                    )}
+                  </div>
+                  
+                  {/* Dane firmy */}
+                  {klient.companyData && (
+                    <div className="mt-1 mb-2 text-sm">
+                      <div className="font-medium text-gray-700">
+                        {klient.companyData.name}
+                      </div>
+                      {klient.companyData.nip && (
+                        <div className="text-xs text-gray-500">
+                          NIP: {klient.companyData.nip}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                  
                   <span className="text-xs text-gray-500">
                     ID: {klient.clientId || klient.id}
                   </span>
@@ -359,20 +389,62 @@ export default function AdminKlienci() {
               </div>
 
               <div className="space-y-2 mb-4">
-                <div className="flex items-center text-sm text-gray-600">
-                  <FiPhone className="h-4 w-4 mr-2 text-gray-400" />
-                  {klient.phone}
-                </div>
+                {/* Telefony - pokazuje wszystkie */}
+                {klient.phones && klient.phones.length > 0 ? (
+                  klient.phones.map((phone, idx) => (
+                    <div key={idx} className="flex items-center text-sm text-gray-600">
+                      <FiPhone className="h-4 w-4 mr-2 text-gray-400 flex-shrink-0" />
+                      <span className="flex-1">{phone.number}</span>
+                      {phone.isPrimary && (
+                        <span className="ml-2 px-1.5 py-0.5 bg-blue-100 text-blue-700 text-xs rounded">Główny</span>
+                      )}
+                      {phone.label && !phone.isPrimary && (
+                        <span className="ml-2 text-xs text-gray-400">({phone.label})</span>
+                      )}
+                    </div>
+                  ))
+                ) : klient.phone ? (
+                  <div className="flex items-center text-sm text-gray-600">
+                    <FiPhone className="h-4 w-4 mr-2 text-gray-400" />
+                    {klient.phone}
+                  </div>
+                ) : null}
+
+                {/* Email */}
                 {klient.email && (
                   <div className="flex items-center text-sm text-gray-600">
                     <FiMail className="h-4 w-4 mr-2 text-gray-400" />
                     {klient.email}
                   </div>
                 )}
-                <div className="flex items-center text-sm text-gray-600">
-                  <FiMapPin className="h-4 w-4 mr-2 text-gray-400" />
-                  {klient.city}
-                </div>
+
+                {/* Adresy - pokazuje wszystkie */}
+                {klient.addresses && klient.addresses.length > 0 ? (
+                  klient.addresses.map((address, idx) => (
+                    <div key={idx} className="flex items-start text-sm text-gray-600">
+                      <FiMapPin className="h-4 w-4 mr-2 mt-0.5 text-gray-400 flex-shrink-0" />
+                      <div className="flex-1">
+                        <div>{address.street}</div>
+                        <div className="text-xs text-gray-500">
+                          {address.postalCode} {address.city}
+                        </div>
+                        {address.isPrimary && (
+                          <span className="inline-block mt-1 px-1.5 py-0.5 bg-blue-100 text-blue-700 text-xs rounded">Główny</span>
+                        )}
+                        {address.label && !address.isPrimary && (
+                          <span className="inline-block mt-1 text-xs text-gray-400">({address.label})</span>
+                        )}
+                      </div>
+                    </div>
+                  ))
+                ) : klient.city ? (
+                  <div className="flex items-center text-sm text-gray-600">
+                    <FiMapPin className="h-4 w-4 mr-2 text-gray-400" />
+                    {klient.city}
+                  </div>
+                ) : null}
+
+                {/* Data dodania */}
                 {klient.createdAt && (
                   <div className="flex items-center text-sm text-gray-600">
                     <FiCalendar className="h-4 w-4 mr-2 text-gray-400" />
@@ -381,13 +453,62 @@ export default function AdminKlienci() {
                 )}
               </div>
 
-              {klient.source && (
-                <div className="mb-4">
+              <div className="mb-4 flex flex-wrap gap-2">
+                {/* Typ klienta */}
+                {klient.clientType && (
+                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                    klient.clientType === 'company' ? 'bg-purple-100 text-purple-800' : 'bg-gray-100 text-gray-800'
+                  }`}>
+                    {klient.clientType === 'company' ? '🏢 Firma' : '👤 Prywatny'}
+                  </span>
+                )}
+
+                {/* Źródło */}
+                {klient.source && (
                   <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
                     {klient.source}
                   </span>
-                </div>
-              )}
+                )}
+                
+                {/* Score dostępności */}
+                {klient.physicalAvailability && klient.physicalAvailability.score !== undefined && (() => {
+                  const category = getAvailabilityCategory(klient.physicalAvailability.score);
+                  return (
+                    <span 
+                      className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium ${category.badgeClass}`}
+                      title={`Dostępność: ${category.label} (${klient.physicalAvailability.score}/100)`}
+                    >
+                      <span>{category.emoji}</span>
+                      <span>{klient.physicalAvailability.score}</span>
+                    </span>
+                  );
+                })()}
+
+                {/* Status */}
+                {klient.status && (
+                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                    klient.status === 'active' ? 'bg-green-100 text-green-800' :
+                    klient.status === 'inactive' ? 'bg-gray-100 text-gray-800' :
+                    'bg-yellow-100 text-yellow-800'
+                  }`}>
+                    {klient.status === 'active' ? '✓ Aktywny' :
+                     klient.status === 'inactive' ? '○ Nieaktywny' :
+                     klient.status}
+                  </span>
+                )}
+
+                {/* Ilość telefonów/adresów */}
+                {klient.phones && klient.phones.length > 1 && (
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
+                    📞 {klient.phones.length} tel.
+                  </span>
+                )}
+                {klient.addresses && klient.addresses.length > 1 && (
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-teal-100 text-teal-800">
+                    📍 {klient.addresses.length} adr.
+                  </span>
+                )}
+              </div>
 
               <div className="flex items-center space-x-2 pt-4 border-t border-gray-200">
                 <button

@@ -26,28 +26,95 @@ export default function AIScanner() {
   const [isLoading, setIsLoading] = useState(true);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [scannedModels, setScannedModels] = useState([]);
+  const [orders, setOrders] = useState([]);
+  const [visits, setVisits] = useState([]);
+
+  // 🚀 Ładowanie zleceń i wizyt z API
+  const loadOrdersAndVisits = async (employeeId) => {
+    try {
+      console.log('📥 Ładowanie zleceń dla pracownika:', employeeId);
+      
+      // Pobierz zadania pracownika (zawierają orderId i visitId)
+      const today = new Date().toISOString().split('T')[0];
+      const tasksResponse = await fetch(`/api/employee-tasks?employeeId=${employeeId}&date=${today}`);
+      const tasksData = await tasksResponse.json();
+      
+      if (tasksData.success && tasksData.tasks.length > 0) {
+        // Wyciągnij unikalne orderId i visitId
+        const orderIds = [...new Set(tasksData.tasks.map(t => t.orderId).filter(Boolean))];
+        const visitIds = [...new Set(tasksData.tasks.map(t => t.visitId).filter(Boolean))];
+        
+        console.log('📋 Znaleziono zleceń:', orderIds.length, 'wizyt:', visitIds.length);
+        
+        // Pobierz szczegóły zleceń
+        if (orderIds.length > 0) {
+          const ordersResponse = await fetch('/api/orders');
+          const ordersData = await ordersResponse.json();
+          
+          if (ordersData.success) {
+            const relevantOrders = ordersData.orders.filter(order => 
+              orderIds.includes(order.id)
+            );
+            setOrders(relevantOrders);
+            console.log('✅ Załadowano zleceń:', relevantOrders.length);
+          }
+        }
+        
+        // Pobierz szczegóły wizyt
+        if (visitIds.length > 0) {
+          const visitsResponse = await fetch('/api/visits');
+          const visitsData = await visitsResponse.json();
+          
+          if (visitsData.success) {
+            const relevantVisits = visitsData.visits.filter(visit => 
+              visitIds.includes(visit.id)
+            );
+            setVisits(relevantVisits);
+            console.log('✅ Załadowano wizyt:', relevantVisits.length);
+          }
+        }
+      } else {
+        console.log('ℹ️ Brak zadań na dziś');
+        setOrders([]);
+        setVisits([]);
+      }
+    } catch (error) {
+      console.error('❌ Błąd ładowania zleceń/wizyt:', error);
+      setOrders([]);
+      setVisits([]);
+    }
+  };
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const employeeSession = localStorage.getItem('employeeSession');
-      if (!employeeSession) {
-        router.push('/pracownik-logowanie');
-        return;
-      }
-      setEmployee(JSON.parse(employeeSession));
-      
-      // Załaduj zapisane modele
-      const savedModels = localStorage.getItem('aiScanner_models');
-      if (savedModels) {
-        try {
-          setScannedModels(JSON.parse(savedModels));
-        } catch (error) {
-          console.error('Error loading saved models:', error);
+    const initializeScanner = async () => {
+      if (typeof window !== 'undefined') {
+        const employeeSession = localStorage.getItem('employeeSession');
+        if (!employeeSession) {
+          router.push('/pracownik-logowanie');
+          return;
         }
+        
+        const employeeData = JSON.parse(employeeSession);
+        setEmployee(employeeData);
+        
+        // 🚀 Załaduj zlecenia i wizyty z API
+        await loadOrdersAndVisits(employeeData.id);
+        
+        // Załaduj zapisane modele
+        const savedModels = localStorage.getItem('aiScanner_models');
+        if (savedModels) {
+          try {
+            setScannedModels(JSON.parse(savedModels));
+          } catch (error) {
+            console.error('Error loading saved models:', error);
+          }
+        }
+        
+        setIsLoading(false);
       }
-      
-      setIsLoading(false);
-    }
+    };
+    
+    initializeScanner();
   }, [router]);
 
   // Zamknij user menu gdy kliknięto poza nim
@@ -297,6 +364,8 @@ export default function AIScanner() {
                     name: employee?.firstName + ' ' + employee?.lastName,
                     id: employee?.id
                   }}
+                  orders={orders}
+                  visits={visits}
                 />
               </div>
             </div>

@@ -6,7 +6,7 @@
       "partNumber": "DC97-16151A",
       "category": "AGD",
       "subcategory": "Pralka",
-      "imageUrl": "/uploads/parts/lożysko-bębna-samsung.jpg",
+      "imageUrl": "/uploads/parts/lożysko-bębna-samsung.svg",
       "compatibleBrands": [
         "Samsung"
       ],
@@ -77,7 +77,7 @@
       "images": [
         {
           "id": "IMG_PART001_001",
-          "url": "/uploads/parts/lożysko-bębna-samsung.jpg",
+          "url": "/uploads/parts/lożysko-bębna-samsung.svg",
           "type": "main",
           "order": 0,
           "caption": "",
@@ -92,7 +92,7 @@
       "partNumber": "DC96-01414G",
       "category": "AGD",
       "subcategory": "Pralka",
-      "imageUrl": "/uploads/parts/pompa-odplywowa.jpg",
+      "imageUrl": "/uploads/parts/pompa-odplywowa.svg",
       "compatibleBrands": [
         "Samsung",
         "LG",
@@ -143,7 +143,7 @@
       "images": [
         {
           "id": "IMG_PART002_001",
-          "url": "/uploads/parts/pompa-odplywowa.jpg",
+          "url": "/uploads/parts/pompa-odplywowa.svg",
           "type": "main",
           "order": 0,
           "caption": "",
@@ -193,40 +193,45 @@
         "pęknięty pasek",
         "poślizg paska"
       ],
-      "images": [],
-      "model3D": null
-    },
-    {
-      "id": "PART004",
-      "name": "Elektrozawór podwójny",
-      "partNumber": "DC62-00024A",
-      "category": "AGD",
-      "subcategory": "Pralka",
-      "compatibleBrands": [
-        "Samsung"
+      "images": [
+        {
+          "id": "IMG_1759556720077_0x7jjfdxe",
+          "url": "/uploads/orders/PART_1759556719974/parts/PART_1759556719974_parts_20251004T054520_SYSTEM_zrzut_ekranu_2025-09-26_223535.png",
+          "type": "main",
+          "order": 0,
+          "caption": "",
+          "uploadedAt": "2025-10-04T05:45:20.077Z"
+        },
+        {
+          "id": "IMG_1759556738223_oq9pfmk7a",
+          "url": "/uploads/orders/PART_1759556738031/parts/PART_1759556738031_parts_20251004T054538_SYSTEM_zrzut_ekranu_2025-09-22_212041.png",
+          "type": "detail",
+          "order": 1,
+          "caption": "",
+          "uploadedAt": "2025-10-04T05:45:38.223Z"
+        },
+        {
+          "id": "IMG_1759556741674_7qx78czdn",
+          "url": "/uploads/orders/PART_1759556741322/parts/PART_1759556741322_parts_20251004T054541_SYSTEM_zrzut_ekranu_2025-09-28_153511.png",
+          "type": "detail",
+          "order": 2,
+          "caption": "",
+          "uploadedAt": "2025-10-04T05:45:41.674Z"
+        },
+        {
+          "id": "IMG_1759556744886_hczxr7a3t",
+          "url": "/uploads/orders/PART_1759556744694/parts/PART_1759556744694_parts_20251004T054544_SYSTEM_zrzut_ekranu_2025-09-28_150622.png",
+          "type": "detail",
+          "order": 3,
+          "caption": "",
+          "uploadedAt": "2025-10-04T05:45:44.886Z"
+        }
       ],
-      "description": "Elektrozawór podwójny do pralek Samsung - sterowanie dopływem wody",
-      "specifications": {
-        "voltage": "230V",
-        "current": "200mA",
-        "pressure": "0.1-1.0 MPa",
-        "outlets": 2
+      "model3D": null,
+      "metadata": {
+        "updatedAt": "2025-10-04T05:45:46.011Z"
       },
-      "pricing": {
-        "retailPrice": 65,
-        "wholesalePrice": 50,
-        "currency": "PLN"
-      },
-      "availability": {
-        "inStock": 10,
-        "available": 10
-      },
-      "installation": {
-        "difficulty": "medium",
-        "estimatedTime": 30
-      },
-      "images": [],
-      "model3D": null
+      "imageUrl": "/uploads/orders/PART_1759556719974/parts/PART_1759556719974_parts_20251004T054520_SYSTEM_zrzut_ekranu_2025-09-26_223535.png"
     },
     {
       "id": "PART005",
@@ -905,72 +910,6 @@
         "createdAt": "2025-10-03T10:00:00Z",
         "updatedAt": "2025-10-03T10:00:00Z",
         "popularityScore": 8.5,
-        "seasonalDemand": "stable"
-      },
-      "images": [],
-      "model3D": null
-    },
-    {
-      "id": "PART018",
-      "name": "Kosz górny kompletny",
-      "partNumber": "DW-BASKET-TOP-45",
-      "category": "AGD",
-      "subcategory": "Zmywarka",
-      "compatibleBrands": [
-        "Bosch",
-        "Siemens"
-      ],
-      "compatibleModels": [
-        "zmywarki 45cm szerokości"
-      ],
-      "description": "Kompletny kosz górny do zmywarek 45cm - z regulacją wysokości i kółkami",
-      "specifications": {
-        "width": "450mm",
-        "color": "szary",
-        "heightAdjust": "3 poziomy",
-        "wheels": "8 szt z łożyskami",
-        "warranty": "24 miesiące"
-      },
-      "pricing": {
-        "retailPrice": 220,
-        "wholesalePrice": 170,
-        "currency": "PLN",
-        "taxIncluded": true
-      },
-      "availability": {
-        "inStock": 10,
-        "minStock": 2,
-        "maxStock": 10,
-        "reserved": 0,
-        "available": 10
-      },
-      "supplier": {
-        "name": "Bosch Home Connect",
-        "supplierCode": "BHC-001",
-        "deliveryTime": "48h",
-        "minOrderQuantity": 1
-      },
-      "installation": {
-        "difficulty": "low",
-        "estimatedTime": 10,
-        "requiredTools": [
-          "bez narzędzi"
-        ],
-        "specialRequirements": [
-          "sprawdzenie wymiarów",
-          "test przesuwu"
-        ]
-      },
-      "failureIndicators": [
-        "kosz się nie przesuwa",
-        "pęknięcia w koszu",
-        "zepsute kółka",
-        "brak regulacji wysokości"
-      ],
-      "metadata": {
-        "createdAt": "2025-10-03T10:00:00Z",
-        "updatedAt": "2025-10-03T10:00:00Z",
-        "popularityScore": 6.5,
         "seasonalDemand": "stable"
       },
       "images": [],

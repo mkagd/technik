@@ -27,7 +27,7 @@ export default function SmartSearchAutocomplete({
   value = '',
   onChange
 }) {
-  const [inputValue, setInputValue] = useState(value);
+  // POPRAWKA: Nie używaj wewnętrznego state jeśli value jest kontrolowane
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(-1);
@@ -59,18 +59,13 @@ export default function SmartSearchAutocomplete({
     });
   }, [items]);
 
-  // Sync z zewnętrznym value
-  useEffect(() => {
-    setInputValue(value);
-  }, [value]);
-
-  // Debounced search
+  // Debounced search - używaj value bezpośrednio
   useEffect(() => {
     if (debounceTimer.current) {
       clearTimeout(debounceTimer.current);
     }
 
-    if (inputValue.trim().length < 2) {
+    if (!value || value.trim().length < 2) {
       setSuggestions([]);
       setShowSuggestions(false);
       if (onSearch) onSearch('');
@@ -80,7 +75,7 @@ export default function SmartSearchAutocomplete({
     setIsLoading(true);
 
     debounceTimer.current = setTimeout(() => {
-      performSearch(inputValue);
+      performSearch(value);
       setIsLoading(false);
     }, 300);
 
@@ -89,7 +84,7 @@ export default function SmartSearchAutocomplete({
         clearTimeout(debounceTimer.current);
       }
     };
-  }, [inputValue, fuse]);
+  }, [value, fuse]);
 
   // Wykonaj wyszukiwanie
   const performSearch = (query) => {
@@ -108,11 +103,12 @@ export default function SmartSearchAutocomplete({
     }
   };
 
-  // Obsługa zmiany inputu
+  // Obsługa zmiany inputu - przekaż bezpośrednio do parent
   const handleInputChange = (e) => {
-    const newValue = e.target.value;
-    setInputValue(newValue);
-    if (onChange) onChange(e);
+    // Nie używaj lokalnego state, tylko wywołaj onChange
+    if (onChange) {
+      onChange(e);
+    }
   };
 
   // Obsługa klawiszy nawigacyjnych
@@ -155,15 +151,17 @@ export default function SmartSearchAutocomplete({
 
   // Wybór sugestii
   const handleSelectSuggestion = (item) => {
-    setInputValue(item.name);
     setShowSuggestions(false);
     setSelectedIndex(-1);
     
-    if (onSelect) {
-      onSelect(item);
-    }
+    // Zaktualizuj wartość przez onChange
     if (onChange) {
       onChange({ target: { value: item.name } });
+    }
+    
+    // Wywołaj callback onSelect
+    if (onSelect) {
+      onSelect(item);
     }
   };
 
@@ -228,7 +226,7 @@ export default function SmartSearchAutocomplete({
         <input
           ref={inputRef}
           type="text"
-          value={inputValue}
+          value={value}
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
           onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
@@ -254,10 +252,9 @@ export default function SmartSearchAutocomplete({
         </div>
 
         {/* Clear Button */}
-        {inputValue && (
+        {value && (
           <button
             onClick={() => {
-              setInputValue('');
               setSuggestions([]);
               setShowSuggestions(false);
               if (onChange) onChange({ target: { value: '' } });

@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 import GlobalSearch from './GlobalSearch';
 import { 
   FiHome, FiCalendar, FiUsers, FiShoppingBag, FiSettings, 
-  FiMenu, FiX, FiBell, FiLogOut, FiUserCheck, FiChevronRight, FiClock, FiSearch, FiPackage, FiDollarSign
+  FiMenu, FiX, FiBell, FiLogOut, FiUserCheck, FiChevronRight, FiClock, FiSearch, FiPackage, FiDollarSign, FiFileText, FiTool, FiGlobe
 } from 'react-icons/fi';
 
 export default function AdminLayout({ children, title, breadcrumbs = [] }) {
@@ -139,15 +139,29 @@ export default function AdminLayout({ children, title, breadcrumbs = [] }) {
       active: router.pathname === '/admin'
     },
     { 
-      icon: FiCalendar, 
-      label: 'Rezerwacje', 
+      icon: FiUsers, 
+      label: '👤 Panel Klienta', 
+      path: '/client/login',
+      active: router.pathname.startsWith('/client'),
+      external: true,
+      color: 'text-pink-600'
+    },
+    { 
+      icon: FiFileText, 
+      label: 'Zgłoszenia', 
       path: '/admin/rezerwacje',
       badge: notificationCount,
       active: router.pathname.startsWith('/admin/rezerwacje')
     },
     { 
-      icon: FiClock, 
-      label: 'Kalendarz', 
+      icon: FiTool, 
+      label: 'Zlecenia', 
+      path: '/admin/zamowienia',
+      active: router.pathname.startsWith('/admin/zamowienia')
+    },
+    { 
+      icon: FiCalendar, 
+      label: 'Kalendarz Wizyt', 
       path: '/admin/kalendarz',
       active: router.pathname.startsWith('/admin/kalendarz')
     },
@@ -164,16 +178,16 @@ export default function AdminLayout({ children, title, breadcrumbs = [] }) {
       active: router.pathname.startsWith('/admin/klienci')
     },
     { 
-      icon: FiShoppingBag, 
-      label: 'Zamówienia', 
-      path: '/admin/zamowienia',
-      active: router.pathname.startsWith('/admin/zamowienia')
-    },
-    { 
       icon: FiPackage, 
       label: 'Magazyn', 
       path: '/admin/magazyn',
-      active: router.pathname.startsWith('/admin/magazyn')
+      active: router.pathname.startsWith('/admin/magazyn') && !router.pathname.startsWith('/admin/allegro')
+    },
+    { 
+      icon: FiShoppingBag, 
+      label: 'Allegro (zakupy)', 
+      path: '/admin/allegro/search',
+      active: router.pathname.startsWith('/admin/allegro')
     },
     { 
       icon: FiDollarSign, 
@@ -185,7 +199,13 @@ export default function AdminLayout({ children, title, breadcrumbs = [] }) {
       icon: FiSettings, 
       label: 'Ustawienia', 
       path: '/admin/ustawienia',
-      active: router.pathname.startsWith('/admin/ustawienia')
+      active: router.pathname === '/admin/ustawienia'
+    },
+    { 
+      icon: FiGlobe, 
+      label: 'Ustawienia strony', 
+      path: '/admin/ustawienia-strony',
+      active: router.pathname.startsWith('/admin/ustawienia-strony')
     }
   ];
 
@@ -233,7 +253,12 @@ export default function AdminLayout({ children, title, breadcrumbs = [] }) {
             <button
               key={item.path}
               onClick={() => {
-                router.push(item.path);
+                if (item.external) {
+                  // Dla external linków otwórz w nowej karcie lub tym samym oknie
+                  window.location.href = item.path;
+                } else {
+                  router.push(item.path);
+                }
                 // Zamknij sidebar na mobile po kliknięciu
                 if (window.innerWidth < 1024) {
                   setTimeout(() => setSidebarOpen(false), 300);
@@ -242,14 +267,16 @@ export default function AdminLayout({ children, title, breadcrumbs = [] }) {
               className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 ${
                 item.active
                   ? 'bg-blue-50 text-blue-600 shadow-sm'
-                  : 'text-gray-700 hover:bg-gray-100'
+                  : item.color 
+                    ? `${item.color} hover:bg-pink-50`
+                    : 'text-gray-700 hover:bg-gray-100'
               }`}
               title={!sidebarOpen ? item.label : undefined}
             >
-              <item.icon className="h-5 w-5 flex-shrink-0" />
+              <item.icon className={`h-5 w-5 flex-shrink-0 ${item.color || ''}`} />
               {sidebarOpen && (
                 <>
-                  <span className="flex-1 text-left font-medium">{item.label}</span>
+                  <span className={`flex-1 text-left font-medium ${item.color || ''}`}>{item.label}</span>
                   {item.badge > 0 && (
                     <span className="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full min-w-[1.5rem] text-center">
                       {item.badge > 99 ? '99+' : item.badge}

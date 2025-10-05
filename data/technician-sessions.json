@@ -26,7 +26,7 @@
     "employeeId": "EMP25189001",
     "email": "jan.kowalski@techserwis.pl",
     "createdAt": "2025-10-03T18:54:12.188Z",
-    "lastActivity": "2025-10-04T04:47:34.413Z",
+    "lastActivity": "2025-10-04T05:30:17.610Z",
     "isValid": true,
     "rememberMe": false,
     "ip": "127.0.0.1",
@@ -74,6 +74,50 @@
     "isValid": true,
     "rememberMe": false,
     "ip": "192.168.0.2",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36"
+  },
+  {
+    "token": "7409068edd5c6638fdca786db608525619d62d1953cd88fbf78f804b2a9239a0",
+    "employeeId": "EMP25189001",
+    "email": "jan.kowalski@techserwis.pl",
+    "createdAt": "2025-10-04T07:06:45.641Z",
+    "lastActivity": "2025-10-04T07:06:50.442Z",
+    "isValid": true,
+    "rememberMe": false,
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36"
+  },
+  {
+    "token": "857ba0ad2a8dfeaa78a2a9ea137b5422a5a57fec92e85d2073839e04bb920a82",
+    "employeeId": "EMP25092001",
+    "email": "jan.serwisant@agdtech.pl",
+    "createdAt": "2025-10-04T07:10:54.039Z",
+    "lastActivity": "2025-10-04T07:44:10.571Z",
+    "isValid": true,
+    "rememberMe": false,
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36"
+  },
+  {
+    "token": "cb5f16140a964fc41706945e607cc2af7b63a68f91346bafe3afc68b84594bed",
+    "employeeId": "EMP25189002",
+    "email": "anna.nowak@techserwis.pl",
+    "createdAt": "2025-10-04T09:25:16.219Z",
+    "lastActivity": "2025-10-04T09:45:21.224Z",
+    "isValid": true,
+    "rememberMe": false,
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36"
+  },
+  {
+    "token": "2757f168f3aaa25ccbfd1f49f7c98cd237997fee8a0cbc025383430141a680e4",
+    "employeeId": "EMP25189001",
+    "email": "jan.kowalski@techserwis.pl",
+    "createdAt": "2025-10-04T09:46:39.179Z",
+    "lastActivity": "2025-10-04T22:04:44.687Z",
+    "isValid": true,
+    "rememberMe": false,
+    "ip": "127.0.0.1",
     "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36"
   }
 ]

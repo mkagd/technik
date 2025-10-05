@@ -61,10 +61,17 @@ const AGDIcons = {
   )
 };
 
-export default function Home() {
+export default function Home({ siteSettings }) {
   const router = useRouter();
   const { colors, isDarkMode, mounted } = useTheme();
   const [loading, setLoading] = useState(true);
+  
+  // Użyj ustawień z props lub fallback na domyślne
+  const settings = siteSettings || {
+    contact: { phone: '+48 123 456 789', email: 'kontakt@techserwis.pl', address: 'Dębica' },
+    stats: { yearsExperience: '15+', repairsCompleted: '2500+', happyClients: '849+', rating: '4.9' },
+    seo: { title: 'TECHNIK Serwis AGD', description: 'Profesjonalny serwis AGD' }
+  };
   
   const [animatedStats, setAnimatedStats] = useState({
     years: 0,
@@ -163,7 +170,13 @@ export default function Home() {
       const steps = 60;
       const stepTime = duration / steps;
       
-      const targets = { years: 15, repairs: 2500, clients: 850, rating: 4.9 };
+      // Pobierz wartości z ustawień i przekonwertuj na liczby
+      const targets = { 
+        years: parseInt(settings.stats.yearsExperience) || 15, 
+        repairs: parseInt(settings.stats.repairsCompleted) || 2500, 
+        clients: parseInt(settings.stats.happyClients) || 850, 
+        rating: parseFloat(settings.stats.rating) || 4.9 
+      };
       let current = { years: 0, repairs: 0, clients: 0, rating: 0 };
       
       const increment = {
@@ -356,9 +369,9 @@ export default function Home() {
 
             {/* Szybki kontakt */}
             <div className={`inline-flex items-center gap-6 px-6 py-4 ${colors.secondary} ${colors.border} border rounded-xl`}>
-              <a href="tel:+48123456789" className="flex items-center gap-2 text-blue-600 hover:text-blue-700 font-semibold">
+              <a href={`tel:${settings.contact.phone.replace(/\s/g, '')}`} className="flex items-center gap-2 text-blue-600 hover:text-blue-700 font-semibold">
                 <FiPhone className="h-5 w-5" />
-                <span>+48 123 456 789</span>
+                <span>{settings.contact.phone}</span>
               </a>
               <div className={`w-px h-6 ${colors.border} border-l`}></div>
               <div className={`flex items-center gap-2 ${colors.textTertiary}`}>
@@ -596,8 +609,8 @@ export default function Home() {
               </div>
               <h3 className={`text-xl font-bold ${colors.textPrimary} mb-2`}>Telefon</h3>
               <p className={`${colors.textTertiary} mb-4`}>Pn-Pt: 8:00-18:00</p>
-              <a href="tel:+48123456789" className="text-blue-600 hover:text-blue-700 font-semibold text-lg">
-                +48 123 456 789
+              <a href={`tel:${settings.contact.phone.replace(/\s/g, '')}`} className="text-blue-600 hover:text-blue-700 font-semibold text-lg">
+                {settings.contact.phone}
               </a>
             </div>
 
@@ -607,8 +620,8 @@ export default function Home() {
               </div>
               <h3 className={`text-xl font-bold ${colors.textPrimary} mb-2`}>Email</h3>
               <p className={`${colors.textTertiary} mb-4`}>Odpowiadamy w 24h</p>
-              <a href="mailto:serwis@technik.pl" className="text-purple-600 hover:text-purple-700 font-semibold text-lg">
-                serwis@technik.pl
+              <a href={`mailto:${settings.contact.email}`} className="text-purple-600 hover:text-purple-700 font-semibold text-lg">
+                {settings.contact.email}
               </a>
             </div>
 
@@ -619,8 +632,7 @@ export default function Home() {
               <h3 className={`text-xl font-bold ${colors.textPrimary} mb-2`}>Adres</h3>
               <p className={`${colors.textTertiary} mb-4`}>Punkt serwisowy</p>
               <p className="text-green-600 font-semibold">
-                ul. Lipowa 17<br />
-                39-200 Dębica
+                {settings.contact.address}
               </p>
             </div>
           </div>
@@ -677,11 +689,13 @@ export default function Home() {
               Profesjonalny Serwis Sprzętu AGD • Dębica
             </p>
             <div className={`flex justify-center space-x-6 text-sm ${colors.textTertiary}`}>
-              <span>© 2025 TECHNIK Serwis AGD</span>
+              <span>© 2025 {settings.companyName || 'TECHNIK Serwis AGD'}</span>
               <span>•</span>
-              <span>ul. Lipowa 17, 39-200 Dębica</span>
+              <span>{settings.contact.address}</span>
               <span>•</span>
-              <span>+48 123 456 789</span>
+              <a href={`tel:${settings.contact.phone.replace(/\s/g, '')}`} className="hover:text-blue-600 transition-colors">
+                {settings.contact.phone}
+              </a>
             </div>
           </div>
         </div>
@@ -867,3 +881,46 @@ export default function Home() {
   );
 }
 
+// Pobierz ustawienia strony przy każdym załadowaniu
+export async function getServerSideProps() {
+  try {
+    const fs = require('fs/promises');
+    const path = require('path');
+    const settingsPath = path.join(process.cwd(), 'data', 'site-settings.json');
+    
+    const data = await fs.readFile(settingsPath, 'utf-8');
+    const siteSettings = JSON.parse(data);
+    
+    return {
+      props: {
+        siteSettings
+      }
+    };
+  } catch (error) {
+    console.error('Błąd wczytywania ustawień strony:', error);
+    // Zwróć domyślne wartości w przypadku błędu
+    return {
+      props: {
+        siteSettings: {
+          contact: {
+            phone: '+48 123 456 789',
+            email: 'kontakt@techserwis.pl',
+            address: 'Dębica'
+          },
+          stats: {
+            yearsExperience: '15+',
+            repairsCompleted: '2500+',
+            happyClients: '849+',
+            rating: '4.9'
+          },
+          seo: {
+            title: 'TECHNIK Serwis AGD',
+            description: 'Profesjonalny serwis AGD'
+          },
+          companyName: 'TECHNIK',
+          slogan: 'Profesjonalne naprawy sprzętu AGD'
+        }
+      }
+    };
+  }
+}

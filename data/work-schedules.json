@@ -39,5 +39,85 @@
     ],
     "createdAt": "2025-10-03T19:01:15.740Z",
     "updatedAt": "2025-10-04T04:22:06.121Z"
+  },
+  {
+    "id": "SCH-1759571051230-vy0v38ow7",
+    "employeeId": "EMP25189002",
+    "weekStart": "2025-09-29",
+    "workSlots": [],
+    "breaks": [
+      {
+        "id": "SLOT-1759571065572-9t9c2u8yf",
+        "dayOfWeek": 1,
+        "startTime": "14:15",
+        "endTime": "15:30",
+        "type": "break",
+        "duration": 75,
+        "notes": "Przerwa",
+        "createdAt": "2025-10-04T09:44:25.572Z"
+      },
+      {
+        "id": "SLOT-1759571103452-xi54n1j3z",
+        "dayOfWeek": 1,
+        "startTime": "03:45",
+        "endTime": "05:45",
+        "type": "break",
+        "duration": 120,
+        "notes": "Przerwa",
+        "createdAt": "2025-10-04T09:45:03.452Z"
+      },
+      {
+        "id": "SLOT-1759571107826-k2wn6g8k2",
+        "dayOfWeek": 2,
+        "startTime": "03:15",
+        "endTime": "06:45",
+        "type": "break",
+        "duration": 210,
+        "notes": "Przerwa",
+        "createdAt": "2025-10-04T09:45:07.826Z"
+      }
+    ],
+    "createdAt": "2025-10-04T09:44:11.230Z",
+    "updatedAt": "2025-10-04T09:45:07.826Z"
+  },
+  {
+    "id": "SCH-1759615473944-ugtshekc1",
+    "employeeId": "EMP25189001",
+    "weekStart": "2025-09-28",
+    "workSlots": [
+      {
+        "id": "SLOT-1759615473944-i87ex4g9z",
+        "dayOfWeek": 2,
+        "startTime": "09:00",
+        "endTime": "13:15",
+        "type": "work",
+        "duration": 255,
+        "notes": "Praca",
+        "createdAt": "2025-10-04T22:04:33.944Z"
+      },
+      {
+        "id": "SLOT-1759615474686-7htvpb0o2",
+        "dayOfWeek": 3,
+        "startTime": "09:30",
+        "endTime": "13:00",
+        "type": "work",
+        "duration": 210,
+        "notes": "Praca",
+        "createdAt": "2025-10-04T22:04:34.686Z"
+      },
+      {
+        "id": "SLOT-1759615476482-9cw58kzyf",
+        "dayOfWeek": 4,
+        "startTime": "06:00",
+        "endTime": "15:00",
+        "type": "work",
+        "duration": 540,
+        "notes": "Praca",
+        "createdAt": "2025-10-04T22:04:36.482Z"
+      }
+    ],
+    "breaks": [],
+    "createdAt": "2025-10-04T22:04:33.944Z",
+    "updatedAt": "2025-10-04T22:04:36.482Z"
   }
 ]

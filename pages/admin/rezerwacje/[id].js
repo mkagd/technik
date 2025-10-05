@@ -6,8 +6,8 @@ import { useRouter } from 'next/router';
 import AdminLayout from '../../../components/AdminLayout';
 import CommentsSection from '../../../components/CommentsSection';
 import { 
-  FiSave, FiX, FiChevronLeft, FiCalendar, FiClock, 
-  FiUser, FiPhone, FiMail, FiMapPin, FiFileText, FiAlertCircle
+  FiEdit, FiChevronLeft, FiCalendar, FiClock, 
+  FiUser, FiPhone, FiMail, FiMapPin, FiFileText
 } from 'react-icons/fi';
 
 export default function RezerwacjaDetale() {
@@ -15,9 +15,6 @@ export default function RezerwacjaDetale() {
   const { id } = router.query;
 
   const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-  const [hasChanges, setHasChanges] = useState(false);
-  const [errors, setErrors] = useState({});
 
   const [rezerwacja, setRezerwacja] = useState({
     name: '',
@@ -86,80 +83,8 @@ export default function RezerwacjaDetale() {
     }
   };
 
-  const updateField = (field, value) => {
-    setRezerwacja(prev => ({ ...prev, [field]: value }));
-    setHasChanges(true);
-    // Clear error for this field
-    if (errors[field]) {
-      setErrors(prev => ({ ...prev, [field]: '' }));
-    }
-  };
-
-  const validate = () => {
-    const newErrors = {};
-
-    if (!rezerwacja.name?.trim()) {
-      newErrors.name = 'Imię i nazwisko jest wymagane';
-    }
-    if (!rezerwacja.phone?.trim()) {
-      newErrors.phone = 'Telefon jest wymagany';
-    }
-    if (!rezerwacja.date) {
-      newErrors.date = 'Data jest wymagana';
-    }
-    if (!rezerwacja.category) {
-      newErrors.category = 'Kategoria jest wymagana';
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleSave = async () => {
-    if (!validate()) {
-      alert('Proszę wypełnić wszystkie wymagane pola');
-      return;
-    }
-
-    try {
-      setSaving(true);
-      
-      const response = await fetch('/api/rezerwacje', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          id: parseInt(id),
-          ...rezerwacja,
-          updatedAt: new Date().toISOString()
-        })
-      });
-
-      if (response.ok) {
-        setHasChanges(false);
-        alert('Rezerwacja została zaktualizowana');
-        await loadRezerwacja();
-      } else {
-        const data = await response.json();
-        alert(data.message || 'Błąd podczas zapisywania');
-      }
-    } catch (error) {
-      console.error('Błąd:', error);
-      alert('Błąd połączenia z serwerem');
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  const handleCancel = () => {
-    if (hasChanges) {
-      if (confirm('Masz niezapisane zmiany. Czy na pewno chcesz wyjść?')) {
-        router.push('/admin/rezerwacje');
-      }
-    } else {
-      router.push('/admin/rezerwacje');
-    }
+  const handleBack = () => {
+    router.push('/admin/rezerwacje');
   };
 
   if (loading) {
@@ -194,7 +119,7 @@ export default function RezerwacjaDetale() {
       {/* Action bar */}
       <div className="mb-6 flex justify-between items-center">
         <button
-          onClick={handleCancel}
+          onClick={handleBack}
           className="inline-flex items-center text-gray-600 hover:text-gray-900 transition-colors"
         >
           <FiChevronLeft className="h-5 w-5 mr-1" />
@@ -202,28 +127,11 @@ export default function RezerwacjaDetale() {
         </button>
         <div className="flex items-center space-x-3">
           <button
-            onClick={handleCancel}
-            className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+            onClick={() => router.push(`/admin/rezerwacje/edytuj/${id}`)}
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors"
           >
-            <FiX className="inline mr-2 h-4 w-4" />
-            Anuluj
-          </button>
-          <button
-            onClick={handleSave}
-            disabled={saving || !hasChanges}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {saving ? (
-              <>
-                <div className="inline-block animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                Zapisywanie...
-              </>
-            ) : (
-              <>
-                <FiSave className="inline mr-2 h-4 w-4" />
-                Zapisz zmiany
-              </>
-            )}
+            <FiEdit className="inline mr-2 h-4 w-4" />
+            Edytuj rezerwację
           </button>
         </div>
       </div>
@@ -249,97 +157,224 @@ export default function RezerwacjaDetale() {
               <FiUser className="mr-2 h-5 w-5" />
               Dane klienta
             </h3>
+
+            {/* Typ klienta */}
+            {rezerwacja.clientType && (
+              <div className="mb-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                <div className="flex items-center">
+                  <span className="text-sm font-medium text-blue-900">
+                    {rezerwacja.clientType === 'company' ? '🏢 Firma' : '👤 Klient prywatny'}
+                  </span>
+                </div>
+              </div>
+            )}
+
+            {/* Dane firmowe (jeśli firma) */}
+            {rezerwacja.clientType === 'company' && rezerwacja.companyData && (
+              <div className="mb-6 p-4 bg-purple-50 rounded-lg border border-purple-200">
+                <h4 className="text-sm font-semibold text-purple-900 mb-3">🏢 Dane firmowe</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+                  {rezerwacja.companyData.name && (
+                    <div>
+                      <span className="text-gray-600">Nazwa:</span>
+                      <span className="ml-2 font-medium text-gray-900">{rezerwacja.companyData.name}</span>
+                    </div>
+                  )}
+                  {rezerwacja.companyData.nip && (
+                    <div>
+                      <span className="text-gray-600">NIP:</span>
+                      <span className="ml-2 font-medium text-gray-900">{rezerwacja.companyData.nip}</span>
+                    </div>
+                  )}
+                  {rezerwacja.companyData.regon && (
+                    <div>
+                      <span className="text-gray-600">REGON:</span>
+                      <span className="ml-2 font-medium text-gray-900">{rezerwacja.companyData.regon}</span>
+                    </div>
+                  )}
+                  {rezerwacja.companyData.krs && (
+                    <div>
+                      <span className="text-gray-600">KRS:</span>
+                      <span className="ml-2 font-medium text-gray-900">{rezerwacja.companyData.krs}</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Imię i nazwisko <span className="text-red-500">*</span>
+                  Imię i nazwisko
                 </label>
-                <input
-                  type="text"
-                  value={rezerwacja.name}
-                  onChange={(e) => updateField('name', e.target.value)}
-                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 ${
-                    errors.name ? 'border-red-300' : 'border-gray-300'
-                  }`}
-                />
-                {errors.name && (
-                  <p className="mt-1 text-sm text-red-600 flex items-center">
-                    <FiAlertCircle className="mr-1 h-4 w-4" />
-                    {errors.name}
-                  </p>
-                )}
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Telefon <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="tel"
-                  value={rezerwacja.phone}
-                  onChange={(e) => updateField('phone', e.target.value)}
-                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 ${
-                    errors.phone ? 'border-red-300' : 'border-gray-300'
-                  }`}
-                />
-                {errors.phone && (
-                  <p className="mt-1 text-sm text-red-600 flex items-center">
-                    <FiAlertCircle className="mr-1 h-4 w-4" />
-                    {errors.phone}
-                  </p>
-                )}
+                <div className="p-3 bg-gray-50 rounded-lg border border-gray-200">
+                  <span className="text-gray-900 font-medium">{rezerwacja.name || 'Brak'}</span>
+                </div>
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Email
                 </label>
-                <input
-                  type="email"
-                  value={rezerwacja.email}
-                  onChange={(e) => updateField('email', e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Miasto
-                </label>
-                <input
-                  type="text"
-                  value={rezerwacja.city}
-                  onChange={(e) => updateField('city', e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Adres
-                </label>
-                <input
-                  type="text"
-                  value={rezerwacja.address}
-                  onChange={(e) => updateField('address', e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Kod pocztowy
-                </label>
-                <input
-                  type="text"
-                  value={rezerwacja.postalCode}
-                  onChange={(e) => updateField('postalCode', e.target.value)}
-                  placeholder="00-000"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                />
+                <div className="p-3 bg-gray-50 rounded-lg border border-gray-200">
+                  <span className="text-gray-900">{rezerwacja.email || 'Brak'}</span>
+                </div>
               </div>
             </div>
+
+            {/* Telefony */}
+            <div className="mt-4">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Telefony
+              </label>
+              {rezerwacja.phones && rezerwacja.phones.length > 0 ? (
+                <div className="space-y-2">
+                  {rezerwacja.phones.map((phone, index) => (
+                    <div key={index} className="flex items-center p-3 bg-gray-50 rounded-lg border border-gray-200">
+                      <FiPhone className="h-4 w-4 text-gray-500 mr-3" />
+                      <span className="font-medium text-gray-900">{phone.number}</span>
+                      {phone.label && phone.label !== 'Główny' && (
+                        <span className="ml-2 text-sm text-gray-600">({phone.label})</span>
+                      )}
+                      {phone.isPrimary && (
+                        <span className="ml-2 px-2 py-0.5 bg-blue-100 text-blue-700 text-xs rounded">
+                          Główny
+                        </span>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="p-3 bg-gray-50 rounded-lg border border-gray-200">
+                  <div className="flex items-center">
+                    <FiPhone className="h-4 w-4 text-gray-500 mr-3" />
+                    <span className="font-medium text-gray-900">{rezerwacja.phone || 'Brak'}</span>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Adresy */}
+            <div className="mt-4">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Adresy
+              </label>
+              {rezerwacja.addresses && rezerwacja.addresses.length > 0 ? (
+                <div className="space-y-2">
+                  {rezerwacja.addresses.map((addr, index) => (
+                    <div key={index} className="flex items-start p-3 bg-gray-50 rounded-lg border border-gray-200">
+                      <FiMapPin className="h-4 w-4 text-gray-500 mr-3 mt-0.5" />
+                      <div className="flex-1">
+                        <div className="font-medium text-gray-900">
+                          {addr.street}, {addr.postalCode} {addr.city}
+                        </div>
+                        {addr.label && addr.label !== 'Główny' && (
+                          <div className="text-sm text-gray-600 mt-1">({addr.label})</div>
+                        )}
+                      </div>
+                      {addr.isPrimary && (
+                        <span className="ml-2 px-2 py-0.5 bg-blue-100 text-blue-700 text-xs rounded">
+                          Główny
+                        </span>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="p-3 bg-gray-50 rounded-lg border border-gray-200">
+                  <div className="flex items-start">
+                    <FiMapPin className="h-4 w-4 text-gray-500 mr-3 mt-0.5" />
+                    <div>
+                      {rezerwacja.address && <div className="font-medium text-gray-900">{rezerwacja.address}</div>}
+                      {rezerwacja.city && (
+                        <div className="text-sm text-gray-600">
+                          {rezerwacja.postalCode && `${rezerwacja.postalCode} `}{rezerwacja.city}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
+
+          {/* Urządzenia */}
+          {rezerwacja.devices && rezerwacja.devices.length > 0 && (
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                <FiFileText className="mr-2 h-5 w-5" />
+                Zgłoszone urządzenia ({rezerwacja.devices.length})
+              </h3>
+              <div className="space-y-4">
+                {rezerwacja.devices.map((device, index) => (
+                  <div key={index} className="p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200">
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <div className="flex items-center mb-2">
+                          <span className="px-2 py-1 bg-blue-600 text-white text-xs font-bold rounded mr-3">
+                            #{index + 1}
+                          </span>
+                          <h4 className="text-lg font-semibold text-gray-900">
+                            {device.name || 'Urządzenie AGD'}
+                          </h4>
+                        </div>
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3">
+                          {device.brand && (
+                            <div className="flex items-center text-sm">
+                              <span className="text-gray-600">Marka:</span>
+                              <span className="ml-2 font-medium text-gray-900">{device.brand}</span>
+                            </div>
+                          )}
+                          {device.model && (
+                            <div className="flex items-center text-sm">
+                              <span className="text-gray-600">Model:</span>
+                              <span className="ml-2 font-medium text-gray-900">{device.model}</span>
+                            </div>
+                          )}
+                          {device.serialNumber && (
+                            <div className="flex items-center text-sm">
+                              <span className="text-gray-600">Nr seryjny:</span>
+                              <span className="ml-2 font-medium text-gray-900">{device.serialNumber}</span>
+                            </div>
+                          )}
+                          {device.purchaseYear && (
+                            <div className="flex items-center text-sm">
+                              <span className="text-gray-600">Rok zakupu:</span>
+                              <span className="ml-2 font-medium text-gray-900">{device.purchaseYear}</span>
+                            </div>
+                          )}
+                        </div>
+
+                        {device.description && (
+                          <div className="mt-3 p-3 bg-white rounded border border-blue-100">
+                            <div className="text-sm text-gray-600 mb-1">Opis problemu:</div>
+                            <div className="text-sm text-gray-900">{device.description}</div>
+                          </div>
+                        )}
+
+                        {device.warrantyStatus && (
+                          <div className="mt-2">
+                            <span className={`inline-flex items-center px-2 py-1 rounded text-xs font-medium ${
+                              device.warrantyStatus === 'warranty' 
+                                ? 'bg-green-100 text-green-800' 
+                                : device.warrantyStatus === 'post-warranty'
+                                ? 'bg-orange-100 text-orange-800'
+                                : 'bg-gray-100 text-gray-800'
+                            }`}>
+                              {device.warrantyStatus === 'warranty' && '✓ Gwarancja'}
+                              {device.warrantyStatus === 'post-warranty' && '⚠ Pogwarancyjne'}
+                              {device.warrantyStatus === 'unknown' && '? Nieznane'}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* Szczegóły rezerwacji */}
           <div>
@@ -350,100 +385,131 @@ export default function RezerwacjaDetale() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Kategoria <span className="text-red-500">*</span>
+                  Kategoria
                 </label>
-                <select
-                  value={rezerwacja.category}
-                  onChange={(e) => updateField('category', e.target.value)}
-                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 ${
-                    errors.category ? 'border-red-300' : 'border-gray-300'
-                  }`}
-                >
-                  <option value="">Wybierz kategorię</option>
-                  {categories.map(cat => (
-                    <option key={cat} value={cat}>{cat}</option>
-                  ))}
-                </select>
-                {errors.category && (
-                  <p className="mt-1 text-sm text-red-600 flex items-center">
-                    <FiAlertCircle className="mr-1 h-4 w-4" />
-                    {errors.category}
-                  </p>
-                )}
+                <div className="p-3 bg-gray-50 rounded-lg border border-gray-200">
+                  <span className="text-gray-900 font-medium">{rezerwacja.category || 'Brak'}</span>
+                </div>
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Status
                 </label>
-                <select
-                  value={rezerwacja.status}
-                  onChange={(e) => updateField('status', e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                >
-                  {bookingStatuses.map(status => (
-                    <option key={status.value} value={status.value}>{status.label}</option>
-                  ))}
-                </select>
+                <div className="p-3 rounded-lg">
+                  <span className={`inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium ${statusInfo.color}`}>
+                    {statusInfo.label}
+                  </span>
+                </div>
               </div>
 
-              <div>
+              {/* Data wizyty - pojedyncza lub zakres */}
+              <div className="md:col-span-2">
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Data <span className="text-red-500">*</span>
+                  {rezerwacja.dateMode === 'range' || rezerwacja.isFlexibleDate || (rezerwacja.dateRange?.from && rezerwacja.dateRange?.to) 
+                    ? '📅 Elastyczny zakres dat' 
+                    : '📆 Data wizyty'}
                 </label>
-                <input
-                  type="date"
-                  value={rezerwacja.date}
-                  onChange={(e) => updateField('date', e.target.value)}
-                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 ${
-                    errors.date ? 'border-red-300' : 'border-gray-300'
-                  }`}
-                />
-                {errors.date && (
-                  <p className="mt-1 text-sm text-red-600 flex items-center">
-                    <FiAlertCircle className="mr-1 h-4 w-4" />
-                    {errors.date}
-                  </p>
+                
+                {/* Zakres dat */}
+                {(rezerwacja.dateMode === 'range' || rezerwacja.isFlexibleDate || (rezerwacja.dateRange?.from && rezerwacja.dateRange?.to)) ? (
+                  <div className="p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200">
+                    <div className="flex items-start">
+                      <FiCalendar className="h-5 w-5 text-blue-600 mt-0.5 mr-3" />
+                      <div className="flex-1">
+                        <div className="text-sm font-semibold text-gray-900 mb-2">
+                          Klient elastyczny - dowolny dzień z zakresu:
+                        </div>
+                        <div className="flex items-center text-base font-medium text-gray-900">
+                          <span>
+                            {new Date(rezerwacja.dateRange.from + 'T00:00:00').toLocaleDateString('pl-PL', { 
+                              day: 'numeric', 
+                              month: 'long',
+                              year: 'numeric',
+                              weekday: 'short'
+                            })}
+                          </span>
+                          <span className="mx-3 text-blue-600">→</span>
+                          <span>
+                            {new Date(rezerwacja.dateRange.to + 'T00:00:00').toLocaleDateString('pl-PL', { 
+                              day: 'numeric', 
+                              month: 'long',
+                              year: 'numeric',
+                              weekday: 'short'
+                            })}
+                          </span>
+                        </div>
+                        <div className="mt-2 text-xs text-blue-700">
+                          {Math.ceil((new Date(rezerwacja.dateRange.to) - new Date(rezerwacja.dateRange.from)) / (1000 * 60 * 60 * 24)) + 1} dni do wyboru
+                        </div>
+                        {rezerwacja.time && (
+                          <div className="mt-3 pt-3 border-t border-blue-200">
+                            <div className="flex items-center text-sm text-gray-700">
+                              <FiClock className="h-4 w-4 mr-2" />
+                              <span>Preferowana godzina: <strong>{rezerwacja.time}</strong></span>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  /* Pojedyncza data */
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="p-3 bg-gray-50 rounded-lg border border-gray-200">
+                      <div className="text-xs text-gray-500 mb-1">Data</div>
+                      <div className="text-gray-900 font-medium">
+                        {rezerwacja.date ? new Date(rezerwacja.date + 'T00:00:00').toLocaleDateString('pl-PL', {
+                          weekday: 'long',
+                          day: 'numeric',
+                          month: 'long',
+                          year: 'numeric'
+                        }) : 'Nie ustalono'}
+                      </div>
+                    </div>
+                    <div className="p-3 bg-gray-50 rounded-lg border border-gray-200">
+                      <div className="text-xs text-gray-500 mb-1">Godzina</div>
+                      <div className="text-gray-900 font-medium">
+                        {rezerwacja.time || 'Nie ustalono'}
+                      </div>
+                    </div>
+                  </div>
                 )}
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Godzina
-                </label>
-                <input
-                  type="time"
-                  value={rezerwacja.time}
-                  onChange={(e) => updateField('time', e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
+              {rezerwacja.availability && (
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Dostępność klienta
+                  </label>
+                  <div className="p-3 bg-blue-50 rounded-lg border border-blue-200">
+                    <div className="flex items-center text-sm">
+                      <FiClock className="h-4 w-4 text-blue-600 mr-2" />
+                      <span className="font-medium text-blue-900">{rezerwacja.availability}</span>
+                    </div>
+                  </div>
+                </div>
+              )}
 
               <div className="md:col-span-2">
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Opis problemu
                 </label>
-                <textarea
-                  value={rezerwacja.description}
-                  onChange={(e) => updateField('description', e.target.value)}
-                  rows={3}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                  placeholder="Opisz problem..."
-                />
+                <div className="p-4 bg-gray-50 rounded-lg border border-gray-200 min-h-[80px]">
+                  <p className="text-gray-900 whitespace-pre-wrap">{rezerwacja.description || rezerwacja.problem || 'Brak opisu'}</p>
+                </div>
               </div>
 
-              <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Notatki wewnętrzne
-                </label>
-                <textarea
-                  value={rezerwacja.notes}
-                  onChange={(e) => updateField('notes', e.target.value)}
-                  rows={4}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                  placeholder="Notatki widoczne tylko dla administratorów..."
-                />
-              </div>
+              {rezerwacja.notes && (
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Notatki wewnętrzne
+                  </label>
+                  <div className="p-4 bg-yellow-50 rounded-lg border border-yellow-200 min-h-[100px]">
+                    <p className="text-gray-900 whitespace-pre-wrap">{rezerwacja.notes}</p>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>

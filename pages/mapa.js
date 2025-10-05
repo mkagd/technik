@@ -3,6 +3,8 @@
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { Wrapper } from '@googlemaps/react-wrapper';
 import { FiMapPin, FiPhone, FiClock, FiUser, FiTool, FiNavigation, FiFilter, FiRefreshCw, FiSettings } from 'react-icons/fi';
+import ModelAIScanner from '../components/ModelAIScanner';
+import { formatAddress } from '../utils/formatAddress';
 
 // Funkcje pomocnicze
 const getMarkerColor = (status) => {
@@ -62,7 +64,7 @@ const createInfoWindowContent = (client) => {
       
       <div style="margin-bottom: 6px;">
         <span style="color: #10b981;">📍</span>
-        <span style="margin-left: 8px;">${client.address}</span>
+        <span style="margin-left: 8px;">${typeof client.address === 'object' ? formatAddress(client.address) : client.address}</span>
       </div>
       
       <div style="margin-bottom: 6px;">
@@ -136,7 +138,7 @@ const createInfoWindowContent = (client) => {
         <a href="tel:${client.clientPhone}" style="display: inline-block; padding: 8px 16px; background-color: #3b82f6; color: white; text-decoration: none; border-radius: 6px; font-size: 14px;">
           📞 Zadzwoń
         </a>
-        <a href="https://maps.google.com/maps?daddr=${encodeURIComponent(client.address)}" target="_blank" style="display: inline-block; margin-left: 8px; padding: 8px 16px; background-color: #10b981; color: white; text-decoration: none; border-radius: 6px; font-size: 14px;">
+        <a href="https://maps.google.com/maps?daddr=${encodeURIComponent(typeof client.address === 'object' ? formatAddress(client.address) : client.address)}" target="_blank" style="display: inline-block; margin-left: 8px; padding: 8px 16px; background-color: #10b981; color: white; text-decoration: none; border-radius: 6px; font-size: 14px;">
           🗺️ Nawiguj
         </a>
         ${(client.status === 'pending' || client.status === 'urgent') ? `
@@ -284,6 +286,9 @@ export default function MapaKlientow() {
     priority: 'normal',
     status: 'pending'
   });
+
+  // Stany dla AI Scanner
+  const [showAIScanner, setShowAIScanner] = useState(false);
 
   useEffect(() => {
     loadClientsData();
@@ -489,8 +494,9 @@ export default function MapaKlientow() {
       }
 
       try {
+        const addressString = typeof client.address === 'object' ? formatAddress(client.address) : client.address;
         const result = await new Promise((resolve, reject) => {
-          geocoder.geocode({ address: client.address }, (results, status) => {
+          geocoder.geocode({ address: addressString }, (results, status) => {
             if (status === 'OK') {
               resolve(results);
             } else {
@@ -515,7 +521,8 @@ export default function MapaKlientow() {
           });
         }
       } catch (error) {
-        console.error(`Błąd geokodowania dla adresu ${client.address}:`, error);
+        const addressString = typeof client.address === 'object' ? formatAddress(client.address) : client.address;
+        console.error(`Błąd geokodowania dla adresu ${addressString}:`, error);
         // Dodaj z domyślną lokalizacją
         updatedClients.push({
           ...client,
@@ -550,13 +557,14 @@ export default function MapaKlientow() {
     // Filtr wyszukiwania
     if (searchTerm) {
       const term = searchTerm.toLowerCase();
-      filtered = filtered.filter(client =>
-        client.clientName.toLowerCase().includes(term) ||
-        client.clientPhone.includes(term) ||
-        client.address.toLowerCase().includes(term) ||
-        client.serviceType.toLowerCase().includes(term) ||
-        client.deviceType?.toLowerCase().includes(term)
-      );
+      filtered = filtered.filter(client => {
+        const addressString = typeof client.address === 'object' ? formatAddress(client.address) : client.address;
+        return client.clientName.toLowerCase().includes(term) ||
+          client.clientPhone.includes(term) ||
+          addressString.toLowerCase().includes(term) ||
+          client.serviceType.toLowerCase().includes(term) ||
+          client.deviceType?.toLowerCase().includes(term);
+      });
     }
 
     // Sortowanie
@@ -665,6 +673,51 @@ export default function MapaKlientow() {
       ...prev,
       [field]: value
     }));
+  };
+
+  // Handler dla AI Scanner - wypełnia pole device
+  const handleAIModelDetected = (models) => {
+    console.log('🔍 handleAIModelDetected - models:', models);
+    
+    if (!models || models.length === 0) {
+      alert('❌ Nie wykryto modelu na tabliczce');
+      setShowAIScanner(false);
+      return;
+    }
+
+    const detectedModel = models[0];
+    
+    // Walidacja modelu
+    if (!detectedModel || typeof detectedModel !== 'object') {
+      console.error('❌ Nieprawidłowy format modelu:', detectedModel);
+      alert('❌ Błąd: Nieprawidłowe dane z skanera');
+      setShowAIScanner(false);
+      return;
+    }
+
+    const deviceInfo = {
+      brand: detectedModel.brand || '',
+      model: detectedModel.model || detectedModel.finalModel || '',
+      type: detectedModel.type || detectedModel.finalType || '',
+    };
+
+    // Sprawdź czy wykryto przynajmniej markę lub model
+    if (!deviceInfo.brand && !deviceInfo.model) {
+      alert('❌ Nie udało się rozpoznać marki ani modelu');
+      setShowAIScanner(false);
+      return;
+    }
+
+    // Aktualizuj pole device - połącz markę, model i typ
+    const deviceString = `${deviceInfo.brand} ${deviceInfo.model}${deviceInfo.type ? ` (${deviceInfo.type})` : ''}`.trim();
+    
+    setNewClientForm(prev => ({
+      ...prev,
+      device: deviceString
+    }));
+
+    alert(`✅ Rozpoznano:\n${deviceInfo.brand} ${deviceInfo.model}\nTyp: ${deviceInfo.type}`);
+    setShowAIScanner(false);
   };
 
   const resetNewClientForm = () => {
@@ -1034,7 +1087,7 @@ export default function MapaKlientow() {
                           </div>
                           <div className="flex items-center">
                             <FiMapPin className="h-3 w-3 mr-2" />
-                            <span className="truncate">{client.address}</span>
+                            <span className="truncate">{typeof client.address === 'object' ? formatAddress(client.address) : client.address}</span>
                           </div>
                           <div className="flex items-center">
                             <FiTool className="h-3 w-3 mr-2" />
@@ -1176,7 +1229,7 @@ export default function MapaKlientow() {
               </div>
               <div className="flex items-center">
                 <FiMapPin className="h-4 w-4 mr-2 text-green-500" />
-                <span>{selectedClient.address}</span>
+                <span>{typeof selectedClient.address === 'object' ? formatAddress(selectedClient.address) : selectedClient.address}</span>
               </div>
               <div className="flex items-center">
                 <FiTool className="h-4 w-4 mr-2 text-orange-500" />
@@ -1214,7 +1267,7 @@ export default function MapaKlientow() {
                 📞 Zadzwoń
               </a>
               <a
-                href={`https://maps.google.com/maps?daddr=${encodeURIComponent(selectedClient.address)}`}
+                href={`https://maps.google.com/maps?daddr=${encodeURIComponent(typeof selectedClient.address === 'object' ? formatAddress(selectedClient.address) : selectedClient.address)}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex-1 bg-green-600 text-white text-center py-2 px-3 rounded text-sm hover:bg-green-700 transition-colors"
@@ -1395,6 +1448,15 @@ export default function MapaKlientow() {
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="Laptop, telefon, drukarka, itp."
                   />
+                  
+                  {/* Przycisk AI Scanner */}
+                  <button
+                    type="button"
+                    onClick={() => setShowAIScanner(true)}
+                    className="mt-2 w-full flex items-center justify-center px-4 py-2 bg-gradient-to-r from-emerald-600 to-cyan-600 text-white rounded-lg hover:from-emerald-700 hover:to-cyan-700 transition-all shadow-md hover:shadow-lg text-sm"
+                  >
+                    🤖 Zeskanuj tabliczkę AI
+                  </button>
                 </div>
 
                 <div>
@@ -1480,6 +1542,15 @@ export default function MapaKlientow() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Modal AI Scanner */}
+      {showAIScanner && (
+        <ModelAIScanner
+          isOpen={showAIScanner}
+          onClose={() => setShowAIScanner(false)}
+          onModelDetected={handleAIModelDetected}
+        />
       )}
     </div>
   );

@@ -10,43 +10,88 @@
         "partId": "PART001",
         "partNumber": "DC97-16151A",
         "name": "Łożysko bębna Samsung",
-        "quantity": 3,
+        "quantity": 1,
         "assignedDate": "2025-10-01T10:00:00Z",
         "assignedBy": "LOG001",
         "assignedByName": "Jan Kowalski (Logistyk)",
         "location": "Schowek przedni",
-        "status": "available"
+        "status": "available",
+        "lastRestocked": "2025-10-04T22:21:25.871Z",
+        "restockedBy": "MIGRATION"
       },
       {
         "partId": "PART002",
         "partNumber": "DC96-01414G",
         "name": "Pompa odpływowa Samsung",
-        "quantity": 2,
+        "quantity": 1,
         "assignedDate": "2025-09-30T14:30:00Z",
         "assignedBy": "LOG001",
         "assignedByName": "Jan Kowalski (Logistyk)",
         "location": "Schowek boczny lewy",
-        "status": "available"
+        "status": "available",
+        "lastRestocked": "2025-10-04T22:21:25.867Z",
+        "restockedBy": "MIGRATION"
       },
       {
         "partId": "PART005",
         "partNumber": "DC66-00343A",
         "name": "Amortyzator pralki Samsung",
-        "quantity": 4,
+        "quantity": 1,
         "assignedDate": "2025-09-28T14:30:00Z",
         "assignedBy": "LOG001",
         "assignedByName": "Jan Kowalski (Logistyk)",
         "location": "Schowek boczny prawy",
-        "status": "available"
+        "status": "available",
+        "lastRestocked": "2025-10-04T22:21:25.972Z",
+        "restockedBy": "MIGRATION"
+      },
+      {
+        "partId": "PART003",
+        "partNumber": "6PH1871",
+        "name": "Pasek napędowy HTD",
+        "quantity": 1,
+        "assignedDate": "2025-10-04T22:21:25.862Z",
+        "assignedBy": "MIGRATION",
+        "assignedByName": "Migracja z employees.json",
+        "location": "Schowek główny",
+        "status": "available",
+        "unitPrice": 0,
+        "notes": "Zmigrowana z employees.json"
+      },
+      {
+        "partId": "PART006",
+        "partNumber": "DW-PUMP-001",
+        "name": "Pompa myjąca zmywarki",
+        "quantity": 1,
+        "assignedDate": "2025-10-04T22:21:25.979Z",
+        "assignedBy": "MIGRATION",
+        "assignedByName": "Migracja z employees.json",
+        "location": "Schowek główny",
+        "status": "available",
+        "unitPrice": 0,
+        "notes": "Zmigrowana z employees.json"
+      },
+      {
+        "partId": "PART007",
+        "partNumber": "DW-ARM-BOT",
+        "name": "Ramię spryskujące dolne",
+        "quantity": 1,
+        "assignedDate": "2025-10-04T22:21:25.984Z",
+        "assignedBy": "MIGRATION",
+        "assignedByName": "Migracja z employees.json",
+        "location": "Schowek główny",
+        "status": "available",
+        "unitPrice": 0,
+        "notes": "Zmigrowana z employees.json"
       }
     ],
-    "totalValue": 610.00,
-    "lastUpdated": "2025-10-01T10:00:00Z",
+    "totalValue": 0,
+    "lastUpdated": "2025-10-05T05:40:19.682Z",
     "statistics": {
-      "totalParts": 9,
-      "totalTypes": 3,
+      "totalParts": 6,
+      "totalTypes": 6,
       "usedThisMonth": 5,
-      "valueUsedThisMonth": 425.00
+      "valueUsedThisMonth": 425
     }
   },
   {
@@ -102,13 +147,13 @@
         "status": "available"
       }
     ],
-    "totalValue": 355.00,
+    "totalValue": 355,
     "lastUpdated": "2025-10-02T14:30:00Z",
     "statistics": {
       "totalParts": 6,
       "totalTypes": 4,
       "usedThisMonth": 8,
-      "valueUsedThisMonth": 720.00
+      "valueUsedThisMonth": 720
     }
   },
   {
@@ -152,13 +197,13 @@
         "status": "available"
       }
     ],
-    "totalValue": 735.00,
+    "totalValue": 735,
     "lastUpdated": "2025-10-01T08:00:00Z",
     "statistics": {
       "totalParts": 10,
       "totalTypes": 3,
       "usedThisMonth": 6,
-      "valueUsedThisMonth": 540.00
+      "valueUsedThisMonth": 540
     }
   },
   {
@@ -202,13 +247,13 @@
         "status": "available"
       }
     ],
-    "totalValue": 415.00,
+    "totalValue": 415,
     "lastUpdated": "2025-09-30T14:00:00Z",
     "statistics": {
       "totalParts": 7,
       "totalTypes": 3,
       "usedThisMonth": 4,
-      "valueUsedThisMonth": 360.00
+      "valueUsedThisMonth": 360
     }
   },
   {
@@ -241,14 +286,84 @@
         "status": "available"
       }
     ],
-    "totalValue": 315.00,
+    "totalValue": 315,
     "lastUpdated": "2025-10-02T10:00:00Z",
     "statistics": {
       "totalParts": 5,
       "totalTypes": 2,
       "usedThisMonth": 3,
-      "valueUsedThisMonth": 270.00
+      "valueUsedThisMonth": 270
     },
     "notes": "Anna jako admin też pracuje w terenie i ma swój magazyn osobisty"
+  },
+  {
+    "id": "PI-1759642819683-001",
+    "employeeId": "EMP25092001",
+    "employeeName": "Jan Serwisant",
+    "employeeRole": "SERWISANT",
+    "vehicle": "undefined Sprinter - WA92808",
+    "parts": [
+      {
+        "partId": "PART007",
+        "partNumber": "DW-ARM-BOT",
+        "name": "Ramię spryskujące dolne",
+        "quantity": 1,
+        "assignedDate": "2025-10-04T22:20:22.540Z",
+        "assignedBy": "EMP25189001",
+        "assignedByName": "Transfer z EMP25189001",
+        "location": "Schowek główny",
+        "status": "available",
+        "unitPrice": 0,
+        "notes": "Transferowana od EMP25189001"
+      }
+    ],
+    "totalValue": 0,
+    "lastUpdated": "2025-10-05T05:40:19.683Z",
+    "statistics": {
+      "totalParts": 1,
+      "totalTypes": 1,
+      "usedThisMonth": 0,
+      "valueUsedThisMonth": 0
+    },
+    "migrationInfo": {
+      "migratedAt": "2025-10-05T05:40:19.683Z",
+      "migratedFrom": "employees.json",
+      "originalItemCount": 1
+    }
+  },
+  {
+    "id": "PI-1759642819685-002",
+    "employeeId": "EMP25092002",
+    "employeeName": "Anna Technik",
+    "employeeRole": "SERWISANT",
+    "vehicle": "Brak pojazdu",
+    "parts": [
+      {
+        "partId": "PART001",
+        "partNumber": "DC97-16151A",
+        "name": "Łożysko bębna Samsung",
+        "quantity": 1,
+        "assignedDate": "2025-10-04T22:20:41.843Z",
+        "assignedBy": "EMP25189001",
+        "assignedByName": "Transfer z EMP25189001",
+        "location": "Schowek główny",
+        "status": "available",
+        "unitPrice": 0,
+        "notes": "Transferowana od EMP25189001"
+      }
+    ],
+    "totalValue": 0,
+    "lastUpdated": "2025-10-05T05:40:19.685Z",
+    "statistics": {
+      "totalParts": 1,
+      "totalTypes": 1,
+      "usedThisMonth": 0,
+      "valueUsedThisMonth": 0
+    },
+    "migrationInfo": {
+      "migratedAt": "2025-10-05T05:40:19.685Z",
+      "migratedFrom": "employees.json",
+      "originalItemCount": 1
+    }
   }
 ]

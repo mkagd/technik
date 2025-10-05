@@ -1,0 +1,75 @@
+[
+  {
+    "token": "0531a544-d023-4319-8566-48061ac1291c",
+    "clientId": "CLI2025000002",
+    "email": "anna.nowak@wp.pl",
+    "phone": "146815234",
+    "loginMethod": "email",
+    "createdAt": "2025-10-04T08:20:30.247Z",
+    "lastActivity": "2025-10-04T08:20:30.247Z",
+    "isValid": true,
+    "rememberMe": false,
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36"
+  },
+  {
+    "token": "6256f484-ae65-4a15-851b-033199a327a8",
+    "clientId": "CLI2025000002",
+    "email": "anna.nowak@wp.pl",
+    "phone": "146815234",
+    "loginMethod": "email",
+    "createdAt": "2025-10-04T09:28:52.026Z",
+    "lastActivity": "2025-10-04T09:28:52.026Z",
+    "isValid": true,
+    "rememberMe": false,
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36"
+  },
+  {
+    "token": "3aa89530-5d82-4f4e-b015-1b9700af1791",
+    "clientId": "CLI2025000002",
+    "email": "anna.nowak@wp.pl",
+    "phone": "146815234",
+    "loginMethod": "email",
+    "createdAt": "2025-10-04T09:37:43.632Z",
+    "lastActivity": "2025-10-04T09:37:43.632Z",
+    "isValid": true,
+    "rememberMe": false,
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36"
+  },
+  {
+    "token": "0a687db4-9178-4851-a911-39997a9100a5",
+    "clientId": "CLI2025000002",
+    "email": "anna.nowak@wp.pl",
+    "phone": "146815234",
+    "loginMethod": "email",
+    "createdAt": "2025-10-04T09:58:05.871Z",
+    "lastActivity": "2025-10-04T09:58:05.871Z",
+    "isValid": true,
+    "rememberMe": false,
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36"
+  },
+  {
+    "token": "eadd4638-7acb-4c19-82d9-7977f275efa9",
+    "clientId": "CLI20252025000019",
+    "loginMethod": "email",
+    "createdAt": "2025-10-04T10:11:41.699Z",
+    "lastActivity": "2025-10-04T10:11:41.699Z",
+    "isValid": true
+  },
+  {
+    "token": "5a2648bd-2a94-4c61-b3bb-4298cd75107d",
+    "clientId": "CLI2025000002",
+    "email": "anna.nowak@wp.pl",
+    "phone": "146815234",
+    "loginMethod": "email",
+    "createdAt": "2025-10-04T11:12:45.537Z",
+    "lastActivity": "2025-10-04T11:12:45.537Z",
+    "isValid": true,
+    "rememberMe": false,
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36"
+  }
+]

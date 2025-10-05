@@ -3,6 +3,7 @@
 
 import fs from 'fs';
 import path from 'path';
+import { statusToBackend, getTechnicianId } from '../../../utils/fieldMapping';
 
 const ORDERS_FILE = path.join(process.cwd(), 'data', 'orders.json');
 const SESSIONS_FILE = path.join(process.cwd(), 'data', 'technician-sessions.json');
@@ -101,8 +102,9 @@ const updateVisitStatus = (visitId, newStatus, employeeId, notes = '') => {
       visitFound = true;
       const visit = order.visits[visitIndex];
       
-      // Sprawdź przypisanie
-      if (visit.assignedTo !== employeeId && visit.technicianId !== employeeId) {
+      // Sprawdź przypisanie (uniwersalny getter)
+      const visitTechnicianId = getTechnicianId(visit);
+      if (visitTechnicianId !== employeeId) {
         return { 
           success: false, 
           error: 'NOT_ASSIGNED',
@@ -125,8 +127,8 @@ const updateVisitStatus = (visitId, newStatus, employeeId, notes = '') => {
       
       const now = new Date().toISOString();
       
-      // Aktualizuj status
-      visit.status = newStatus;
+      // Aktualizuj status (normalizuj do angielskiego formatu)
+      visit.status = statusToBackend(newStatus);
       visit.updatedAt = now;
       
       // Dodaj do historii statusów

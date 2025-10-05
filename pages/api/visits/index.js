@@ -133,14 +133,37 @@ function filterVisits(visits, filters) {
     return filtered.filter(v => v.visitId === filters.id);
   }
 
-  // Filter by status
-  if (filters.status) {
+  // Filter by status - ENHANCED for WEEK 3: Multiple selection support
+  if (filters.selectedStatuses) {
+    // NEW: Handle array from multiple selection checkboxes
+    const statusArray = Array.isArray(filters.selectedStatuses) 
+      ? filters.selectedStatuses 
+      : filters.selectedStatuses.split(',').map(s => s.trim());
+    
+    if (statusArray.length > 0) {
+      filtered = filtered.filter(v => statusArray.includes(v.status));
+    }
+  } else if (filters.status) {
+    // LEGACY: Backward compatibility with old single-select filter
     const statuses = filters.status.split(',').map(s => s.trim());
     filtered = filtered.filter(v => statuses.includes(v.status));
   }
 
-  // Filter by technician
-  if (filters.technicianId) {
+  // Filter by technician - ENHANCED for WEEK 3: Multiple selection support
+  if (filters.selectedTechnicianIds) {
+    // NEW: Handle array from multiple selection checkboxes
+    const technicianArray = Array.isArray(filters.selectedTechnicianIds) 
+      ? filters.selectedTechnicianIds 
+      : filters.selectedTechnicianIds.split(',').map(t => t.trim());
+    
+    if (technicianArray.length > 0) {
+      filtered = filtered.filter(v => 
+        technicianArray.includes(v.technicianId) || 
+        technicianArray.includes(v.assignedTo)
+      );
+    }
+  } else if (filters.technicianId) {
+    // LEGACY: Backward compatibility with old single-select filter
     filtered = filtered.filter(v => 
       v.technicianId === filters.technicianId || 
       v.assignedTo === filters.technicianId
@@ -181,6 +204,41 @@ function filterVisits(visits, filters) {
   if (filters.priority) {
     const priorities = filters.priority.split(',').map(p => p.trim());
     filtered = filtered.filter(v => priorities.includes(v.priority || v.orderPriority));
+  }
+
+  // WEEK 3 PHASE 2: Filter by cost range
+  if (filters.costMin !== undefined && filters.costMin !== null) {
+    const minCost = parseFloat(filters.costMin) || 0;
+    filtered = filtered.filter(v => (v.totalCost || 0) >= minCost);
+  }
+
+  if (filters.costMax !== undefined && filters.costMax !== null) {
+    const maxCost = parseFloat(filters.costMax) || 5000;
+    filtered = filtered.filter(v => (v.totalCost || 0) <= maxCost);
+  }
+
+  // WEEK 3 PHASE 3: Filter by withParts (has used parts)
+  if (filters.withParts === 'true') {
+    filtered = filtered.filter(v => {
+      const parts = v.partsUsed || [];
+      return Array.isArray(parts) && parts.length > 0;
+    });
+  }
+
+  // WEEK 3 PHASE 3: Filter by withPhotos (has photos)
+  if (filters.withPhotos === 'true') {
+    filtered = filtered.filter(v => {
+      const photos = v.photos || [];
+      return Array.isArray(photos) && photos.length > 0;
+    });
+  }
+
+  // WEEK 3 PHASE 3: Filter by urgentOnly (only urgent priority)
+  if (filters.urgentOnly === 'true') {
+    filtered = filtered.filter(v => {
+      const priority = v.priority || v.orderPriority;
+      return priority === 'urgent';
+    });
   }
 
   // Search in client name, address, device using Fuse.js (fuzzy search)
@@ -243,6 +301,22 @@ function sortVisits(visits, sortBy, sortOrder) {
 
       case 'cost':
         comparison = (a.totalCost || 0) - (b.totalCost || 0);
+        break;
+
+      case 'waitTime':
+        // Sort by how long the visit has been waiting (createdAt to now)
+        // Older visits = longer wait time = higher priority
+        const createdA = new Date(a.createdAt || a.scheduledDateTime);
+        const createdB = new Date(b.createdAt || b.scheduledDateTime);
+        comparison = createdA - createdB; // Older first when asc
+        break;
+
+      case 'priority':
+        // Sort by priority: urgent > high > normal > low
+        const priorityOrder = { urgent: 4, high: 3, normal: 2, low: 1 };
+        const priorityA = priorityOrder[a.priority || a.orderPriority] || 2;
+        const priorityB = priorityOrder[b.priority || b.orderPriority] || 2;
+        comparison = priorityA - priorityB;
         break;
 
       default:

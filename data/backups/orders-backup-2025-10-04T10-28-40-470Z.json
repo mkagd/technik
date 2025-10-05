@@ -1,0 +1,2396 @@
+[
+  {
+    "id": "ORD2025000050",
+    "clientId": "CLI20252025000019",
+    "clientName": "Marek kowalski",
+    "clientPhone": "987987987",
+    "clientAddress": "Gliniana 17/30, 39-300 Kraków",
+    "serviceAddress": "Gliniana 17/30, 39-300 Kraków",
+    "deviceType": "Lodówka",
+    "brand": "Bosch",
+    "model": "",
+    "serialNumber": "",
+    "issueDescription": "ZCCascascacs",
+    "status": "pending",
+    "priority": "normal",
+    "assignedTo": null,
+    "assignedToName": null,
+    "estimatedCost": null,
+    "finalCost": null,
+    "preferredDate": "2025-10-08",
+    "preferredTime": "14:00-16:00",
+    "notes": "",
+    "photos": [],
+    "createdAt": "2025-10-04T10:12:47.928Z",
+    "updatedAt": "2025-10-04T10:12:47.928Z",
+    "scheduledDate": null,
+    "completedAt": null,
+    "statusHistory": [
+      {
+        "status": "pending",
+        "changedAt": "2025-10-04T10:12:47.928Z",
+        "notes": "Zamówienie utworzone przez klienta"
+      }
+    ]
+  },
+  {
+    "id": "ORD2025000049",
+    "clientId": "CLI20252025000019",
+    "clientName": "Marek kowalski",
+    "clientPhone": "987987987",
+    "clientAddress": "Gliniana 17/30, 39-300 Kraków",
+    "serviceAddress": "Gliniana 17/30, 39-300 Kraków",
+    "deviceType": "Lodówka",
+    "brand": "Samsung",
+    "model": "",
+    "serialNumber": "",
+    "issueDescription": "qweqweqeqw",
+    "status": "pending",
+    "priority": "normal",
+    "assignedTo": null,
+    "assignedToName": null,
+    "estimatedCost": null,
+    "finalCost": null,
+    "preferredDate": "2025-10-17",
+    "preferredTime": "8:00-10:00",
+    "notes": "",
+    "photos": [],
+    "createdAt": "2025-10-04T10:12:03.410Z",
+    "updatedAt": "2025-10-04T10:12:03.410Z",
+    "scheduledDate": null,
+    "completedAt": null,
+    "statusHistory": [
+      {
+        "status": "pending",
+        "changedAt": "2025-10-04T10:12:03.410Z",
+        "notes": "Zamówienie utworzone przez klienta"
+      }
+    ]
+  },
+  {
+    "id": "ORD2025000048",
+    "clientId": "CLI2025000002",
+    "clientName": "Anna Nowak",
+    "clientPhone": "146815234",
+    "clientAddress": "ul. Piłsudskiego 28, 39-200 Dębica",
+    "serviceAddress": "ul. Piłsudskiego 28, 39-200 Dębica",
+    "deviceType": "Lodówka",
+    "brand": "Gorenje",
+    "model": "",
+    "serialNumber": "",
+    "issueDescription": "12r12r121r1",
+    "status": "pending",
+    "priority": "high",
+    "assignedTo": null,
+    "assignedToName": null,
+    "estimatedCost": null,
+    "finalCost": null,
+    "preferredDate": null,
+    "preferredTime": "8:00-10:00",
+    "notes": "",
+    "photos": [],
+    "createdAt": "2025-10-04T09:58:33.265Z",
+    "updatedAt": "2025-10-04T09:58:33.265Z",
+    "scheduledDate": null,
+    "completedAt": null,
+    "statusHistory": [
+      {
+        "status": "pending",
+        "changedAt": "2025-10-04T09:58:33.266Z",
+        "notes": "Zamówienie utworzone przez klienta"
+      }
+    ]
+  },
+  {
+    "id": "ORD2025000047",
+    "clientId": "CLI2025000002",
+    "clientName": "Anna Nowak",
+    "clientPhone": "146815234",
+    "clientAddress": "ul. Piłsudskiego 28, 39-200 Dębica",
+    "deviceType": "Lodówka",
+    "brand": "Candy",
+    "model": "",
+    "serialNumber": "",
+    "issueDescription": "NIE GRZEJE",
+    "status": "pending",
+    "priority": "normal",
+    "assignedTo": null,
+    "assignedToName": null,
+    "estimatedCost": null,
+    "finalCost": null,
+    "preferredDate": null,
+    "preferredTime": null,
+    "notes": "",
+    "photos": [],
+    "createdAt": "2025-10-04T09:29:12.803Z",
+    "updatedAt": "2025-10-04T09:29:12.803Z",
+    "scheduledDate": null,
+    "completedAt": null,
+    "statusHistory": [
+      {
+        "status": "pending",
+        "changedAt": "2025-10-04T09:29:12.803Z",
+        "notes": "Zamówienie utworzone przez klienta"
+      }
+    ]
+  },
+  {
+    "id": "ORD2025000046",
+    "clientId": "CLI2025000002",
+    "clientName": "Anna Nowak",
+    "clientPhone": "146815234",
+    "clientAddress": "ul. Piłsudskiego 28, 39-200 Dębica",
+    "deviceType": "Pralka",
+    "brand": "Samsung",
+    "model": "",
+    "serialNumber": "",
+    "issueDescription": "ascsasacsass",
+    "status": "zaplanowane",
+    "priority": "normal",
+    "assignedTo": null,
+    "assignedToName": null,
+    "estimatedCost": null,
+    "finalCost": null,
+    "preferredDate": null,
+    "preferredTime": null,
+    "notes": "",
+    "photos": [],
+    "createdAt": "2025-10-04T09:31:30.463Z",
+    "updatedAt": "2025-10-04T10:08:26.433Z",
+    "scheduledDate": null,
+    "completedAt": null,
+    "statusHistory": [
+      {
+        "status": "pending",
+        "changedAt": "2025-10-04T09:31:30.463Z",
+        "notes": "Zamówienie utworzone przez klienta"
+      }
+    ],
+    "visits": [
+      {
+        "visitId": "VIS25280001",
+        "visitNumber": 1,
+        "type": "diagnosis",
+        "status": "scheduled",
+        "scheduledDate": "2025-10-07",
+        "scheduledTime": "09:00",
+        "date": "2025-10-07",
+        "time": "09:00",
+        "assignedTo": "EMP25189001",
+        "technicianId": "EMP25189001",
+        "technicianName": "Jan Kowalski",
+        "notes": [
+          {
+            "id": "NOTE-1759571326323-p54c6wz2o",
+            "type": "diagnosis",
+            "content": "mam problem z tym pomooocy",
+            "category": null,
+            "priority": "high",
+            "isPrivate": false,
+            "tags": [
+              "pilne"
+            ],
+            "createdBy": "EMP25189001",
+            "createdByName": "jan.kowalski@techserwis.pl",
+            "createdAt": "2025-10-04T09:48:46.323Z",
+            "relatedTo": null,
+            "isPinned": false,
+            "isResolved": false
+          },
+          {
+            "id": "NOTE-1759572506433-q8n5bk7mo",
+            "type": "general",
+            "content": "zc",
+            "category": null,
+            "priority": "normal",
+            "isPrivate": false,
+            "tags": [
+              "gwarancja"
+            ],
+            "createdBy": "EMP25189001",
+            "createdByName": "jan.kowalski@techserwis.pl",
+            "createdAt": "2025-10-04T10:08:26.433Z",
+            "relatedTo": null,
+            "isPinned": false,
+            "isResolved": false
+          }
+        ],
+        "createdAt": "2025-10-04T09:45:55.693Z",
+        "createdBy": "admin",
+        "updatedAt": "2025-10-04T10:08:26.433Z",
+        "statusHistory": [
+          {
+            "from": "scheduled",
+            "to": "rescheduled",
+            "changedBy": "EMP25189001",
+            "changedAt": "2025-10-04T09:47:00.318Z",
+            "notes": ""
+          },
+          {
+            "from": "rescheduled",
+            "to": "scheduled",
+            "changedBy": "EMP25189001",
+            "changedAt": "2025-10-04T09:47:12.443Z",
+            "notes": ""
+          }
+        ],
+        "rescheduledAt": "2025-10-04T09:47:00.318Z",
+        "rescheduledBy": "EMP25189001",
+        "rescheduledReason": "",
+        "partPhotos": [
+          {
+            "id": "PHOTO-1759571276576-jl01g8ann",
+            "type": "part",
+            "url": "/uploads/visits/visit-1759571276557-cwgsq4ccz.jpg",
+            "filename": "visit-1759571276557-cwgsq4ccz.jpg",
+            "originalName": "IMG_20250410_152309.jpg",
+            "mimeType": "image/jpeg",
+            "size": 3474644,
+            "caption": "",
+            "description": "",
+            "tags": [],
+            "location": null,
+            "uploadedBy": "EMP25189001",
+            "uploadedAt": "2025-10-04T09:47:56.576Z",
+            "relatedTo": null,
+            "isPrivate": false
+          }
+        ],
+        "allPhotos": [
+          {
+            "id": "PHOTO-1759571276576-jl01g8ann",
+            "type": "part",
+            "url": "/uploads/visits/visit-1759571276557-cwgsq4ccz.jpg",
+            "filename": "visit-1759571276557-cwgsq4ccz.jpg",
+            "originalName": "IMG_20250410_152309.jpg",
+            "mimeType": "image/jpeg",
+            "size": 3474644,
+            "caption": "",
+            "description": "",
+            "tags": [],
+            "location": null,
+            "uploadedBy": "EMP25189001",
+            "uploadedAt": "2025-10-04T09:47:56.576Z",
+            "relatedTo": null,
+            "isPrivate": false
+          }
+        ],
+        "photoCount": 1,
+        "technicianNotes": "\n[2025-10-04T09:48:46.323Z] 🔍 DIAGNOZA: mam problem z tym pomooocy\n[2025-10-04T10:08:26.433Z] zc",
+        "diagnosis": "mam problem z tym pomooocy",
+        "diagnosisDate": "2025-10-04T09:48:46.323Z",
+        "diagnosedBy": "EMP25189001",
+        "models": [
+          {
+            "id": 1759572426402,
+            "brand": "Amica",
+            "model": "61118E3.475eHTaKDp.Xx\n230/400V",
+            "name": "Amica 61118E3.475eHTaKDp.Xx\n230/400V",
+            "type": "Płyta indukcyjna",
+            "serialNumber": "00175708335521",
+            "notes": "Rozpoznane ze zdjęcia tabliczki. ELECTRIC COOKER / KUCHNIA ELEKTRYCZNA\nMODEL: 61118ED3.475hTaKDp(Xx)\nTYPE / TYP: 61118E3.475eHTaKDp.Xx\n230/400V~ 50Hz\n11,0kW\nInduction hob / Płyta indukcyjna\n\nCE\n\nProduct code / Kod wyrobu: 57083\nSerial No. / Nr seryjny 00175708335521",
+            "dateAdded": "2025-10-04T10:07:06.402Z",
+            "source": "scanner",
+            "parts": []
+          }
+        ],
+        "lastUpdatedBy": "EMP25189001"
+      }
+    ]
+  },
+  {
+    "id": "ORD2025000045",
+    "clientId": "CLI2025000002",
+    "clientName": "Anna Nowak",
+    "clientPhone": "146815234",
+    "clientAddress": "ul. Piłsudskiego 28, 39-200 Dębica",
+    "serviceAddress": "ul. Piłsudskiego 28, 39-200 Dębica",
+    "deviceType": "Lodówka",
+    "brand": "Sharp",
+    "model": "",
+    "serialNumber": "",
+    "issueDescription": "nei dziala lodoówa",
+    "status": "pending",
+    "priority": "normal",
+    "assignedTo": null,
+    "assignedToName": null,
+    "estimatedCost": null,
+    "finalCost": null,
+    "preferredDate": "2025-10-04",
+    "preferredTime": "12:00-14:00",
+    "notes": "",
+    "photos": [],
+    "createdAt": "2025-10-04T09:51:40.736Z",
+    "updatedAt": "2025-10-04T09:51:40.736Z",
+    "scheduledDate": null,
+    "completedAt": null,
+    "statusHistory": [
+      {
+        "status": "pending",
+        "changedAt": "2025-10-04T09:51:40.736Z",
+        "notes": "Zamówienie utworzone przez klienta"
+      }
+    ]
+  },
+  {
+    "id": "ORD2025000044",
+    "clientId": "CLI2025000018",
+    "clientName": "Barbara Król",
+    "clientPhone": "171240056",
+    "clientEmail": "barbara.krol@interia.pl",
+    "clientAddress": {
+      "street": "ul. Armii Krajowej",
+      "buildingNumber": "12",
+      "apartmentNumber": "8",
+      "city": "Mielec",
+      "postalCode": "39-300",
+      "voivodeship": "Podkarpackie",
+      "country": "Polska"
+    },
+    "deviceType": "Lodówka",
+    "brand": "Electrolux",
+    "model": "Electrolux 5070",
+    "serialNumber": "SN562941",
+    "issueDescription": "Nie działa oświetlenie",
+    "detailedDescription": "Nie działa oświetlenie. Klient zgłasza problem z urządzeniem Lodówka Electrolux.",
+    "status": "completed",
+    "priority": "normal",
+    "assignedTo": "EMP25092001",
+    "assignedToName": "Jan Serwisant",
+    "createdAt": "2025-09-17T07:52:16.922Z",
+    "updatedAt": "2025-09-17T07:52:16.922Z",
+    "scheduledDate": null,
+    "completedAt": "2025-10-02T07:52:16.922Z",
+    "estimatedCost": 124,
+    "finalCost": 366,
+    "warranty": false,
+    "source": "email",
+    "notes": "Zlecenie z Mielec",
+    "statusHistory": [
+      {
+        "status": "pending",
+        "timestamp": "2025-09-17T07:52:16.922Z",
+        "note": "Zlecenie utworzone"
+      },
+      {
+        "status": "in-progress",
+        "timestamp": "2025-10-03T07:52:16.923Z",
+        "note": "Przydzielono do Jan Serwisant",
+        "changedBy": "EMP25092001"
+      },
+      {
+        "status": "completed",
+        "timestamp": "2025-10-02T07:52:16.922Z",
+        "note": "Naprawa zakończona",
+        "changedBy": "EMP25092001"
+      }
+    ]
+  },
+  {
+    "id": "ORD2025000043",
+    "clientId": "CLI2025000018",
+    "clientName": "Barbara Król",
+    "clientPhone": "171240056",
+    "clientEmail": "barbara.krol@interia.pl",
+    "clientAddress": {
+      "street": "ul. Armii Krajowej",
+      "buildingNumber": "12",
+      "apartmentNumber": "8",
+      "city": "Mielec",
+      "postalCode": "39-300",
+      "voivodeship": "Podkarpackie",
+      "country": "Polska"
+    },
+    "deviceType": "Płyta indukcyjna",
+    "brand": "Samsung",
+    "model": "Samsung 5572",
+    "serialNumber": "SN776289",
+    "issueDescription": "Błąd E0",
+    "detailedDescription": "Błąd E0. Klient zgłasza problem z urządzeniem Płyta indukcyjna Samsung.",
+    "status": "pending",
+    "priority": "normal",
+    "assignedTo": null,
+    "assignedToName": null,
+    "createdAt": "2025-09-13T07:52:16.922Z",
+    "updatedAt": "2025-09-13T07:52:16.922Z",
+    "scheduledDate": null,
+    "completedAt": null,
+    "estimatedCost": 301,
+    "finalCost": null,
+    "warranty": false,
+    "source": "phone",
+    "notes": "Zlecenie z Mielec",
+    "statusHistory": [
+      {
+        "status": "pending",
+        "timestamp": "2025-09-13T07:52:16.922Z",
+        "note": "Zlecenie utworzone"
+      }
+    ]
+  },
+  {
+    "id": "ORD2025000042",
+    "clientId": "CLI2025000017",
+    "clientName": "Centrum Medyczne MEDYK",
+    "clientPhone": "171239945",
+    "clientEmail": "rejestracja@medyk-mielec.pl",
+    "clientAddress": {
+      "street": "ul. Kościuszki",
+      "buildingNumber": "88",
+      "apartmentNumber": "",
+      "city": "Mielec",
+      "postalCode": "39-300",
+      "voivodeship": "Podkarpackie",
+      "country": "Polska"
+    },
+    "deviceType": "Piekarnik",
+    "brand": "Siemens",
+    "model": "Siemens 6911",
+    "serialNumber": "SN620249",
+    "issueDescription": "Nie włącza się",
+    "detailedDescription": "Nie włącza się. Klient zgłasza problem z urządzeniem Piekarnik Siemens.",
+    "status": "scheduled",
+    "priority": "normal",
+    "assignedTo": "EMP25189002",
+    "assignedToName": "Anna Nowak",
+    "createdAt": "2025-09-11T07:52:16.922Z",
+    "updatedAt": "2025-09-11T07:52:16.922Z",
+    "scheduledDate": "2025-10-03T07:52:16.922Z",
+    "completedAt": null,
+    "estimatedCost": 159,
+    "finalCost": null,
+    "warranty": false,
+    "source": "email",
+    "notes": "Zlecenie z Mielec",
+    "statusHistory": [
+      {
+        "status": "pending",
+        "timestamp": "2025-09-11T07:52:16.922Z",
+        "note": "Zlecenie utworzone"
+      },
+      {
+        "status": "in-progress",
+        "timestamp": "2025-09-16T07:52:16.922Z",
+        "note": "Przydzielono do Anna Nowak",
+        "changedBy": "EMP25189002"
+      }
+    ]
+  },
+  {
+    "id": "ORD2025000041",
+    "clientId": "CLI2025000017",
+    "clientName": "Centrum Medyczne MEDYK",
+    "clientPhone": "171239945",
+    "clientEmail": "rejestracja@medyk-mielec.pl",
+    "clientAddress": {
+      "street": "ul. Kościuszki",
+      "buildingNumber": "88",
+      "apartmentNumber": "",
+      "city": "Mielec",
+      "postalCode": "39-300",
+      "voivodeship": "Podkarpackie",
+      "country": "Polska"
+    },
+    "deviceType": "Płyta indukcyjna",
+    "brand": "Electrolux",
+    "model": "Electrolux 8155",
+    "serialNumber": "SN935352",
+    "issueDescription": "Błąd E0",
+    "detailedDescription": "Błąd E0. Klient zgłasza problem z urządzeniem Płyta indukcyjna Electrolux.",
+    "status": "cancelled",
+    "priority": "normal",
+    "assignedTo": "EMP25092003",
+    "assignedToName": "Piotr Chłodnictwo",
+    "createdAt": "2025-09-23T07:52:16.921Z",
+    "updatedAt": "2025-09-23T07:52:16.921Z",
+    "scheduledDate": null,
+    "completedAt": null,
+    "estimatedCost": 144,
+    "finalCost": null,
+    "warranty": false,
+    "source": "email",
+    "notes": "Zlecenie z Mielec",
+    "statusHistory": [
+      {
+        "status": "pending",
+        "timestamp": "2025-09-23T07:52:16.921Z",
+        "note": "Zlecenie utworzone"
+      },
+      {
+        "status": "in-progress",
+        "timestamp": "2025-09-18T07:52:16.921Z",
+        "note": "Przydzielono do Piotr Chłodnictwo",
+        "changedBy": "EMP25092003"
+      }
+    ]
+  },
+  {
+    "id": "ORD2025000040",
+    "clientId": "CLI2025000017",
+    "clientName": "Centrum Medyczne MEDYK",
+    "clientPhone": "171239945",
+    "clientEmail": "rejestracja@medyk-mielec.pl",
+    "clientAddress": {
+      "street": "ul. Kościuszki",
+      "buildingNumber": "88",
+      "apartmentNumber": "",
+      "city": "Mielec",
+      "postalCode": "39-300",
+      "voivodeship": "Podkarpackie",
+      "country": "Polska"
+    },
+    "deviceType": "Kuchenka",
+    "brand": "Amica",
+    "model": "Amica 4178",
+    "serialNumber": "SN916195",
+    "issueDescription": "Uszkodzona płyta",
+    "detailedDescription": "Uszkodzona płyta. Klient zgłasza problem z urządzeniem Kuchenka Amica.",
+    "status": "pending",
+    "priority": "normal",
+    "assignedTo": null,
+    "assignedToName": null,
+    "createdAt": "2025-10-02T07:52:16.921Z",
+    "updatedAt": "2025-10-02T07:52:16.921Z",
+    "scheduledDate": null,
+    "completedAt": null,
+    "estimatedCost": 349,
+    "finalCost": null,
+    "warranty": false,
+    "source": "walk-in",
+    "notes": "Zlecenie z Mielec",
+    "statusHistory": [
+      {
+        "status": "pending",
+        "timestamp": "2025-10-02T07:52:16.921Z",
+        "note": "Zlecenie utworzone"
+      }
+    ]
+  },
+  {
+    "id": "ORD2025000039",
+    "clientId": "CLI2025000016",
+    "clientName": "Robert Pawlak",
+    "clientPhone": "171238834",
+    "clientEmail": "robert.pawlak@gmail.com",
+    "clientAddress": {
+      "street": "ul. Rejtana",
+      "buildingNumber": "30",
+      "apartmentNumber": "",
+      "city": "Mielec",
+      "postalCode": "39-300",
+      "voivodeship": "Podkarpackie",
+      "country": "Polska"
+    },
+    "deviceType": "Kuchenka",
+    "brand": "Amica",
+    "model": "Amica 1961",
+    "serialNumber": "SN510888",
+    "issueDescription": "Nie zapala się palnik",
+    "detailedDescription": "Nie zapala się palnik. Klient zgłasza problem z urządzeniem Kuchenka Amica.",
+    "status": "pending",
+    "priority": "normal",
+    "assignedTo": null,
+    "assignedToName": null,
+    "createdAt": "2025-09-08T07:52:16.919Z",
+    "updatedAt": "2025-09-08T07:52:16.919Z",
+    "scheduledDate": null,
+    "completedAt": null,
+    "estimatedCost": 313,
+    "finalCost": null,
+    "warranty": false,
+    "source": "website",
+    "notes": "Zlecenie z Mielec",
+    "statusHistory": [
+      {
+        "status": "pending",
+        "timestamp": "2025-09-08T07:52:16.919Z",
+        "note": "Zlecenie utworzone"
+      }
+    ]
+  },
+  {
+    "id": "ORD2025000038",
+    "clientId": "CLI2025000016",
+    "clientName": "Robert Pawlak",
+    "clientPhone": "171238834",
+    "clientEmail": "robert.pawlak@gmail.com",
+    "clientAddress": {
+      "street": "ul. Rejtana",
+      "buildingNumber": "30",
+      "apartmentNumber": "",
+      "city": "Mielec",
+      "postalCode": "39-300",
+      "voivodeship": "Podkarpackie",
+      "country": "Polska"
+    },
+    "deviceType": "Suszarka",
+    "brand": "LG",
+    "model": "LG 6234",
+    "serialNumber": "SN252440",
+    "issueDescription": "Nie grzeje",
+    "detailedDescription": "Nie grzeje. Klient zgłasza problem z urządzeniem Suszarka LG.",
+    "status": "cancelled",
+    "priority": "normal",
+    "assignedTo": "EMP25092003",
+    "assignedToName": "Piotr Chłodnictwo",
+    "createdAt": "2025-09-14T07:52:16.919Z",
+    "updatedAt": "2025-09-14T07:52:16.919Z",
+    "scheduledDate": null,
+    "completedAt": null,
+    "estimatedCost": 265,
+    "finalCost": null,
+    "warranty": false,
+    "source": "phone",
+    "notes": "Zlecenie z Mielec",
+    "statusHistory": [
+      {
+        "status": "pending",
+        "timestamp": "2025-09-14T07:52:16.919Z",
+        "note": "Zlecenie utworzone"
+      },
+      {
+        "status": "in-progress",
+        "timestamp": "2025-09-22T07:52:16.919Z",
+        "note": "Przydzielono do Piotr Chłodnictwo",
+        "changedBy": "EMP25092003"
+      }
+    ]
+  },
+  {
+    "id": "ORD2025000037",
+    "clientId": "CLI2025000015",
+    "clientName": "Hotel PLAZA Mielec",
+    "clientPhone": "171237723",
+    "clientEmail": "recepcja@hotelplaza.pl",
+    "clientAddress": {
+      "street": "ul. Legionów",
+      "buildingNumber": "55",
+      "apartmentNumber": "",
+      "city": "Mielec",
+      "postalCode": "39-300",
+      "voivodeship": "Podkarpackie",
+      "country": "Polska"
+    },
+    "deviceType": "Mikrofalówka",
+    "brand": "Sharp",
+    "model": "Sharp 3330",
+    "serialNumber": "SN679821",
+    "issueDescription": "Nie włącza się",
+    "detailedDescription": "Nie włącza się. Klient zgłasza problem z urządzeniem Mikrofalówka Sharp.",
+    "status": "cancelled",
+    "priority": "normal",
+    "assignedTo": "EMP25092004",
+    "assignedToName": "Tomasz Elektryk",
+    "createdAt": "2025-09-12T07:52:16.918Z",
+    "updatedAt": "2025-09-12T07:52:16.918Z",
+    "scheduledDate": null,
+    "completedAt": null,
+    "estimatedCost": 344,
+    "finalCost": null,
+    "warranty": false,
+    "source": "website",
+    "notes": "Zlecenie z Mielec",
+    "statusHistory": [
+      {
+        "status": "pending",
+        "timestamp": "2025-09-12T07:52:16.918Z",
+        "note": "Zlecenie utworzone"
+      },
+      {
+        "status": "in-progress",
+        "timestamp": "2025-09-21T07:52:16.918Z",
+        "note": "Przydzielono do Tomasz Elektryk",
+        "changedBy": "EMP25092004"
+      }
+    ]
+  },
+  {
+    "id": "ORD2025000036",
+    "clientId": "CLI2025000015",
+    "clientName": "Hotel PLAZA Mielec",
+    "clientPhone": "171237723",
+    "clientEmail": "recepcja@hotelplaza.pl",
+    "clientAddress": {
+      "street": "ul. Legionów",
+      "buildingNumber": "55",
+      "apartmentNumber": "",
+      "city": "Mielec",
+      "postalCode": "39-300",
+      "voivodeship": "Podkarpackie",
+      "country": "Polska"
+    },
+    "deviceType": "Mikrofalówka",
+    "brand": "LG",
+    "model": "LG 6572",
+    "serialNumber": "SN894814",
+    "issueDescription": "Uszkodzone drzwi",
+    "detailedDescription": "Uszkodzone drzwi. Klient zgłasza problem z urządzeniem Mikrofalówka LG.",
+    "status": "cancelled",
+    "priority": "normal",
+    "assignedTo": "EMP25092005",
+    "assignedToName": "Marek Pralkowski",
+    "createdAt": "2025-09-23T07:52:16.918Z",
+    "updatedAt": "2025-09-23T07:52:16.918Z",
+    "scheduledDate": null,
+    "completedAt": null,
+    "estimatedCost": 112,
+    "finalCost": null,
+    "warranty": false,
+    "source": "walk-in",
+    "notes": "Zlecenie z Mielec",
+    "statusHistory": [
+      {
+        "status": "pending",
+        "timestamp": "2025-09-23T07:52:16.918Z",
+        "note": "Zlecenie utworzone"
+      },
+      {
+        "status": "in-progress",
+        "timestamp": "2025-10-01T07:52:16.918Z",
+        "note": "Przydzielono do Marek Pralkowski",
+        "changedBy": "EMP25092005"
+      }
+    ]
+  },
+  {
+    "id": "ORD2025000035",
+    "clientId": "CLI2025000015",
+    "clientName": "Hotel PLAZA Mielec",
+    "clientPhone": "171237723",
+    "clientEmail": "recepcja@hotelplaza.pl",
+    "clientAddress": {
+      "street": "ul. Legionów",
+      "buildingNumber": "55",
+      "apartmentNumber": "",
+      "city": "Mielec",
+      "postalCode": "39-300",
+      "voivodeship": "Podkarpackie",
+      "country": "Polska"
+    },
+    "deviceType": "Ekspres do kawy",
+    "brand": "Siemens",
+    "model": "Siemens 2428",
+    "serialNumber": "SN602853",
+    "issueDescription": "Błąd odkamieniania",
+    "detailedDescription": "Błąd odkamieniania. Klient zgłasza problem z urządzeniem Ekspres do kawy Siemens.",
+    "status": "completed",
+    "priority": "normal",
+    "assignedTo": "EMP25092002",
+    "assignedToName": "Anna Technik",
+    "createdAt": "2025-09-13T07:52:16.917Z",
+    "updatedAt": "2025-09-13T07:52:16.917Z",
+    "scheduledDate": null,
+    "completedAt": "2025-09-30T07:52:16.917Z",
+    "estimatedCost": 226,
+    "finalCost": 441,
+    "warranty": true,
+    "source": "phone",
+    "notes": "Zlecenie z Mielec",
+    "statusHistory": [
+      {
+        "status": "pending",
+        "timestamp": "2025-09-13T07:52:16.917Z",
+        "note": "Zlecenie utworzone"
+      },
+      {
+        "status": "in-progress",
+        "timestamp": "2025-09-27T07:52:16.917Z",
+        "note": "Przydzielono do Anna Technik",
+        "changedBy": "EMP25092002"
+      },
+      {
+        "status": "completed",
+        "timestamp": "2025-09-30T07:52:16.917Z",
+        "note": "Naprawa zakończona",
+        "changedBy": "EMP25092002"
+      }
+    ]
+  },
+  {
+    "id": "ORD2025000034",
+    "clientId": "CLI2025000014",
+    "clientName": "Ewa Grabowska",
+    "clientPhone": "171236612",
+    "clientEmail": "ewa.grabowska@onet.pl",
+    "clientAddress": {
+      "street": "ul. Obrońców Pokoju",
+      "buildingNumber": "15",
+      "apartmentNumber": "4",
+      "city": "Mielec",
+      "postalCode": "39-300",
+      "voivodeship": "Podkarpackie",
+      "country": "Polska"
+    },
+    "deviceType": "Suszarka",
+    "brand": "Beko",
+    "model": "Beko 5326",
+    "serialNumber": "SN787846",
+    "issueDescription": "Hałasuje",
+    "detailedDescription": "Hałasuje. Klient zgłasza problem z urządzeniem Suszarka Beko.",
+    "status": "pending",
+    "priority": "normal",
+    "assignedTo": null,
+    "assignedToName": null,
+    "createdAt": "2025-09-16T07:52:16.917Z",
+    "updatedAt": "2025-09-16T07:52:16.917Z",
+    "scheduledDate": null,
+    "completedAt": null,
+    "estimatedCost": 295,
+    "finalCost": null,
+    "warranty": false,
+    "source": "phone",
+    "notes": "Zlecenie z Mielec",
+    "statusHistory": [
+      {
+        "status": "pending",
+        "timestamp": "2025-09-16T07:52:16.917Z",
+        "note": "Zlecenie utworzone"
+      }
+    ]
+  },
+  {
+    "id": "ORD2025000033",
+    "clientId": "CLI2025000014",
+    "clientName": "Ewa Grabowska",
+    "clientPhone": "171236612",
+    "clientEmail": "ewa.grabowska@onet.pl",
+    "clientAddress": {
+      "street": "ul. Obrońców Pokoju",
+      "buildingNumber": "15",
+      "apartmentNumber": "4",
+      "city": "Mielec",
+      "postalCode": "39-300",
+      "voivodeship": "Podkarpackie",
+      "country": "Polska"
+    },
+    "deviceType": "Suszarka",
+    "brand": "Samsung",
+    "model": "Samsung 4178",
+    "serialNumber": "SN727045",
+    "issueDescription": "Błąd F01",
+    "detailedDescription": "Błąd F01. Klient zgłasza problem z urządzeniem Suszarka Samsung.",
+    "status": "in-progress",
+    "priority": "normal",
+    "assignedTo": "EMP25092001",
+    "assignedToName": "Jan Serwisant",
+    "createdAt": "2025-09-14T07:52:16.916Z",
+    "updatedAt": "2025-09-14T07:52:16.916Z",
+    "scheduledDate": null,
+    "completedAt": null,
+    "estimatedCost": 203,
+    "finalCost": null,
+    "warranty": true,
+    "source": "website",
+    "notes": "Zlecenie z Mielec",
+    "statusHistory": [
+      {
+        "status": "pending",
+        "timestamp": "2025-09-14T07:52:16.916Z",
+        "note": "Zlecenie utworzone"
+      },
+      {
+        "status": "in-progress",
+        "timestamp": "2025-10-04T07:52:16.916Z",
+        "note": "Przydzielono do Jan Serwisant",
+        "changedBy": "EMP25092001"
+      }
+    ]
+  },
+  {
+    "id": "ORD2025000032",
+    "clientId": "CLI2025000013",
+    "clientName": "Michał Piotrowski",
+    "clientPhone": "171235601",
+    "clientEmail": "michal.piotrowski@wp.pl",
+    "clientAddress": {
+      "street": "ul. Sienkiewicza",
+      "buildingNumber": "40",
+      "apartmentNumber": "",
+      "city": "Mielec",
+      "postalCode": "39-300",
+      "voivodeship": "Podkarpackie",
+      "country": "Polska"
+    },
+    "deviceType": "Zmywarka",
+    "brand": "Whirlpool",
+    "model": "Whirlpool 6902",
+    "serialNumber": "SN497501",
+    "issueDescription": "Nie kończy cyklu",
+    "detailedDescription": "Nie kończy cyklu. Klient zgłasza problem z urządzeniem Zmywarka Whirlpool.",
+    "status": "in-progress",
+    "priority": "normal",
+    "assignedTo": "EMP25092001",
+    "assignedToName": "Jan Serwisant",
+    "createdAt": "2025-09-08T07:52:16.916Z",
+    "updatedAt": "2025-09-08T07:52:16.916Z",
+    "scheduledDate": null,
+    "completedAt": null,
+    "estimatedCost": 194,
+    "finalCost": null,
+    "warranty": false,
+    "source": "email",
+    "notes": "Zlecenie z Mielec",
+    "statusHistory": [
+      {
+        "status": "pending",
+        "timestamp": "2025-09-08T07:52:16.916Z",
+        "note": "Zlecenie utworzone"
+      },
+      {
+        "status": "in-progress",
+        "timestamp": "2025-09-15T07:52:16.916Z",
+        "note": "Przydzielono do Jan Serwisant",
+        "changedBy": "EMP25092001"
+      }
+    ]
+  },
+  {
+    "id": "ORD2025000031",
+    "clientId": "CLI2025000013",
+    "clientName": "Michał Piotrowski",
+    "clientPhone": "171235601",
+    "clientEmail": "michal.piotrowski@wp.pl",
+    "clientAddress": {
+      "street": "ul. Sienkiewicza",
+      "buildingNumber": "40",
+      "apartmentNumber": "",
+      "city": "Mielec",
+      "postalCode": "39-300",
+      "voivodeship": "Podkarpackie",
+      "country": "Polska"
+    },
+    "deviceType": "Piekarnik",
+    "brand": "Bosch",
+    "model": "Bosch 1843",
+    "serialNumber": "SN807677",
+    "issueDescription": "Błąd wyświetlacza",
+    "detailedDescription": "Błąd wyświetlacza. Klient zgłasza problem z urządzeniem Piekarnik Bosch.",
+    "status": "pending",
+    "priority": "normal",
+    "assignedTo": null,
+    "assignedToName": null,
+    "createdAt": "2025-09-27T07:52:16.915Z",
+    "updatedAt": "2025-09-27T07:52:16.915Z",
+    "scheduledDate": null,
+    "completedAt": null,
+    "estimatedCost": 393,
+    "finalCost": null,
+    "warranty": false,
+    "source": "phone",
+    "notes": "Zlecenie z Mielec",
+    "statusHistory": [
+      {
+        "status": "pending",
+        "timestamp": "2025-09-27T07:52:16.915Z",
+        "note": "Zlecenie utworzone"
+      }
+    ]
+  },
+  {
+    "id": "ORD2025000030",
+    "clientId": "CLI2025000013",
+    "clientName": "Michał Piotrowski",
+    "clientPhone": "171235601",
+    "clientEmail": "michal.piotrowski@wp.pl",
+    "clientAddress": {
+      "street": "ul. Sienkiewicza",
+      "buildingNumber": "40",
+      "apartmentNumber": "",
+      "city": "Mielec",
+      "postalCode": "39-300",
+      "voivodeship": "Podkarpackie",
+      "country": "Polska"
+    },
+    "deviceType": "Mikrofalówka",
+    "brand": "Sharp",
+    "model": "Sharp 7916",
+    "serialNumber": "SN984731",
+    "issueDescription": "Nie włącza się",
+    "detailedDescription": "Nie włącza się. Klient zgłasza problem z urządzeniem Mikrofalówka Sharp.",
+    "status": "pending",
+    "priority": "normal",
+    "assignedTo": null,
+    "assignedToName": null,
+    "createdAt": "2025-09-14T07:52:16.914Z",
+    "updatedAt": "2025-09-14T07:52:16.914Z",
+    "scheduledDate": null,
+    "completedAt": null,
+    "estimatedCost": 227,
+    "finalCost": null,
+    "warranty": false,
+    "source": "phone",
+    "notes": "Zlecenie z Mielec",
+    "statusHistory": [
+      {
+        "status": "pending",
+        "timestamp": "2025-09-14T07:52:16.914Z",
+        "note": "Zlecenie utworzone"
+      }
+    ]
+  },
+  {
+    "id": "ORD2025000029",
+    "clientId": "CLI2025000012",
+    "clientName": "Joanna Krawczyk",
+    "clientPhone": "171234590",
+    "clientEmail": "joanna.krawczyk@gmail.com",
+    "clientAddress": {
+      "street": "ul. Żeromskiego",
+      "buildingNumber": "25",
+      "apartmentNumber": "10",
+      "city": "Mielec",
+      "postalCode": "39-300",
+      "voivodeship": "Podkarpackie",
+      "country": "Polska"
+    },
+    "deviceType": "Zamrażarka",
+    "brand": "LG",
+    "model": "LG 6394",
+    "serialNumber": "SN275794",
+    "issueDescription": "Hałasuje",
+    "detailedDescription": "Hałasuje. Klient zgłasza problem z urządzeniem Zamrażarka LG.",
+    "status": "completed",
+    "priority": "normal",
+    "assignedTo": "EMP25092001",
+    "assignedToName": "Jan Serwisant",
+    "createdAt": "2025-09-21T07:52:16.914Z",
+    "updatedAt": "2025-09-21T07:52:16.914Z",
+    "scheduledDate": null,
+    "completedAt": "2025-10-01T07:52:16.914Z",
+    "estimatedCost": 290,
+    "finalCost": 369,
+    "warranty": false,
+    "source": "walk-in",
+    "notes": "Zlecenie z Mielec",
+    "statusHistory": [
+      {
+        "status": "pending",
+        "timestamp": "2025-09-21T07:52:16.914Z",
+        "note": "Zlecenie utworzone"
+      },
+      {
+        "status": "in-progress",
+        "timestamp": "2025-10-03T07:52:16.914Z",
+        "note": "Przydzielono do Jan Serwisant",
+        "changedBy": "EMP25092001"
+      },
+      {
+        "status": "completed",
+        "timestamp": "2025-10-01T07:52:16.914Z",
+        "note": "Naprawa zakończona",
+        "changedBy": "EMP25092001"
+      }
+    ]
+  },
+  {
+    "id": "ORD2025000028",
+    "clientId": "CLI2025000012",
+    "clientName": "Joanna Krawczyk",
+    "clientPhone": "171234590",
+    "clientEmail": "joanna.krawczyk@gmail.com",
+    "clientAddress": {
+      "street": "ul. Żeromskiego",
+      "buildingNumber": "25",
+      "apartmentNumber": "10",
+      "city": "Mielec",
+      "postalCode": "39-300",
+      "voivodeship": "Podkarpackie",
+      "country": "Polska"
+    },
+    "deviceType": "Mikrofalówka",
+    "brand": "Samsung",
+    "model": "Samsung 8406",
+    "serialNumber": "SN730005",
+    "issueDescription": "Nie włącza się",
+    "detailedDescription": "Nie włącza się. Klient zgłasza problem z urządzeniem Mikrofalówka Samsung.",
+    "status": "in-progress",
+    "priority": "normal",
+    "assignedTo": "EMP25092003",
+    "assignedToName": "Piotr Chłodnictwo",
+    "createdAt": "2025-09-29T07:52:16.913Z",
+    "updatedAt": "2025-09-29T07:52:16.913Z",
+    "scheduledDate": null,
+    "completedAt": null,
+    "estimatedCost": 175,
+    "finalCost": null,
+    "warranty": true,
+    "source": "website",
+    "notes": "Zlecenie z Mielec",
+    "statusHistory": [
+      {
+        "status": "pending",
+        "timestamp": "2025-09-29T07:52:16.913Z",
+        "note": "Zlecenie utworzone"
+      },
+      {
+        "status": "in-progress",
+        "timestamp": "2025-09-26T07:52:16.913Z",
+        "note": "Przydzielono do Piotr Chłodnictwo",
+        "changedBy": "EMP25092003"
+      }
+    ]
+  },
+  {
+    "id": "ORD2025000027",
+    "clientId": "CLI2025000012",
+    "clientName": "Joanna Krawczyk",
+    "clientPhone": "171234590",
+    "clientEmail": "joanna.krawczyk@gmail.com",
+    "clientAddress": {
+      "street": "ul. Żeromskiego",
+      "buildingNumber": "25",
+      "apartmentNumber": "10",
+      "city": "Mielec",
+      "postalCode": "39-300",
+      "voivodeship": "Podkarpackie",
+      "country": "Polska"
+    },
+    "deviceType": "Mikrofalówka",
+    "brand": "Sharp",
+    "model": "Sharp 6790",
+    "serialNumber": "SN222990",
+    "issueDescription": "Uszkodzone drzwi",
+    "detailedDescription": "Uszkodzone drzwi. Klient zgłasza problem z urządzeniem Mikrofalówka Sharp.",
+    "status": "pending",
+    "priority": "normal",
+    "assignedTo": null,
+    "assignedToName": null,
+    "createdAt": "2025-09-05T07:52:16.913Z",
+    "updatedAt": "2025-09-05T07:52:16.913Z",
+    "scheduledDate": null,
+    "completedAt": null,
+    "estimatedCost": 196,
+    "finalCost": null,
+    "warranty": true,
+    "source": "walk-in",
+    "notes": "Zlecenie z Mielec",
+    "statusHistory": [
+      {
+        "status": "pending",
+        "timestamp": "2025-09-05T07:52:16.913Z",
+        "note": "Zlecenie utworzone"
+      }
+    ]
+  },
+  {
+    "id": "ORD2025000026",
+    "clientId": "CLI2025000011",
+    "clientName": "Paweł Dąbrowski",
+    "clientPhone": "171238901",
+    "clientEmail": "pawel.dabrowski@interia.pl",
+    "clientAddress": {
+      "street": "ul. Słowackiego",
+      "buildingNumber": "8",
+      "apartmentNumber": "",
+      "city": "Ropczyce",
+      "postalCode": "39-100",
+      "voivodeship": "Podkarpackie",
+      "country": "Polska"
+    },
+    "deviceType": "Okap",
+    "brand": "Electrolux",
+    "model": "Electrolux 9871",
+    "serialNumber": "SN252873",
+    "issueDescription": "Nie działa wentylator",
+    "detailedDescription": "Nie działa wentylator. Klient zgłasza problem z urządzeniem Okap Electrolux.",
+    "status": "pending",
+    "priority": "normal",
+    "assignedTo": null,
+    "assignedToName": null,
+    "createdAt": "2025-09-15T07:52:16.912Z",
+    "updatedAt": "2025-09-15T07:52:16.912Z",
+    "scheduledDate": null,
+    "completedAt": null,
+    "estimatedCost": 112,
+    "finalCost": null,
+    "warranty": false,
+    "source": "email",
+    "notes": "Zlecenie z Ropczyce",
+    "statusHistory": [
+      {
+        "status": "pending",
+        "timestamp": "2025-09-15T07:52:16.912Z",
+        "note": "Zlecenie utworzone"
+      }
+    ]
+  },
+  {
+    "id": "ORD2025000025",
+    "clientId": "CLI2025000011",
+    "clientName": "Paweł Dąbrowski",
+    "clientPhone": "171238901",
+    "clientEmail": "pawel.dabrowski@interia.pl",
+    "clientAddress": {
+      "street": "ul. Słowackiego",
+      "buildingNumber": "8",
+      "apartmentNumber": "",
+      "city": "Ropczyce",
+      "postalCode": "39-100",
+      "voivodeship": "Podkarpackie",
+      "country": "Polska"
+    },
+    "deviceType": "Zamrażarka",
+    "brand": "Bosch",
+    "model": "Bosch 7955",
+    "serialNumber": "SN417765",
+    "issueDescription": "Nie zamraża",
+    "detailedDescription": "Nie zamraża. Klient zgłasza problem z urządzeniem Zamrażarka Bosch.",
+    "status": "in-progress",
+    "priority": "high",
+    "assignedTo": "EMP25092004",
+    "assignedToName": "Tomasz Elektryk",
+    "createdAt": "2025-09-26T07:52:16.911Z",
+    "updatedAt": "2025-09-26T07:52:16.911Z",
+    "scheduledDate": null,
+    "completedAt": null,
+    "estimatedCost": 184,
+    "finalCost": null,
+    "warranty": true,
+    "source": "website",
+    "notes": "Zlecenie z Ropczyce",
+    "statusHistory": [
+      {
+        "status": "pending",
+        "timestamp": "2025-09-26T07:52:16.911Z",
+        "note": "Zlecenie utworzone"
+      },
+      {
+        "status": "in-progress",
+        "timestamp": "2025-09-15T07:52:16.911Z",
+        "note": "Przydzielono do Tomasz Elektryk",
+        "changedBy": "EMP25092004"
+      }
+    ]
+  },
+  {
+    "id": "ORD2025000024",
+    "clientId": "CLI2025000010",
+    "clientName": "Restaurant \"Pod Kogutem\"",
+    "clientPhone": "171237890",
+    "clientEmail": "kontakt@podkogutem.pl",
+    "clientAddress": {
+      "street": "ul. Mickiewicza",
+      "buildingNumber": "12",
+      "apartmentNumber": "",
+      "city": "Ropczyce",
+      "postalCode": "39-100",
+      "voivodeship": "Podkarpackie",
+      "country": "Polska"
+    },
+    "deviceType": "Płyta indukcyjna",
+    "brand": "Samsung",
+    "model": "Samsung 2094",
+    "serialNumber": "SN595131",
+    "issueDescription": "Błąd E0",
+    "detailedDescription": "Błąd E0. Klient zgłasza problem z urządzeniem Płyta indukcyjna Samsung.",
+    "status": "in-progress",
+    "priority": "normal",
+    "assignedTo": "EMP25092003",
+    "assignedToName": "Piotr Chłodnictwo",
+    "createdAt": "2025-09-15T07:52:16.909Z",
+    "updatedAt": "2025-09-15T07:52:16.909Z",
+    "scheduledDate": null,
+    "completedAt": null,
+    "estimatedCost": 237,
+    "finalCost": null,
+    "warranty": false,
+    "source": "website",
+    "notes": "Zlecenie z Ropczyce",
+    "statusHistory": [
+      {
+        "status": "pending",
+        "timestamp": "2025-09-15T07:52:16.909Z",
+        "note": "Zlecenie utworzone"
+      },
+      {
+        "status": "in-progress",
+        "timestamp": "2025-09-27T07:52:16.910Z",
+        "note": "Przydzielono do Piotr Chłodnictwo",
+        "changedBy": "EMP25092003"
+      }
+    ]
+  },
+  {
+    "id": "ORD2025000023",
+    "clientId": "CLI2025000010",
+    "clientName": "Restaurant \"Pod Kogutem\"",
+    "clientPhone": "171237890",
+    "clientEmail": "kontakt@podkogutem.pl",
+    "clientAddress": {
+      "street": "ul. Mickiewicza",
+      "buildingNumber": "12",
+      "apartmentNumber": "",
+      "city": "Ropczyce",
+      "postalCode": "39-100",
+      "voivodeship": "Podkarpackie",
+      "country": "Polska"
+    },
+    "deviceType": "Ekspres do kawy",
+    "brand": "Siemens",
+    "model": "Siemens 4262",
+    "serialNumber": "SN429406",
+    "issueDescription": "Słaba kawa",
+    "detailedDescription": "Słaba kawa. Klient zgłasza problem z urządzeniem Ekspres do kawy Siemens.",
+    "status": "scheduled",
+    "priority": "normal",
+    "assignedTo": "EMP25092002",
+    "assignedToName": "Anna Technik",
+    "createdAt": "2025-09-14T07:52:16.908Z",
+    "updatedAt": "2025-09-14T07:52:16.908Z",
+    "scheduledDate": "2025-09-29T07:52:16.908Z",
+    "completedAt": null,
+    "estimatedCost": 283,
+    "finalCost": null,
+    "warranty": true,
+    "source": "email",
+    "notes": "Zlecenie z Ropczyce",
+    "statusHistory": [
+      {
+        "status": "pending",
+        "timestamp": "2025-09-14T07:52:16.908Z",
+        "note": "Zlecenie utworzone"
+      },
+      {
+        "status": "in-progress",
+        "timestamp": "2025-09-27T07:52:16.908Z",
+        "note": "Przydzielono do Anna Technik",
+        "changedBy": "EMP25092002"
+      }
+    ]
+  },
+  {
+    "id": "ORD2025000022",
+    "clientId": "CLI2025000009",
+    "clientName": "Agnieszka Szymańska",
+    "clientPhone": "171236789",
+    "clientEmail": "agnieszka.szymanska@onet.pl",
+    "clientAddress": {
+      "street": "ul. Dębicka",
+      "buildingNumber": "33",
+      "apartmentNumber": "7",
+      "city": "Ropczyce",
+      "postalCode": "39-100",
+      "voivodeship": "Podkarpackie",
+      "country": "Polska"
+    },
+    "deviceType": "Piekarnik",
+    "brand": "Bosch",
+    "model": "Bosch 6520",
+    "serialNumber": "SN951494",
+    "issueDescription": "Nie działa termoobieg",
+    "detailedDescription": "Nie działa termoobieg. Klient zgłasza problem z urządzeniem Piekarnik Bosch.",
+    "status": "in-progress",
+    "priority": "high",
+    "assignedTo": "EMP25092005",
+    "assignedToName": "Marek Pralkowski",
+    "createdAt": "2025-09-16T07:52:16.908Z",
+    "updatedAt": "2025-09-16T07:52:16.908Z",
+    "scheduledDate": null,
+    "completedAt": null,
+    "estimatedCost": 351,
+    "finalCost": null,
+    "warranty": false,
+    "source": "phone",
+    "notes": "Zlecenie z Ropczyce",
+    "statusHistory": [
+      {
+        "status": "pending",
+        "timestamp": "2025-09-16T07:52:16.908Z",
+        "note": "Zlecenie utworzone"
+      },
+      {
+        "status": "in-progress",
+        "timestamp": "2025-09-26T07:52:16.908Z",
+        "note": "Przydzielono do Marek Pralkowski",
+        "changedBy": "EMP25092005"
+      }
+    ]
+  },
+  {
+    "id": "ORD2025000021",
+    "clientId": "CLI2025000009",
+    "clientName": "Agnieszka Szymańska",
+    "clientPhone": "171236789",
+    "clientEmail": "agnieszka.szymanska@onet.pl",
+    "clientAddress": {
+      "street": "ul. Dębicka",
+      "buildingNumber": "33",
+      "apartmentNumber": "7",
+      "city": "Ropczyce",
+      "postalCode": "39-100",
+      "voivodeship": "Podkarpackie",
+      "country": "Polska"
+    },
+    "deviceType": "Okap",
+    "brand": "Electrolux",
+    "model": "Electrolux 2623",
+    "serialNumber": "SN497118",
+    "issueDescription": "Hałasuje",
+    "detailedDescription": "Hałasuje. Klient zgłasza problem z urządzeniem Okap Electrolux.",
+    "status": "pending",
+    "priority": "normal",
+    "assignedTo": null,
+    "assignedToName": null,
+    "createdAt": "2025-09-26T07:52:16.907Z",
+    "updatedAt": "2025-09-26T07:52:16.907Z",
+    "scheduledDate": null,
+    "completedAt": null,
+    "estimatedCost": 353,
+    "finalCost": null,
+    "warranty": false,
+    "source": "website",
+    "notes": "Zlecenie z Ropczyce",
+    "statusHistory": [
+      {
+        "status": "pending",
+        "timestamp": "2025-09-26T07:52:16.907Z",
+        "note": "Zlecenie utworzone"
+      }
+    ]
+  },
+  {
+    "id": "ORD2025000020",
+    "clientId": "CLI2025000008",
+    "clientName": "Marek Zieliński",
+    "clientPhone": "171235678",
+    "clientEmail": "marek.zielinski@wp.pl",
+    "clientAddress": {
+      "street": "ul. Kościuszki",
+      "buildingNumber": "18",
+      "apartmentNumber": "",
+      "city": "Ropczyce",
+      "postalCode": "39-100",
+      "voivodeship": "Podkarpackie",
+      "country": "Polska"
+    },
+    "deviceType": "Ekspres do kawy",
+    "brand": "Krups",
+    "model": "Krups 4829",
+    "serialNumber": "SN898951",
+    "issueDescription": "Słaba kawa",
+    "detailedDescription": "Słaba kawa. Klient zgłasza problem z urządzeniem Ekspres do kawy Krups.",
+    "status": "pending",
+    "priority": "normal",
+    "assignedTo": null,
+    "assignedToName": null,
+    "createdAt": "2025-09-17T07:52:16.907Z",
+    "updatedAt": "2025-09-17T07:52:16.907Z",
+    "scheduledDate": null,
+    "completedAt": null,
+    "estimatedCost": 390,
+    "finalCost": null,
+    "warranty": true,
+    "source": "walk-in",
+    "notes": "Zlecenie z Ropczyce",
+    "statusHistory": [
+      {
+        "status": "pending",
+        "timestamp": "2025-09-17T07:52:16.907Z",
+        "note": "Zlecenie utworzone"
+      }
+    ]
+  },
+  {
+    "id": "ORD2025000019",
+    "clientId": "CLI2025000008",
+    "clientName": "Marek Zieliński",
+    "clientPhone": "171235678",
+    "clientEmail": "marek.zielinski@wp.pl",
+    "clientAddress": {
+      "street": "ul. Kościuszki",
+      "buildingNumber": "18",
+      "apartmentNumber": "",
+      "city": "Ropczyce",
+      "postalCode": "39-100",
+      "voivodeship": "Podkarpackie",
+      "country": "Polska"
+    },
+    "deviceType": "Suszarka",
+    "brand": "Beko",
+    "model": "Beko 5973",
+    "serialNumber": "SN207208",
+    "issueDescription": "Nie obraca się bęben",
+    "detailedDescription": "Nie obraca się bęben. Klient zgłasza problem z urządzeniem Suszarka Beko.",
+    "status": "in-progress",
+    "priority": "normal",
+    "assignedTo": "EMP25092004",
+    "assignedToName": "Tomasz Elektryk",
+    "createdAt": "2025-09-10T07:52:16.906Z",
+    "updatedAt": "2025-09-10T07:52:16.906Z",
+    "scheduledDate": null,
+    "completedAt": null,
+    "estimatedCost": 304,
+    "finalCost": null,
+    "warranty": false,
+    "source": "email",
+    "notes": "Zlecenie z Ropczyce",
+    "statusHistory": [
+      {
+        "status": "pending",
+        "timestamp": "2025-09-10T07:52:16.906Z",
+        "note": "Zlecenie utworzone"
+      },
+      {
+        "status": "in-progress",
+        "timestamp": "2025-09-24T07:52:16.906Z",
+        "note": "Przydzielono do Tomasz Elektryk",
+        "changedBy": "EMP25092004"
+      }
+    ]
+  },
+  {
+    "id": "ORD2025000018",
+    "clientId": "CLI2025000007",
+    "clientName": "Katarzyna Lewandowska",
+    "clientPhone": "171234567",
+    "clientEmail": "katarzyna.lewandowska@gmail.com",
+    "clientAddress": {
+      "street": "ul. Rynek",
+      "buildingNumber": "5",
+      "apartmentNumber": "2",
+      "city": "Ropczyce",
+      "postalCode": "39-100",
+      "voivodeship": "Podkarpackie",
+      "country": "Polska"
+    },
+    "deviceType": "Suszarka",
+    "brand": "LG",
+    "model": "LG 2116",
+    "serialNumber": "SN811039",
+    "issueDescription": "Nie grzeje",
+    "detailedDescription": "Nie grzeje. Klient zgłasza problem z urządzeniem Suszarka LG.",
+    "status": "cancelled",
+    "priority": "high",
+    "assignedTo": "EMP25189002",
+    "assignedToName": "Anna Nowak",
+    "createdAt": "2025-09-19T07:52:16.905Z",
+    "updatedAt": "2025-09-19T07:52:16.905Z",
+    "scheduledDate": null,
+    "completedAt": null,
+    "estimatedCost": 149,
+    "finalCost": null,
+    "warranty": false,
+    "source": "phone",
+    "notes": "Zlecenie z Ropczyce",
+    "statusHistory": [
+      {
+        "status": "pending",
+        "timestamp": "2025-09-19T07:52:16.905Z",
+        "note": "Zlecenie utworzone"
+      },
+      {
+        "status": "in-progress",
+        "timestamp": "2025-09-22T07:52:16.905Z",
+        "note": "Przydzielono do Anna Nowak",
+        "changedBy": "EMP25189002"
+      }
+    ]
+  },
+  {
+    "id": "ORD2025000017",
+    "clientId": "CLI2025000007",
+    "clientName": "Katarzyna Lewandowska",
+    "clientPhone": "171234567",
+    "clientEmail": "katarzyna.lewandowska@gmail.com",
+    "clientAddress": {
+      "street": "ul. Rynek",
+      "buildingNumber": "5",
+      "apartmentNumber": "2",
+      "city": "Ropczyce",
+      "postalCode": "39-100",
+      "voivodeship": "Podkarpackie",
+      "country": "Polska"
+    },
+    "deviceType": "Płyta indukcyjna",
+    "brand": "Siemens",
+    "model": "Siemens 9812",
+    "serialNumber": "SN870850",
+    "issueDescription": "Uszkodzony wyświetlacz",
+    "detailedDescription": "Uszkodzony wyświetlacz. Klient zgłasza problem z urządzeniem Płyta indukcyjna Siemens.",
+    "status": "pending",
+    "priority": "high",
+    "assignedTo": null,
+    "assignedToName": null,
+    "createdAt": "2025-09-23T07:52:16.905Z",
+    "updatedAt": "2025-09-23T07:52:16.905Z",
+    "scheduledDate": null,
+    "completedAt": null,
+    "estimatedCost": 361,
+    "finalCost": null,
+    "warranty": true,
+    "source": "walk-in",
+    "notes": "Zlecenie z Ropczyce",
+    "statusHistory": [
+      {
+        "status": "pending",
+        "timestamp": "2025-09-23T07:52:16.905Z",
+        "note": "Zlecenie utworzone"
+      }
+    ]
+  },
+  {
+    "id": "ORD2025000016",
+    "clientId": "CLI2025000007",
+    "clientName": "Katarzyna Lewandowska",
+    "clientPhone": "171234567",
+    "clientEmail": "katarzyna.lewandowska@gmail.com",
+    "clientAddress": {
+      "street": "ul. Rynek",
+      "buildingNumber": "5",
+      "apartmentNumber": "2",
+      "city": "Ropczyce",
+      "postalCode": "39-100",
+      "voivodeship": "Podkarpackie",
+      "country": "Polska"
+    },
+    "deviceType": "Zamrażarka",
+    "brand": "LG",
+    "model": "LG 3560",
+    "serialNumber": "SN262812",
+    "issueDescription": "Nie działa oświetlenie",
+    "detailedDescription": "Nie działa oświetlenie. Klient zgłasza problem z urządzeniem Zamrażarka LG.",
+    "status": "completed",
+    "priority": "normal",
+    "assignedTo": "EMP25092003",
+    "assignedToName": "Piotr Chłodnictwo",
+    "createdAt": "2025-09-29T07:52:16.904Z",
+    "updatedAt": "2025-09-29T07:52:16.904Z",
+    "scheduledDate": null,
+    "completedAt": "2025-10-01T07:52:16.904Z",
+    "estimatedCost": 121,
+    "finalCost": 346,
+    "warranty": false,
+    "source": "website",
+    "notes": "Zlecenie z Ropczyce",
+    "statusHistory": [
+      {
+        "status": "pending",
+        "timestamp": "2025-09-29T07:52:16.904Z",
+        "note": "Zlecenie utworzone"
+      },
+      {
+        "status": "in-progress",
+        "timestamp": "2025-09-24T07:52:16.904Z",
+        "note": "Przydzielono do Piotr Chłodnictwo",
+        "changedBy": "EMP25092003"
+      },
+      {
+        "status": "completed",
+        "timestamp": "2025-10-01T07:52:16.904Z",
+        "note": "Naprawa zakończona",
+        "changedBy": "EMP25092003"
+      }
+    ]
+  },
+  {
+    "id": "ORD2025000015",
+    "clientId": "CLI2025000006",
+    "clientName": "Tomasz Kamiński",
+    "clientPhone": "146819678",
+    "clientEmail": "tomasz.kaminski@gmail.com",
+    "clientAddress": {
+      "street": "ul. Słoneczna",
+      "buildingNumber": "22",
+      "apartmentNumber": "",
+      "city": "Dębica",
+      "postalCode": "39-200",
+      "voivodeship": "Podkarpackie",
+      "country": "Polska"
+    },
+    "deviceType": "Płyta indukcyjna",
+    "brand": "Bosch",
+    "model": "Bosch 2987",
+    "serialNumber": "SN142018",
+    "issueDescription": "Uszkodzony wyświetlacz",
+    "detailedDescription": "Uszkodzony wyświetlacz. Klient zgłasza problem z urządzeniem Płyta indukcyjna Bosch.",
+    "status": "in-progress",
+    "priority": "normal",
+    "assignedTo": "EMP25092006",
+    "assignedToName": "Karolina Kucharska",
+    "createdAt": "2025-09-10T07:52:16.904Z",
+    "updatedAt": "2025-09-10T07:52:16.904Z",
+    "scheduledDate": null,
+    "completedAt": null,
+    "estimatedCost": 212,
+    "finalCost": null,
+    "warranty": false,
+    "source": "walk-in",
+    "notes": "Zlecenie z Dębica",
+    "statusHistory": [
+      {
+        "status": "pending",
+        "timestamp": "2025-09-10T07:52:16.904Z",
+        "note": "Zlecenie utworzone"
+      },
+      {
+        "status": "in-progress",
+        "timestamp": "2025-09-21T07:52:16.904Z",
+        "note": "Przydzielono do Karolina Kucharska",
+        "changedBy": "EMP25092006"
+      }
+    ]
+  },
+  {
+    "id": "ORD2025000014",
+    "clientId": "CLI2025000006",
+    "clientName": "Tomasz Kamiński",
+    "clientPhone": "146819678",
+    "clientEmail": "tomasz.kaminski@gmail.com",
+    "clientAddress": {
+      "street": "ul. Słoneczna",
+      "buildingNumber": "22",
+      "apartmentNumber": "",
+      "city": "Dębica",
+      "postalCode": "39-200",
+      "voivodeship": "Podkarpackie",
+      "country": "Polska"
+    },
+    "deviceType": "Okap",
+    "brand": "Electrolux",
+    "model": "Electrolux 6626",
+    "serialNumber": "SN560315",
+    "issueDescription": "Nie działa wentylator",
+    "detailedDescription": "Nie działa wentylator. Klient zgłasza problem z urządzeniem Okap Electrolux.",
+    "status": "in-progress",
+    "priority": "urgent",
+    "assignedTo": "EMP25189002",
+    "assignedToName": "Anna Nowak",
+    "createdAt": "2025-09-18T07:52:16.903Z",
+    "updatedAt": "2025-09-18T07:52:16.903Z",
+    "scheduledDate": null,
+    "completedAt": null,
+    "estimatedCost": 110,
+    "finalCost": null,
+    "warranty": true,
+    "source": "email",
+    "notes": "Zlecenie z Dębica",
+    "statusHistory": [
+      {
+        "status": "pending",
+        "timestamp": "2025-09-18T07:52:16.903Z",
+        "note": "Zlecenie utworzone"
+      },
+      {
+        "status": "in-progress",
+        "timestamp": "2025-10-04T07:52:16.903Z",
+        "note": "Przydzielono do Anna Nowak",
+        "changedBy": "EMP25189002"
+      }
+    ]
+  },
+  {
+    "id": "ORD2025000013",
+    "clientId": "CLI2025000006",
+    "clientName": "Tomasz Kamiński",
+    "clientPhone": "146819678",
+    "clientEmail": "tomasz.kaminski@gmail.com",
+    "clientAddress": {
+      "street": "ul. Słoneczna",
+      "buildingNumber": "22",
+      "apartmentNumber": "",
+      "city": "Dębica",
+      "postalCode": "39-200",
+      "voivodeship": "Podkarpackie",
+      "country": "Polska"
+    },
+    "deviceType": "Piekarnik",
+    "brand": "Whirlpool",
+    "model": "Whirlpool 6664",
+    "serialNumber": "SN693249",
+    "issueDescription": "Nie działa termoobieg",
+    "detailedDescription": "Nie działa termoobieg. Klient zgłasza problem z urządzeniem Piekarnik Whirlpool.",
+    "status": "in-progress",
+    "priority": "high",
+    "assignedTo": "EMP25092001",
+    "assignedToName": "Jan Serwisant",
+    "createdAt": "2025-09-06T07:52:16.903Z",
+    "updatedAt": "2025-09-06T07:52:16.903Z",
+    "scheduledDate": null,
+    "completedAt": null,
+    "estimatedCost": 144,
+    "finalCost": null,
+    "warranty": false,
+    "source": "email",
+    "notes": "Zlecenie z Dębica",
+    "statusHistory": [
+      {
+        "status": "pending",
+        "timestamp": "2025-09-06T07:52:16.903Z",
+        "note": "Zlecenie utworzone"
+      },
+      {
+        "status": "in-progress",
+        "timestamp": "2025-09-25T07:52:16.903Z",
+        "note": "Przydzielono do Jan Serwisant",
+        "changedBy": "EMP25092001"
+      }
+    ]
+  },
+  {
+    "id": "ORD2025000012",
+    "clientId": "CLI2025000005",
+    "clientName": "Firma TECH-AGD Sp. z o.o.",
+    "clientPhone": "146818567",
+    "clientEmail": "biuro@tech-agd.pl",
+    "clientAddress": {
+      "street": "ul. Przemysłowa",
+      "buildingNumber": "10",
+      "apartmentNumber": "",
+      "city": "Dębica",
+      "postalCode": "39-200",
+      "voivodeship": "Podkarpackie",
+      "country": "Polska"
+    },
+    "deviceType": "Mikrofalówka",
+    "brand": "Whirlpool",
+    "model": "Whirlpool 3546",
+    "serialNumber": "SN193127",
+    "issueDescription": "Nie obraca się talerz",
+    "detailedDescription": "Nie obraca się talerz. Klient zgłasza problem z urządzeniem Mikrofalówka Whirlpool.",
+    "status": "cancelled",
+    "priority": "high",
+    "assignedTo": "EMP25092006",
+    "assignedToName": "Karolina Kucharska",
+    "createdAt": "2025-09-14T07:52:16.902Z",
+    "updatedAt": "2025-09-14T07:52:16.902Z",
+    "scheduledDate": null,
+    "completedAt": null,
+    "estimatedCost": 378,
+    "finalCost": null,
+    "warranty": true,
+    "source": "website",
+    "notes": "Zlecenie z Dębica",
+    "statusHistory": [
+      {
+        "status": "pending",
+        "timestamp": "2025-09-14T07:52:16.902Z",
+        "note": "Zlecenie utworzone"
+      },
+      {
+        "status": "in-progress",
+        "timestamp": "2025-09-26T07:52:16.902Z",
+        "note": "Przydzielono do Karolina Kucharska",
+        "changedBy": "EMP25092006"
+      }
+    ]
+  },
+  {
+    "id": "ORD2025000011",
+    "clientId": "CLI2025000005",
+    "clientName": "Firma TECH-AGD Sp. z o.o.",
+    "clientPhone": "146818567",
+    "clientEmail": "biuro@tech-agd.pl",
+    "clientAddress": {
+      "street": "ul. Przemysłowa",
+      "buildingNumber": "10",
+      "apartmentNumber": "",
+      "city": "Dębica",
+      "postalCode": "39-200",
+      "voivodeship": "Podkarpackie",
+      "country": "Polska"
+    },
+    "deviceType": "Zmywarka",
+    "brand": "Siemens",
+    "model": "Siemens 4449",
+    "serialNumber": "SN712940",
+    "issueDescription": "Wyciek wody",
+    "detailedDescription": "Wyciek wody. Klient zgłasza problem z urządzeniem Zmywarka Siemens.",
+    "status": "completed",
+    "priority": "normal",
+    "assignedTo": "EMP25092005",
+    "assignedToName": "Marek Pralkowski",
+    "createdAt": "2025-10-02T07:52:16.901Z",
+    "updatedAt": "2025-10-02T07:52:16.901Z",
+    "scheduledDate": null,
+    "completedAt": "2025-10-03T07:52:16.901Z",
+    "estimatedCost": 308,
+    "finalCost": 275,
+    "warranty": false,
+    "source": "walk-in",
+    "notes": "Zlecenie z Dębica",
+    "statusHistory": [
+      {
+        "status": "pending",
+        "timestamp": "2025-10-02T07:52:16.901Z",
+        "note": "Zlecenie utworzone"
+      },
+      {
+        "status": "in-progress",
+        "timestamp": "2025-09-22T07:52:16.901Z",
+        "note": "Przydzielono do Marek Pralkowski",
+        "changedBy": "EMP25092005"
+      },
+      {
+        "status": "completed",
+        "timestamp": "2025-10-03T07:52:16.901Z",
+        "note": "Naprawa zakończona",
+        "changedBy": "EMP25092005"
+      }
+    ]
+  },
+  {
+    "id": "ORD2025000010",
+    "clientId": "CLI2025000005",
+    "clientName": "Firma TECH-AGD Sp. z o.o.",
+    "clientPhone": "146818567",
+    "clientEmail": "biuro@tech-agd.pl",
+    "clientAddress": {
+      "street": "ul. Przemysłowa",
+      "buildingNumber": "10",
+      "apartmentNumber": "",
+      "city": "Dębica",
+      "postalCode": "39-200",
+      "voivodeship": "Podkarpackie",
+      "country": "Polska"
+    },
+    "deviceType": "Pralka",
+    "brand": "Amica",
+    "model": "Amica 7233",
+    "serialNumber": "SN105251",
+    "issueDescription": "Hałasuje przy wirówce",
+    "detailedDescription": "Hałasuje przy wirówce. Klient zgłasza problem z urządzeniem Pralka Amica.",
+    "status": "cancelled",
+    "priority": "normal",
+    "assignedTo": "EMP25189002",
+    "assignedToName": "Anna Nowak",
+    "createdAt": "2025-09-09T07:52:16.901Z",
+    "updatedAt": "2025-09-09T07:52:16.901Z",
+    "scheduledDate": null,
+    "completedAt": null,
+    "estimatedCost": 198,
+    "finalCost": null,
+    "warranty": false,
+    "source": "phone",
+    "notes": "Zlecenie z Dębica",
+    "statusHistory": [
+      {
+        "status": "pending",
+        "timestamp": "2025-09-09T07:52:16.901Z",
+        "note": "Zlecenie utworzone"
+      },
+      {
+        "status": "in-progress",
+        "timestamp": "2025-09-25T07:52:16.901Z",
+        "note": "Przydzielono do Anna Nowak",
+        "changedBy": "EMP25189002"
+      }
+    ]
+  },
+  {
+    "id": "ORD2025000009",
+    "clientId": "CLI2025000004",
+    "clientName": "Maria Wójcik",
+    "clientPhone": "146817456",
+    "clientEmail": "maria.wojcik@onet.pl",
+    "clientAddress": {
+      "street": "ul. Ogrodowa",
+      "buildingNumber": "7",
+      "apartmentNumber": "5",
+      "city": "Dębica",
+      "postalCode": "39-200",
+      "voivodeship": "Podkarpackie",
+      "country": "Polska"
+    },
+    "deviceType": "Okap",
+    "brand": "Bosch",
+    "model": "Bosch 2443",
+    "serialNumber": "SN141870",
+    "issueDescription": "Nie działa oświetlenie",
+    "detailedDescription": "Nie działa oświetlenie. Klient zgłasza problem z urządzeniem Okap Bosch.",
+    "status": "cancelled",
+    "priority": "normal",
+    "assignedTo": "EMP25092003",
+    "assignedToName": "Piotr Chłodnictwo",
+    "createdAt": "2025-09-09T07:52:16.900Z",
+    "updatedAt": "2025-09-09T07:52:16.900Z",
+    "scheduledDate": null,
+    "completedAt": null,
+    "estimatedCost": 152,
+    "finalCost": null,
+    "warranty": true,
+    "source": "email",
+    "notes": "Zlecenie z Dębica",
+    "statusHistory": [
+      {
+        "status": "pending",
+        "timestamp": "2025-09-09T07:52:16.900Z",
+        "note": "Zlecenie utworzone"
+      },
+      {
+        "status": "in-progress",
+        "timestamp": "2025-09-27T07:52:16.900Z",
+        "note": "Przydzielono do Piotr Chłodnictwo",
+        "changedBy": "EMP25092003"
+      }
+    ]
+  },
+  {
+    "id": "ORD2025000008",
+    "clientId": "CLI2025000004",
+    "clientName": "Maria Wójcik",
+    "clientPhone": "146817456",
+    "clientEmail": "maria.wojcik@onet.pl",
+    "clientAddress": {
+      "street": "ul. Ogrodowa",
+      "buildingNumber": "7",
+      "apartmentNumber": "5",
+      "city": "Dębica",
+      "postalCode": "39-200",
+      "voivodeship": "Podkarpackie",
+      "country": "Polska"
+    },
+    "deviceType": "Lodówka",
+    "brand": "Bosch",
+    "model": "Bosch 6955",
+    "serialNumber": "SN131698",
+    "issueDescription": "Nie działa oświetlenie",
+    "detailedDescription": "Nie działa oświetlenie. Klient zgłasza problem z urządzeniem Lodówka Bosch.",
+    "status": "in-progress",
+    "priority": "normal",
+    "assignedTo": "EMP25092006",
+    "assignedToName": "Karolina Kucharska",
+    "createdAt": "2025-09-22T07:52:16.900Z",
+    "updatedAt": "2025-09-22T07:52:16.900Z",
+    "scheduledDate": null,
+    "completedAt": null,
+    "estimatedCost": 292,
+    "finalCost": null,
+    "warranty": false,
+    "source": "walk-in",
+    "notes": "Zlecenie z Dębica",
+    "statusHistory": [
+      {
+        "status": "pending",
+        "timestamp": "2025-09-22T07:52:16.900Z",
+        "note": "Zlecenie utworzone"
+      },
+      {
+        "status": "in-progress",
+        "timestamp": "2025-09-25T07:52:16.900Z",
+        "note": "Przydzielono do Karolina Kucharska",
+        "changedBy": "EMP25092006"
+      }
+    ]
+  },
+  {
+    "id": "ORD2025000007",
+    "clientId": "CLI2025000004",
+    "clientName": "Maria Wójcik",
+    "clientPhone": "146817456",
+    "clientEmail": "maria.wojcik@onet.pl",
+    "clientAddress": {
+      "street": "ul. Ogrodowa",
+      "buildingNumber": "7",
+      "apartmentNumber": "5",
+      "city": "Dębica",
+      "postalCode": "39-200",
+      "voivodeship": "Podkarpackie",
+      "country": "Polska"
+    },
+    "deviceType": "Suszarka",
+    "brand": "Samsung",
+    "model": "Samsung 3906",
+    "serialNumber": "SN227654",
+    "issueDescription": "Błąd F01",
+    "detailedDescription": "Błąd F01. Klient zgłasza problem z urządzeniem Suszarka Samsung.",
+    "status": "in-progress",
+    "priority": "high",
+    "assignedTo": "EMP25092006",
+    "assignedToName": "Karolina Kucharska",
+    "createdAt": "2025-09-12T07:52:16.900Z",
+    "updatedAt": "2025-09-12T07:52:16.900Z",
+    "scheduledDate": null,
+    "completedAt": null,
+    "estimatedCost": 327,
+    "finalCost": null,
+    "warranty": true,
+    "source": "phone",
+    "notes": "Zlecenie z Dębica",
+    "statusHistory": [
+      {
+        "status": "pending",
+        "timestamp": "2025-09-12T07:52:16.900Z",
+        "note": "Zlecenie utworzone"
+      },
+      {
+        "status": "in-progress",
+        "timestamp": "2025-10-04T07:52:16.900Z",
+        "note": "Przydzielono do Karolina Kucharska",
+        "changedBy": "EMP25092006"
+      }
+    ]
+  },
+  {
+    "id": "ORD2025000006",
+    "status": "oczekuje-na-czesci",
+    "updatedAt": "2025-10-04T08:01:12.104Z"
+  },
+  {
+    "id": "ORD2025000005",
+    "clientId": "CLI2025000003",
+    "clientName": "Piotr Wiśniewski",
+    "clientPhone": "146816345",
+    "clientEmail": "piotr.wisniewski@interia.pl",
+    "clientAddress": {
+      "street": "ul. Rzeszowska",
+      "buildingNumber": "42",
+      "apartmentNumber": "12",
+      "city": "Dębica",
+      "postalCode": "39-200",
+      "voivodeship": "Podkarpackie",
+      "country": "Polska"
+    },
+    "deviceType": "Piekarnik",
+    "brand": "Bosch",
+    "model": "Bosch 9642",
+    "serialNumber": "SN334322",
+    "issueDescription": "Uszkodzone drzwi",
+    "detailedDescription": "Uszkodzone drzwi. Klient zgłasza problem z urządzeniem Piekarnik Bosch.",
+    "status": "pending",
+    "priority": "normal",
+    "assignedTo": null,
+    "assignedToName": null,
+    "createdAt": "2025-09-28T07:52:16.899Z",
+    "updatedAt": "2025-09-28T07:52:16.899Z",
+    "scheduledDate": null,
+    "completedAt": null,
+    "estimatedCost": 219,
+    "finalCost": null,
+    "warranty": false,
+    "source": "website",
+    "notes": "Zlecenie z Dębica",
+    "statusHistory": [
+      {
+        "status": "pending",
+        "timestamp": "2025-09-28T07:52:16.899Z",
+        "note": "Zlecenie utworzone"
+      }
+    ]
+  },
+  {
+    "id": "ORD2025000004",
+    "clientId": "CLI2025000002",
+    "clientName": "Anna Nowak",
+    "clientPhone": "146815234",
+    "clientEmail": "anna.nowak@wp.pl",
+    "clientAddress": {
+      "street": "ul. Piłsudskiego",
+      "buildingNumber": "28",
+      "apartmentNumber": "",
+      "city": "Dębica",
+      "postalCode": "39-200",
+      "voivodeship": "Podkarpackie",
+      "country": "Polska"
+    },
+    "deviceType": "Płyta indukcyjna",
+    "brand": "Electrolux",
+    "model": "Electrolux 6869",
+    "serialNumber": "SN419136",
+    "issueDescription": "Uszkodzony wyświetlacz",
+    "detailedDescription": "Uszkodzony wyświetlacz. Klient zgłasza problem z urządzeniem Płyta indukcyjna Electrolux.",
+    "status": "pending",
+    "priority": "normal",
+    "assignedTo": null,
+    "assignedToName": null,
+    "createdAt": "2025-09-15T07:52:16.898Z",
+    "updatedAt": "2025-09-15T07:52:16.898Z",
+    "scheduledDate": null,
+    "completedAt": null,
+    "estimatedCost": 150,
+    "finalCost": null,
+    "warranty": false,
+    "source": "walk-in",
+    "notes": "Zlecenie z Dębica",
+    "statusHistory": [
+      {
+        "status": "pending",
+        "timestamp": "2025-09-15T07:52:16.898Z",
+        "note": "Zlecenie utworzone"
+      }
+    ]
+  },
+  {
+    "id": "ORD2025000003",
+    "clientId": "CLI2025000002",
+    "clientName": "Anna Nowak",
+    "clientPhone": "146815234",
+    "clientEmail": "anna.nowak@wp.pl",
+    "clientAddress": {
+      "street": "ul. Piłsudskiego",
+      "buildingNumber": "28",
+      "apartmentNumber": "",
+      "city": "Dębica",
+      "postalCode": "39-200",
+      "voivodeship": "Podkarpackie",
+      "country": "Polska"
+    },
+    "deviceType": "Okap",
+    "brand": "Bosch",
+    "model": "Bosch 6657",
+    "serialNumber": "SN307445",
+    "issueDescription": "Nie działa wentylator",
+    "detailedDescription": "Nie działa wentylator. Klient zgłasza problem z urządzeniem Okap Bosch.",
+    "status": "in-progress",
+    "priority": "normal",
+    "assignedTo": "EMP25092002",
+    "assignedToName": "Anna Technik",
+    "createdAt": "2025-09-08T07:52:16.898Z",
+    "updatedAt": "2025-09-08T07:52:16.898Z",
+    "scheduledDate": null,
+    "completedAt": null,
+    "estimatedCost": 261,
+    "finalCost": null,
+    "warranty": false,
+    "source": "phone",
+    "notes": "Zlecenie z Dębica",
+    "statusHistory": [
+      {
+        "status": "pending",
+        "timestamp": "2025-09-08T07:52:16.898Z",
+        "note": "Zlecenie utworzone"
+      },
+      {
+        "status": "in-progress",
+        "timestamp": "2025-10-03T07:52:16.898Z",
+        "note": "Przydzielono do Anna Technik",
+        "changedBy": "EMP25092002"
+      }
+    ]
+  },
+  {
+    "id": "ORD2025000002",
+    "clientId": "CLI2025000001",
+    "clientName": "Jan Kowalski",
+    "clientPhone": "146814523",
+    "clientEmail": "jan.kowalski@gmail.com",
+    "clientAddress": {
+      "street": "ul. Krakowska",
+      "buildingNumber": "15",
+      "apartmentNumber": "3",
+      "city": "Dębica",
+      "postalCode": "39-200",
+      "voivodeship": "Podkarpackie",
+      "country": "Polska"
+    },
+    "deviceType": "Mikrofalówka",
+    "brand": "Sharp",
+    "model": "Sharp 9553",
+    "serialNumber": "SN896011",
+    "issueDescription": "Nie grzeje",
+    "detailedDescription": "Nie grzeje. Klient zgłasza problem z urządzeniem Mikrofalówka Sharp.",
+    "status": "completed",
+    "priority": "normal",
+    "assignedTo": "EMP25189002",
+    "assignedToName": "Anna Nowak",
+    "createdAt": "2025-10-02T07:52:16.897Z",
+    "updatedAt": "2025-10-02T07:52:16.897Z",
+    "scheduledDate": null,
+    "completedAt": "2025-10-01T07:52:16.897Z",
+    "estimatedCost": 260,
+    "finalCost": 414,
+    "warranty": false,
+    "source": "walk-in",
+    "notes": "Zlecenie z Dębica",
+    "statusHistory": [
+      {
+        "status": "pending",
+        "timestamp": "2025-10-02T07:52:16.897Z",
+        "note": "Zlecenie utworzone"
+      },
+      {
+        "status": "in-progress",
+        "timestamp": "2025-09-28T07:52:16.897Z",
+        "note": "Przydzielono do Anna Nowak",
+        "changedBy": "EMP25189002"
+      },
+      {
+        "status": "completed",
+        "timestamp": "2025-10-01T07:52:16.897Z",
+        "note": "Naprawa zakończona",
+        "changedBy": "EMP25189002"
+      }
+    ]
+  },
+  {
+    "id": "ORD2025000001",
+    "clientId": "CLI2025000001",
+    "clientName": "Jan Kowalski",
+    "clientPhone": "146814523",
+    "clientEmail": "jan.kowalski@gmail.com",
+    "clientAddress": {
+      "street": "ul. Krakowska",
+      "buildingNumber": "15",
+      "apartmentNumber": "3",
+      "city": "Dębica",
+      "postalCode": "39-200",
+      "voivodeship": "Podkarpackie",
+      "country": "Polska"
+    },
+    "deviceType": "Piekarnik",
+    "brand": "Siemens",
+    "model": "Siemens 8604",
+    "serialNumber": "SN200444",
+    "issueDescription": "Uszkodzone drzwi",
+    "detailedDescription": "Uszkodzone drzwi. Klient zgłasza problem z urządzeniem Piekarnik Siemens.",
+    "status": "in-progress",
+    "priority": "high",
+    "assignedTo": "EMP25092003",
+    "assignedToName": "Piotr Chłodnictwo",
+    "createdAt": "2025-09-12T07:52:16.896Z",
+    "updatedAt": "2025-09-12T07:52:16.896Z",
+    "scheduledDate": null,
+    "completedAt": null,
+    "estimatedCost": 148,
+    "finalCost": null,
+    "warranty": false,
+    "source": "website",
+    "notes": "Zlecenie z Dębica",
+    "statusHistory": [
+      {
+        "status": "pending",
+        "timestamp": "2025-09-12T07:52:16.896Z",
+        "note": "Zlecenie utworzone"
+      },
+      {
+        "status": "in-progress",
+        "timestamp": "2025-09-29T07:52:16.896Z",
+        "note": "Przydzielono do Piotr Chłodnictwo",
+        "changedBy": "EMP25092003"
+      }
+    ]
+  },
+  {
+    "id": "ORD2025000051",
+    "clientId": "CLI2025000002",
+    "clientName": "Anna Nowak",
+    "clientPhone": "146815234",
+    "clientAddress": "ul. Piłsudskiego 28, 39-200 Dębica",
+    "serviceAddress": "ul. Piłsudskiego 28, 39-200 Dębica",
+    "deviceType": "Pralka",
+    "brand": "Candy",
+    "model": "",
+    "serialNumber": "",
+    "issueDescription": "efevewvewv",
+    "status": "pending",
+    "priority": "normal",
+    "assignedTo": null,
+    "assignedToName": null,
+    "estimatedCost": null,
+    "finalCost": null,
+    "preferredDate": "2025-10-06",
+    "preferredTime": "8:00-10:00",
+    "notes": "",
+    "photos": [],
+    "createdAt": "2025-10-04T10:16:05.972Z",
+    "updatedAt": "2025-10-04T10:16:05.972Z",
+    "scheduledDate": null,
+    "completedAt": null,
+    "statusHistory": [
+      {
+        "status": "pending",
+        "changedAt": "2025-10-04T10:16:05.972Z",
+        "notes": "Zamówienie utworzone przez klienta"
+      }
+    ]
+  }
+]

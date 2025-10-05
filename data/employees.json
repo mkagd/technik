@@ -222,6 +222,28 @@
       "demontaż": 10,
       "montaż": 10,
       "trudnaZabudowa": 30
+    },
+    "passwordHash": "$2b$10$sXG7PWbblkaPvBj2X6LCa.DNwaa/JJtMBygrSbMSqHOdmu8vHn4de",
+    "passwordSetAt": "2025-10-04T06:46:27.152Z",
+    "passwordChangedBy": "migration-script",
+    "requirePasswordChange": false,
+    "lastPasswordChange": "2025-10-04T06:46:27.152Z",
+    "isLocked": false,
+    "failedLoginAttempts": 0,
+    "lastLoginAttempt": null,
+    "lastLogin": "2025-10-04T09:46:39.177Z",
+    "passwordHistory": [
+      {
+        "hash": "$2b$10$sXG7PWbblkaPvBj2X6LCa.DNwaa/JJtMBygrSbMSqHOdmu8vHn4de",
+        "changedAt": "2025-10-04T06:46:27.152Z",
+        "changedBy": "migration-script"
+      }
+    ],
+    "updated_at": "2025-10-04T22:21:25.985Z",
+    "inventoryMigrated": {
+      "migratedAt": "2025-10-05T05:40:19.688Z",
+      "itemCount": 6,
+      "note": "Dane przeniesione do personal-inventories.json"
     }
   },
   {
@@ -354,7 +376,23 @@
       "montaż": 10,
       "trudnaZabudowa": 30
     },
-    "updated_at": "2025-10-02T20:07:13.250Z"
+    "updated_at": "2025-10-02T20:07:13.250Z",
+    "passwordHash": "$2b$10$1x.UYygkrybymNEmS7Sooei74p5zSechC5FufvthDzg0n.yQGaWu6",
+    "passwordSetAt": "2025-10-04T06:46:27.216Z",
+    "passwordChangedBy": "migration-script",
+    "requirePasswordChange": false,
+    "lastPasswordChange": "2025-10-04T06:46:27.216Z",
+    "isLocked": false,
+    "failedLoginAttempts": 0,
+    "lastLoginAttempt": null,
+    "lastLogin": "2025-10-04T09:25:16.217Z",
+    "passwordHistory": [
+      {
+        "hash": "$2b$10$1x.UYygkrybymNEmS7Sooei74p5zSechC5FufvthDzg0n.yQGaWu6",
+        "changedAt": "2025-10-04T06:46:27.216Z",
+        "changedBy": "migration-script"
+      }
+    ]
   },
   {
     "id": "EMP25092001",
@@ -487,7 +525,28 @@
       "montaż": 10,
       "trudnaZabudowa": 30
     },
-    "updated_at": "2025-10-03T06:52:56.162Z"
+    "updated_at": "2025-10-04T22:20:22.544Z",
+    "passwordHash": "$2b$10$ybXRx0.NDOYGX99rkczOYOMfaCLMkDwi8hwBBRQkKyejXL5WRRzVa",
+    "passwordSetAt": "2025-10-04T06:46:27.280Z",
+    "passwordChangedBy": "migration-script",
+    "requirePasswordChange": false,
+    "lastPasswordChange": "2025-10-04T06:46:27.280Z",
+    "isLocked": false,
+    "failedLoginAttempts": 0,
+    "lastLoginAttempt": null,
+    "lastLogin": "2025-10-04T07:10:54.037Z",
+    "passwordHistory": [
+      {
+        "hash": "$2b$10$ybXRx0.NDOYGX99rkczOYOMfaCLMkDwi8hwBBRQkKyejXL5WRRzVa",
+        "changedAt": "2025-10-04T06:46:27.280Z",
+        "changedBy": "migration-script"
+      }
+    ],
+    "inventoryMigrated": {
+      "migratedAt": "2025-10-05T05:40:19.688Z",
+      "itemCount": 1,
+      "note": "Dane przeniesione do personal-inventories.json"
+    }
   },
   {
     "id": "EMP25092002",
@@ -566,6 +625,38 @@
       "demontaż": 12,
       "montaż": 12,
       "trudnaZabudowa": 25
+    },
+    "passwordHash": "$2b$10$wnc3kBDWZZRnURzlLbn5KeV3cYlcnJbOBAwrIvBtsMb7PK.p3GZRa",
+    "passwordSetAt": "2025-10-04T06:53:22.202Z",
+    "passwordChangedBy": "ADMIN001",
+    "requirePasswordChange": true,
+    "lastPasswordChange": "2025-10-04T06:53:22.202Z",
+    "isLocked": false,
+    "failedLoginAttempts": 0,
+    "lastLoginAttempt": null,
+    "lastLogin": null,
+    "passwordHistory": [
+      {
+        "hash": "$2b$10$flhHxZCthmQYv4u2CDavQ.Z8Pcid/eXeyhkjBY.jWTECY1gmUpejq",
+        "changedAt": "2025-10-04T06:46:27.343Z",
+        "changedBy": "migration-script"
+      },
+      {
+        "hash": "$2b$10$flhHxZCthmQYv4u2CDavQ.Z8Pcid/eXeyhkjBY.jWTECY1gmUpejq",
+        "changedAt": "2025-10-04T06:53:22.202Z",
+        "changedBy": "migration-script"
+      }
+    ],
+    "lockedBy": "ADMIN001",
+    "lockedAt": "2025-10-04T07:00:12.202Z",
+    "lockReason": "manual",
+    "unlockedBy": "ADMIN001",
+    "unlockedAt": "2025-10-04T07:30:58.913Z",
+    "updated_at": "2025-10-04T22:20:41.846Z",
+    "inventoryMigrated": {
+      "migratedAt": "2025-10-05T05:40:19.688Z",
+      "itemCount": 1,
+      "note": "Dane przeniesione do personal-inventories.json"
     }
   },
   {
@@ -663,7 +754,23 @@
       "demontaż": 8,
       "montaż": 8,
       "trudnaZabudowa": 25
-    }
+    },
+    "passwordHash": "$2b$10$hokFP.gUV6Hd1ji59/u2mOvR3ghKwejjreD4Lm5EYmeT250jD1qL6",
+    "passwordSetAt": "2025-10-04T06:46:27.407Z",
+    "passwordChangedBy": "migration-script",
+    "requirePasswordChange": false,
+    "lastPasswordChange": "2025-10-04T06:46:27.407Z",
+    "isLocked": false,
+    "failedLoginAttempts": 0,
+    "lastLoginAttempt": null,
+    "lastLogin": null,
+    "passwordHistory": [
+      {
+        "hash": "$2b$10$hokFP.gUV6Hd1ji59/u2mOvR3ghKwejjreD4Lm5EYmeT250jD1qL6",
+        "changedAt": "2025-10-04T06:46:27.407Z",
+        "changedBy": "migration-script"
+      }
+    ]
   },
   {
     "id": "EMP25092004",
@@ -814,7 +921,23 @@
       "demontaż": 9,
       "montaż": 9,
       "trudnaZabudowa": 28
-    }
+    },
+    "passwordHash": "$2b$10$fQVvTP1.b.AJQhMY4R/EuOHl4DHBM9xgXz5lpJ21rvKMXjZ8ouo3u",
+    "passwordSetAt": "2025-10-04T06:46:27.470Z",
+    "passwordChangedBy": "migration-script",
+    "requirePasswordChange": false,
+    "lastPasswordChange": "2025-10-04T06:46:27.470Z",
+    "isLocked": false,
+    "failedLoginAttempts": 0,
+    "lastLoginAttempt": null,
+    "lastLogin": null,
+    "passwordHistory": [
+      {
+        "hash": "$2b$10$fQVvTP1.b.AJQhMY4R/EuOHl4DHBM9xgXz5lpJ21rvKMXjZ8ouo3u",
+        "changedAt": "2025-10-04T06:46:27.470Z",
+        "changedBy": "migration-script"
+      }
+    ]
   },
   {
     "id": "EMP25092005",
@@ -958,7 +1081,23 @@
       "demontaż": 11,
       "montaż": 11,
       "trudnaZabudowa": 32
-    }
+    },
+    "passwordHash": "$2b$10$8MJLvcqyr38TosUNc9TGluawosZ1WyoQfD1IDtys7bP3Ea5mtkosS",
+    "passwordSetAt": "2025-10-04T06:46:27.534Z",
+    "passwordChangedBy": "migration-script",
+    "requirePasswordChange": false,
+    "lastPasswordChange": "2025-10-04T06:46:27.534Z",
+    "isLocked": false,
+    "failedLoginAttempts": 0,
+    "lastLoginAttempt": null,
+    "lastLogin": null,
+    "passwordHistory": [
+      {
+        "hash": "$2b$10$8MJLvcqyr38TosUNc9TGluawosZ1WyoQfD1IDtys7bP3Ea5mtkosS",
+        "changedAt": "2025-10-04T06:46:27.534Z",
+        "changedBy": "migration-script"
+      }
+    ]
   },
   {
     "id": "EMP25092006",
@@ -1112,6 +1251,22 @@
       "demontaż": 10,
       "montaż": 10,
       "trudnaZabudowa": 30
-    }
+    },
+    "passwordHash": "$2b$10$tIsi7RuXNR4wsLDvJUqHpO0K96NLibYFZiVQ3ogEf85Eic/qTwoCa",
+    "passwordSetAt": "2025-10-04T06:46:27.599Z",
+    "passwordChangedBy": "migration-script",
+    "requirePasswordChange": false,
+    "lastPasswordChange": "2025-10-04T06:46:27.599Z",
+    "isLocked": false,
+    "failedLoginAttempts": 0,
+    "lastLoginAttempt": null,
+    "lastLogin": null,
+    "passwordHistory": [
+      {
+        "hash": "$2b$10$tIsi7RuXNR4wsLDvJUqHpO0K96NLibYFZiVQ3ogEf85Eic/qTwoCa",
+        "changedAt": "2025-10-04T06:46:27.599Z",
+        "changedBy": "migration-script"
+      }
+    ]
   }
 ]

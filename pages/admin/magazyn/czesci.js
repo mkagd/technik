@@ -45,6 +45,9 @@ export default function AdminMagazynCzesci() {
   const [modelInput, setModelInput] = useState('');
   const [viewMode, setViewMode] = useState('table'); // 'table' or 'grid'
   const [showOCRScanner, setShowOCRScanner] = useState(false);
+  const [showModelModal, setShowModelModal] = useState(false);
+  const [modelSearchQuery, setModelSearchQuery] = useState('');
+  const [selectedModel, setSelectedModel] = useState(null);
 
   // Load view mode preference from localStorage
   useEffect(() => {
@@ -231,6 +234,48 @@ export default function AdminMagazynCzesci() {
     }
   };
 
+  const handleAddByModel = (model) => {
+    // Funkcja dodająca części do filtrów na podstawie wybranego modelu
+    setSelectedModel(model);
+    setShowModelModal(false);
+    
+    // Filtruj części kompatybilne z tym modelem
+    const compatibleParts = parts.filter(part => {
+      const models = part.compatibleModels || [];
+      return models.some(m => m.toLowerCase().includes(model.toLowerCase()));
+    });
+
+    if (compatibleParts.length > 0) {
+      // Ustaw filtr na pierwszy brand z listy części
+      const firstBrand = compatibleParts[0].compatibleBrands?.[0] || '';
+      setFilterBrand(firstBrand);
+      setSearchQuery(model);
+      setSuccessMessage(`✅ Znaleziono ${compatibleParts.length} części dla modelu "${model}"`);
+      setTimeout(() => setSuccessMessage(''), 5000);
+    } else {
+      setErrorMessage(`❌ Nie znaleziono części dla modelu "${model}"`);
+      setTimeout(() => setErrorMessage(''), 5000);
+    }
+  };
+
+  const getUniqueModels = () => {
+    const modelsSet = new Set();
+    parts.forEach(part => {
+      if (part.compatibleModels && Array.isArray(part.compatibleModels)) {
+        part.compatibleModels.forEach(model => modelsSet.add(model));
+      }
+    });
+    return Array.from(modelsSet).sort();
+  };
+
+  const getFilteredModels = () => {
+    const allModels = getUniqueModels();
+    if (!modelSearchQuery.trim()) return allModels;
+    
+    const query = modelSearchQuery.toLowerCase();
+    return allModels.filter(model => model.toLowerCase().includes(query));
+  };
+
   const handleDelete = async (partId) => {
     if (!confirm('Czy na pewno usunąć tę część? Ta akcja jest nieodwracalna!')) return;
 
@@ -389,6 +434,38 @@ export default function AdminMagazynCzesci() {
                   <span className="inline sm:hidden">OCR</span>
                   <span className="px-1.5 py-0.5 bg-white/20 rounded text-xs font-bold">AI</span>
                 </button>
+
+                {/* Add by Model Button */}
+                <button
+                  onClick={() => setShowModelModal(true)}
+                  className="px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg hover:from-indigo-700 hover:to-purple-700 flex items-center gap-2 font-medium shadow-lg hover:shadow-xl transition-all flex-shrink-0"
+                  title="Znajdź części według modelu urządzenia"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
+                  </svg>
+                  <span className="hidden sm:inline">Dodaj wg modelu</span>
+                  <span className="inline sm:hidden">Model</span>
+                </button>
+
+                {/* ASWO Order Button - Direct Link */}
+                <a
+                  href="http://sklep.aswo.com/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-4 py-2 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-lg hover:from-green-700 hover:to-emerald-700 flex items-center gap-2 font-medium shadow-lg hover:shadow-xl transition-all flex-shrink-0"
+                  title="Zamów części w sklepie ASWO (Koszalin) - otwiera w nowej karcie"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                  </svg>
+                  <span className="hidden sm:inline">Zamów ASWO</span>
+                  <span className="inline sm:hidden">ASWO</span>
+                  <span className="px-1.5 py-0.5 bg-white/20 rounded text-xs font-bold">24h</span>
+                  <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                  </svg>
+                </a>
               </div>
 
               {/* Advanced Filters Toggle */}
@@ -1184,6 +1261,123 @@ export default function AdminMagazynCzesci() {
           </div>
         )}
 
+      {/* Model Selection Modal */}
+      {showModelModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full max-h-[80vh] flex flex-col">
+            {/* Header */}
+            <div className="p-6 border-b dark:border-gray-700">
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <h3 className="text-xl font-bold text-gray-900 dark:text-white">
+                    🔍 Wybierz model urządzenia
+                  </h3>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                    System wyświetli części kompatybilne z wybranym modelem
+                  </p>
+                </div>
+                <button
+                  onClick={() => {
+                    setShowModelModal(false);
+                    setModelSearchQuery('');
+                  }}
+                  className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+
+              {/* Search */}
+              <div className="relative">
+                <input
+                  type="text"
+                  value={modelSearchQuery}
+                  onChange={(e) => setModelSearchQuery(e.target.value)}
+                  placeholder="🔍 Wpisz model (np. WW90T4540AE, SGS4HCW48E)..."
+                  className="w-full px-4 py-3 pl-10 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
+                  autoFocus
+                />
+                <svg className="absolute left-3 top-3.5 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              </div>
+
+              <div className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                Znaleziono: {getFilteredModels().length} modeli
+              </div>
+            </div>
+
+            {/* Models List */}
+            <div className="flex-1 overflow-y-auto p-6">
+              {getFilteredModels().length === 0 ? (
+                <div className="text-center py-12">
+                  <svg className="mx-auto h-12 w-12 text-gray-400 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <p className="text-gray-500 dark:text-gray-400">Nie znaleziono modeli</p>
+                  <p className="text-sm text-gray-400 dark:text-gray-500 mt-1">
+                    Spróbuj wpisać inną nazwę modelu
+                  </p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {getFilteredModels().map((model, index) => {
+                    const partsCount = parts.filter(p => 
+                      p.compatibleModels?.some(m => m.toLowerCase() === model.toLowerCase())
+                    ).length;
+
+                    return (
+                      <button
+                        key={index}
+                        onClick={() => handleAddByModel(model)}
+                        className="p-4 border-2 border-gray-200 dark:border-gray-700 rounded-lg hover:border-blue-500 dark:hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all text-left group"
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className="flex-1 min-w-0">
+                            <div className="font-semibold text-gray-900 dark:text-white truncate group-hover:text-blue-600 dark:group-hover:text-blue-400">
+                              {model}
+                            </div>
+                            <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                              {partsCount} {partsCount === 1 ? 'część' : partsCount < 5 ? 'części' : 'części'}
+                            </div>
+                          </div>
+                          <svg className="w-5 h-5 text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 flex-shrink-0 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                          </svg>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+
+            {/* Footer */}
+            <div className="p-6 border-t dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
+              <div className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400">
+                <div className="flex items-center gap-2">
+                  <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <span>Wybierz model aby zobaczyć kompatybilne części</span>
+                </div>
+                <button
+                  onClick={() => {
+                    setShowModelModal(false);
+                    setModelSearchQuery('');
+                  }}
+                  className="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 font-medium"
+                >
+                  Anuluj
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* OCR Scanner Modal */}
       <PartNameplateScanner
         isOpen={showOCRScanner}
@@ -1205,6 +1399,7 @@ export default function AdminMagazynCzesci() {
           setTimeout(() => setSuccessMessage(''), 5000);
         }}
       />
+
       </div>
     </AdminLayout>
   );

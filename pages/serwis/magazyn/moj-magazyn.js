@@ -1,25 +1,55 @@
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
 import Link from 'next/link';
 import DarkModeToggle from '../../../components/DarkModeToggle';
 
 export default function SerwisantMojMagazyn() {
-  const [employeeId] = useState('EMP25189002'); // TODO: Get from auth
+  const router = useRouter();
+  const [employee, setEmployee] = useState(null);
   const [inventory, setInventory] = useState(null);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
-    loadInventory();
+    // ✅ Pobierz dane pracownika z localStorage (jak w /technician)
+    const employeeData = localStorage.getItem('serwisEmployee') || localStorage.getItem('technicianEmployee');
+    
+    if (!employeeData) {
+      console.warn('⚠️ Brak danych pracownika, przekierowanie do logowania');
+      router.push('/pracownik-logowanie');
+      return;
+    }
+
+    try {
+      const emp = JSON.parse(employeeData);
+      setEmployee(emp);
+      loadInventory(emp.id);
+    } catch (err) {
+      console.error('❌ Błąd parsowania danych pracownika:', err);
+      router.push('/pracownik-logowanie');
+    }
   }, []);
 
-  const loadInventory = async () => {
+  const loadInventory = async (employeeId) => {
+    if (!employeeId) {
+      console.error('❌ Brak employeeId');
+      return;
+    }
+
     setLoading(true);
     try {
+      console.log(`📦 Ładowanie magazynu dla: ${employeeId}`);
       const res = await fetch(`/api/inventory/personal?employeeId=${employeeId}`);
       const data = await res.json();
-      setInventory(data.inventory);
+      
+      if (data.success) {
+        setInventory(data.inventory);
+        console.log(`✅ Załadowano magazyn:`, data.inventory);
+      } else {
+        console.error('❌ Błąd API:', data.error);
+      }
     } catch (error) {
-      console.error('Error loading inventory:', error);
+      console.error('❌ Error loading inventory:', error);
     } finally {
       setLoading(false);
     }

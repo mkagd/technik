@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { FiTool, FiMapPin, FiUser, FiClock, FiArrowRight, FiArrowLeft, FiCheck } from 'react-icons/fi';
 import GoogleGeocoder from '../geocoding/simple/GoogleGeocoder.js';
+import ModelAIScanner from '../components/ModelAIScanner';
 
 export default function RezerwacjaNowa() {
     const geocoder = useRef(null);
@@ -10,6 +11,10 @@ export default function RezerwacjaNowa() {
     const [showSummary, setShowSummary] = useState(false);
     const [showBrandSuggestions, setShowBrandSuggestions] = useState(null);
     const [showProblemSuggestions, setShowProblemSuggestions] = useState(null);
+    const [showAIScanner, setShowAIScanner] = useState(false);
+    const [scanningDeviceIndex, setScanningDeviceIndex] = useState(null);
+    const [availabilityData, setAvailabilityData] = useState(null);
+    const [loadingAvailability, setLoadingAvailability] = useState(false);
     
     const [formData, setFormData] = useState({
         // Multi-device support
@@ -166,8 +171,44 @@ export default function RezerwacjaNowa() {
         }));
     };
 
-    const nextStep = () => {
-        if (currentStep < 5) setCurrentStep(currentStep + 1);
+    const nextStep = async () => {
+        if (currentStep < 5) {
+            // Jeśli przechodzimy do kroku 4 (dostępność), pobierz dane
+            if (currentStep === 3 && formData.postalCode && formData.city) {
+                await fetchAvailability();
+            }
+            setCurrentStep(currentStep + 1);
+        }
+    };
+
+    // Pobierz dostępność w czasie rzeczywistym
+    const fetchAvailability = async () => {
+        setLoadingAvailability(true);
+        try {
+            const response = await fetch('/api/availability', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    postalCode: formData.postalCode,
+                    city: formData.city
+                }),
+            });
+
+            const data = await response.json();
+            
+            if (data.success) {
+                setAvailabilityData(data.availability);
+                console.log('✅ Pobrano dostępność:', data.availability);
+            } else {
+                console.error('❌ Błąd pobierania dostępności:', data.error);
+            }
+        } catch (error) {
+            console.error('❌ Błąd przy pobieraniu dostępności:', error);
+        } finally {
+            setLoadingAvailability(false);
+        }
     };
 
     const prevStep = () => {
@@ -175,6 +216,62 @@ export default function RezerwacjaNowa() {
             setCurrentStep(currentStep - 1);
             setShowSummary(false);
         }
+    };
+
+    // Handler dla AI skanera - wypełnia brand i model dla konkretnego urządzenia
+    const handleAIModelDetected = (models) => {
+        console.log('🔍 handleAIModelDetected - models:', models);
+        
+        if (!models || models.length === 0 || scanningDeviceIndex === null) {
+            alert('❌ Nie wykryto modelu na tabliczce');
+            setShowAIScanner(false);
+            setScanningDeviceIndex(null);
+            return;
+        }
+
+        const detectedModel = models[0];
+        
+        // Dodatkowa walidacja - sprawdź czy detectedModel nie jest undefined/null
+        if (!detectedModel || typeof detectedModel !== 'object') {
+            console.error('❌ Nieprawidłowy format modelu:', detectedModel);
+            alert('❌ Błąd: Nieprawidłowe dane z skanera');
+            setShowAIScanner(false);
+            setScanningDeviceIndex(null);
+            return;
+        }
+
+        const deviceInfo = {
+            brand: detectedModel.brand || '',
+            model: detectedModel.model || detectedModel.finalModel || '',
+            type: detectedModel.type || detectedModel.finalType || '',
+        };
+
+        // Sprawdź czy wykryto przynajmniej markę lub model
+        if (!deviceInfo.brand && !deviceInfo.model) {
+            alert('❌ Nie udało się rozpoznać marki ani modelu');
+            setShowAIScanner(false);
+            setScanningDeviceIndex(null);
+            return;
+        }
+
+        // Aktualizuj dane dla konkretnego urządzenia
+        setFormData(prev => {
+            const newBrands = [...prev.brands];
+            const newDevices = [...prev.devices];
+            
+            newBrands[scanningDeviceIndex] = deviceInfo.brand;
+            newDevices[scanningDeviceIndex] = deviceInfo.model;
+            
+            return {
+                ...prev,
+                brands: newBrands,
+                devices: newDevices
+            };
+        });
+
+        alert(`✅ Rozpoznano:\n${deviceInfo.brand} ${deviceInfo.model}\nTyp: ${deviceInfo.type}`);
+        setShowAIScanner(false);
+        setScanningDeviceIndex(null);
     };
 
     const handleSubmit = async (e) => {
@@ -506,6 +603,20 @@ export default function RezerwacjaNowa() {
                                                         </div>
                                                     </div>
                                                     
+                                                    {/* Przycisk AI Scanner */}
+                                                    <div className="mt-3">
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => {
+                                                                setScanningDeviceIndex(index);
+                                                                setShowAIScanner(true);
+                                                            }}
+                                                            className="w-full flex items-center justify-center px-4 py-2 bg-gradient-to-r from-emerald-600 to-cyan-600 text-white rounded-lg hover:from-emerald-700 hover:to-cyan-700 transition-all shadow-md hover:shadow-lg text-sm"
+                                                        >
+                                                            🤖 Zeskanuj tabliczkę AI
+                                                        </button>
+                                                    </div>
+                                                    
                                                     <div className="mt-3">
                                                         <label className="block text-sm font-medium text-gray-700 mb-1">
                                                             Opis problemu *
@@ -757,43 +868,221 @@ export default function RezerwacjaNowa() {
                                     <h2 className="text-xl font-semibold text-gray-900">Kiedy jesteś dostępny?</h2>
                                 </div>
 
+                                {/* Banner informacyjny - elegancki */}
+                                <div className="mb-6 p-4 bg-gray-50 border border-gray-200 rounded-lg">
+                                    <div className="flex items-start">
+                                        <span className="text-2xl mr-3 mt-0.5">💡</span>
+                                        <div className="flex-1">
+                                            <p className="text-sm font-semibold text-gray-900 mb-2">
+                                                Im większa elastyczność terminowa, tym szybciej do Ciebie dotrzemy!
+                                            </p>
+                                            {availabilityData ? (
+                                                <div className="flex items-center gap-2 text-xs text-green-600">
+                                                    <span className="inline-block w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                                                    <span className="font-medium">Czasy oczekiwania obliczone na podstawie aktualnego obłożenia dla Twojej lokalizacji</span>
+                                                </div>
+                                            ) : loadingAvailability ? (
+                                                <div className="flex items-center gap-2 text-xs text-blue-600">
+                                                    <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-blue-600"></div>
+                                                    <span>Obliczam dostępność...</span>
+                                                </div>
+                                            ) : (
+                                                <div className="flex items-center gap-4 text-xs text-gray-600">
+                                                    <div className="flex items-center">
+                                                        <span className="font-bold text-gray-900 mr-1">24h</span>
+                                                        <span>- Cały dzień</span>
+                                                    </div>
+                                                    <span className="text-gray-400">→</span>
+                                                    <div className="flex items-center">
+                                                        <span className="font-bold text-gray-900 mr-1">2-3 dni</span>
+                                                        <span>- Konkretne godziny</span>
+                                                    </div>
+                                                    <span className="text-gray-400">→</span>
+                                                    <div className="flex items-center">
+                                                        <span className="font-bold text-gray-900 mr-1">5 dni</span>
+                                                        <span>- Po 15:00</span>
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+
                                 <div className="space-y-4">
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-3">
                                             Preferowany przedział czasowy *
                                         </label>
-                                        <div className="grid grid-cols-2 gap-3">
+                                        <div className="grid grid-cols-3 gap-2 mb-3">
                                             {[
-                                                { value: 'Cały dzień', label: 'Cały dzień', icon: '⏰', time: '8:00-20:00' },
-                                                { value: '8:00-12:00', label: 'Rano', icon: '🌅', time: '8:00-12:00' },
-                                                { value: '12:00-16:00', label: 'Popołudnie', icon: '☀️', time: '12:00-16:00' },
-                                                { value: '16:00-20:00', label: 'Wieczór', icon: '🌆', time: '16:00-20:00' },
-                                                { value: 'Weekend', label: 'Weekend', icon: '📅', time: 'Sobota/Niedziela' },
-                                                { value: 'Po 15:00', label: 'Po 15:00', icon: '🌙', time: 'Późne popołudnie' }
-                                            ].map((option) => (
-                                                <label key={option.value} className={`cursor-pointer border-2 rounded-lg p-4 transition-all ${
-                                                    formData.timeSlot === option.value 
+                                                { 
+                                                    value: 'Cały dzień', 
+                                                    label: 'Cały dzień', 
+                                                    icon: '⏰', 
+                                                    time: '8:00-20:00', 
+                                                    recommended: true, 
+                                                    waitTime: 'Do 24h!', 
+                                                    badge: '⭐ POLECAMY', 
+                                                    popularity: 20,
+                                                    benefit: 'Najszybsza realizacja',
+                                                    tooltip: 'Możemy dopasować nasz grafik do Twojej dostępności - to najszybsza opcja!'
+                                                },
+                                                { 
+                                                    value: '8:00-12:00', 
+                                                    label: 'Rano', 
+                                                    icon: '🌅', 
+                                                    time: '8:00-12:00', 
+                                                    waitTime: 'Do 2 dni', 
+                                                    popularity: 40,
+                                                    benefit: 'Dobra dostępność',
+                                                    tooltip: 'Poranne godziny są popularne, ale wciąż mamy dużo wolnych terminów'
+                                                },
+                                                { 
+                                                    value: '12:00-16:00', 
+                                                    label: 'Popołudnie', 
+                                                    icon: '☀️', 
+                                                    time: '12:00-16:00', 
+                                                    waitTime: 'Do 2 dni', 
+                                                    popularity: 60,
+                                                    benefit: 'Średnia dostępność',
+                                                    tooltip: 'Popularne godziny - może wydłużyć czas oczekiwania'
+                                                },
+                                                { 
+                                                    value: '16:00-20:00', 
+                                                    label: 'Wieczór', 
+                                                    icon: '🌆', 
+                                                    time: '16:00-20:00', 
+                                                    waitTime: 'Do 3 dni', 
+                                                    popularity: 75,
+                                                    benefit: 'Ograniczona dostępność',
+                                                    tooltip: 'Bardzo popularne godziny - często wydłuża czas oczekiwania o 1-2 dni'
+                                                },
+                                                { 
+                                                    value: 'Weekend', 
+                                                    label: 'Weekend', 
+                                                    icon: '📅', 
+                                                    time: 'Sobota/Niedziela', 
+                                                    waitTime: 'Do 4 dni', 
+                                                    popularity: 85,
+                                                    benefit: 'Weekendowa naprawa',
+                                                    tooltip: 'Ograniczona liczba ekip pracujących w weekend'
+                                                },
+                                                { 
+                                                    value: 'Po 15:00', 
+                                                    label: 'Po 15:00', 
+                                                    icon: '🌙', 
+                                                    time: 'Późne popołudnie', 
+                                                    waitTime: 'Do 5 dni', 
+                                                    warning: true, 
+                                                    badge: '⚠️ DUŻE OBŁOŻENIE', 
+                                                    popularity: 95,
+                                                    benefit: 'Najdłuższy czas oczekiwania',
+                                                    tooltip: 'To najczęściej wybierany przedział - może znacznie wydłużyć realizację'
+                                                }
+                                            ].map((option) => {
+                                                // Nadpisz dane z API jeśli są dostępne
+                                                const dynamicData = availabilityData && availabilityData[option.value];
+                                                if (dynamicData) {
+                                                    option.popularity = dynamicData.popularity;
+                                                    option.waitTime = dynamicData.waitTime;
+                                                    option.waitDays = dynamicData.waitDays;
+                                                }
+
+                                                const isSelected = formData.timeSlot === option.value;
+                                                const baseClasses = 'cursor-pointer border rounded-lg transition-all duration-200 relative overflow-hidden';
+                                                
+                                                // Kolory w zależności od typu opcji - subtelne
+                                                let colorClasses = '';
+                                                if (option.recommended) {
+                                                    colorClasses = isSelected 
                                                         ? 'border-blue-500 bg-blue-50 shadow-md' 
-                                                        : 'border-gray-200 hover:border-gray-300 bg-white'
-                                                }`}>
-                                                    <input
-                                                        type="radio"
-                                                        name="timeSlot"
-                                                        value={option.value}
-                                                        checked={formData.timeSlot === option.value}
-                                                        onChange={handleChange}
-                                                        className="sr-only"
-                                                    />
-                                                    <div className="text-center">
-                                                        <div className="text-3xl mb-2">{option.icon}</div>
-                                                        <div className="font-semibold text-gray-800">{option.label}</div>
-                                                        <div className="text-xs text-gray-500 mt-1">{option.time}</div>
-                                                        {formData.timeSlot === option.value && (
-                                                            <div className="mt-2 text-blue-600 text-sm font-semibold">✓ Wybrane</div>
+                                                        : 'border-blue-300 hover:border-blue-400 bg-white hover:shadow-md hover:ring-1 hover:ring-blue-200';
+                                                } else if (option.warning) {
+                                                    colorClasses = isSelected 
+                                                        ? 'border-blue-500 bg-blue-50 shadow-md' 
+                                                        : 'border-gray-300 hover:border-gray-400 bg-white hover:shadow-sm';
+                                                } else {
+                                                    colorClasses = isSelected 
+                                                        ? 'border-blue-500 bg-blue-50 shadow-md' 
+                                                        : 'border-gray-300 hover:border-gray-400 bg-white hover:shadow-sm';
+                                                }
+
+                                                // Kompaktowy rozmiar dla wszystkich
+                                                const sizeClasses = 'p-3';
+
+                                                return (
+                                                    <label key={option.value} className={`${baseClasses} ${colorClasses} ${sizeClasses} group`}>
+                                                        <input
+                                                            type="radio"
+                                                            name="timeSlot"
+                                                            value={option.value}
+                                                            checked={isSelected}
+                                                            onChange={handleChange}
+                                                            className="sr-only"
+                                                        />
+                                                        
+                                                        {/* Badge w rogu - kompaktowy */}
+                                                        {option.badge && (
+                                                            <div className={`absolute top-1 right-1 px-1.5 py-0.5 rounded text-xs font-bold whitespace-nowrap z-10 ${
+                                                                option.recommended 
+                                                                    ? 'bg-blue-500 text-white' 
+                                                                    : 'bg-gray-500 text-white'
+                                                            }`}>
+                                                                {option.recommended ? '⭐' : '⚠️'}
+                                                            </div>
                                                         )}
-                                                    </div>
-                                                </label>
-                                            ))}
+
+                                                        <div className="text-center relative z-10">
+                                                            {/* Ikona i tytuł w jednej linii dla małych kart */}
+                                                            <div className="flex flex-col items-center">
+                                                                <div className="text-2xl mb-1">{option.icon}</div>
+                                                                <div className="font-semibold text-gray-800 text-sm">
+                                                                    {option.label}
+                                                                </div>
+                                                                <div className="text-xs text-gray-500">{option.time}</div>
+                                                            </div>
+                                                            
+                                                            {/* Progress bar - kompaktowy */}
+                                                            {option.popularity && (
+                                                                <div className="mt-2">
+                                                                    <div className="flex items-center justify-between text-xs mb-0.5">
+                                                                        <span className="text-gray-500 text-xs">Obłożenie</span>
+                                                                        <span className="font-semibold text-gray-700 text-xs">
+                                                                            {option.popularity}%
+                                                                        </span>
+                                                                    </div>
+                                                                    <div className="w-full h-1 bg-gray-200 rounded-full overflow-hidden">
+                                                                        <div 
+                                                                            className="h-full transition-all duration-500 rounded-full bg-gray-700"
+                                                                            style={{ width: `${option.popularity}%` }}
+                                                                        ></div>
+                                                                    </div>
+                                                                </div>
+                                                            )}
+                                                            
+                                                            {/* Czas oczekiwania */}
+                                                            {option.waitTime && (
+                                                                <div className={`mt-2 text-xs font-bold ${
+                                                                    option.recommended ? 'text-blue-600' : 'text-gray-700'
+                                                                }`}>
+                                                                    ⏱️ {option.waitTime}
+                                                                </div>
+                                                            )}
+
+                                                            {isSelected && (
+                                                                <div className="mt-1 text-xs font-semibold text-blue-600">
+                                                                    ✓ Wybrane
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    </label>
+                                                );
+                                            })}
+                                        </div>
+
+                                        {/* Kompaktowa zachęta */}
+                                        <div className="mt-3 p-2 bg-gray-50 rounded-lg text-center text-xs text-gray-600">
+                                            💡 Elastyczne terminy = Szybsza realizacja
                                         </div>
                                     </div>
 
@@ -1026,6 +1315,63 @@ export default function RezerwacjaNowa() {
                     </div>
                 </form>
             </div>
+
+            {/* Modal AI Scanner */}
+            {showAIScanner && (
+                <ModelAIScanner
+                    isOpen={showAIScanner}
+                    onClose={() => {
+                        setShowAIScanner(false);
+                        setScanningDeviceIndex(null);
+                    }}
+                    onModelDetected={handleAIModelDetected}
+                />
+            )}
+
+            {/* Custom animations */}
+            <style jsx>{`
+                @keyframes bounce-slow {
+                    0%, 100% {
+                        transform: translateY(0) translateX(-50%);
+                    }
+                    50% {
+                        transform: translateY(-5px) translateX(-50%);
+                    }
+                }
+                
+                @keyframes fade-in {
+                    from {
+                        opacity: 0;
+                        transform: scale(0.9);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: scale(1);
+                    }
+                }
+
+                .animate-bounce-slow {
+                    animation: bounce-slow 2s ease-in-out infinite;
+                }
+
+                .animate-fade-in {
+                    animation: fade-in 0.3s ease-out;
+                }
+
+                .hover\:scale-102:hover {
+                    transform: scale(1.02);
+                }
+
+                .hover\:scale-105:hover {
+                    transform: scale(1.05);
+                }
+
+                /* Smooth scroll dla progress bara */
+                .transition-all {
+                    transition-property: all;
+                    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+                }
+            `}</style>
         </div>
     );
 }

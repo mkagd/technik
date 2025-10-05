@@ -1,0 +1,90 @@
+{
+  "timestamp": "2025-10-05T05:40:19.676Z",
+  "employees": [
+    {
+      "id": "EMP25189001",
+      "name": "Jan Kowalski",
+      "inventory": [
+        {
+          "partId": "PART003",
+          "quantity": 1,
+          "addedAt": "2025-10-04T22:21:25.862Z"
+        },
+        {
+          "partId": "PART002",
+          "quantity": 1,
+          "addedAt": "2025-10-04T22:21:25.867Z"
+        },
+        {
+          "partId": "PART001",
+          "quantity": 1,
+          "addedAt": "2025-10-04T22:21:25.871Z"
+        },
+        {
+          "partId": "PART005",
+          "quantity": 1,
+          "addedAt": "2025-10-04T22:21:25.972Z"
+        },
+        {
+          "partId": "PART006",
+          "quantity": 1,
+          "addedAt": "2025-10-04T22:21:25.979Z"
+        },
+        {
+          "partId": "PART007",
+          "quantity": 1,
+          "addedAt": "2025-10-04T22:21:25.984Z"
+        }
+      ]
+    },
+    {
+      "id": "EMP25189002",
+      "name": "Anna Nowak",
+      "inventory": []
+    },
+    {
+      "id": "EMP25092001",
+      "name": "Jan Serwisant",
+      "inventory": [
+        {
+          "partId": "PART007",
+          "quantity": 1,
+          "addedAt": "2025-10-04T22:20:22.540Z",
+          "transferredFrom": "EMP25189001"
+        }
+      ]
+    },
+    {
+      "id": "EMP25092002",
+      "name": "Anna Technik",
+      "inventory": [
+        {
+          "partId": "PART001",
+          "quantity": 1,
+          "addedAt": "2025-10-04T22:20:41.843Z",
+          "transferredFrom": "EMP25189001"
+        }
+      ]
+    },
+    {
+      "id": "EMP25092003",
+      "name": "Piotr Chłodnictwo",
+      "inventory": []
+    },
+    {
+      "id": "EMP25092004",
+      "name": "Tomasz Elektryk",
+      "inventory": []
+    },
+    {
+      "id": "EMP25092005",
+      "name": "Marek Pralkowski",
+      "inventory": []
+    },
+    {
+      "id": "EMP25092006",
+      "name": "Karolina Kucharska",
+      "inventory": []
+    }
+  ]
+}

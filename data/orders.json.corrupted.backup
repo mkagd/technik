@@ -1,0 +1,58 @@
+[
+  {
+    "clientId": "CLIS252770001",
+    "clientName": "TEST - Jan Kowalski",
+    "clientPhone": "123456789",
+    "email": "test@example.com",
+    "address": "Testowa 1, Kraków",
+    "city": "Kraków",
+    "deviceType": "Pralka",
+    "brand": "TEST",
+    "model": "TEST-001",
+    "description": "Test naprawy",
+    "priority": "medium",
+    "status": "scheduled",
+    "devices": [
+      {
+        "name": "Pralka",
+        "brand": "TEST",
+        "model": "TEST-001",
+        "description": "Test naprawy",
+        "hasBuiltIn": false,
+        "builtInParams": {
+          "demontaz": false,
+          "montaz": false,
+          "trudna": false,
+          "wolnostojacy": false,
+          "ograniczony": false,
+          "front": false,
+          "czas": false
+        },
+        "builtInParamsNotes": {}
+      }
+    ],
+    "visits": [],
+    "id": 1759641343461,
+    "orderNumber": "ORDS252780001",
+    "builtInParams": {
+      "demontaz": false,
+      "montaz": false,
+      "trudna": false,
+      "wolnostojacy": false,
+      "ograniczony": false,
+      "front": false,
+      "czas": false
+    },
+    "source": "system-auto",
+    "sourceDetails": null,
+    "createdBy": "system",
+    "createdByName": "System",
+    "userId": null,
+    "isUserCreated": false,
+    "createdFromIP": null,
+    "dateAdded": "2025-10-05T05:15:43.461Z",
+    "createdAt": "2025-10-05T05:15:43.461Z",
+    "updatedAt": "2025-10-05T05:15:43.461Z",
+    "updatedBy": null
+  }
+]

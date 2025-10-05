@@ -354,7 +354,12 @@ export const convertReservationToClientOrder = async (reservationData) => {
         city: reservationData.city,
         street: reservationData.street,
         dateAdded: now,
-        history: []
+        history: [],
+        // Dodaj tablice wielokrotnych danych
+        phones: reservationData.phones || [],
+        addresses: reservationData.addresses || [],
+        // Dostępność fizyczna klienta
+        physicalAvailability: reservationData.physicalAvailability || null
     };
 
     // Stwórz zamówienie - zgodne ze strukturą orders.json
@@ -367,6 +372,9 @@ export const convertReservationToClientOrder = async (reservationData) => {
         city: client.city,
         street: client.street,
         postalCode: reservationData.postalCode || '',
+        // Dodaj tablice wielokrotnych danych do zamówienia
+        phones: reservationData.phones || [],
+        addresses: reservationData.addresses || [],
         // 🌍 WSPÓŁRZĘDNE GPS z geocodingu
         clientLocation: reservationData.clientLocation || null,
         latitude: reservationData.clientLocation?.coordinates?.lat || null,
@@ -377,7 +385,7 @@ export const convertReservationToClientOrder = async (reservationData) => {
         serialNumber: '',
         description: reservationData.problem || reservationData.description || 'Brak opisu',
         priority: reservationData.priority || 'medium',
-        status: reservationData.status || 'scheduled',
+        status: reservationData.status || 'pending', // 📌 'pending' - nowa rezerwacja oczekująca na przydzielenie
         visits: [], // Puste wizyty na start
         // Pola legacy dla kompatybilności
         category: reservationData.category,
@@ -385,19 +393,72 @@ export const convertReservationToClientOrder = async (reservationData) => {
         scheduledDate: reservationData.date || reservationData.scheduledDate,
         scheduledTime: reservationData.scheduledTime,
         availability: reservationData.availability || 'Nie określono',
-        devices: [{
-            name: reservationData.device || reservationData.serviceType,
-            description: reservationData.problem || reservationData.description,
-            builtInParams: { ...DEFAULT_BUILTIN_OPTIONS },
-            builtInParamsNotes: {}
-        }],
+        devices: (() => {
+            // Sprawdź czy devices to tablica obiektów (z admin panel) czy stringów (z formularza)
+            if (reservationData.devices && reservationData.devices.length > 0) {
+                const firstDevice = reservationData.devices[0];
+                
+                // Jeśli to obiekt - użyj go bezpośrednio (admin panel format)
+                if (typeof firstDevice === 'object' && firstDevice !== null) {
+                    return reservationData.devices.map(device => ({
+                        name: device.category || device.model || device.brand || 'Nie określono',
+                        brand: device.brand || '',
+                        model: device.model || '',
+                        serialNumber: device.serialNumber || '',
+                        description: device.problem || 'Brak opisu',
+                        hasBuiltIn: device.hasBuiltIn || false,
+                        builtInParams: device.hasBuiltIn ? {
+                            ...DEFAULT_BUILTIN_OPTIONS,
+                            demontaz: true,
+                            montaz: true
+                        } : { ...DEFAULT_BUILTIN_OPTIONS },
+                        builtInParamsNotes: {}
+                    }));
+                }
+            }
+            
+            // Format z formularza rezerwacji - brands[], devices[], categories[] jako stringi
+            if (reservationData.categories && reservationData.categories.length > 0) {
+                return reservationData.categories.map((category, index) => ({
+                    name: category || 'Nie określono',
+                    brand: reservationData.brands?.[index] || '',
+                    model: reservationData.devices?.[index] || '', // devices[] to modele jako stringi
+                    serialNumber: '',
+                    description: reservationData.problems?.[index] || 'Brak opisu',
+                    hasBuiltIn: reservationData.hasBuiltIn?.[index] || false,
+                    builtInParams: reservationData.hasBuiltIn?.[index] ? {
+                        ...DEFAULT_BUILTIN_OPTIONS,
+                        demontaz: reservationData.hasDemontaz?.[index] || true,
+                        montaz: reservationData.hasMontaz?.[index] || true,
+                        trudna: reservationData.hasTrudnaZabudowa?.[index] || false
+                    } : { ...DEFAULT_BUILTIN_OPTIONS },
+                    builtInParamsNotes: {}
+                }));
+            }
+            
+            // Fallback - pojedyncze urządzenie ze starych pól
+            return [{
+                name: reservationData.device || reservationData.serviceType || reservationData.category || 'Nie określono',
+                brand: reservationData.brand || '',
+                model: reservationData.device || '',
+                serialNumber: '',
+                description: reservationData.problem || reservationData.description || 'Brak opisu',
+                hasBuiltIn: reservationData.hasBuiltIn || false,
+                builtInParams: reservationData.hasBuiltIn ? {
+                    ...DEFAULT_BUILTIN_OPTIONS,
+                    demontaz: true,
+                    montaz: true
+                } : { ...DEFAULT_BUILTIN_OPTIONS },
+                builtInParamsNotes: {}
+            }];
+        })(),
         builtInParams: { ...DEFAULT_BUILTIN_OPTIONS },
         // Dodajemy deviceDetails z informacjami o zabudowie
         deviceDetails: {
             deviceType: (reservationData.category || reservationData.device || '').toLowerCase(),
-            hasBuiltIn: reservationData.hasBuiltIn || false,
-            hasDemontaz: reservationData.hasDemontaz || false,
-            hasMontaz: reservationData.hasMontaz || false,
+            hasBuiltIn: reservationData.devices?.[0]?.hasBuiltIn || reservationData.hasBuiltIn || false,
+            hasDemontaz: reservationData.devices?.[0]?.hasBuiltIn || reservationData.hasDemontaz || false,
+            hasMontaz: reservationData.devices?.[0]?.hasBuiltIn || reservationData.hasMontaz || false,
             hasTrudnaZabudowa: reservationData.hasTrudnaZabudowa || false,
             manualAdditionalTime: 0
         },

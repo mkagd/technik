@@ -39,8 +39,9 @@
     "type": "info",
     "link": "/admin/klienci",
     "userId": null,
-    "read": false,
-    "createdAt": "2025-10-03T05:07:42.101Z"
+    "read": true,
+    "createdAt": "2025-10-03T05:07:42.101Z",
+    "readAt": "2025-10-04T11:22:43.454Z"
   },
   {
     "id": 1759468062499,
@@ -49,8 +50,9 @@
     "type": "success",
     "link": "/admin/zamowienia",
     "userId": null,
-    "read": false,
-    "createdAt": "2025-10-03T05:07:42.116Z"
+    "read": true,
+    "createdAt": "2025-10-03T05:07:42.116Z",
+    "readAt": "2025-10-04T11:22:43.454Z"
   },
   {
     "id": 1759468062806,
@@ -59,8 +61,9 @@
     "type": "info",
     "link": "/admin/rezerwacje",
     "userId": null,
-    "read": false,
-    "createdAt": "2025-10-03T05:07:42.118Z"
+    "read": true,
+    "createdAt": "2025-10-03T05:07:42.118Z",
+    "readAt": "2025-10-04T11:22:43.454Z"
   },
   {
     "id": 1759468087585,
@@ -69,8 +72,9 @@
     "type": "info",
     "link": "/admin/klienci",
     "userId": null,
-    "read": false,
-    "createdAt": "2025-10-03T05:08:07.485Z"
+    "read": true,
+    "createdAt": "2025-10-03T05:08:07.485Z",
+    "readAt": "2025-10-04T11:22:43.454Z"
   },
   {
     "id": 1759468088022,
@@ -79,8 +83,9 @@
     "type": "success",
     "link": "/admin/zamowienia",
     "userId": null,
-    "read": false,
-    "createdAt": "2025-10-03T05:08:07.503Z"
+    "read": true,
+    "createdAt": "2025-10-03T05:08:07.503Z",
+    "readAt": "2025-10-04T11:22:43.454Z"
   },
   {
     "id": 1759468087994,
@@ -89,8 +94,9 @@
     "type": "info",
     "link": "/admin/rezerwacje",
     "userId": null,
-    "read": false,
-    "createdAt": "2025-10-03T05:08:07.506Z"
+    "read": true,
+    "createdAt": "2025-10-03T05:08:07.506Z",
+    "readAt": "2025-10-04T11:22:43.454Z"
   },
   {
     "id": 1759469730870,
@@ -121,8 +127,9 @@
     "type": "info",
     "link": "/admin/rezerwacje",
     "userId": null,
-    "read": false,
-    "createdAt": "2025-10-03T05:35:30.525Z"
+    "read": true,
+    "createdAt": "2025-10-03T05:35:30.525Z",
+    "readAt": "2025-10-04T11:22:43.454Z"
   },
   {
     "id": 1759471073729,
@@ -142,8 +149,9 @@
     "type": "success",
     "link": "/admin/zamowienia",
     "userId": null,
-    "read": false,
-    "createdAt": "2025-10-03T05:57:53.010Z"
+    "read": true,
+    "createdAt": "2025-10-03T05:57:53.010Z",
+    "readAt": "2025-10-04T11:22:43.454Z"
   },
   {
     "id": 1759471073027,
@@ -152,8 +160,9 @@
     "type": "info",
     "link": "/admin/rezerwacje",
     "userId": null,
-    "read": false,
-    "createdAt": "2025-10-03T05:57:53.012Z"
+    "read": true,
+    "createdAt": "2025-10-03T05:57:53.012Z",
+    "readAt": "2025-10-04T11:22:43.454Z"
   },
   {
     "id": 1759474205474,
@@ -162,7 +171,368 @@
     "type": "error",
     "link": "/admin/logistyk/zamowienia?id=PR-2025-10-03-1943",
     "userId": null,
+    "read": true,
+    "createdAt": "2025-10-03T06:50:05.474Z",
+    "readAt": "2025-10-04T11:22:43.454Z"
+  },
+  {
+    "id": 1759598648682,
+    "title": "Nowy klient",
+    "message": "Zarejestrowano nowego klienta: Mariusz Bielaszka",
+    "type": "info",
+    "link": "/admin/klienci",
+    "userId": null,
     "read": false,
-    "createdAt": "2025-10-03T06:50:05.474Z"
+    "createdAt": "2025-10-04T17:24:08.052Z"
+  },
+  {
+    "id": 1759598648367,
+    "title": "Nowe zamówienie",
+    "message": "Utworzono zamówienie ORDS252770001 - Pralki",
+    "type": "success",
+    "link": "/admin/zamowienia",
+    "userId": null,
+    "read": false,
+    "createdAt": "2025-10-04T17:24:08.066Z"
+  },
+  {
+    "id": 1759598648290,
+    "title": "Nowa rezerwacja",
+    "message": "Mariusz Bielaszka zgłosił rezerwację: Pralki",
+    "type": "info",
+    "link": "/admin/rezerwacje",
+    "userId": null,
+    "read": false,
+    "createdAt": "2025-10-04T17:24:08.068Z"
+  },
+  {
+    "id": 1759599520952,
+    "title": "Nowy klient",
+    "message": "Zarejestrowano nowego klienta: Mariusz Bielaszka",
+    "type": "info",
+    "link": "/admin/klienci",
+    "userId": null,
+    "read": false,
+    "createdAt": "2025-10-04T17:38:40.695Z"
+  },
+  {
+    "id": 1759599520853,
+    "title": "Nowe zamówienie",
+    "message": "Utworzono zamówienie ORDS252770002 - Pralki",
+    "type": "success",
+    "link": "/admin/zamowienia",
+    "userId": null,
+    "read": false,
+    "createdAt": "2025-10-04T17:38:40.704Z"
+  },
+  {
+    "id": 1759599521123,
+    "title": "Nowa rezerwacja",
+    "message": "Mariusz Bielaszka zgłosił rezerwację: Pralki",
+    "type": "info",
+    "link": "/admin/rezerwacje",
+    "userId": null,
+    "read": false,
+    "createdAt": "2025-10-04T17:38:40.705Z"
+  },
+  {
+    "id": 1759600719513,
+    "title": "Nowy klient",
+    "message": "Zarejestrowano nowego klienta: qweqwe",
+    "type": "info",
+    "link": "/admin/klienci",
+    "userId": null,
+    "read": false,
+    "createdAt": "2025-10-04T17:58:39.497Z"
+  },
+  {
+    "id": 1759600720018,
+    "title": "Nowe zamówienie",
+    "message": "Utworzono zamówienie ORDS252770003 - Pralki",
+    "type": "success",
+    "link": "/admin/zamowienia",
+    "userId": null,
+    "read": false,
+    "createdAt": "2025-10-04T17:58:39.513Z"
+  },
+  {
+    "id": 1759600720513,
+    "title": "Nowa rezerwacja",
+    "message": "qweqwe zgłosił rezerwację: Pralki",
+    "type": "info",
+    "link": "/admin/rezerwacje",
+    "userId": null,
+    "read": false,
+    "createdAt": "2025-10-04T17:58:39.514Z"
+  },
+  {
+    "id": 1759602864439,
+    "title": "Nowy klient",
+    "message": "Zarejestrowano nowego klienta: Oliwia Bielaszka",
+    "type": "info",
+    "link": "/admin/klienci",
+    "userId": null,
+    "read": false,
+    "createdAt": "2025-10-04T18:34:23.873Z"
+  },
+  {
+    "id": 1759602864809,
+    "title": "Nowe zamówienie",
+    "message": "Utworzono zamówienie ORDS252770004 - Pralki",
+    "type": "success",
+    "link": "/admin/zamowienia",
+    "userId": null,
+    "read": false,
+    "createdAt": "2025-10-04T18:34:23.890Z"
+  },
+  {
+    "id": 1759602864625,
+    "title": "Nowa rezerwacja",
+    "message": "Oliwia Bielaszka zgłosił rezerwację: Pralki",
+    "type": "info",
+    "link": "/admin/rezerwacje",
+    "userId": null,
+    "read": false,
+    "createdAt": "2025-10-04T18:34:23.892Z"
+  },
+  {
+    "id": 1759610022281,
+    "title": "Nowy klient",
+    "message": "Zarejestrowano nowego klienta: Konting",
+    "type": "info",
+    "link": "/admin/klienci",
+    "userId": null,
+    "read": false,
+    "createdAt": "2025-10-04T20:33:41.882Z"
+  },
+  {
+    "id": 1759610022038,
+    "title": "Nowe zamówienie",
+    "message": "Utworzono zamówienie ORDS252770005 - Pralki",
+    "type": "success",
+    "link": "/admin/zamowienia",
+    "userId": null,
+    "read": false,
+    "createdAt": "2025-10-04T20:33:41.889Z"
+  },
+  {
+    "id": 1759610022045,
+    "title": "Nowa rezerwacja",
+    "message": "Konting zgłosił rezerwację: Pralki",
+    "type": "info",
+    "link": "/admin/rezerwacje",
+    "userId": null,
+    "read": false,
+    "createdAt": "2025-10-04T20:33:41.891Z"
+  },
+  {
+    "id": 1759642076904,
+    "title": "Nowy klient",
+    "message": "Zarejestrowano nowego klienta: Mariusz Bielaszka",
+    "type": "info",
+    "link": "/admin/klienci",
+    "userId": null,
+    "read": false,
+    "createdAt": "2025-10-05T05:27:56.767Z"
+  },
+  {
+    "id": 1759642077191,
+    "title": "Nowe zamówienie",
+    "message": "Utworzono zamówienie ORDS252780006 - Pralka",
+    "type": "success",
+    "link": "/admin/zamowienia",
+    "userId": null,
+    "read": false,
+    "createdAt": "2025-10-05T05:27:56.805Z"
+  },
+  {
+    "id": 1759642076885,
+    "title": "Nowa rezerwacja",
+    "message": "Mariusz Bielaszka zgłosił rezerwację: Pralka",
+    "type": "info",
+    "link": "/admin/rezerwacje",
+    "userId": null,
+    "read": false,
+    "createdAt": "2025-10-05T05:27:56.807Z"
+  },
+  {
+    "id": 1759642102964,
+    "title": "Nowy klient",
+    "message": "Zarejestrowano nowego klienta: Technik B",
+    "type": "info",
+    "link": "/admin/klienci",
+    "userId": null,
+    "read": false,
+    "createdAt": "2025-10-05T05:28:22.032Z"
+  },
+  {
+    "id": 1759642102712,
+    "title": "Nowe zamówienie",
+    "message": "Utworzono zamówienie ORDS252780007 - Zmywarka",
+    "type": "success",
+    "link": "/admin/zamowienia",
+    "userId": null,
+    "read": false,
+    "createdAt": "2025-10-05T05:28:22.043Z"
+  },
+  {
+    "id": 1759642102292,
+    "title": "Nowa rezerwacja",
+    "message": "Technik B zgłosił rezerwację: Zmywarka",
+    "type": "info",
+    "link": "/admin/rezerwacje",
+    "userId": null,
+    "read": false,
+    "createdAt": "2025-10-05T05:28:22.044Z"
+  },
+  {
+    "id": 1759644727281,
+    "title": "Nowy klient",
+    "message": "Zarejestrowano nowego klienta: Bruno Bielaszka",
+    "type": "info",
+    "link": "/admin/klienci",
+    "userId": null,
+    "read": false,
+    "createdAt": "2025-10-05T06:12:06.619Z"
+  },
+  {
+    "id": 1759644727473,
+    "title": "Nowe zamówienie",
+    "message": "Utworzono zamówienie ORDS252780008 - Lodówka",
+    "type": "success",
+    "link": "/admin/zamowienia",
+    "userId": null,
+    "read": false,
+    "createdAt": "2025-10-05T06:12:06.632Z"
+  },
+  {
+    "id": 1759644727332,
+    "title": "Nowa rezerwacja",
+    "message": "Bruno Bielaszka zgłosił rezerwację: Lodówka",
+    "type": "info",
+    "link": "/admin/rezerwacje",
+    "userId": null,
+    "read": false,
+    "createdAt": "2025-10-05T06:12:06.634Z"
+  },
+  {
+    "id": 1759644777869,
+    "title": "Nowy klient",
+    "message": "Zarejestrowano nowego klienta: Bruno Bielaszka",
+    "type": "info",
+    "link": "/admin/klienci",
+    "userId": null,
+    "read": false,
+    "createdAt": "2025-10-05T06:12:56.898Z"
+  },
+  {
+    "id": 1759644777196,
+    "title": "Nowe zamówienie",
+    "message": "Utworzono zamówienie ORDS252780009 - Lodówka",
+    "type": "success",
+    "link": "/admin/zamowienia",
+    "userId": null,
+    "read": false,
+    "createdAt": "2025-10-05T06:12:56.911Z"
+  },
+  {
+    "id": 1759644777039,
+    "title": "Nowa rezerwacja",
+    "message": "Bruno Bielaszka zgłosił rezerwację: Lodówka",
+    "type": "info",
+    "link": "/admin/rezerwacje",
+    "userId": null,
+    "read": false,
+    "createdAt": "2025-10-05T06:12:56.914Z"
+  },
+  {
+    "id": 1759644788133,
+    "title": "Nowy klient",
+    "message": "Zarejestrowano nowego klienta: Bruno Bielaszka",
+    "type": "info",
+    "link": "/admin/klienci",
+    "userId": null,
+    "read": false,
+    "createdAt": "2025-10-05T06:13:08.048Z"
+  },
+  {
+    "id": 1759644789026,
+    "title": "Nowe zamówienie",
+    "message": "Utworzono zamówienie ORDS252780010 - Lodówka",
+    "type": "success",
+    "link": "/admin/zamowienia",
+    "userId": null,
+    "read": false,
+    "createdAt": "2025-10-05T06:13:08.065Z"
+  },
+  {
+    "id": 1759644788162,
+    "title": "Nowa rezerwacja",
+    "message": "Bruno Bielaszka zgłosił rezerwację: Lodówka",
+    "type": "info",
+    "link": "/admin/rezerwacje",
+    "userId": null,
+    "read": false,
+    "createdAt": "2025-10-05T06:13:08.068Z"
+  },
+  {
+    "id": 1759644793906,
+    "title": "Nowy klient",
+    "message": "Zarejestrowano nowego klienta: Bruno Bielaszka",
+    "type": "info",
+    "link": "/admin/klienci",
+    "userId": null,
+    "read": false,
+    "createdAt": "2025-10-05T06:13:13.212Z"
+  },
+  {
+    "id": 1759644793663,
+    "title": "Nowe zamówienie",
+    "message": "Utworzono zamówienie ORDS252780011 - Lodówka",
+    "type": "success",
+    "link": "/admin/zamowienia",
+    "userId": null,
+    "read": false,
+    "createdAt": "2025-10-05T06:13:13.230Z"
+  },
+  {
+    "id": 1759644793723,
+    "title": "Nowa rezerwacja",
+    "message": "Bruno Bielaszka zgłosił rezerwację: Lodówka",
+    "type": "info",
+    "link": "/admin/rezerwacje",
+    "userId": null,
+    "read": false,
+    "createdAt": "2025-10-05T06:13:13.232Z"
+  },
+  {
+    "id": 1759644797236,
+    "title": "Nowy klient",
+    "message": "Zarejestrowano nowego klienta: Bruno Bielaszka",
+    "type": "info",
+    "link": "/admin/klienci",
+    "userId": null,
+    "read": false,
+    "createdAt": "2025-10-05T06:13:16.875Z"
+  },
+  {
+    "id": 1759644797751,
+    "title": "Nowe zamówienie",
+    "message": "Utworzono zamówienie ORDS252780012 - Lodówka",
+    "type": "success",
+    "link": "/admin/zamowienia",
+    "userId": null,
+    "read": false,
+    "createdAt": "2025-10-05T06:13:16.888Z"
+  },
+  {
+    "id": 1759644797232,
+    "title": "Nowa rezerwacja",
+    "message": "Bruno Bielaszka zgłosił rezerwację: Lodówka",
+    "type": "info",
+    "link": "/admin/rezerwacje",
+    "userId": null,
+    "read": false,
+    "createdAt": "2025-10-05T06:13:16.890Z"
   }
 ]

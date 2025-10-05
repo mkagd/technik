@@ -131,7 +131,7 @@ const smartParseModelAndType = (parsed) => {
   return { finalModel, finalType, finalName };
 };
 
-export default function SimpleAIScanner({ onModelDetected, employeeInfo }) {
+export default function SimpleAIScanner({ onModelDetected, employeeInfo, orders = [], visits = [] }) {
   const [isScanning, setIsScanning] = useState(false);
   const [capturedImage, setCapturedImage] = useState(null);
   const [aiResult, setAiResult] = useState('');
@@ -140,6 +140,9 @@ export default function SimpleAIScanner({ onModelDetected, employeeInfo }) {
   const [stream, setStream] = useState(null);
   const [cameraError, setCameraError] = useState(null);
   const [processingStage, setProcessingStage] = useState('');
+  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [selectedVisit, setSelectedVisit] = useState(null);
+  const [showOrderSelect, setShowOrderSelect] = useState(false);
   
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
@@ -345,6 +348,106 @@ export default function SimpleAIScanner({ onModelDetected, employeeInfo }) {
 
   return (
     <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+      {/* Sekcja wyboru zlecenia/wizyty */}
+      {(orders.length > 0 || visits.length > 0) && (
+        <div className="bg-gradient-to-r from-blue-50 to-purple-50 border-b border-gray-200 p-4">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-sm font-semibold text-gray-900 flex items-center">
+              <FiZap className="h-4 w-4 mr-2 text-blue-600" />
+              Twoje zlecenia na dziś
+            </h3>
+            {(selectedOrder || selectedVisit) && (
+              <button
+                onClick={() => {
+                  setSelectedOrder(null);
+                  setSelectedVisit(null);
+                }}
+                className="text-xs text-gray-600 hover:text-gray-800"
+              >
+                Zmień
+              </button>
+            )}
+          </div>
+          
+          {!selectedOrder && !selectedVisit ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              {orders.map(order => (
+                <button
+                  key={order.id}
+                  onClick={() => setSelectedOrder(order)}
+                  className="text-left p-3 bg-white rounded-lg border border-gray-200 hover:border-blue-500 hover:shadow-md transition-all"
+                >
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs font-medium text-gray-500">Zlecenie #{order.id}</p>
+                      <p className="text-sm font-semibold text-gray-900 truncate">
+                        {order.clientName || 'Klient'}
+                      </p>
+                      <p className="text-xs text-gray-600 truncate">
+                        {order.deviceType} - {order.brand}
+                      </p>
+                    </div>
+                    <span className={`text-xs px-2 py-1 rounded-full ${
+                      order.status === 'completed' ? 'bg-green-100 text-green-800' :
+                      order.status === 'in_progress' ? 'bg-blue-100 text-blue-800' :
+                      'bg-yellow-100 text-yellow-800'
+                    }`}>
+                      {order.status === 'completed' ? 'Zakończone' :
+                       order.status === 'in_progress' ? 'W trakcie' : 'Nowe'}
+                    </span>
+                  </div>
+                </button>
+              ))}
+              
+              {visits.map(visit => (
+                <button
+                  key={visit.id}
+                  onClick={() => setSelectedVisit(visit)}
+                  className="text-left p-3 bg-white rounded-lg border border-gray-200 hover:border-purple-500 hover:shadow-md transition-all"
+                >
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs font-medium text-gray-500">Wizyta #{visit.id}</p>
+                      <p className="text-sm font-semibold text-gray-900 truncate">
+                        {visit.clientName || 'Klient'}
+                      </p>
+                      <p className="text-xs text-gray-600 truncate">
+                        {visit.visitDate} {visit.timeSlot}
+                      </p>
+                    </div>
+                    <span className={`text-xs px-2 py-1 rounded-full ${
+                      visit.status === 'completed' ? 'bg-green-100 text-green-800' :
+                      visit.status === 'confirmed' ? 'bg-blue-100 text-blue-800' :
+                      'bg-yellow-100 text-yellow-800'
+                    }`}>
+                      {visit.status === 'completed' ? 'Zakończona' :
+                       visit.status === 'confirmed' ? 'Potwierdzona' : 'Oczekuje'}
+                    </span>
+                  </div>
+                </button>
+              ))}
+            </div>
+          ) : (
+            <div className="bg-white rounded-lg border-2 border-blue-500 p-3">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xs font-medium text-blue-600">
+                    {selectedOrder ? 'Wybrane zlecenie' : 'Wybrana wizyta'}
+                  </p>
+                  <p className="text-sm font-semibold text-gray-900">
+                    #{selectedOrder?.id || selectedVisit?.id} - {selectedOrder?.clientName || selectedVisit?.clientName}
+                  </p>
+                  <p className="text-xs text-gray-600">
+                    {selectedOrder?.deviceType || selectedVisit?.visitDate} {selectedOrder?.brand || selectedVisit?.timeSlot}
+                  </p>
+                </div>
+                <FiCheck className="h-6 w-6 text-green-600" />
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+      
       {!capturedImage && !isScanning && (
         <div className="text-center p-8">
           <FiCamera className="h-16 w-16 text-gray-400 mx-auto mb-4" />
@@ -352,13 +455,21 @@ export default function SimpleAIScanner({ onModelDetected, employeeInfo }) {
             Skanowanie modelu urządzenia
           </h3>
           <p className="text-gray-600 mb-6">
-            Wykonaj zdjęcie tabliczki znamionowej, a AI automatycznie rozpozna model
+            {(selectedOrder || selectedVisit) 
+              ? `Wykonaj zdjęcie tabliczki znamionowej dla zlecenia ${selectedOrder?.id || selectedVisit?.id}`
+              : 'Wybierz zlecenie powyżej, następnie wykonaj zdjęcie tabliczki'
+            }
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button
               onClick={initCamera}
-              className="flex items-center justify-center px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-colors"
+              disabled={(orders.length > 0 || visits.length > 0) && !selectedOrder && !selectedVisit}
+              className={`flex items-center justify-center px-6 py-3 rounded-lg transition-colors ${
+                (orders.length > 0 || visits.length > 0) && !selectedOrder && !selectedVisit
+                  ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                  : 'bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700'
+              }`}
             >
               <FiCamera className="h-5 w-5 mr-2" />
               Użyj kamery
@@ -370,15 +481,27 @@ export default function SimpleAIScanner({ onModelDetected, employeeInfo }) {
               onChange={handleFileUpload}
               ref={fileInputRef}
               className="hidden"
+              disabled={(orders.length > 0 || visits.length > 0) && !selectedOrder && !selectedVisit}
             />
             <button
               onClick={() => fileInputRef.current?.click()}
-              className="flex items-center justify-center px-6 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
+              disabled={(orders.length > 0 || visits.length > 0) && !selectedOrder && !selectedVisit}
+              className={`flex items-center justify-center px-6 py-3 rounded-lg transition-colors ${
+                (orders.length > 0 || visits.length > 0) && !selectedOrder && !selectedVisit
+                  ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                  : 'bg-gray-600 text-white hover:bg-gray-700'
+              }`}
             >
               <FiRefreshCw className="h-5 w-5 mr-2" />
               Wybierz plik
             </button>
           </div>
+          
+          {(orders.length > 0 || visits.length > 0) && !selectedOrder && !selectedVisit && (
+            <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 text-yellow-800 rounded-lg text-sm">
+              ⚠️ Najpierw wybierz zlecenie lub wizytę powyżej
+            </div>
+          )}
           
           {cameraError && (
             <div className="mt-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg">

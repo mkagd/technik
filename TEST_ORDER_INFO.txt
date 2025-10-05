@@ -1,0 +1,24 @@
+===========================================
+TESTOWE ZAMÓWIENIE WIELOURZĄDZENIOWE
+===========================================
+
+Data utworzenia: 4.10.2025, 13:03:43
+
+IDs:
+- Order ID: ORD-1759575823713-342
+- Order Number: ORDA-2025-5285
+- Client ID: CLI-1759575823713-874
+- Visit ID: VIS-1759575823713-398
+
+Urządzenia:
+1. Pralka - Samsung WW90K6414QW (S/N: SN-TEST-PRALKA-001)
+2. Zmywarka - Bosch SMS46GI01E (S/N: SN-TEST-ZMYWARKA-001)
+
+Łącza:
+- Admin: http://localhost:3000/admin/zamowienia/ORD-1759575823713-342
+- Technik: http://localhost:3000/technician/visit/VIS-1759575823713-398
+
+Status: zaplanowane
+Wizyta: 2025-10-04 o 10:00
+
+===========================================

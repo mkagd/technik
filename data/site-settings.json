@@ -1,0 +1,35 @@
+{
+  "contact": {
+    "phone": "+48 792 392 870",
+    "email": "kontakt@techserwis.pl",
+    "address": "ul. Przykładowa 123, 39-200 Dębica"
+  },
+  "businessHours": {
+    "monday": "8:00 - 18:00",
+    "tuesday": "8:00 - 18:00",
+    "wednesday": "8:00 - 18:00",
+    "thursday": "8:00 - 18:00",
+    "friday": "8:00 - 18:00",
+    "saturday": "9:00 - 14:00",
+    "sunday": "Zamknięte"
+  },
+  "socialMedia": {
+    "facebook": "",
+    "instagram": "",
+    "linkedin": ""
+  },
+  "seo": {
+    "title": "TECHNIK - Profesjonalny Serwis AGD Dębica",
+    "description": "Profesjonalny serwis AGD w Dębicy. Naprawiamy pralki, lodówki, zmywarki, piekarniki. 30 lat doświadczenia. Gwarancja na usługi.",
+    "keywords": "serwis agd dębica, naprawa pralki dębica, naprawa lodówki, serwis zmywarek, naprawa piekarnika"
+  },
+  "stats": {
+    "yearsExperience": "5+",
+    "repairsCompleted": "2500+",
+    "happyClients": "849+",
+    "rating": "2"
+  },
+  "companyName": "TECHNIK Serwis AGD",
+  "slogan": "Profesjonalne naprawy sprzętu AGD",
+  "lastUpdated": "2025-10-04T21:06:56.507Z"
+}

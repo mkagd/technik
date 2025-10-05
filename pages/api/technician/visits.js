@@ -3,6 +3,7 @@
 
 import fs from 'fs';
 import path from 'path';
+import { getTechnicianId, statusToUI } from '../../../utils/fieldMapping';
 
 const ORDERS_FILE = path.join(process.cwd(), 'data', 'orders.json');
 const SESSIONS_FILE = path.join(process.cwd(), 'data', 'technician-sessions.json');
@@ -78,9 +79,8 @@ const extractVisitsFromOrder = (order) => {
         time: visit.time || visit.scheduledTime || '09:00',
         scheduledDate: visit.scheduledDate || visit.date,
         
-        // Przypisanie
-        assignedTo: visit.assignedTo,
-        technicianId: visit.technicianId || visit.assignedTo,
+        // Przypisanie (używamy uniwersalnego gettera)
+        technicianId: getTechnicianId(visit) || getTechnicianId(order),
         
         // Dane klienta
         clientId: order.clientId,
@@ -158,8 +158,8 @@ const extractVisitsFromOrder = (order) => {
       time: order.visitTime || order.time || '09:00',
       scheduledDate: order.visitDate || order.plannedDate,
       
-      assignedTo: order.assignedTo || order.assignedEmployee || order.technicianId,
-      technicianId: order.technicianId || order.assignedTo,
+      // Przypisanie (uniwersalny getter)
+      technicianId: getTechnicianId(order),
       
       clientId: order.clientId,
       clientName: order.clientName || order.customerName,

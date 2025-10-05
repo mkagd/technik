@@ -4,7 +4,7 @@
 import fs from 'fs';
 import path from 'path';
 
-const DATA_FILE = path.join(process.cwd(), 'data', 'rezervacje.json');
+const DATA_FILE = path.join(process.cwd(), 'data', 'rezerwacje.json');
 
 // Upewnij się, że folder data istnieje
 const ensureDataDir = () => {

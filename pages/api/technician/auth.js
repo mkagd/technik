@@ -4,6 +4,7 @@
 import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
+import bcrypt from 'bcryptjs';
 
 const EMPLOYEES_FILE = path.join(process.cwd(), 'data', 'employees.json');
 const SESSIONS_FILE = path.join(process.cwd(), 'data', 'technician-sessions.json');
@@ -19,6 +20,16 @@ const readEmployees = () => {
   } catch (error) {
     console.error('❌ Error reading employees.json:', error);
     return [];
+  }
+};
+
+const saveEmployees = (employees) => {
+  try {
+    fs.writeFileSync(EMPLOYEES_FILE, JSON.stringify(employees, null, 2));
+    return true;
+  } catch (error) {
+    console.error('❌ Error saving employees.json:', error);
+    return false;
   }
 };
 
@@ -125,7 +136,7 @@ export default function handler(req, res) {
 // ===========================
 // LOGIN
 // ===========================
-const handleLogin = (req, res) => {
+const handleLogin = async (req, res) => {
   if (req.method !== 'POST') {
     return res.status(405).json({ 
       success: false, 
@@ -138,7 +149,7 @@ const handleLogin = (req, res) => {
   if (!email || !password) {
     return res.status(400).json({
       success: false,
-      message: 'Email and password are required'
+      message: 'Email i hasło są wymagane'
     });
   }
 
@@ -152,21 +163,77 @@ const handleLogin = (req, res) => {
   if (!employee) {
     return res.status(401).json({
       success: false,
-      message: 'Invalid email or inactive account'
+      message: 'Nieprawidłowy email lub konto nieaktywne'
     });
   }
 
-  // Sprawdź hasło
-  // Na razie używamy domyślnego hasła "haslo123" dla wszystkich
-  // Później można dodać pole employee.passwordHash
-  const defaultPassword = 'haslo123';
-  const hashedInput = hashPassword(password);
-  const hashedDefault = hashPassword(defaultPassword);
-  
-  if (hashedInput !== hashedDefault) {
-    return res.status(401).json({
+  // ⭐ KROK 1: Sprawdź czy konto jest zablokowane (PRZED sprawdzeniem hasła!)
+  if (employee.isLocked) {
+    return res.status(403).json({
       success: false,
-      message: 'Invalid password'
+      message: '🔒 Twoje konto zostało zablokowane/zawieszone. Skontaktuj się z administratorem, aby je odblokować.',
+      isLocked: true
+    });
+  }
+
+  // ⭐ KROK 2: Sprawdź hasło z bcrypt
+  
+  // Sprawdź czy pracownik ma ustawione hasło
+  if (!employee.passwordHash) {
+    // Fallback: sprawdź domyślne hasło (dla wstecznej kompatybilności)
+    const defaultPassword = 'haslo123';
+    if (password !== defaultPassword) {
+      return res.status(401).json({
+        success: false,
+        message: 'Nieprawidłowe hasło'
+      });
+    }
+    console.log(`⚠️ Employee ${employee.id} using default password - migration needed`);
+  } else {
+    // Użyj bcrypt do weryfikacji
+    const isPasswordValid = await bcrypt.compare(password, employee.passwordHash);
+    
+    if (!isPasswordValid) {
+      // Zwiększ licznik nieudanych prób
+      if (!employee.failedLoginAttempts) employee.failedLoginAttempts = 0;
+      employee.failedLoginAttempts++;
+      employee.lastLoginAttempt = new Date().toISOString();
+
+      // Zablokuj po 5 nieudanych próbach
+      if (employee.failedLoginAttempts >= 5) {
+        employee.isLocked = true;
+        employee.lockedAt = new Date().toISOString();
+        employee.lockReason = 'automatic'; // 5 failed attempts
+        saveEmployees(employees);
+        
+        return res.status(403).json({
+          success: false,
+          message: '🔒 Twoje konto zostało zablokowane z powodu zbyt wielu nieudanych prób logowania. Skontaktuj się z administratorem.',
+          isLocked: true
+        });
+      }
+
+      saveEmployees(employees);
+
+      return res.status(401).json({
+        success: false,
+        message: `❌ Nieprawidłowe hasło. Pozostało prób: ${5 - employee.failedLoginAttempts}.`,
+        attemptsLeft: 5 - employee.failedLoginAttempts
+      });
+    }
+
+    // ✅ Hasło prawidłowe - reset failed attempts
+    employee.failedLoginAttempts = 0;
+    employee.lastLogin = new Date().toISOString();
+    saveEmployees(employees);
+  }
+
+  // ⭐ KROK 3: Sprawdź czy wymaga zmiany hasła
+  if (employee.requirePasswordChange) {
+    return res.status(403).json({
+      success: false,
+      message: '⚠️ Wymagana zmiana hasła. Skontaktuj się z administratorem.',
+      requirePasswordChange: true
     });
   }
 
@@ -212,7 +279,7 @@ const handleLogin = (req, res) => {
 
   return res.status(200).json({
     success: true,
-    message: 'Login successful',
+    message: 'Zalogowano pomyślnie',
     token,
     employee: employeeData,
     expiresIn: '7d'
@@ -235,7 +302,7 @@ const handleLogout = (req, res) => {
   if (!token) {
     return res.status(400).json({
       success: false,
-      message: 'Token is required'
+      message: 'Token jest wymagany'
     });
   }
 
@@ -245,7 +312,7 @@ const handleLogout = (req, res) => {
   if (sessionIndex === -1) {
     return res.status(404).json({
       success: false,
-      message: 'Session not found'
+      message: 'Sesja nie znaleziona'
     });
   }
 
@@ -258,7 +325,7 @@ const handleLogout = (req, res) => {
 
   return res.status(200).json({
     success: true,
-    message: 'Logout successful'
+    message: 'Wylogowano pomyślnie'
   });
 };
 
@@ -271,7 +338,7 @@ const handleValidateToken = (req, res) => {
   if (!token) {
     return res.status(400).json({
       success: false,
-      message: 'Token is required'
+      message: 'Token jest wymagany'
     });
   }
 
@@ -280,7 +347,7 @@ const handleValidateToken = (req, res) => {
   if (!session) {
     return res.status(401).json({
       success: false,
-      message: 'Invalid or expired token'
+      message: 'Nieprawidłowy lub wygasły token'
     });
   }
 
@@ -299,7 +366,7 @@ const handleValidateToken = (req, res) => {
   if (!employee) {
     return res.status(404).json({
       success: false,
-      message: 'Employee not found'
+      message: 'Pracownik nie znaleziony'
     });
   }
 
@@ -319,7 +386,7 @@ const handleValidateToken = (req, res) => {
 
   return res.status(200).json({
     success: true,
-    message: 'Token is valid',
+    message: 'Token jest prawidłowy',
     employee: employeeData,
     session: {
       createdAt: session.createdAt,

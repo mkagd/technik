@@ -1,0 +1,162 @@
+# ✅ DANE WYCZYSZCZONE I WYPEŁNIONE
+
+**Data:** 04.10.2025  
+**Status:** ✅ Sukces
+
+---
+
+## 📊 Podsumowanie Operacji
+
+### Wykonane Akcje:
+- ✅ Utworzono backupy wszystkich plików
+- ✅ Wyczyszczono orders.json (0 zamówień)
+- ✅ Wyczyszczono visits.json (0 wizyt)
+- ✅ Utworzono 5 nowych klientów z Dębicy
+- ✅ Utworzono 8 rezerwacji
+
+---
+
+## 👥 KLIENCI (5) - DĘBICA
+
+### 1. Jan Kowalski
+- **ID:** CLI-1759576455349-245
+- **Telefon:** 146812345
+- **Komórka:** 501234567
+- **Email:** jan.kowalski@gmail.com
+- **Adres:** ul. Kopernika 15/3, 39-200 Dębica
+- **Hasło:** test123
+
+### 2. Anna Nowak
+- **ID:** CLI-1759576455350-526
+- **Telefon:** 146823456
+- **Komórka:** 512345678
+- **Email:** anna.nowak@interia.pl
+- **Adres:** ul. Mickiewicza 28/12, 39-200 Dębica
+- **Hasło:** test123
+
+### 3. Piotr Wiśniewski
+- **ID:** CLI-1759576455350-356
+- **Telefon:** 146834567
+- **Komórka:** 523456789
+- **Email:** piotr.wisniewski@wp.pl
+- **Adres:** ul. Słowackiego 7, 39-200 Dębica
+- **Hasło:** test123
+
+### 4. Maria Lewandowska
+- **ID:** CLI-1759576455350-729
+- **Telefon:** 146845678
+- **Komórka:** 534567890
+- **Email:** maria.lewandowska@onet.pl
+- **Adres:** ul. Sienkiewicza 42/5, 39-200 Dębica
+- **Hasło:** test123
+
+### 5. Tomasz Wójcik
+- **ID:** CLI-1759576455350-733
+- **Telefon:** 146856789
+- **Komórka:** 545678901
+- **Email:** tomasz.wojcik@gmail.com
+- **Adres:** ul. Rynek 3/8, 39-200 Dębica
+- **Hasło:** test123
+
+---
+
+## 📅 REZERWACJE (8)
+
+### 1. Jan Kowalski - Pralka Samsung
+- **ID:** REZ-1759576455350-766
+- **Data:** 2025-10-05 o 09:00
+- **Status:** ✅ confirmed
+- **Adres:** ul. Kopernika 15/3, 39-200 Dębica
+
+### 2. Anna Nowak - Zmywarka Bosch
+- **ID:** REZ-1759576455350-279
+- **Data:** 2025-10-06 o 10:00
+- **Status:** ✅ confirmed
+- **Adres:** ul. Mickiewicza 28/12, 39-200 Dębica
+
+### 3. Piotr Wiśniewski - Lodówka Whirlpool
+- **ID:** REZ-1759576455350-994
+- **Data:** 2025-10-07 o 11:00
+- **Status:** ✅ confirmed
+- **Adres:** ul. Słowackiego 7, 39-200 Dębica
+
+### 4. Maria Lewandowska - Piekarnik LG
+- **ID:** REZ-1759576455350-286
+- **Data:** 2025-10-08 o 12:00
+- **Status:** ⏳ pending
+- **Adres:** ul. Sienkiewicza 42/5, 39-200 Dębica
+
+### 5. Tomasz Wójcik - Płyta indukcyjna Electrolux
+- **ID:** REZ-1759576455350-475
+- **Data:** 2025-10-09 o 13:00
+- **Status:** ⏳ pending
+- **Adres:** ul. Rynek 3/8, 39-200 Dębica
+
+### 6. Jan Kowalski - Pralka Samsung
+- **ID:** REZ-1759576455350-993
+- **Data:** 2025-10-10 o 14:00
+- **Status:** ⏳ pending
+- **Adres:** ul. Kopernika 15/3, 39-200 Dębica
+
+### 7. Anna Nowak - Zmywarka Bosch
+- **ID:** REZ-1759576455350-986
+- **Data:** 2025-10-11 o 15:00
+- **Status:** ✅ completed
+- **Adres:** ul. Mickiewicza 28/12, 39-200 Dębica
+
+### 8. Piotr Wiśniewski - Lodówka Whirlpool
+- **ID:** REZ-1759576455350-331
+- **Data:** 2025-10-12 o 16:00
+- **Status:** ✅ completed
+- **Adres:** ul. Słowackiego 7, 39-200 Dębica
+
+---
+
+## 🔗 Linki do Paneli
+
+### Panel Admina:
+- **Klienci:** http://localhost:3000/admin/klienci
+- **Rezerwacje:** http://localhost:3000/admin/rezerwacje
+- **Wizyty:** http://localhost:3000/admin/wizyty
+
+---
+
+## 💾 Pliki Backupów
+
+Utworzono backupy przed wyczyszczeniem:
+- `data/clients-backup-1759576455349.json`
+- `data/orders-backup-1759576455349.json`
+- `data/rezervacje-backup-1759576455349.json`
+- `data/visits-backup-1759576455349.json`
+
+---
+
+## 📝 Notatki
+
+### Co zostało wyczyszczone:
+- ✅ Wszystkie zamówienia (orders.json)
+- ✅ Wszystkie wizyty (visits.json)
+- ✅ Wszyscy starzy klienci (clients.json)
+- ✅ Wszystkie stare rezerwacje (rezervacje.json)
+
+### Co zostało utworzone:
+- ✅ 5 nowych klientów z pełnymi adresami z Dębicy
+- ✅ 8 rezerwacji (3 confirmed, 3 pending, 2 completed)
+- ✅ Hasło dla wszystkich klientów: **test123**
+
+### Co trzeba dodać ręcznie:
+- ⏳ Wizyty - możesz dodać je przez panel admina
+
+---
+
+## 🚀 Następne Kroki
+
+1. Otwórz panel admina: http://localhost:3000/admin/klienci
+2. Sprawdź listę 5 klientów z Dębicy
+3. Przejdź do rezerwacji: http://localhost:3000/admin/rezerwacje
+4. Dodaj wizyty ręcznie dla klientów według potrzeb
+
+---
+
+**Utworzono:** 04.10.2025  
+**Skrypt:** clean-and-populate-data.js

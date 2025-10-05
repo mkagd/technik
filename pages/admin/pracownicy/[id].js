@@ -5,9 +5,10 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import AdminLayout from '../../../components/AdminLayout';
+import SecurityTab from '../../../components/admin/SecurityTab';
 import { 
   FiSave, FiX, FiUser, FiClock, FiHome, FiTool, FiMapPin, 
-  FiTrendingUp, FiTruck, FiAward, FiChevronLeft, FiAlertCircle
+  FiTrendingUp, FiTruck, FiAward, FiChevronLeft, FiAlertCircle, FiLock
 } from 'react-icons/fi';
 
 export default function PracownikEdycja() {
@@ -125,7 +126,8 @@ export default function PracownikEdycja() {
     { id: 'repair-times', label: 'Czasy napraw', icon: FiClock },
     { id: 'built-in-times', label: 'Czasy zabudowy', icon: FiHome },
     { id: 'specializations', label: 'Specjalizacje', icon: FiTool },
-    { id: 'service-area', label: 'Obszar działania', icon: FiMapPin }
+    { id: 'service-area', label: 'Obszar działania', icon: FiMapPin },
+    { id: 'security', label: 'Bezpieczeństwo', icon: FiLock }
   ];
 
   // Load employee data
@@ -925,6 +927,28 @@ export default function PracownikEdycja() {
                   </div>
                 </div>
               </div>
+            </div>
+          )}
+
+          {/* TAB: BEZPIECZEŃSTWO */}
+          {activeTab === 'security' && !isNewEmployee && (
+            <SecurityTab 
+              employeeId={id}
+              employeeEmail={employeeData.email}
+              employeeName={employeeData.name}
+            />
+          )}
+
+          {/* Informacja dla nowych pracowników */}
+          {activeTab === 'security' && isNewEmployee && (
+            <div className="py-12 text-center">
+              <FiLock className="mx-auto h-12 w-12 text-gray-400 mb-4" />
+              <h3 className="text-lg font-medium text-gray-900 mb-2">
+                Zapisz pracownika aby zarządzać hasłem
+              </h3>
+              <p className="text-gray-600">
+                Opcje bezpieczeństwa będą dostępne po pierwszym zapisaniu pracownika
+              </p>
             </div>
           )}
           

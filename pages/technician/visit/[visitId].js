@@ -5,6 +5,8 @@ import StatusControl from '../../../components/technician/StatusControl';
 import NotesEditor from '../../../components/technician/NotesEditor';
 import TimeTracker from '../../../components/technician/TimeTracker';
 import PhotoUploader from '../../../components/technician/PhotoUploader';
+import ModelAIScanner from '../../../components/ModelAIScanner';
+import ModelManagerModal from '../../../components/ModelManagerModal';
 
 export default function VisitDetailsPage() {
   const router = useRouter();
@@ -20,6 +22,14 @@ export default function VisitDetailsPage() {
   
   // Modals
   const [showNotesEditor, setShowNotesEditor] = useState(false);
+  const [showAIScanner, setShowAIScanner] = useState(false);
+  const [showModelManager, setShowModelManager] = useState(false);
+  
+  // ✅ MULTI-DEVICE: Selected device index
+  const [selectedDeviceIndex, setSelectedDeviceIndex] = useState(0);
+  
+  // Visit models state
+  const [visitModels, setVisitModels] = useState([]);
 
   // Check authentication
   useEffect(() => {
@@ -66,6 +76,19 @@ export default function VisitDetailsPage() {
       }
 
       setVisit(data.visit);
+      
+      // ✅ MULTI-DEVICE: Load models for currently selected device
+      if (data.visit.deviceModels && Array.isArray(data.visit.deviceModels)) {
+        const currentDeviceModels = data.visit.deviceModels.find(
+          dm => dm.deviceIndex === selectedDeviceIndex
+        );
+        setVisitModels(currentDeviceModels?.models || []);
+      } else if (data.visit.models && Array.isArray(data.visit.models)) {
+        // Fallback: old single-device format
+        setVisitModels(data.visit.models);
+      } else {
+        setVisitModels([]);
+      }
       
     } catch (err) {
       console.error('Error loading visit details:', err);
@@ -144,6 +167,123 @@ export default function VisitDetailsPage() {
       hour: '2-digit',
       minute: '2-digit'
     });
+  };
+
+  // Handler dla AI Scanner - dodaje rozpoznane modele do wizyty
+  const handleAIModelDetected = async (models) => {
+    console.log('🔍 handleAIModelDetected - models:', models);
+    
+    if (!models || models.length === 0) {
+      alert('❌ Nie wykryto modelu na tabliczce');
+      setShowAIScanner(false);
+      return;
+    }
+
+    const detectedModel = models[0];
+    
+    // Walidacja modelu
+    if (!detectedModel || typeof detectedModel !== 'object') {
+      console.error('❌ Nieprawidłowy format modelu:', detectedModel);
+      alert('❌ Błąd: Nieprawidłowe dane z skanera');
+      setShowAIScanner(false);
+      return;
+    }
+
+    const deviceInfo = {
+      type: detectedModel.type || detectedModel.finalType || '',
+      brand: detectedModel.brand || '',
+      model: detectedModel.model || detectedModel.finalModel || '',
+      serialNumber: detectedModel.serialNumber || ''
+    };
+
+    // Sprawdź czy wykryto przynajmniej markę lub model
+    if (!deviceInfo.brand && !deviceInfo.model) {
+      alert('❌ Nie udało się rozpoznać marki ani modelu');
+      setShowAIScanner(false);
+      return;
+    }
+
+    // Aktualizuj dane wizyty
+    try {
+      const token = localStorage.getItem('technicianToken');
+      
+      const response = await fetch(`/api/technician/visits/${visitId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          deviceType: deviceInfo.type,
+          deviceBrand: deviceInfo.brand,
+          deviceModel: deviceInfo.model,
+          serialNumber: deviceInfo.serialNumber
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Błąd aktualizacji wizyty');
+      }
+
+      // Odśwież dane wizyty
+      await loadVisitDetails();
+      
+      alert(`✅ Rozpoznano:\n${deviceInfo.brand} ${deviceInfo.model}\nTyp: ${deviceInfo.type}`);
+      setShowAIScanner(false);
+      
+    } catch (err) {
+      console.error('Error updating visit:', err);
+      alert('❌ Błąd zapisywania danych: ' + err.message);
+      setShowAIScanner(false);
+    }
+  };
+
+  // Handler dla ModelManagerModal - zapisuje modele do wizyty
+  const handleSaveModels = async (models) => {
+    console.log(`💾 Zapisuję modele do wizyty dla urządzenia ${selectedDeviceIndex}:`, models);
+    
+    try {
+      const token = localStorage.getItem('technicianToken');
+      
+      const response = await fetch(`/api/technician/visits/${visitId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          models: models,
+          deviceIndex: selectedDeviceIndex  // ✅ MULTI-DEVICE: Specify which device
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Błąd zapisywania modeli');
+      }
+
+      const result = await response.json();
+      console.log('✅ API Response:', result);
+
+      // Aktualizuj lokalny state z danymi z serwera
+      setVisitModels(models);
+      
+      // Odśwież pełne dane wizyty (pobierze zaktualizowane dane urządzenia z API)
+      await loadVisitDetails();
+      
+      // Pokaż komunikat
+      const modelCount = models.length;
+      const deviceInfo = models[0] ? `${models[0].brand} ${models[0].model || models[0].finalModel}` : '';
+      const deviceName = visit.devices && visit.devices[selectedDeviceIndex] 
+        ? visit.devices[selectedDeviceIndex].deviceType 
+        : `Urządzenie ${selectedDeviceIndex + 1}`;
+      
+      alert(`✅ Zapisano ${modelCount} ${modelCount === 1 ? 'model' : 'modeli'} dla ${deviceName}${deviceInfo ? '\n📱 ' + deviceInfo : ''}`);
+      setShowModelManager(false);
+      
+    } catch (err) {
+      console.error('Error saving models:', err);
+      alert('❌ Błąd zapisywania modeli: ' + err.message);
+    }
   };
 
   if (loading) {
@@ -280,26 +420,85 @@ export default function VisitDetailsPage() {
                 <svg className="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
-                Urządzenie
+                Urządzenie {visit.devices && visit.devices.length > 1 ? `(${visit.devices.length})` : ''}
               </h2>
+
+              {/* Device Selector - pokazuje się tylko gdy jest więcej niż 1 urządzenie */}
+              {visit.devices && visit.devices.length > 1 && (
+                <div className="flex flex-wrap gap-2 mb-4 pb-4 border-b border-gray-200">
+                  {visit.devices.map((device, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setSelectedDeviceIndex(index)}
+                      className={`px-4 py-2 rounded-lg font-medium transition-all ${
+                        selectedDeviceIndex === index
+                          ? 'bg-blue-600 text-white shadow-md'
+                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      }`}
+                    >
+                      {device.deviceType || `Urządzenie ${index + 1}`}
+                      {device.brand && ` - ${device.brand}`}
+                    </button>
+                  ))}
+                </div>
+              )}
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 <div>
                   <p className="text-sm text-gray-500 mb-1">Typ</p>
-                  <p className="text-base font-medium text-gray-900">{visit.device?.type || 'Nieznany'}</p>
+                  <p className="text-base font-medium text-gray-900">
+                    {visit.devices && visit.devices[selectedDeviceIndex]
+                      ? visit.devices[selectedDeviceIndex].deviceType
+                      : visit.device?.type || 'Nieznany'}
+                  </p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-500 mb-1">Marka</p>
-                  <p className="text-base font-medium text-gray-900">{visit.device?.brand || 'Nieznana'}</p>
+                  <p className="text-base font-medium text-gray-900">
+                    {visit.devices && visit.devices[selectedDeviceIndex]
+                      ? visit.devices[selectedDeviceIndex].brand
+                      : visit.device?.brand || 'Nieznana'}
+                  </p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-500 mb-1">Model</p>
-                  <p className="text-base text-gray-900">{visit.device?.model || 'Nieznany'}</p>
+                  <p className="text-base text-gray-900">
+                    {visit.devices && visit.devices[selectedDeviceIndex]
+                      ? visit.devices[selectedDeviceIndex].model
+                      : visit.device?.model || 'Nieznany'}
+                  </p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-500 mb-1">Numer seryjny</p>
-                  <p className="text-base text-gray-900 font-mono text-sm">{visit.device?.serialNumber || 'Brak'}</p>
+                  <p className="text-base text-gray-900 font-mono text-sm">
+                    {visit.devices && visit.devices[selectedDeviceIndex]
+                      ? visit.devices[selectedDeviceIndex].serialNumber
+                      : visit.device?.serialNumber || 'Brak'}
+                  </p>
                 </div>
+              </div>
+
+              {/* Przycisk Model Manager - Pełne zarządzanie urządzeniami */}
+              <div className="mt-4">
+                <button
+                  onClick={() => setShowModelManager(true)}
+                  className="w-full flex items-center justify-center px-4 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg hover:from-purple-700 hover:to-blue-700 transition-all shadow-md hover:shadow-lg"
+                >
+                  <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                  📸 Zeskanuj tabliczkę znamionową
+                </button>
+                
+                {/* Pokazuje liczbę zeskanowanych modeli */}
+                {visitModels && visitModels.length > 0 && (
+                  <div className="mt-2 text-center">
+                    <span className="text-sm text-gray-600">
+                      ✅ Zeskanowano: <strong>{visitModels.length}</strong> {visitModels.length === 1 ? 'urządzenie' : 'urządzeń'}
+                    </span>
+                  </div>
+                )}
               </div>
 
               {visit.device?.warranty && (
@@ -702,6 +901,37 @@ export default function VisitDetailsPage() {
           visit={visit}
           onSessionChanged={(updatedVisit) => {
             setVisit(updatedVisit);
+          }}
+        />
+      )}
+
+      {/* Modal AI Scanner */}
+      {showAIScanner && (
+        <ModelAIScanner
+          isOpen={showAIScanner}
+          onClose={() => setShowAIScanner(false)}
+          onModelDetected={handleAIModelDetected}
+        />
+      )}
+
+      {/* Model Manager Modal - Pełne zarządzanie tabliczkami znamionowymi */}
+      {showModelManager && (
+        <ModelManagerModal
+          isOpen={showModelManager}
+          onClose={() => setShowModelManager(false)}
+          onSave={handleSaveModels}
+          initialModels={visitModels}
+          context={{
+            type: 'visit',
+            visitId: visit?.visitId,
+            clientName: visit?.client?.name || 'Wizyta',
+            deviceName: visit.devices && visit.devices[selectedDeviceIndex]
+              ? `${visit.devices[selectedDeviceIndex].deviceType || 'Urządzenie'} - ${visit.devices[selectedDeviceIndex].brand || ''}`
+              : 'Urządzenie',
+            deviceIndex: selectedDeviceIndex,
+            description: visit.devices && visit.devices.length > 1
+              ? `Skanowanie tabliczki znamionowej dla urządzenia ${selectedDeviceIndex + 1}/${visit.devices.length}`
+              : 'Zarządzanie tabliczkami znamionowymi urządzeń dla wizyty'
           }}
         />
       )}

@@ -3,7 +3,22 @@ import Link from 'next/link';
 import DarkModeToggle from '../../../components/DarkModeToggle';
 
 export default function SerwisantZamow() {
-  const [employeeId] = useState('EMP25189002'); // TODO: Get from auth
+    const router = useRouter();
+  
+  // ✅ FIX: Get employeeId from localStorage (like moj-magazyn.js)
+  const [employeeId, setEmployeeId] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    const employeeData = localStorage.getItem('serwisEmployee') || localStorage.getItem('technicianEmployee');
+    if (employeeData) {
+      const emp = JSON.parse(employeeData);
+      setEmployeeId(emp.id);
+    } else {
+      alert('❌ Nie znaleziono danych pracownika. Zaloguj się ponownie.');
+      router.push('/serwis/login');
+    }
+  }, []);
   const [parts, setParts] = useState([]);
   const [selectedParts, setSelectedParts] = useState([{ partId: '', quantity: 1 }]);
   const [urgency, setUrgency] = useState('standard');

@@ -1,6 +1,6 @@
 
 import { createClient } from '@supabase/supabase-js';
-import { readReservations, addReservation } from '../../utils/dataStorage';
+import { readReservations, addReservation, updateReservation } from '../../utils/dataStorage';
 import {
   addClient,
   addOrder,
@@ -91,7 +91,11 @@ export default async function handler(req, res) {
         serviceType: device,
         description: problem,
         scheduledDate: date,
-        availability: availability // Pass availability to conversion
+        availability: availability, // Pass availability to conversion
+        // Przekaż tablice z multi-item danych
+        phones: req.body.phones || [],
+        addresses: req.body.addresses || [],
+        devices: req.body.devices || []
       });
 
       clientData = converted.client;
@@ -400,7 +404,48 @@ export default async function handler(req, res) {
       console.error('❌ File read error:', error);
     }
 
-    // Główne źródło danych: klienci + zamówienia
+    // Główne źródło danych: rezervacje.json
+    try {
+      const reservations = readReservations();
+      console.log(`📊 Reservations from file: ${reservations.length}`);
+
+      // Jeśli szukamy konkretnej rezerwacji po ID
+      if (id) {
+        // Porównuj zarówno jako string jak i jako number
+        const singleReservation = reservations.find(r => 
+          r.id === id || r.id === Number(id) || String(r.id) === String(id)
+        );
+        if (singleReservation) {
+          console.log('✅ Single reservation found:', id);
+          // Przekształć na format zgodny z formularzem
+          return res.status(200).json({
+            ...singleReservation,
+            name: singleReservation.name || singleReservation.clientName,
+            phone: singleReservation.phone || singleReservation.clientPhone,
+            email: singleReservation.email || singleReservation.clientEmail,
+            address: singleReservation.address || singleReservation.clientAddress,
+            city: singleReservation.city || '',
+            postalCode: singleReservation.postalCode || '',
+            category: singleReservation.category || singleReservation.deviceType || singleReservation.device,
+            description: singleReservation.description || singleReservation.problem || singleReservation.issueDescription,
+            date: singleReservation.date || singleReservation.scheduledDate || singleReservation.preferredDate,
+            time: singleReservation.time || singleReservation.scheduledTime || singleReservation.preferredTime,
+            status: singleReservation.status || 'pending',
+            notes: singleReservation.notes || ''
+          });
+        }
+      }
+
+      // Zwróć wszystkie rezerwacje
+      if (reservations.length > 0) {
+        console.log('✅ Returning reservations:', reservations.length, 'items');
+        return res.status(200).json({ rezerwacje: reservations });
+      }
+    } catch (error) {
+      console.error('❌ Error reading reservations:', error);
+    }
+
+    // Fallback: klienci + zamówienia
     try {
       const clients = await readClients();
       const orders = await readOrders();
@@ -448,7 +493,10 @@ export default async function handler(req, res) {
 
       // Jeśli szukamy konkretnej rezerwacji po ID
       if (id) {
-        const singleReservation = combinedReservations.find(r => r.id === id);
+        // Porównuj zarówno jako string jak i jako number
+        const singleReservation = combinedReservations.find(r => 
+          r.id === id || r.id === Number(id) || String(r.id) === String(id)
+        );
         if (singleReservation) {
           console.log('✅ Single reservation found:', id);
           return res.status(200).json(singleReservation);
@@ -478,6 +526,39 @@ export default async function handler(req, res) {
 
     if (!id) {
       return res.status(400).json({ message: 'Brak ID rezerwacji' });
+    }
+
+    console.log(`🔍 Updating reservation/client: ${id}`);
+    console.log('📝 Update data:', updateData);
+
+    // Najpierw spróbuj zaktualizować jako rezerwację (numeric ID)
+    try {
+      const reservations = readReservations();
+      const reservationIndex = reservations.findIndex(r => 
+        r.id === id || r.id === Number(id) || String(r.id) === String(id)
+      );
+
+      if (reservationIndex !== -1) {
+        // Znaleziono rezerwację - aktualizuj ją
+        console.log('✅ Found reservation at index:', reservationIndex);
+        
+        const result = updateReservation(reservations[reservationIndex].id, {
+          ...updateData,
+          updatedAt: new Date().toISOString(),
+          updatedBy: 'admin'
+        });
+
+        if (result) {
+          console.log('✅ Reservation updated successfully');
+          return res.status(200).json({ 
+            message: 'Rezerwacja zaktualizowana', 
+            data: result 
+          });
+        }
+      }
+    } catch (error) {
+      console.error('❌ Error updating reservation:', error);
+      // Continue to try client/order update
     }
 
     if (supabase) {

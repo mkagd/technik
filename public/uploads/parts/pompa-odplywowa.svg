@@ -1,0 +1,23 @@
+<svg width="400" height="400" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#10B981;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#059669;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect width="400" height="400" fill="url(#grad2)"/>
+  <circle cx="200" cy="200" r="100" fill="#fff" opacity="0.1"/>
+  <circle cx="200" cy="200" r="80" fill="#fff" opacity="0.15"/>
+  <circle cx="200" cy="200" r="60" fill="#fff" opacity="0.2"/>
+  <rect x="150" y="120" width="100" height="160" fill="#fff" opacity="0.3" rx="10"/>
+  <circle cx="200" cy="180" r="30" fill="#fff" opacity="0.4"/>
+  <text x="200" y="300" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#fff">
+    Pompa odpływowa
+  </text>
+  <text x="200" y="330" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" fill="#fff" opacity="0.8">
+    DC96-01414G
+  </text>
+  <text x="200" y="370" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#fff" opacity="0.6">
+    [Zdjęcie tymczasowe]
+  </text>
+</svg>

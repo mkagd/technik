@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import AdminLayout from '../../../components/AdminLayout';
 import VisitAuditTimeline from '../../../components/VisitAuditTimeline';
+import ModelManagerModal from '../../../components/ModelManagerModal';
 import { useToast } from '../../../contexts/ToastContext';
 import {
   FiCalendar, FiClock, FiUser, FiMapPin, FiTool, FiCheckCircle,
@@ -27,17 +28,30 @@ export default function AdminVisitsList() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   
-  // Filter state
+  // Filter state - ENHANCED for WEEK 3
   const [filters, setFilters] = useState({
     search: '',
-    status: '',
-    technicianId: '',
+    status: '', // Deprecated - use selectedStatuses instead
+    selectedStatuses: [], // NEW: Multiple selection
+    technicianId: '', // Deprecated - use selectedTechnicianIds instead
+    selectedTechnicianIds: [], // NEW: Multiple selection
     type: '',
     dateFrom: '',
     dateTo: '',
     today: false,
-    priority: ''
+    priority: '',
+    // NEW Week 3 filters:
+    costMin: 0,
+    costMax: 1000,
+    withParts: null, // null = all, true = only with parts, false = without parts
+    withPhotos: null, // null = all, true = only with photos, false = without photos
+    urgentOnly: false
   });
+  
+  // Advanced filter UI state
+  const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
+  const [showStatusDropdown, setShowStatusDropdown] = useState(false);
+  const [showTechnicianDropdown, setShowTechnicianDropdown] = useState(false);
   
   // UI state
   const [sortBy, setSortBy] = useState('date');
@@ -63,6 +77,13 @@ export default function AdminVisitsList() {
   const [currentPhoto, setCurrentPhoto] = useState(0);
   const [photoGallery, setPhotoGallery] = useState([]);
 
+  // Actions menu
+  const [actionMenuVisitId, setActionMenuVisitId] = useState(null);
+
+  // Click-outside refs for dropdowns
+  const statusDropdownRef = useRef(null);
+  const technicianDropdownRef = useRef(null);
+
   // Edit mode
   const [isEditMode, setIsEditMode] = useState(false);
   const [editedVisit, setEditedVisit] = useState(null);
@@ -70,11 +91,60 @@ export default function AdminVisitsList() {
   const [saveError, setSaveError] = useState(null);
   const [saveSuccess, setSaveSuccess] = useState(false);
 
+  // Device Models Manager Modal
+  const [showModelManager, setShowModelManager] = useState(false);
+  const [visitModels, setVisitModels] = useState([]);
+
+  // WEEK 3 PHASE 5: Saved Filter Presets
+  const [showPresetModal, setShowPresetModal] = useState(false);
+  const [presetName, setPresetName] = useState('');
+  const [savedPresets, setSavedPresets] = useState([]);
+  const [presetAction, setPresetAction] = useState('save'); // 'save' or 'load'
+
+  // Load saved presets from localStorage
+  useEffect(() => {
+    const stored = localStorage.getItem('visitFilterPresets');
+    if (stored) {
+      try {
+        setSavedPresets(JSON.parse(stored));
+      } catch (e) {
+        console.error('Failed to load presets:', e);
+      }
+    }
+  }, []);
+
   // Load data
   useEffect(() => {
     loadVisits();
     loadEmployees();
   }, [filters, sortBy, sortOrder, currentPage, itemsPerPage]);
+
+  // Close action menu when clicking outside
+  useEffect(() => {
+    if (!actionMenuVisitId) return;
+
+    const handleClickOutside = () => {
+      setActionMenuVisitId(null);
+    };
+
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, [actionMenuVisitId]);
+
+  // Close filter dropdowns when clicking outside - WEEK 3
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (statusDropdownRef.current && !statusDropdownRef.current.contains(event.target)) {
+        setShowStatusDropdown(false);
+      }
+      if (technicianDropdownRef.current && !technicianDropdownRef.current.contains(event.target)) {
+        setShowTechnicianDropdown(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   // Keyboard navigation for lightbox
   useEffect(() => {
@@ -97,22 +167,59 @@ export default function AdminVisitsList() {
   const loadVisits = async () => {
     setLoading(true);
     try {
-      const params = new URLSearchParams({
-        ...filters,
-        today: filters.today ? 'true' : 'false',
-        sortBy,
-        sortOrder,
-        page: currentPage.toString(),
-        limit: itemsPerPage.toString(),
-        includeStats: 'true'
-      });
+      const params = new URLSearchParams();
+      
+      // Add basic filters
+      params.append('today', filters.today ? 'true' : 'false');
+      params.append('sortBy', sortBy);
+      params.append('sortOrder', sortOrder);
+      params.append('page', currentPage.toString());
+      params.append('limit', itemsPerPage.toString());
+      params.append('includeStats', 'true');
+      
+      // Add search
+      if (filters.search) params.append('search', filters.search);
+      
+      // WEEK 3: Handle multiple selection arrays for status
+      if (filters.selectedStatuses && filters.selectedStatuses.length > 0) {
+        params.append('selectedStatuses', filters.selectedStatuses.join(','));
+      } else if (filters.status) {
+        // Legacy fallback
+        params.append('status', filters.status);
+      }
+      
+      // WEEK 3: Handle multiple selection arrays for technicians
+      if (filters.selectedTechnicianIds && filters.selectedTechnicianIds.length > 0) {
+        params.append('selectedTechnicianIds', filters.selectedTechnicianIds.join(','));
+      } else if (filters.technicianId) {
+        // Legacy fallback
+        params.append('technicianId', filters.technicianId);
+      }
+      
+      // Add other simple filters
+      if (filters.type) params.append('type', filters.type);
+      if (filters.dateFrom) params.append('dateFrom', filters.dateFrom);
+      if (filters.dateTo) params.append('dateTo', filters.dateTo);
+      if (filters.priority) params.append('priority', filters.priority);
 
-      // Remove empty params
-      Array.from(params.keys()).forEach(key => {
-        if (!params.get(key) || params.get(key) === 'false') {
-          params.delete(key);
-        }
-      });
+      // WEEK 3 PHASE 2: Add cost range filters
+      if (filters.costMin !== undefined && filters.costMin !== 0) {
+        params.append('costMin', filters.costMin.toString());
+      }
+      if (filters.costMax !== undefined && filters.costMax !== 5000) {
+        params.append('costMax', filters.costMax.toString());
+      }
+
+      // WEEK 3 PHASE 3: Add toggle filters
+      if (filters.withParts === true) {
+        params.append('withParts', 'true');
+      }
+      if (filters.withPhotos === true) {
+        params.append('withPhotos', 'true');
+      }
+      if (filters.urgentOnly === true) {
+        params.append('urgentOnly', 'true');
+      }
 
       const response = await fetch(`/api/visits?${params}`);
       if (!response.ok) throw new Error('Failed to fetch visits');
@@ -324,6 +431,88 @@ export default function AdminVisitsList() {
     }
   };
 
+  // Cancel visit handler
+  const handleCancelVisit = async (visit) => {
+    if (!confirm(`Czy na pewno chcesz anulować wizytę ${visit.visitId}?\n\nKlient: ${visit.clientName}\nData: ${visit.scheduledDate} ${visit.scheduledTime}\n\nTa operacja może być cofnięta z historii zmian.`)) {
+      return;
+    }
+
+    try {
+      const response = await fetch('/api/visits', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          visitId: visit.visitId,
+          orderId: visit.orderId,
+          updates: {
+            status: 'cancelled',
+            cancelledAt: new Date().toISOString(),
+            cancelledBy: 'admin', // TODO: Get from session
+            cancelReason: 'Anulowano z panelu administracyjnego'
+          },
+          userId: 'admin', // TODO: Get from session
+          userName: 'Administrator',
+          reason: `Anulowano wizytę ${visit.visitId} dla klienta ${visit.clientName}`,
+          modifiedBy: 'admin'
+        })
+      });
+
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || 'Failed to cancel visit');
+
+      toast.success(`✅ Wizyta ${visit.visitId} została anulowana`);
+      await loadVisits(); // Reload visits list
+
+      // Close modal if it's the currently displayed visit
+      if (selectedVisit?.visitId === visit.visitId) {
+        setShowDetailModal(false);
+        setSelectedVisit(null);
+      }
+    } catch (err) {
+      console.error('Cancel visit error:', err);
+      toast.error('❌ Błąd anulowania wizyty: ' + err.message);
+    }
+  };
+
+  // Model Manager handler
+  const handleModelsUpdate = async (models, cart) => {
+    console.log('🔍 Aktualizacja modeli dla wizyty:', selectedVisit.visitId);
+    console.log('📦 Modele:', models);
+    console.log('🛒 Koszyk części:', cart);
+    
+    try {
+      // Zapisz modele do wizyty
+      const response = await fetch('/api/visits', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          visitId: selectedVisit.visitId,
+          orderId: selectedVisit.orderId,
+          updates: {
+            models: models,
+            partsCart: cart
+          },
+          userId: 'admin',
+          userName: 'Administrator',
+          reason: `Zaktualizowano modele urządzeń (${models.length} modeli)`,
+          modifiedBy: 'admin'
+        })
+      });
+
+      if (response.ok) {
+        toast.success(`✅ Zapisano ${models.length} modeli dla wizyty ${selectedVisit.visitId}`);
+        setVisitModels(models);
+        await loadVisits(); // Odśwież listę wizyt
+      } else {
+        const error = await response.json();
+        throw new Error(error.message || 'Błąd zapisu modeli');
+      }
+    } catch (err) {
+      console.error('Error saving models:', err);
+      toast.error('❌ Błąd zapisu modeli: ' + err.message);
+    }
+  };
+
   // Filter handlers
   const handleFilterChange = (key, value) => {
     setFilters(prev => ({ ...prev, [key]: value }));
@@ -339,7 +528,15 @@ export default function AdminVisitsList() {
       dateFrom: '',
       dateTo: '',
       today: false,
-      priority: ''
+      priority: '',
+      // WEEK 3: Clear new filter arrays
+      selectedStatuses: [],
+      selectedTechnicianIds: [],
+      costMin: 0,
+      costMax: 1000,
+      withParts: null,
+      withPhotos: null,
+      urgentOnly: false
     });
     setCurrentPage(1);
   };
@@ -356,16 +553,78 @@ export default function AdminVisitsList() {
         setFilters(prev => ({ ...prev, today: false, dateFrom: tomorrow, dateTo: tomorrow }));
         break;
       case 'scheduled':
-        setFilters(prev => ({ ...prev, status: 'scheduled' }));
+        // WEEK 3: Toggle status in array instead of single value
+        setFilters(prev => ({
+          ...prev,
+          selectedStatuses: prev.selectedStatuses.includes('scheduled')
+            ? prev.selectedStatuses.filter(s => s !== 'scheduled')
+            : [...prev.selectedStatuses, 'scheduled'],
+          status: '' // Clear legacy
+        }));
         break;
       case 'in_progress':
-        setFilters(prev => ({ ...prev, status: 'in_progress' }));
+        // WEEK 3: Toggle status in array
+        setFilters(prev => ({
+          ...prev,
+          selectedStatuses: prev.selectedStatuses.includes('in_progress')
+            ? prev.selectedStatuses.filter(s => s !== 'in_progress')
+            : [...prev.selectedStatuses, 'in_progress'],
+          status: '' // Clear legacy
+        }));
         break;
       case 'completed':
-        setFilters(prev => ({ ...prev, status: 'completed' }));
+        // WEEK 3: Toggle status in array
+        setFilters(prev => ({
+          ...prev,
+          selectedStatuses: prev.selectedStatuses.includes('completed')
+            ? prev.selectedStatuses.filter(s => s !== 'completed')
+            : [...prev.selectedStatuses, 'completed'],
+          status: '' // Clear legacy
+        }));
         break;
     }
     setCurrentPage(1);
+  };
+
+  // WEEK 3 PHASE 5: Preset management functions
+  const savePreset = () => {
+    if (!presetName.trim()) {
+      toast.error('❌ Podaj nazwę presetu');
+      return;
+    }
+
+    const preset = {
+      id: Date.now().toString(),
+      name: presetName.trim(),
+      filters: { ...filters },
+      sortBy,
+      sortOrder,
+      createdAt: new Date().toISOString()
+    };
+
+    const updated = [...savedPresets, preset];
+    setSavedPresets(updated);
+    localStorage.setItem('visitFilterPresets', JSON.stringify(updated));
+    
+    setPresetName('');
+    setShowPresetModal(false);
+    toast.success(`✅ Preset "${preset.name}" zapisany`);
+  };
+
+  const loadPreset = (preset) => {
+    setFilters(preset.filters);
+    setSortBy(preset.sortBy);
+    setSortOrder(preset.sortOrder);
+    setCurrentPage(1);
+    setShowPresetModal(false);
+    toast.success(`✅ Załadowano preset "${preset.name}"`);
+  };
+
+  const deletePreset = (presetId) => {
+    const updated = savedPresets.filter(p => p.id !== presetId);
+    setSavedPresets(updated);
+    localStorage.setItem('visitFilterPresets', JSON.stringify(updated));
+    toast.success('✅ Preset usunięty');
   };
 
   // Selection handlers
@@ -383,6 +642,125 @@ export default function AdminVisitsList() {
     } else {
       setSelectedVisits(visits.map(v => v.visitId));
     }
+  };
+
+  // WEEK 3 PHASE 4: Generate active filter chips
+  const getActiveFiltersChips = () => {
+    const chips = [];
+
+    // Search query
+    if (filters.search) {
+      chips.push({
+        id: 'search',
+        label: `🔍 "${filters.search}"`,
+        onRemove: () => setFilters({ ...filters, search: '' })
+      });
+    }
+
+    // Selected statuses
+    if (filters.selectedStatuses && filters.selectedStatuses.length > 0) {
+      const statusLabels = {
+        scheduled: 'Zaplanowane',
+        in_progress: 'W trakcie',
+        completed: 'Zakończone',
+        cancelled: 'Anulowane',
+        rescheduled: 'Przełożone'
+      };
+      chips.push({
+        id: 'statuses',
+        label: `📊 Statusy: ${filters.selectedStatuses.map(s => statusLabels[s]).join(', ')}`,
+        onRemove: () => setFilters({ ...filters, selectedStatuses: [] })
+      });
+    }
+
+    // Selected technicians
+    if (filters.selectedTechnicianIds && filters.selectedTechnicianIds.length > 0) {
+      const techNames = filters.selectedTechnicianIds
+        .map(id => employees.find(e => e.id === id)?.name || id)
+        .join(', ');
+      chips.push({
+        id: 'technicians',
+        label: `👤 Technicy: ${techNames}`,
+        onRemove: () => setFilters({ ...filters, selectedTechnicianIds: [] })
+      });
+    }
+
+    // Visit type
+    if (filters.type) {
+      const typeLabels = {
+        diagnosis: 'Diagnoza',
+        repair: 'Naprawa',
+        followup: 'Kontrola',
+        installation: 'Instalacja',
+        maintenance: 'Konserwacja'
+      };
+      chips.push({
+        id: 'type',
+        label: `🔧 ${typeLabels[filters.type] || filters.type}`,
+        onRemove: () => setFilters({ ...filters, type: '' })
+      });
+    }
+
+    // Date range
+    if (filters.dateFrom || filters.dateTo) {
+      const dateLabel = filters.dateFrom && filters.dateTo
+        ? `${filters.dateFrom} - ${filters.dateTo}`
+        : filters.dateFrom
+        ? `Od ${filters.dateFrom}`
+        : `Do ${filters.dateTo}`;
+      chips.push({
+        id: 'dateRange',
+        label: `📅 ${dateLabel}`,
+        onRemove: () => setFilters({ ...filters, dateFrom: '', dateTo: '' })
+      });
+    }
+
+    // Today filter
+    if (filters.today) {
+      chips.push({
+        id: 'today',
+        label: '📅 Dzisiaj',
+        onRemove: () => setFilters({ ...filters, today: false })
+      });
+    }
+
+    // Cost range (only if different from default)
+    if (filters.costMin > 0 || filters.costMax < 5000) {
+      chips.push({
+        id: 'costRange',
+        label: `💰 ${filters.costMin} zł - ${filters.costMax} zł`,
+        onRemove: () => setFilters({ ...filters, costMin: 0, costMax: 5000 })
+      });
+    }
+
+    // With parts toggle
+    if (filters.withParts === true) {
+      chips.push({
+        id: 'withParts',
+        label: '📦 Z częściami',
+        onRemove: () => setFilters({ ...filters, withParts: null })
+      });
+    }
+
+    // With photos toggle
+    if (filters.withPhotos === true) {
+      chips.push({
+        id: 'withPhotos',
+        label: '🖼️ Ze zdjęciami',
+        onRemove: () => setFilters({ ...filters, withPhotos: null })
+      });
+    }
+
+    // Urgent only toggle
+    if (filters.urgentOnly) {
+      chips.push({
+        id: 'urgentOnly',
+        label: '🔥 Tylko pilne',
+        onRemove: () => setFilters({ ...filters, urgentOnly: false })
+      });
+    }
+
+    return chips;
   };
 
   // Status helpers
@@ -866,8 +1244,48 @@ export default function AdminVisitsList() {
 
             {showFilters && (
               <div className="space-y-4">
+                {/* WEEK 3 PHASE 5: Saved Presets Quick Access */}
+                {savedPresets.length > 0 && (
+                  <div className="border-b border-gray-200 pb-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-xs font-semibold text-gray-600 uppercase">💾 Zapisane Presety</span>
+                      <button
+                        onClick={() => {
+                          setPresetAction('load');
+                          setShowPresetModal(true);
+                        }}
+                        className="text-xs text-blue-600 hover:text-blue-700"
+                      >
+                        Zarządzaj
+                      </button>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {savedPresets.slice(0, 5).map((preset) => (
+                        <button
+                          key={preset.id}
+                          onClick={() => loadPreset(preset)}
+                          className="px-3 py-1.5 rounded-lg text-sm font-medium bg-purple-100 text-purple-700 hover:bg-purple-200 transition"
+                        >
+                          {preset.name}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
                 {/* Quick filters */}
                 <div className="flex flex-wrap gap-2">
+                  <button
+                    onClick={() => {
+                      setPresetAction('save');
+                      setShowPresetModal(true);
+                    }}
+                    className="px-3 py-1.5 rounded-lg text-sm font-medium bg-green-100 text-green-700 hover:bg-green-200 transition flex items-center gap-1"
+                  >
+                    <FiPackage className="w-4 h-4" />
+                    Zapisz obecne filtry
+                  </button>
+                  
                   <button
                     onClick={() => handleQuickFilter('today')}
                     className={`px-3 py-1.5 rounded-lg text-sm font-medium transition ${
@@ -887,7 +1305,7 @@ export default function AdminVisitsList() {
                   <button
                     onClick={() => handleQuickFilter('scheduled')}
                     className={`px-3 py-1.5 rounded-lg text-sm font-medium transition ${
-                      filters.status === 'scheduled'
+                      filters.selectedStatuses.includes('scheduled')
                         ? 'bg-yellow-600 text-white'
                         : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                     }`}
@@ -897,7 +1315,7 @@ export default function AdminVisitsList() {
                   <button
                     onClick={() => handleQuickFilter('in_progress')}
                     className={`px-3 py-1.5 rounded-lg text-sm font-medium transition ${
-                      filters.status === 'in_progress'
+                      filters.selectedStatuses.includes('in_progress')
                         ? 'bg-blue-600 text-white'
                         : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                     }`}
@@ -907,7 +1325,7 @@ export default function AdminVisitsList() {
                   <button
                     onClick={() => handleQuickFilter('completed')}
                     className={`px-3 py-1.5 rounded-lg text-sm font-medium transition ${
-                      filters.status === 'completed'
+                      filters.selectedStatuses.includes('completed')
                         ? 'bg-green-600 text-white'
                         : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                     }`}
@@ -936,33 +1354,111 @@ export default function AdminVisitsList() {
                     />
                   </div>
 
-                  {/* Status filter */}
-                  <select
-                    value={filters.status}
-                    onChange={(e) => handleFilterChange('status', e.target.value)}
-                    className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  >
-                    <option value="">Wszystkie statusy</option>
-                    <option value="scheduled">Zaplanowane</option>
-                    <option value="in_progress">W trakcie</option>
-                    <option value="completed">Zakończone</option>
-                    <option value="cancelled">Anulowane</option>
-                    <option value="rescheduled">Przełożone</option>
-                  </select>
+                  {/* Status filter - ENHANCED: Multiple selection */}
+                  <div className="relative" ref={statusDropdownRef}>
+                    <button
+                      onClick={() => {
+                        setShowStatusDropdown(!showStatusDropdown);
+                        setShowTechnicianDropdown(false);
+                      }}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-left flex items-center justify-between bg-white hover:bg-gray-50 transition"
+                    >
+                      <span className="font-medium">
+                        {filters.selectedStatuses.length === 0 
+                          ? 'Wszystkie statusy'
+                          : `Statusy (${filters.selectedStatuses.length})`}
+                      </span>
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </button>
+                    
+                    {showStatusDropdown && (
+                      <div className="absolute z-20 mt-1 w-full bg-white border border-gray-300 rounded-lg shadow-lg p-3">
+                        <div className="space-y-2">
+                          {['scheduled', 'in_progress', 'completed', 'cancelled', 'rescheduled'].map(status => (
+                            <label key={status} className="flex items-center gap-2 hover:bg-gray-50 p-2 rounded cursor-pointer">
+                              <input
+                                type="checkbox"
+                                checked={filters.selectedStatuses.includes(status)}
+                                onChange={(e) => {
+                                  const newStatuses = e.target.checked
+                                    ? [...filters.selectedStatuses, status]
+                                    : filters.selectedStatuses.filter(s => s !== status);
+                                  setFilters({ ...filters, selectedStatuses: newStatuses, status: '' });
+                                  setCurrentPage(1);
+                                }}
+                                className="w-4 h-4 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
+                              />
+                              <span className="text-sm font-medium">
+                                {status === 'scheduled' && '📅 Zaplanowane'}
+                                {status === 'in_progress' && '⚙️ W trakcie'}
+                                {status === 'completed' && '✅ Zakończone'}
+                                {status === 'cancelled' && '❌ Anulowane'}
+                                {status === 'rescheduled' && '🔄 Przełożone'}
+                              </span>
+                            </label>
+                          ))}
+                        </div>
+                        <button
+                          onClick={() => setFilters({ ...filters, selectedStatuses: [] })}
+                          className="mt-2 w-full py-1 text-sm text-blue-600 hover:text-blue-700 font-medium"
+                        >
+                          Wyczyść zaznaczenie
+                        </button>
+                      </div>
+                    )}
+                  </div>
 
-                  {/* Technician filter */}
-                  <select
-                    value={filters.technicianId}
-                    onChange={(e) => handleFilterChange('technicianId', e.target.value)}
-                    className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  >
-                    <option value="">Wszyscy technicy</option>
-                    {employees.map(emp => (
-                      <option key={emp.id} value={emp.id}>
-                        {emp.name}
-                      </option>
-                    ))}
-                  </select>
+                  {/* Technician filter - ENHANCED: Multiple selection */}
+                  <div className="relative" ref={technicianDropdownRef}>
+                    <button
+                      onClick={() => {
+                        setShowTechnicianDropdown(!showTechnicianDropdown);
+                        setShowStatusDropdown(false);
+                      }}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-left flex items-center justify-between bg-white hover:bg-gray-50 transition"
+                    >
+                      <span className="font-medium">
+                        {filters.selectedTechnicianIds.length === 0 
+                          ? 'Wszyscy technicy'
+                          : `Technicy (${filters.selectedTechnicianIds.length})`}
+                      </span>
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </button>
+                    
+                    {showTechnicianDropdown && (
+                      <div className="absolute z-20 mt-1 w-full bg-white border border-gray-300 rounded-lg shadow-lg p-3 max-h-64 overflow-y-auto">
+                        <div className="space-y-2">
+                          {employees.map(emp => (
+                            <label key={emp.id} className="flex items-center gap-2 hover:bg-gray-50 p-2 rounded cursor-pointer">
+                              <input
+                                type="checkbox"
+                                checked={filters.selectedTechnicianIds.includes(emp.id)}
+                                onChange={(e) => {
+                                  const newTechIds = e.target.checked
+                                    ? [...filters.selectedTechnicianIds, emp.id]
+                                    : filters.selectedTechnicianIds.filter(id => id !== emp.id);
+                                  setFilters({ ...filters, selectedTechnicianIds: newTechIds, technicianId: '' });
+                                  setCurrentPage(1);
+                                }}
+                                className="w-4 h-4 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
+                              />
+                              <span className="text-sm font-medium">{emp.name}</span>
+                            </label>
+                          ))}
+                        </div>
+                        <button
+                          onClick={() => setFilters({ ...filters, selectedTechnicianIds: [] })}
+                          className="mt-2 w-full py-1 text-sm text-blue-600 hover:text-blue-700 font-medium"
+                        >
+                          Wyczyść zaznaczenie
+                        </button>
+                      </div>
+                    )}
+                  </div>
 
                   {/* Type filter */}
                   <select
@@ -1002,6 +1498,179 @@ export default function AdminVisitsList() {
                       onChange={(e) => handleFilterChange('dateTo', e.target.value)}
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     />
+                  </div>
+                </div>
+
+                {/* WEEK 3 PHASE 2: Cost Range Slider */}
+                <div className="border-t border-gray-200 pt-4 mt-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-3">
+                    💰 Zakres kosztów: <span className="text-blue-600 font-semibold">{filters.costMin} zł - {filters.costMax} zł</span>
+                  </label>
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-4">
+                      <div className="flex-1">
+                        <label className="block text-xs text-gray-600 mb-1">Minimum</label>
+                        <input
+                          type="range"
+                          min="0"
+                          max="5000"
+                          step="50"
+                          value={filters.costMin}
+                          onChange={(e) => {
+                            const newMin = parseInt(e.target.value);
+                            if (newMin <= filters.costMax) {
+                              setFilters({ ...filters, costMin: newMin });
+                              setCurrentPage(1);
+                            }
+                          }}
+                          className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                        />
+                        <div className="text-xs text-gray-500 mt-1">{filters.costMin} zł</div>
+                      </div>
+                      <div className="flex-1">
+                        <label className="block text-xs text-gray-600 mb-1">Maximum</label>
+                        <input
+                          type="range"
+                          min="0"
+                          max="5000"
+                          step="50"
+                          value={filters.costMax}
+                          onChange={(e) => {
+                            const newMax = parseInt(e.target.value);
+                            if (newMax >= filters.costMin) {
+                              setFilters({ ...filters, costMax: newMax });
+                              setCurrentPage(1);
+                            }
+                          }}
+                          className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                        />
+                        <div className="text-xs text-gray-500 mt-1">{filters.costMax} zł</div>
+                      </div>
+                    </div>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => {
+                          setFilters({ ...filters, costMin: 0, costMax: 500 });
+                          setCurrentPage(1);
+                        }}
+                        className="px-2 py-1 text-xs bg-gray-100 hover:bg-gray-200 rounded transition"
+                      >
+                        0-500 zł
+                      </button>
+                      <button
+                        onClick={() => {
+                          setFilters({ ...filters, costMin: 500, costMax: 1500 });
+                          setCurrentPage(1);
+                        }}
+                        className="px-2 py-1 text-xs bg-gray-100 hover:bg-gray-200 rounded transition"
+                      >
+                        500-1500 zł
+                      </button>
+                      <button
+                        onClick={() => {
+                          setFilters({ ...filters, costMin: 1500, costMax: 5000 });
+                          setCurrentPage(1);
+                        }}
+                        className="px-2 py-1 text-xs bg-gray-100 hover:bg-gray-200 rounded transition"
+                      >
+                        1500+ zł
+                      </button>
+                      <button
+                        onClick={() => {
+                          setFilters({ ...filters, costMin: 0, costMax: 5000 });
+                          setCurrentPage(1);
+                        }}
+                        className="px-2 py-1 text-xs bg-blue-100 hover:bg-blue-200 text-blue-700 rounded transition"
+                      >
+                        Reset
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* WEEK 3 PHASE 3: Toggle Switches */}
+                <div className="border-t border-gray-200 pt-4 mt-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-3">
+                    🔧 Dodatkowe filtry
+                  </label>
+                  <div className="space-y-3">
+                    {/* With Parts Toggle */}
+                    <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition">
+                      <div className="flex items-center gap-2">
+                        <FiPackage className="w-4 h-4 text-gray-600" />
+                        <span className="text-sm font-medium text-gray-700">Tylko z użytymi częściami</span>
+                      </div>
+                      <button
+                        onClick={() => {
+                          setFilters({ 
+                            ...filters, 
+                            withParts: filters.withParts === true ? null : true 
+                          });
+                          setCurrentPage(1);
+                        }}
+                        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                          filters.withParts === true ? 'bg-blue-600' : 'bg-gray-300'
+                        }`}
+                      >
+                        <span
+                          className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                            filters.withParts === true ? 'translate-x-6' : 'translate-x-1'
+                          }`}
+                        />
+                      </button>
+                    </div>
+
+                    {/* With Photos Toggle */}
+                    <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition">
+                      <div className="flex items-center gap-2">
+                        <FiImage className="w-4 h-4 text-gray-600" />
+                        <span className="text-sm font-medium text-gray-700">Tylko ze zdjęciami</span>
+                      </div>
+                      <button
+                        onClick={() => {
+                          setFilters({ 
+                            ...filters, 
+                            withPhotos: filters.withPhotos === true ? null : true 
+                          });
+                          setCurrentPage(1);
+                        }}
+                        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                          filters.withPhotos === true ? 'bg-blue-600' : 'bg-gray-300'
+                        }`}
+                      >
+                        <span
+                          className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                            filters.withPhotos === true ? 'translate-x-6' : 'translate-x-1'
+                          }`}
+                        />
+                      </button>
+                    </div>
+
+                    {/* Urgent Only Toggle */}
+                    <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition">
+                      <div className="flex items-center gap-2">
+                        <FiAlertCircle className="w-4 h-4 text-red-600" />
+                        <span className="text-sm font-medium text-gray-700">Tylko pilne</span>
+                      </div>
+                      <button
+                        onClick={() => {
+                          setFilters({ 
+                            ...filters, 
+                            urgentOnly: !filters.urgentOnly 
+                          });
+                          setCurrentPage(1);
+                        }}
+                        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                          filters.urgentOnly ? 'bg-red-600' : 'bg-gray-300'
+                        }`}
+                      >
+                        <span
+                          className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                            filters.urgentOnly ? 'translate-x-6' : 'translate-x-1'
+                          }`}
+                        />
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1064,11 +1733,150 @@ export default function AdminVisitsList() {
               </button>
             </div>
           ) : (
-            <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead className="bg-gray-50 border-b border-gray-200">
-                    <tr>
+            <>
+              {/* WEEK 3 PHASE 4: Active Filter Chips */}
+              {(() => {
+                const activeChips = getActiveFiltersChips();
+                return activeChips.length > 0 && (
+                  <div className="bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200 rounded-lg p-4 mb-4">
+                    <div className="flex items-center justify-between mb-3">
+                      <span className="text-sm font-semibold text-gray-700">
+                        🎯 Aktywne filtry ({activeChips.length})
+                      </span>
+                      <button
+                        onClick={clearFilters}
+                        className="flex items-center gap-1 px-3 py-1 text-xs font-medium text-red-600 bg-white hover:bg-red-50 border border-red-200 rounded-lg transition"
+                      >
+                        <FiX className="w-3 h-3" />
+                        Wyczyść wszystkie
+                      </button>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {activeChips.map((chip) => (
+                        <div
+                          key={chip.id}
+                          className="inline-flex items-center gap-2 px-3 py-1.5 bg-white border border-blue-300 rounded-full text-sm font-medium text-gray-700 shadow-sm hover:shadow-md transition group"
+                        >
+                          <span>{chip.label}</span>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              chip.onRemove();
+                            }}
+                            className="flex items-center justify-center w-4 h-4 rounded-full bg-gray-200 hover:bg-red-500 hover:text-white transition-colors group-hover:bg-gray-300"
+                          >
+                            <FiX className="w-3 h-3" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })()}
+
+              {/* Sorting Controls - WEEK 3 ENHANCEMENT */}
+              <div className="bg-white rounded-lg shadow-sm p-4 mb-4 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-medium text-gray-700">Sortuj:</span>
+                  <div className="flex flex-wrap gap-2">
+                    <button
+                      onClick={() => {
+                        setSortBy('date');
+                        setSortOrder(sortBy === 'date' && sortOrder === 'asc' ? 'desc' : 'asc');
+                      }}
+                      className={`px-3 py-1.5 rounded-lg text-sm font-medium transition flex items-center gap-1 ${
+                        sortBy === 'date'
+                          ? 'bg-blue-600 text-white'
+                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      }`}
+                    >
+                      📅 Data
+                      {sortBy === 'date' && (
+                        <span>{sortOrder === 'asc' ? '↑' : '↓'}</span>
+                      )}
+                    </button>
+                    
+                    <button
+                      onClick={() => {
+                        setSortBy('waitTime');
+                        setSortOrder(sortBy === 'waitTime' && sortOrder === 'desc' ? 'asc' : 'desc');
+                      }}
+                      className={`px-3 py-1.5 rounded-lg text-sm font-medium transition flex items-center gap-1 ${
+                        sortBy === 'waitTime'
+                          ? 'bg-orange-600 text-white'
+                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      }`}
+                    >
+                      ⏰ Najdłużej czekające
+                      {sortBy === 'waitTime' && (
+                        <span>{sortOrder === 'asc' ? '↑' : '↓'}</span>
+                      )}
+                    </button>
+                    
+                    <button
+                      onClick={() => {
+                        setSortBy('priority');
+                        setSortOrder(sortBy === 'priority' && sortOrder === 'asc' ? 'desc' : 'asc');
+                      }}
+                      className={`px-3 py-1.5 rounded-lg text-sm font-medium transition flex items-center gap-1 ${
+                        sortBy === 'priority'
+                          ? 'bg-red-600 text-white'
+                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      }`}
+                    >
+                      🔥 Priorytet
+                      {sortBy === 'priority' && (
+                        <span>{sortOrder === 'asc' ? '↑' : '↓'}</span>
+                      )}
+                    </button>
+                    
+                    <button
+                      onClick={() => {
+                        setSortBy('client');
+                        setSortOrder(sortBy === 'client' && sortOrder === 'asc' ? 'desc' : 'asc');
+                      }}
+                      className={`px-3 py-1.5 rounded-lg text-sm font-medium transition flex items-center gap-1 ${
+                        sortBy === 'client'
+                          ? 'bg-purple-600 text-white'
+                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      }`}
+                    >
+                      👤 Klient
+                      {sortBy === 'client' && (
+                        <span>{sortOrder === 'asc' ? '↑' : '↓'}</span>
+                      )}
+                    </button>
+                    
+                    <button
+                      onClick={() => {
+                        setSortBy('cost');
+                        setSortOrder(sortBy === 'cost' && sortOrder === 'asc' ? 'desc' : 'asc');
+                      }}
+                      className={`px-3 py-1.5 rounded-lg text-sm font-medium transition flex items-center gap-1 ${
+                        sortBy === 'cost'
+                          ? 'bg-green-600 text-white'
+                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      }`}
+                    >
+                      💰 Koszt
+                      {sortBy === 'cost' && (
+                        <span>{sortOrder === 'asc' ? '↑' : '↓'}</span>
+                      )}
+                    </button>
+                  </div>
+                </div>
+                
+                <div className="text-sm text-gray-500">
+                  Wyników: <span className="font-semibold text-gray-900">{visits.length}</span>
+                </div>
+              </div>
+
+              {/* Table */}
+              <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead className="bg-gray-50 border-b border-gray-200">
+                      <tr>
                       <th className="px-4 py-3 text-left">
                         <input
                           type="checkbox"
@@ -1179,9 +1987,88 @@ export default function AdminVisitsList() {
                             </div>
                           </td>
                           <td className="px-4 py-3 text-right" onClick={(e) => e.stopPropagation()}>
-                            <button className="p-2 hover:bg-gray-100 rounded-lg transition">
-                              <FiMoreVertical className="w-4 h-4 text-gray-600" />
-                            </button>
+                            <div className="relative">
+                              <button
+                                onClick={() => setActionMenuVisitId(actionMenuVisitId === visit.visitId ? null : visit.visitId)}
+                                className="p-2 hover:bg-gray-100 rounded-lg transition"
+                              >
+                                <FiMoreVertical className="w-4 h-4 text-gray-600" />
+                              </button>
+                              
+                              {/* Dropdown menu */}
+                              {actionMenuVisitId === visit.visitId && (
+                                <div 
+                                  onClick={(e) => e.stopPropagation()}
+                                  className="absolute right-0 mt-1 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-10"
+                                >
+                                  <div className="py-1">
+                                    <button
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        setSelectedVisit(visit);
+                                        setShowDetailModal(true);
+                                        setActionMenuVisitId(null);
+                                      }}
+                                      className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
+                                    >
+                                      <FiEye className="w-4 h-4" />
+                                      Zobacz szczegóły
+                                    </button>
+                                    <button
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        setSelectedVisit(visit);
+                                        setEditedVisit({ ...visit });
+                                        setIsEditMode(true);
+                                        setShowDetailModal(true);
+                                        setActionMenuVisitId(null);
+                                      }}
+                                      className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
+                                    >
+                                      <FiEdit className="w-4 h-4" />
+                                      Edytuj wizytę
+                                    </button>
+                                    <button
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        router.push(`/admin/zamowienia/${visit.orderId}`);
+                                        setActionMenuVisitId(null);
+                                      }}
+                                      className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
+                                    >
+                                      <FiPackage className="w-4 h-4" />
+                                      Zobacz zamówienie
+                                    </button>
+                                    <button
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        setSelectedVisit(visit);
+                                        setVisitModels(visit.models || []);
+                                        setShowModelManager(true);
+                                        setActionMenuVisitId(null);
+                                      }}
+                                      className="w-full text-left px-4 py-2 text-sm text-purple-700 hover:bg-purple-50 flex items-center gap-2"
+                                    >
+                                      <FiTool className="w-4 h-4" />
+                                      Zarządzaj modelami
+                                    </button>
+                                    <div className="border-t border-gray-200 my-1"></div>
+                                    <button
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        setActionMenuVisitId(null);
+                                        handleCancelVisit(visit);
+                                      }}
+                                      className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2"
+                                      disabled={visit.status === 'cancelled'}
+                                    >
+                                      <FiXCircle className="w-4 h-4" />
+                                      {visit.status === 'cancelled' ? 'Już anulowana' : 'Anuluj wizytę'}
+                                    </button>
+                                  </div>
+                                </div>
+                              )}
+                            </div>
                           </td>
                         </tr>
                       );
@@ -1230,6 +2117,7 @@ export default function AdminVisitsList() {
                 </div>
               )}
             </div>
+            </>
           )}
         </div>
       </div>
@@ -1351,10 +2239,19 @@ export default function AdminVisitsList() {
 
                   {/* Device Info */}
                   <div className="bg-gray-50 rounded-lg p-4">
-                    <h3 className="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
-                      <FiTool className="w-4 h-4" />
-                      Urządzenie
-                    </h3>
+                    <div className="flex items-center justify-between mb-3">
+                      <h3 className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                        <FiTool className="w-4 h-4" />
+                        Urządzenie
+                      </h3>
+                      <button
+                        onClick={() => setShowModelManager(true)}
+                        className="flex items-center gap-1 px-2 py-1 text-xs bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition"
+                      >
+                        <FiPackage className="w-3 h-3" />
+                        Zarządzaj modelami
+                      </button>
+                    </div>
                     <div className="space-y-1">
                       <p className="text-gray-900 font-medium">
                         {selectedVisit.deviceType}
@@ -1362,6 +2259,11 @@ export default function AdminVisitsList() {
                       <p className="text-sm text-gray-600">
                         {selectedVisit.deviceBrand} {selectedVisit.deviceModel}
                       </p>
+                      {selectedVisit.deviceSerialNumber && (
+                        <p className="text-xs text-gray-500">
+                          S/N: {selectedVisit.deviceSerialNumber}
+                        </p>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -1478,55 +2380,81 @@ export default function AdminVisitsList() {
                   </h3>
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                     {/* Before Photos */}
-                    {selectedVisit.beforePhotos?.map((photo, idx) => (
-                      <div
-                        key={`before-${idx}`}
-                        className="relative aspect-square bg-gray-100 rounded-lg overflow-hidden cursor-pointer hover:opacity-80 transition group"
-                        onClick={() => {
-                          const allPhotos = [
-                            ...selectedVisit.beforePhotos.map(p => ({ url: p, type: 'before' })),
-                            ...selectedVisit.afterPhotos.map(p => ({ url: p, type: 'after' }))
-                          ];
-                          setPhotoGallery(allPhotos);
-                          setCurrentPhoto(idx);
-                          setShowLightbox(true);
-                        }}
-                      >
-                        <img
-                          src={photo}
-                          alt={`Przed serwisem ${idx + 1}`}
-                          className="w-full h-full object-cover"
-                        />
-                        <div className="absolute top-1 left-1 bg-blue-600 text-white text-xs px-2 py-0.5 rounded">
-                          Przed
+                    {selectedVisit.beforePhotos?.map((photo, idx) => {
+                      const imageUrl = typeof photo === 'string' 
+                        ? (photo.startsWith('http') || photo.startsWith('/api/') ? photo : (photo.startsWith('/') ? photo : `/${photo}`))
+                        : (photo?.data?.url || photo?.url || photo);
+                      
+                      return (
+                        <div
+                          key={`before-${idx}`}
+                          className="relative aspect-square bg-gray-100 rounded-lg overflow-hidden cursor-pointer hover:opacity-80 transition group"
+                          onClick={() => {
+                            const getPhotoUrl = (p) => typeof p === 'string' 
+                              ? (p.startsWith('http') || p.startsWith('/api/') ? p : (p.startsWith('/') ? p : `/${p}`))
+                              : (p?.data?.url || p?.url || p);
+                            const allPhotos = [
+                              ...selectedVisit.beforePhotos.map(p => ({ url: getPhotoUrl(p), type: 'before' })),
+                              ...selectedVisit.afterPhotos.map(p => ({ url: getPhotoUrl(p), type: 'after' }))
+                            ];
+                            setPhotoGallery(allPhotos);
+                            setCurrentPhoto(idx);
+                            setShowLightbox(true);
+                          }}
+                        >
+                          <img
+                            src={imageUrl}
+                            alt={`Przed serwisem ${idx + 1}`}
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                              console.error('Image load error:', imageUrl);
+                              e.target.src = '/api/placeholder-image?text=Błąd';
+                            }}
+                          />
+                          <div className="absolute top-1 left-1 bg-blue-600 text-white text-xs px-2 py-0.5 rounded">
+                            Przed
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                     {/* After Photos */}
-                    {selectedVisit.afterPhotos?.map((photo, idx) => (
-                      <div
-                        key={`after-${idx}`}
-                        className="relative aspect-square bg-gray-100 rounded-lg overflow-hidden cursor-pointer hover:opacity-80 transition group"
-                        onClick={() => {
-                          const allPhotos = [
-                            ...selectedVisit.beforePhotos.map(p => ({ url: p, type: 'before' })),
-                            ...selectedVisit.afterPhotos.map(p => ({ url: p, type: 'after' }))
-                          ];
-                          setPhotoGallery(allPhotos);
-                          setCurrentPhoto(selectedVisit.beforePhotos.length + idx);
-                          setShowLightbox(true);
-                        }}
-                      >
-                        <img
-                          src={photo}
-                          alt={`Po serwisie ${idx + 1}`}
-                          className="w-full h-full object-cover"
-                        />
-                        <div className="absolute top-1 left-1 bg-green-600 text-white text-xs px-2 py-0.5 rounded">
-                          Po
+                    {selectedVisit.afterPhotos?.map((photo, idx) => {
+                      const imageUrl = typeof photo === 'string' 
+                        ? (photo.startsWith('http') || photo.startsWith('/api/') ? photo : (photo.startsWith('/') ? photo : `/${photo}`))
+                        : (photo?.data?.url || photo?.url || photo);
+                      
+                      return (
+                        <div
+                          key={`after-${idx}`}
+                          className="relative aspect-square bg-gray-100 rounded-lg overflow-hidden cursor-pointer hover:opacity-80 transition group"
+                          onClick={() => {
+                            const getPhotoUrl = (p) => typeof p === 'string' 
+                              ? (p.startsWith('http') || p.startsWith('/api/') ? p : (p.startsWith('/') ? p : `/${p}`))
+                              : (p?.data?.url || p?.url || p);
+                            const allPhotos = [
+                              ...selectedVisit.beforePhotos.map(p => ({ url: getPhotoUrl(p), type: 'before' })),
+                              ...selectedVisit.afterPhotos.map(p => ({ url: getPhotoUrl(p), type: 'after' }))
+                            ];
+                            setPhotoGallery(allPhotos);
+                            setCurrentPhoto(selectedVisit.beforePhotos.length + idx);
+                            setShowLightbox(true);
+                          }}
+                        >
+                          <img
+                            src={imageUrl}
+                            alt={`Po serwisie ${idx + 1}`}
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                              console.error('Image load error:', imageUrl);
+                              e.target.src = '/api/placeholder-image?text=Błąd';
+                            }}
+                          />
+                          <div className="absolute top-1 left-1 bg-green-600 text-white text-xs px-2 py-0.5 rounded">
+                            Po
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 </div>
               )}
@@ -1743,19 +2671,59 @@ export default function AdminVisitsList() {
                   </div>
                 </>
               ) : (
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => router.push(`/admin/zamowienia/${selectedVisit.orderId}`)}
-                    className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
-                  >
-                    Zobacz pełne zamówienie
-                  </button>
-                  <button
-                    onClick={() => setShowDetailModal(false)}
-                    className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition"
-                  >
-                    Zamknij
-                  </button>
+                <div className="space-y-2">
+                  {/* Models Info Banner */}
+                  {selectedVisit.models && selectedVisit.models.length > 0 && (
+                    <div className="bg-gradient-to-r from-purple-50 to-blue-50 border border-purple-200 rounded-lg p-3">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-2">
+                          <FiPackage className="h-5 w-5 text-purple-600" />
+                          <div>
+                            <span className="text-sm font-medium text-purple-800">
+                              {selectedVisit.models.length} {selectedVisit.models.length === 1 ? 'model urządzenia' : 'modele urządzeń'}
+                            </span>
+                            <p className="text-xs text-purple-600">
+                              {selectedVisit.models.map(m => `${m.brand} ${m.model}`).join(', ')}
+                            </p>
+                          </div>
+                        </div>
+                        <button
+                          onClick={() => {
+                            setVisitModels(selectedVisit.models || []);
+                            setShowModelManager(true);
+                          }}
+                          className="px-3 py-1 bg-purple-600 hover:bg-purple-700 text-white text-sm rounded-lg transition"
+                        >
+                          Edytuj
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                  
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => {
+                        setVisitModels(selectedVisit.models || []);
+                        setShowModelManager(true);
+                      }}
+                      className="flex-1 px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg hover:from-purple-700 hover:to-blue-700 transition flex items-center justify-center gap-2"
+                    >
+                      <FiTool className="w-4 h-4" />
+                      {selectedVisit.models && selectedVisit.models.length > 0 ? 'Zarządzaj modelami' : 'Dodaj modele urządzeń'}
+                    </button>
+                    <button
+                      onClick={() => router.push(`/admin/zamowienia/${selectedVisit.orderId}`)}
+                      className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+                    >
+                      Zobacz zamówienie
+                    </button>
+                    <button
+                      onClick={() => setShowDetailModal(false)}
+                      className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition"
+                    >
+                      Zamknij
+                    </button>
+                  </div>
                 </div>
               )}
             </div>
@@ -2113,6 +3081,199 @@ export default function AdminVisitsList() {
                   Zamknij
                 </button>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Device Models Manager Modal - Updated to ModelManagerModal */}
+      <ModelManagerModal
+        isOpen={showModelManager}
+        onClose={() => setShowModelManager(false)}
+        visitId={selectedVisit?.visitId}
+        initialModels={visitModels}
+        onSave={(updatedModels) => {
+          // Update visit with models
+          setVisitModels(updatedModels);
+          if (selectedVisit && updatedModels.length > 0) {
+            const mainModel = updatedModels[0];
+            const updatedVisit = {
+              ...selectedVisit,
+              deviceBrand: mainModel.brand,
+              deviceModel: mainModel.model,
+              deviceType: mainModel.type,
+              deviceSerialNumber: mainModel.serialNumber,
+              models: updatedModels
+            };
+            setSelectedVisit(updatedVisit);
+            toast.success(`✅ Zaktualizowano modele urządzeń (${updatedModels.length})`);
+          }
+          setShowModelManager(false);
+        }}
+        context="admin"
+      />
+
+      {/* WEEK 3 PHASE 5: Saved Presets Modal */}
+      {showPresetModal && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
+          onClick={() => setShowPresetModal(false)}
+        >
+          <div
+            className="bg-white rounded-lg max-w-2xl w-full max-h-[80vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="p-6">
+              {/* Header */}
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold text-gray-900">
+                  {presetAction === 'save' ? '💾 Zapisz Preset Filtrów' : '📋 Zarządzaj Presetami'}
+                </h2>
+                <button
+                  onClick={() => setShowPresetModal(false)}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  <FiX className="w-6 h-6" />
+                </button>
+              </div>
+
+              {/* Save Preset Form */}
+              {presetAction === 'save' && (
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Nazwa presetu
+                    </label>
+                    <input
+                      type="text"
+                      value={presetName}
+                      onChange={(e) => setPresetName(e.target.value)}
+                      placeholder="np. Pilne dzisiaj, Zaległe drogie..."
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      onKeyPress={(e) => {
+                        if (e.key === 'Enter') savePreset();
+                      }}
+                    />
+                  </div>
+
+                  {/* Preview aktywnych filtrów */}
+                  <div className="bg-gray-50 rounded-lg p-4">
+                    <p className="text-sm font-medium text-gray-700 mb-2">
+                      Aktywne filtry do zapisania:
+                    </p>
+                    <div className="space-y-1 text-sm text-gray-600">
+                      {getActiveFiltersChips().length > 0 ? (
+                        getActiveFiltersChips().map((chip) => (
+                          <div key={chip.id}>• {chip.label}</div>
+                        ))
+                      ) : (
+                        <p className="text-gray-400 italic">Brak aktywnych filtrów</p>
+                      )}
+                      <div>• Sortowanie: {sortBy} ({sortOrder})</div>
+                    </div>
+                  </div>
+
+                  <div className="flex gap-3">
+                    <button
+                      onClick={savePreset}
+                      className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition font-medium"
+                    >
+                      Zapisz Preset
+                    </button>
+                    <button
+                      onClick={() => setShowPresetModal(false)}
+                      className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition"
+                    >
+                      Anuluj
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Load/Manage Presets */}
+              {presetAction === 'load' && (
+                <div className="space-y-3">
+                  {savedPresets.length === 0 ? (
+                    <div className="text-center py-8">
+                      <FiPackage className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                      <p className="text-gray-600">Brak zapisanych presetów</p>
+                      <button
+                        onClick={() => {
+                          setPresetAction('save');
+                        }}
+                        className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+                      >
+                        Zapisz pierwszy preset
+                      </button>
+                    </div>
+                  ) : (
+                    savedPresets.map((preset) => (
+                      <div
+                        key={preset.id}
+                        className="border border-gray-200 rounded-lg p-4 hover:border-blue-300 transition"
+                      >
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <h3 className="font-semibold text-gray-900 mb-1">
+                              {preset.name}
+                            </h3>
+                            <p className="text-xs text-gray-500 mb-2">
+                              Utworzono: {new Date(preset.createdAt).toLocaleDateString('pl-PL', {
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit'
+                              })}
+                            </p>
+                            <div className="flex flex-wrap gap-1">
+                              {(() => {
+                                const chips = [];
+                                if (preset.filters.selectedStatuses?.length > 0) {
+                                  chips.push(`Statusy: ${preset.filters.selectedStatuses.length}`);
+                                }
+                                if (preset.filters.selectedTechnicianIds?.length > 0) {
+                                  chips.push(`Technicy: ${preset.filters.selectedTechnicianIds.length}`);
+                                }
+                                if (preset.filters.costMin > 0 || preset.filters.costMax < 5000) {
+                                  chips.push(`Koszt: ${preset.filters.costMin}-${preset.filters.costMax} zł`);
+                                }
+                                if (preset.filters.withParts) chips.push('Z częściami');
+                                if (preset.filters.withPhotos) chips.push('Ze zdjęciami');
+                                if (preset.filters.urgentOnly) chips.push('Tylko pilne');
+                                
+                                return chips.map((chip, i) => (
+                                  <span key={i} className="text-xs px-2 py-0.5 bg-gray-100 text-gray-600 rounded">
+                                    {chip}
+                                  </span>
+                                ));
+                              })()}
+                            </div>
+                          </div>
+                          <div className="flex gap-2 ml-4">
+                            <button
+                              onClick={() => loadPreset(preset)}
+                              className="px-3 py-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm font-medium"
+                            >
+                              Załaduj
+                            </button>
+                            <button
+                              onClick={() => {
+                                if (confirm(`Czy na pewno usunąć preset "${preset.name}"?`)) {
+                                  deletePreset(preset.id);
+                                }
+                              }}
+                              className="px-3 py-1.5 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition text-sm font-medium"
+                            >
+                              <FiTrash2 className="w-4 h-4" />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              )}
             </div>
           </div>
         </div>

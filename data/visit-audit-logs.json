@@ -29,6 +29,86 @@
         "userAgent": "Mozilla/5.0...",
         "source": "admin_panel"
       }
+    },
+    {
+      "id": "VLOG_1759559843104_qw4km8xi",
+      "visitId": "VIS834186050092",
+      "orderId": 1759394518208,
+      "timestamp": "2025-10-04T06:37:23.104Z",
+      "userId": "admin",
+      "userName": "Administrator",
+      "action": "deleted",
+      "entity": "visit",
+      "changes": [
+        {
+          "field": "status",
+          "oldValue": "completed",
+          "newValue": "cancelled",
+          "displayName": "Status"
+        },
+        {
+          "field": "cancelledAt",
+          "newValue": "2025-10-04T06:37:22.837Z",
+          "displayName": "cancelledAt"
+        },
+        {
+          "field": "cancelledBy",
+          "newValue": "admin",
+          "displayName": "cancelledBy"
+        },
+        {
+          "field": "cancelReason",
+          "newValue": "Anulowano z panelu administracyjnego",
+          "displayName": "cancelReason"
+        }
+      ],
+      "reason": "Anulowano wizytę VIS834186050092 dla klienta oli bie",
+      "metadata": {
+        "ip": "127.0.0.1",
+        "userAgent": "node",
+        "source": "api"
+      }
+    },
+    {
+      "id": "VLOG_1759560030707_nle1mpvr",
+      "visitId": "VIS834186050092",
+      "orderId": 1759394518208,
+      "timestamp": "2025-10-04T06:40:30.707Z",
+      "userId": "admin",
+      "userName": "Administrator",
+      "action": "updated",
+      "entity": "visit",
+      "changes": [
+        {
+          "field": "models",
+          "newValue": [
+            {
+              "id": 1759560026829,
+              "brand": "Amica",
+              "model": "6111IE3.475EHTakDp",
+              "name": "Amica 6111IE3.475EHTakDp",
+              "type": "Płyta indukcyjna",
+              "serialNumber": "00175708335521",
+              "notes": "Rozpoznane ze zdjęcia tabliczki. ELECTRIC COOKER / KUCHNIA ELEKTRYCZNA\nMODEL: 6111IED3.475HTakDp(Xx)\nTYPE / TYP: 6111IE3.475EHTakDp:Xx\n230/400V~ 50Hz\n11,0kW\nInduction hob / Płyta indukcyjna\n\nCE\n\nProduct code / Kod wyrobu: 57083\nSerial No. / Nr seryjny 00175708335521",
+              "dateAdded": "2025-10-04T06:40:26.829Z",
+              "source": "scanner",
+              "parts": []
+            }
+          ],
+          "displayName": "models"
+        },
+        {
+          "field": "partsCart",
+          "newValue": [],
+          "displayName": "partsCart"
+        }
+      ],
+      "reason": "Zaktualizowano modele urządzeń (1 modeli)",
+      "metadata": {
+        "ip": "127.0.0.1",
+        "userAgent": "node",
+        "source": "api"
+      }
     }
   ],
   "_metadata": {
