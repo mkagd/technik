@@ -100,17 +100,22 @@ export default function AdminMagazynZamowienia() {
     if (!confirm('Zatwierdzić to zamówienie?')) return;
 
     try {
-      const res = await fetch(`/api/part-requests/${requestId}/approve`, {
-        method: 'POST',
+      const res = await fetch(`/api/part-requests/approve?requestId=${requestId}`, {
+        method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ approvedBy: 'Admin' })
+        body: JSON.stringify({ 
+          approvedBy: 'ADMIN001',
+          finalDelivery: 'paczkomat',
+          logisticianNotes: 'Zatwierdzone przez administratora'
+        })
       });
 
       if (res.ok) {
         alert('✅ Zamówienie zatwierdzone!');
         loadData();
       } else {
-        alert('❌ Błąd podczas zatwierdzania');
+        const error = await res.json();
+        alert('❌ Błąd: ' + (error.error || 'Nie można zatwierdzić'));
       }
     } catch (error) {
       console.error('Error approving:', error);
@@ -123,10 +128,13 @@ export default function AdminMagazynZamowienia() {
     if (!reason) return;
 
     try {
-      const res = await fetch(`/api/part-requests/${requestId}/reject`, {
-        method: 'POST',
+      const res = await fetch(`/api/part-requests/reject?requestId=${requestId}`, {
+        method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ rejectedBy: 'Admin', reason })
+        body: JSON.stringify({ 
+          rejectedBy: 'ADMIN001',
+          rejectionReason: reason
+        })
       });
 
       if (res.ok) {
