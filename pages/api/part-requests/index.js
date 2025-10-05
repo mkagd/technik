@@ -30,8 +30,8 @@ function writeJSON(filePath, data) {
   }
 }
 
-// Helper: Generuj ID zamówienia
-function generateRequestId() {
+// Helper: Generuj ID zamówienia dla pracownika
+function generateRequestId(employeeId) {
   const now = new Date();
   const year = String(now.getFullYear()).slice(-2); // 25 zamiast 2025
   const month = String(now.getMonth() + 1).padStart(2, '0');
@@ -39,20 +39,18 @@ function generateRequestId() {
   const hour = String(now.getHours()).padStart(2, '0');
   const minute = String(now.getMinutes()).padStart(2, '0');
   
-  // Dodaj licznik 001-999 na wypadek duplikatu w tej samej minucie
+  const dateTime = `${year}${month}${day}${hour}${minute}`;
+  
+  // Policz ile zamówień ma już ten pracownik (licznik życiowy)
   const requests = readJSON(partRequestsPath) || [];
-  const prefix = `ZC-${year}${month}${day}${hour}${minute}`;
+  const employeeRequestsCount = requests.filter(r => 
+    r.requestedFor === employeeId || r.requestedBy === employeeId
+  ).length;
   
-  // Znajdź ile już jest zamówień z tym prefixem
-  let counter = 1;
-  let newId = `${prefix}-${String(counter).padStart(3, '0')}`;
+  // Następne zamówienie = count + 1
+  const counter = employeeRequestsCount + 1;
   
-  while (requests.some(r => r.requestId === newId)) {
-    counter++;
-    newId = `${prefix}-${String(counter).padStart(3, '0')}`;
-  }
-  
-  return newId;
+  return `ZC-${dateTime}-${String(counter).padStart(3, '0')}`;
 }
 
 // Helper: Sprawdź czy po deadline
@@ -235,8 +233,8 @@ export default function handler(req, res) {
       ? (config?.ordering?.afterDeadlineCharge || 25) 
       : 0;
     
-    // Generuj ID
-    const requestId = generateRequestId();
+    // Generuj ID (przekaż employeeId aby stworzyć unikalny licznik dla pracownika)
+    const requestId = generateRequestId(requestedFor);
     
     // Określ czy to admin ordering dla kogoś innego
     const isAdminOrder = requestedBy !== requestedFor;
