@@ -44,6 +44,13 @@ export default function SerwisantZamow() {
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   
+  // 🆕 Kontekst naprawy
+  const [orderNumber, setOrderNumber] = useState('');
+  const [clientName, setClientName] = useState('');
+  const [deviceBrand, setDeviceBrand] = useState('');
+  const [deviceModel, setDeviceModel] = useState('');
+  const [issueDescription, setIssueDescription] = useState('');
+  
   // Photo upload states
   const [photos, setPhotos] = useState([]);
   const [photoUrls, setPhotoUrls] = useState([]);
@@ -183,7 +190,15 @@ export default function SerwisantZamow() {
           urgency,
           preferredDelivery: delivery,
           paczkomatId: delivery === 'paczkomat' ? paczkomatId : undefined,
-          notes
+          notes,
+          // 🆕 Kontekst naprawy
+          orderNumber: orderNumber || undefined,
+          clientName: clientName || undefined,
+          deviceInfo: (deviceBrand || deviceModel || issueDescription) ? {
+            brand: deviceBrand || undefined,
+            model: deviceModel || undefined,
+            issueDescription: issueDescription || undefined
+          } : undefined
         })
       });
 
@@ -345,6 +360,69 @@ export default function SerwisantZamow() {
                 </div>
               )}
 
+              {/* 🆕 Kontekst naprawy */}
+              <div className="mb-6 p-4 bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-200 rounded-lg">
+                <h3 className="text-sm font-semibold text-purple-900 mb-3 flex items-center">
+                  <span className="mr-2">🔧</span>
+                  Kontekst naprawy (opcjonalnie)
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">Nr zlecenia</label>
+                    <input
+                      type="text"
+                      value={orderNumber}
+                      onChange={(e) => setOrderNumber(e.target.value)}
+                      placeholder="np. ORD-2025-001"
+                      className="w-full px-3 py-2 border border-purple-200 rounded-lg text-sm focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">Klient</label>
+                    <input
+                      type="text"
+                      value={clientName}
+                      onChange={(e) => setClientName(e.target.value)}
+                      placeholder="Jan Kowalski"
+                      className="w-full px-3 py-2 border border-purple-200 rounded-lg text-sm focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">Marka urządzenia</label>
+                    <input
+                      type="text"
+                      value={deviceBrand}
+                      onChange={(e) => setDeviceBrand(e.target.value)}
+                      placeholder="Samsung, Bosch..."
+                      className="w-full px-3 py-2 border border-purple-200 rounded-lg text-sm focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">Model</label>
+                    <input
+                      type="text"
+                      value={deviceModel}
+                      onChange={(e) => setDeviceModel(e.target.value)}
+                      placeholder="WW90T4540AE"
+                      className="w-full px-3 py-2 border border-purple-200 rounded-lg text-sm focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    />
+                  </div>
+                  <div className="md:col-span-2">
+                    <label className="block text-xs font-medium text-gray-700 mb-1">Opis usterki</label>
+                    <textarea
+                      value={issueDescription}
+                      onChange={(e) => setIssueDescription(e.target.value)}
+                      placeholder="np. Nie kręci bęben, podejrzenie uszkodzonego łożyska..."
+                      rows="2"
+                      className="w-full px-3 py-2 border border-purple-200 rounded-lg text-sm focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    />
+                  </div>
+                </div>
+                <p className="text-xs text-purple-600 mt-2">
+                  💡 Te informacje pomogą logistykowi lepiej zrozumieć kontekst zamówienia
+                </p>
+              </div>
+
               {/* Parts Selection */}
               <div className="mb-6">
                 <div className="flex items-center justify-between mb-2">
@@ -400,20 +478,49 @@ export default function SerwisantZamow() {
                 </div>
               </div>
 
-              {/* Urgency */}
+              {/* Urgency - Ulepszone wizualizacje */}
               <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Priorytet
+                <label className="block text-sm font-medium text-gray-700 mb-3">
+                  ⏱️ Priorytet
                 </label>
-                <div className="flex space-x-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   {[
-                    { value: 'standard', label: 'Standard', desc: 'Normalna dostawa' },
-                    { value: 'urgent', label: '🔥 Pilne', desc: 'Potrzebne szybko' },
-                    { value: 'express', label: '⚡ Express', desc: 'Klient czeka!' }
+                    { 
+                      value: 'standard', 
+                      label: 'Standard', 
+                      icon: '📦',
+                      desc: '2-3 dni robocze', 
+                      borderColor: 'border-blue-300',
+                      bgColor: 'bg-blue-50',
+                      selectedBorder: 'border-blue-600',
+                      cost: 'Bez opłat'
+                    },
+                    { 
+                      value: 'urgent', 
+                      label: 'Pilne', 
+                      icon: '⚠️',
+                      desc: 'Na jutro', 
+                      borderColor: 'border-orange-300',
+                      bgColor: 'bg-orange-50',
+                      selectedBorder: 'border-orange-600',
+                      cost: 'Standardowa'
+                    },
+                    { 
+                      value: 'express', 
+                      label: 'Express', 
+                      icon: '🔴',
+                      desc: 'Dzisiaj!', 
+                      borderColor: 'border-red-300',
+                      bgColor: 'bg-red-50',
+                      selectedBorder: 'border-red-600',
+                      cost: '+25 zł po 15:00'
+                    }
                   ].map(opt => (
-                    <label key={opt.value} className="flex-1">
-                      <div className={`border-2 rounded-lg p-3 cursor-pointer transition-all ${
-                        urgency === opt.value ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
+                    <label key={opt.value} className="cursor-pointer group">
+                      <div className={`border-2 rounded-xl p-4 transition-all ${
+                        urgency === opt.value 
+                          ? `${opt.selectedBorder} ${opt.bgColor} shadow-lg scale-105` 
+                          : `${opt.borderColor} hover:shadow-md hover:scale-102`
                       }`}>
                         <input
                           type="radio"
@@ -423,8 +530,12 @@ export default function SerwisantZamow() {
                           onChange={(e) => setUrgency(e.target.value)}
                           className="sr-only"
                         />
-                        <p className="font-medium text-gray-900">{opt.label}</p>
-                        <p className="text-xs text-gray-500">{opt.desc}</p>
+                        <div className="text-center">
+                          <div className="text-4xl mb-2">{opt.icon}</div>
+                          <p className="font-bold text-gray-900 text-base mb-1">{opt.label}</p>
+                          <p className="text-sm text-gray-600 mb-2">{opt.desc}</p>
+                          <p className="text-xs text-gray-500 font-medium">{opt.cost}</p>
+                        </div>
                       </div>
                     </label>
                   ))}
