@@ -90,6 +90,20 @@ export default function AdminRezerwacje() {
   const applyFilters = () => {
     let filtered = [...rezerwacje];
 
+    // 🆕 WORKFLOW: Rezerwacje domyślnie pokazują tylko status 'pending' (oczekuje na kontakt)
+    // '' (pusty) = domyślnie pending
+    // '__all__' = wszystkie statusy
+    // konkretny status = tylko ten status
+    if (filters.status === '__all__') {
+      // Pokazuj wszystkie statusy - nie filtruj
+    } else if (filters.status) {
+      // User wybrał konkretny status - pokaż tylko ten
+      filtered = filtered.filter(r => r.status === filters.status);
+    } else {
+      // Brak wyboru = domyślnie tylko pending (nowe zgłoszenia czekające na kontakt)
+      filtered = filtered.filter(r => r.status === 'pending');
+    }
+
     // Search
     if (filters.search) {
       const searchLower = filters.search.toLowerCase();
@@ -114,11 +128,6 @@ export default function AdminRezerwacje() {
       filtered = filtered.filter(r => 
         r.category?.toLowerCase() === filters.category.toLowerCase()
       );
-    }
-
-    // Status
-    if (filters.status) {
-      filtered = filtered.filter(r => r.status === filters.status);
     }
 
     // Sort by selected field and direction
@@ -388,6 +397,25 @@ export default function AdminRezerwacje() {
         </div>
       </div>
 
+      {/* Workflow Info Banner */}
+      {filters.status === '' && (
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+          <div className="flex items-start">
+            <div className="flex-shrink-0">
+              <svg className="h-5 w-5 text-blue-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+              </svg>
+            </div>
+            <div className="ml-3 flex-1">
+              <p className="text-sm text-blue-800">
+                <strong>💡 Workflow:</strong> Pokazujesz tylko nowe zgłoszenia ze statusem <strong>"Oczekuje na kontakt"</strong>. 
+                Po kliknięciu <strong>"Dodaj zlecenie"</strong> status zmieni się na "Skontaktowano się" i zlecenie przejdzie do widoku Zamówień.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Filters */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6">
         <div className="flex flex-col md:flex-row gap-4">
@@ -468,9 +496,13 @@ export default function AdminRezerwacje() {
                 onChange={(e) => setFilters({ ...filters, status: e.target.value })}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               >
-                <option value="">Wszystkie</option>
+                <option value="">⏳ Tylko oczekujące (pending)</option>
+                <option value="__all__">📋 Wszystkie statusy</option>
+                <option disabled>──────────</option>
                 {bookingStatuses.map(status => (
-                  <option key={status.value} value={status.value}>{status.label}</option>
+                  <option key={status.value} value={status.value}>
+                    {status.icon} {status.label}
+                  </option>
                 ))}
               </select>
             </div>

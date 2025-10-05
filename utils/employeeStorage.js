@@ -3,6 +3,7 @@
 
 import fs from 'fs';
 import path from 'path';
+import { generateEmployeeId } from './id-generator.js';
 
 const EMPLOYEES_FILE = path.join(process.cwd(), 'data', 'employees.json');
 const SPECIALIZATIONS_FILE = path.join(process.cwd(), 'data', 'specializations.json');
@@ -24,37 +25,9 @@ export const readEmployees = () => {
     try {
         ensureDataDir();
         if (!fs.existsSync(EMPLOYEES_FILE)) {
-            // Domyślni pracownicy jeśli plik nie istnieje
-            const defaultEmployees = [
-                {
-                    id: '#EMP001',
-                    name: 'Jan Kowalski',
-                    email: 'jan.kowalski@techserwis.pl',
-                    phone: '+48 123 456 789',
-                    specializations: ['Serwis AGD', 'Naprawa pralek'],
-                    isActive: true,
-                    dateAdded: new Date().toISOString(),
-                    address: 'Warszawa',
-                    workingHours: '8:00-16:00',
-                    experience: '5 lat',
-                    rating: 4.8,
-                    completedJobs: 245
-                },
-                {
-                    id: '#EMP002',
-                    name: 'Anna Nowak',
-                    email: 'anna.nowak@techserwis.pl',
-                    phone: '+48 987 654 321',
-                    specializations: ['Serwis komputerowy', 'Naprawa laptopów'],
-                    isActive: true,
-                    dateAdded: new Date().toISOString(),
-                    address: 'Kraków',
-                    workingHours: '9:00-17:00',
-                    experience: '3 lata',
-                    rating: 4.9,
-                    completedJobs: 189
-                }
-            ];
+            // Domyślni pracownicy jeśli plik nie istnieje - używamy nowego formatu ID
+            const defaultEmployees = [];
+            // Zwracamy pustą tablicę - pracownicy będą dodawani przez panel admin
             writeEmployees(defaultEmployees);
             return defaultEmployees;
         }
@@ -83,14 +56,11 @@ export const addEmployee = (employeeData) => {
     try {
         const employees = readEmployees();
 
-        // Generuj ID dla nowego pracownika
-        const maxId = employees.reduce((max, emp) => {
-            const idNum = parseInt(emp.id.replace('#EMP', ''));
-            return idNum > max ? idNum : max;
-        }, 0);
+        // Generuj ID dla nowego pracownika używając nowego systemu
+        const newId = generateEmployeeId(employees, new Date(), 'admin-panel');
 
         const newEmployee = {
-            id: `#EMP${String(maxId + 1).padStart(3, '0')}`,
+            id: newId,
             name: employeeData.name,
             email: employeeData.email,
             phone: employeeData.phone,

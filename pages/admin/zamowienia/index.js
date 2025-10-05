@@ -54,11 +54,22 @@ export default function AdminZamowienia() {
     applyFilters();
   }, [orders, filters]);
 
+  useEffect(() => {
+    if (showDeleteModal && orderToDelete) {
+      console.log('🔴 Delete modal opened for:', {
+        id: orderToDelete.id,
+        orderNumber: orderToDelete.orderNumber,
+        clientName: orderToDelete.clientName
+      });
+    }
+  }, [showDeleteModal, orderToDelete]);
+
   const loadOrders = async () => {
     try {
       setLoading(true);
       console.log('📞 Fetching orders from API...');
-      const response = await fetch('/api/orders');
+      // Dodaj timestamp aby wymusić świeże dane (bez cache)
+      const response = await fetch(`/api/orders?_t=${Date.now()}`);
       const data = await response.json();
       
       console.log('📦 API Response:', { 
@@ -90,6 +101,20 @@ export default function AdminZamowienia() {
   const applyFilters = () => {
     let filtered = [...orders];
 
+    // 🆕 WORKFLOW: Zamówienia pokazują tylko statusy od 'contacted' wzwyż (bez pending)
+    // pending = w rezerwacjach, contacted+ = w zamówieniach
+    // '__all__' = wszystkie statusy (też pending)
+    // konkretny status = tylko ten status
+    if (filters.status === '__all__') {
+      // Pokazuj wszystkie statusy włącznie z pending
+    } else if (filters.status) {
+      // User wybrał konkretny status - pokaż tylko ten
+      filtered = filtered.filter(o => o.status === filters.status);
+    } else {
+      // Brak wyboru = domyślnie ukryj pending (pending są w rezerwacjach)
+      filtered = filtered.filter(o => o.status !== 'pending');
+    }
+
     if (filters.search) {
       const searchLower = filters.search.toLowerCase();
       filtered = filtered.filter(o => 
@@ -102,10 +127,6 @@ export default function AdminZamowienia() {
 
     if (filters.deviceType) {
       filtered = filtered.filter(o => o.deviceType === filters.deviceType);
-    }
-
-    if (filters.status) {
-      filtered = filtered.filter(o => o.status === filters.status);
     }
 
     if (filters.dateFrom) {
@@ -179,20 +200,34 @@ export default function AdminZamowienia() {
 
   const handleDelete = async (id) => {
     try {
-      const response = await fetch(`/api/orders/${id}`, {
-        method: 'DELETE'
+      console.log(`🗑️ Attempting to delete order:`, { id, type: typeof id });
+      const url = `/api/orders?id=${id}`;
+      console.log(`📍 DELETE URL: ${url}`);
+      
+      const response = await fetch(url, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json'
+        }
       });
 
+      console.log(`📡 Response status: ${response.status} ${response.statusText}`);
+      
+      const data = await response.json();
+      console.log(`📦 Response data:`, data);
+
       if (response.ok) {
+        console.log(`✅ Order ${id} deleted successfully`);
         await loadOrders();
         setShowDeleteModal(false);
         setOrderToDelete(null);
         toast.success('Zamówienie zostało usunięte');
       } else {
-        toast.error('Błąd podczas usuwania zamówienia');
+        console.error('❌ Delete failed:', data);
+        toast.error(data.message || 'Błąd podczas usuwania zamówienia');
       }
     } catch (error) {
-      console.error('Błąd:', error);
+      console.error('❌ Delete error:', error);
       toast.error('Błąd połączenia z serwerem');
     }
   };
@@ -233,6 +268,25 @@ export default function AdminZamowienia() {
           </button>
         </div>
       </div>
+
+      {/* Workflow Info Banner */}
+      {filters.status === '' && (
+        <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
+          <div className="flex items-start">
+            <div className="flex-shrink-0">
+              <svg className="h-5 w-5 text-green-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+              </svg>
+            </div>
+            <div className="ml-3 flex-1">
+              <p className="text-sm text-green-800">
+                <strong>💡 Workflow:</strong> Pokazujesz tylko aktywne zlecenia (status <strong>"Skontaktowano się"</strong> i dalej). 
+                Nowe zgłoszenia ze statusem "Oczekuje na kontakt" znajdują się w widoku <strong>Rezerwacje</strong>.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Filters */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6">
@@ -283,9 +337,13 @@ export default function AdminZamowienia() {
                 onChange={(e) => setFilters({ ...filters, status: e.target.value })}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
               >
-                <option value="">Wszystkie</option>
+                <option value="">📞 Aktywne (bez pending)</option>
+                <option value="__all__">📋 Wszystkie statusy</option>
+                <option disabled>──────────</option>
                 {orderStatuses.map(status => (
-                  <option key={status.value} value={status.value}>{status.label}</option>
+                  <option key={status.value} value={status.value}>
+                    {status.icon} {status.label}
+                  </option>
                 ))}
               </select>
             </div>
@@ -441,6 +499,21 @@ export default function AdminZamowienia() {
                     <FiEdit className="mr-1.5 h-4 w-4" />
                     Edytuj
                   </button>
+                  <button
+                    onClick={() => {
+                      console.log('🗑️ Delete button clicked for order:', { 
+                        id: order.id, 
+                        orderNumber: order.orderNumber,
+                        clientName: order.clientName 
+                      });
+                      setOrderToDelete(order);
+                      setShowDeleteModal(true);
+                    }}
+                    className="inline-flex items-center justify-center px-3 py-1.5 border border-red-300 rounded-md text-sm font-medium text-red-700 bg-red-50 hover:bg-red-100"
+                    title="Usuń zamówienie"
+                  >
+                    <FiTrash2 className="h-4 w-4" />
+                  </button>
                 </div>
               </div>
             );
@@ -451,26 +524,69 @@ export default function AdminZamowienia() {
       {/* Delete Modal */}
       {showDeleteModal && orderToDelete && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Potwierdź usunięcie</h3>
-            <p className="text-sm text-gray-600 mb-6">
-              Czy na pewno chcesz usunąć zamówienie <span className="font-semibold">{orderToDelete.orderNumber}</span>?
-            </p>
-            <div className="flex justify-end space-x-3">
+          <div className="bg-white rounded-xl shadow-xl max-w-lg w-full p-6">
+            <div className="flex items-start mb-4">
+              <div className="flex-shrink-0">
+                <div className="flex items-center justify-center h-12 w-12 rounded-full bg-red-100">
+                  <FiTrash2 className="h-6 w-6 text-red-600" />
+                </div>
+              </div>
+              <div className="ml-4 flex-1">
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                  Potwierdź usunięcie zamówienia
+                </h3>
+                <p className="text-sm text-gray-600 mb-4">
+                  Czy na pewno chcesz usunąć to zamówienie? Ta operacja jest <strong>nieodwracalna</strong>.
+                </p>
+                
+                {/* Szczegóły zamówienia */}
+                <div className="bg-gray-50 rounded-lg p-4 border border-gray-200 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-medium text-gray-500">Numer zamówienia:</span>
+                    <span className="text-sm font-semibold text-gray-900">{orderToDelete.orderNumber}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-medium text-gray-500">Klient:</span>
+                    <span className="text-sm font-medium text-gray-900">{orderToDelete.clientName}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-medium text-gray-500">Urządzenie:</span>
+                    <span className="text-sm text-gray-700">{orderToDelete.deviceType}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-medium text-gray-500">Status:</span>
+                    <span className={`text-xs font-medium rounded-full px-2 py-1 ${getStatusInfo(orderToDelete.status).color}`}>
+                      {getStatusInfo(orderToDelete.status).icon} {getStatusInfo(orderToDelete.status).label}
+                    </span>
+                  </div>
+                  {orderToDelete.createdAt && (
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-medium text-gray-500">Data utworzenia:</span>
+                      <span className="text-sm text-gray-700">
+                        {new Date(orderToDelete.createdAt).toLocaleDateString('pl-PL')}
+                      </span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+            
+            <div className="flex justify-end space-x-3 mt-6">
               <button
                 onClick={() => {
                   setShowDeleteModal(false);
                   setOrderToDelete(null);
                 }}
-                className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50"
+                className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
               >
                 Anuluj
               </button>
               <button
                 onClick={() => handleDelete(orderToDelete.id)}
-                className="px-4 py-2 bg-red-600 text-white rounded-lg text-sm font-medium hover:bg-red-700"
+                className="px-4 py-2 bg-red-600 text-white rounded-lg text-sm font-medium hover:bg-red-700 transition-colors shadow-sm"
               >
-                Usuń
+                <FiTrash2 className="inline-block mr-1.5 h-4 w-4" />
+                Usuń zamówienie
               </button>
             </div>
           </div>

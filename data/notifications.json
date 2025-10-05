@@ -182,8 +182,9 @@
     "type": "info",
     "link": "/admin/klienci",
     "userId": null,
-    "read": false,
-    "createdAt": "2025-10-04T17:24:08.052Z"
+    "read": true,
+    "createdAt": "2025-10-04T17:24:08.052Z",
+    "readAt": "2025-10-05T07:24:19.466Z"
   },
   {
     "id": 1759598648367,
@@ -192,8 +193,9 @@
     "type": "success",
     "link": "/admin/zamowienia",
     "userId": null,
-    "read": false,
-    "createdAt": "2025-10-04T17:24:08.066Z"
+    "read": true,
+    "createdAt": "2025-10-04T17:24:08.066Z",
+    "readAt": "2025-10-05T07:24:19.466Z"
   },
   {
     "id": 1759598648290,
@@ -202,8 +204,9 @@
     "type": "info",
     "link": "/admin/rezerwacje",
     "userId": null,
-    "read": false,
-    "createdAt": "2025-10-04T17:24:08.068Z"
+    "read": true,
+    "createdAt": "2025-10-04T17:24:08.068Z",
+    "readAt": "2025-10-05T07:24:19.466Z"
   },
   {
     "id": 1759599520952,
@@ -212,8 +215,9 @@
     "type": "info",
     "link": "/admin/klienci",
     "userId": null,
-    "read": false,
-    "createdAt": "2025-10-04T17:38:40.695Z"
+    "read": true,
+    "createdAt": "2025-10-04T17:38:40.695Z",
+    "readAt": "2025-10-05T07:24:19.466Z"
   },
   {
     "id": 1759599520853,
@@ -222,8 +226,9 @@
     "type": "success",
     "link": "/admin/zamowienia",
     "userId": null,
-    "read": false,
-    "createdAt": "2025-10-04T17:38:40.704Z"
+    "read": true,
+    "createdAt": "2025-10-04T17:38:40.704Z",
+    "readAt": "2025-10-05T07:24:19.466Z"
   },
   {
     "id": 1759599521123,
@@ -232,8 +237,9 @@
     "type": "info",
     "link": "/admin/rezerwacje",
     "userId": null,
-    "read": false,
-    "createdAt": "2025-10-04T17:38:40.705Z"
+    "read": true,
+    "createdAt": "2025-10-04T17:38:40.705Z",
+    "readAt": "2025-10-05T07:24:19.466Z"
   },
   {
     "id": 1759600719513,
@@ -242,8 +248,9 @@
     "type": "info",
     "link": "/admin/klienci",
     "userId": null,
-    "read": false,
-    "createdAt": "2025-10-04T17:58:39.497Z"
+    "read": true,
+    "createdAt": "2025-10-04T17:58:39.497Z",
+    "readAt": "2025-10-05T07:24:19.466Z"
   },
   {
     "id": 1759600720018,
@@ -252,8 +259,9 @@
     "type": "success",
     "link": "/admin/zamowienia",
     "userId": null,
-    "read": false,
-    "createdAt": "2025-10-04T17:58:39.513Z"
+    "read": true,
+    "createdAt": "2025-10-04T17:58:39.513Z",
+    "readAt": "2025-10-05T07:24:19.466Z"
   },
   {
     "id": 1759600720513,
@@ -262,8 +270,9 @@
     "type": "info",
     "link": "/admin/rezerwacje",
     "userId": null,
-    "read": false,
-    "createdAt": "2025-10-04T17:58:39.514Z"
+    "read": true,
+    "createdAt": "2025-10-04T17:58:39.514Z",
+    "readAt": "2025-10-05T07:24:19.466Z"
   },
   {
     "id": 1759602864439,
@@ -272,8 +281,9 @@
     "type": "info",
     "link": "/admin/klienci",
     "userId": null,
-    "read": false,
-    "createdAt": "2025-10-04T18:34:23.873Z"
+    "read": true,
+    "createdAt": "2025-10-04T18:34:23.873Z",
+    "readAt": "2025-10-05T07:24:19.466Z"
   },
   {
     "id": 1759602864809,
@@ -282,8 +292,9 @@
     "type": "success",
     "link": "/admin/zamowienia",
     "userId": null,
-    "read": false,
-    "createdAt": "2025-10-04T18:34:23.890Z"
+    "read": true,
+    "createdAt": "2025-10-04T18:34:23.890Z",
+    "readAt": "2025-10-05T07:24:19.466Z"
   },
   {
     "id": 1759602864625,
@@ -292,8 +303,9 @@
     "type": "info",
     "link": "/admin/rezerwacje",
     "userId": null,
-    "read": false,
-    "createdAt": "2025-10-04T18:34:23.892Z"
+    "read": true,
+    "createdAt": "2025-10-04T18:34:23.892Z",
+    "readAt": "2025-10-05T07:24:19.466Z"
   },
   {
     "id": 1759610022281,
@@ -302,8 +314,9 @@
     "type": "info",
     "link": "/admin/klienci",
     "userId": null,
-    "read": false,
-    "createdAt": "2025-10-04T20:33:41.882Z"
+    "read": true,
+    "createdAt": "2025-10-04T20:33:41.882Z",
+    "readAt": "2025-10-05T07:24:19.466Z"
   },
   {
     "id": 1759610022038,
@@ -312,8 +325,9 @@
     "type": "success",
     "link": "/admin/zamowienia",
     "userId": null,
-    "read": false,
-    "createdAt": "2025-10-04T20:33:41.889Z"
+    "read": true,
+    "createdAt": "2025-10-04T20:33:41.889Z",
+    "readAt": "2025-10-05T07:24:19.466Z"
   },
   {
     "id": 1759610022045,
@@ -322,8 +336,9 @@
     "type": "info",
     "link": "/admin/rezerwacje",
     "userId": null,
-    "read": false,
-    "createdAt": "2025-10-04T20:33:41.891Z"
+    "read": true,
+    "createdAt": "2025-10-04T20:33:41.891Z",
+    "readAt": "2025-10-05T07:24:19.466Z"
   },
   {
     "id": 1759642076904,
@@ -332,8 +347,9 @@
     "type": "info",
     "link": "/admin/klienci",
     "userId": null,
-    "read": false,
-    "createdAt": "2025-10-05T05:27:56.767Z"
+    "read": true,
+    "createdAt": "2025-10-05T05:27:56.767Z",
+    "readAt": "2025-10-05T07:24:19.466Z"
   },
   {
     "id": 1759642077191,
@@ -342,8 +358,9 @@
     "type": "success",
     "link": "/admin/zamowienia",
     "userId": null,
-    "read": false,
-    "createdAt": "2025-10-05T05:27:56.805Z"
+    "read": true,
+    "createdAt": "2025-10-05T05:27:56.805Z",
+    "readAt": "2025-10-05T07:24:19.466Z"
   },
   {
     "id": 1759642076885,
@@ -352,8 +369,9 @@
     "type": "info",
     "link": "/admin/rezerwacje",
     "userId": null,
-    "read": false,
-    "createdAt": "2025-10-05T05:27:56.807Z"
+    "read": true,
+    "createdAt": "2025-10-05T05:27:56.807Z",
+    "readAt": "2025-10-05T07:24:19.466Z"
   },
   {
     "id": 1759642102964,
@@ -362,8 +380,9 @@
     "type": "info",
     "link": "/admin/klienci",
     "userId": null,
-    "read": false,
-    "createdAt": "2025-10-05T05:28:22.032Z"
+    "read": true,
+    "createdAt": "2025-10-05T05:28:22.032Z",
+    "readAt": "2025-10-05T07:24:19.466Z"
   },
   {
     "id": 1759642102712,
@@ -372,8 +391,9 @@
     "type": "success",
     "link": "/admin/zamowienia",
     "userId": null,
-    "read": false,
-    "createdAt": "2025-10-05T05:28:22.043Z"
+    "read": true,
+    "createdAt": "2025-10-05T05:28:22.043Z",
+    "readAt": "2025-10-05T07:24:19.466Z"
   },
   {
     "id": 1759642102292,
@@ -382,8 +402,9 @@
     "type": "info",
     "link": "/admin/rezerwacje",
     "userId": null,
-    "read": false,
-    "createdAt": "2025-10-05T05:28:22.044Z"
+    "read": true,
+    "createdAt": "2025-10-05T05:28:22.044Z",
+    "readAt": "2025-10-05T07:24:19.466Z"
   },
   {
     "id": 1759644727281,
@@ -392,8 +413,9 @@
     "type": "info",
     "link": "/admin/klienci",
     "userId": null,
-    "read": false,
-    "createdAt": "2025-10-05T06:12:06.619Z"
+    "read": true,
+    "createdAt": "2025-10-05T06:12:06.619Z",
+    "readAt": "2025-10-05T07:24:19.466Z"
   },
   {
     "id": 1759644727473,
@@ -402,8 +424,9 @@
     "type": "success",
     "link": "/admin/zamowienia",
     "userId": null,
-    "read": false,
-    "createdAt": "2025-10-05T06:12:06.632Z"
+    "read": true,
+    "createdAt": "2025-10-05T06:12:06.632Z",
+    "readAt": "2025-10-05T07:24:19.466Z"
   },
   {
     "id": 1759644727332,
@@ -412,8 +435,9 @@
     "type": "info",
     "link": "/admin/rezerwacje",
     "userId": null,
-    "read": false,
-    "createdAt": "2025-10-05T06:12:06.634Z"
+    "read": true,
+    "createdAt": "2025-10-05T06:12:06.634Z",
+    "readAt": "2025-10-05T07:24:19.466Z"
   },
   {
     "id": 1759644777869,
@@ -422,8 +446,9 @@
     "type": "info",
     "link": "/admin/klienci",
     "userId": null,
-    "read": false,
-    "createdAt": "2025-10-05T06:12:56.898Z"
+    "read": true,
+    "createdAt": "2025-10-05T06:12:56.898Z",
+    "readAt": "2025-10-05T07:24:19.466Z"
   },
   {
     "id": 1759644777196,
@@ -432,8 +457,9 @@
     "type": "success",
     "link": "/admin/zamowienia",
     "userId": null,
-    "read": false,
-    "createdAt": "2025-10-05T06:12:56.911Z"
+    "read": true,
+    "createdAt": "2025-10-05T06:12:56.911Z",
+    "readAt": "2025-10-05T07:24:19.466Z"
   },
   {
     "id": 1759644777039,
@@ -442,8 +468,9 @@
     "type": "info",
     "link": "/admin/rezerwacje",
     "userId": null,
-    "read": false,
-    "createdAt": "2025-10-05T06:12:56.914Z"
+    "read": true,
+    "createdAt": "2025-10-05T06:12:56.914Z",
+    "readAt": "2025-10-05T07:24:19.466Z"
   },
   {
     "id": 1759644788133,
@@ -452,8 +479,9 @@
     "type": "info",
     "link": "/admin/klienci",
     "userId": null,
-    "read": false,
-    "createdAt": "2025-10-05T06:13:08.048Z"
+    "read": true,
+    "createdAt": "2025-10-05T06:13:08.048Z",
+    "readAt": "2025-10-05T07:24:19.466Z"
   },
   {
     "id": 1759644789026,
@@ -462,8 +490,9 @@
     "type": "success",
     "link": "/admin/zamowienia",
     "userId": null,
-    "read": false,
-    "createdAt": "2025-10-05T06:13:08.065Z"
+    "read": true,
+    "createdAt": "2025-10-05T06:13:08.065Z",
+    "readAt": "2025-10-05T07:24:19.466Z"
   },
   {
     "id": 1759644788162,
@@ -472,8 +501,9 @@
     "type": "info",
     "link": "/admin/rezerwacje",
     "userId": null,
-    "read": false,
-    "createdAt": "2025-10-05T06:13:08.068Z"
+    "read": true,
+    "createdAt": "2025-10-05T06:13:08.068Z",
+    "readAt": "2025-10-05T07:24:19.466Z"
   },
   {
     "id": 1759644793906,
@@ -482,8 +512,9 @@
     "type": "info",
     "link": "/admin/klienci",
     "userId": null,
-    "read": false,
-    "createdAt": "2025-10-05T06:13:13.212Z"
+    "read": true,
+    "createdAt": "2025-10-05T06:13:13.212Z",
+    "readAt": "2025-10-05T07:24:19.466Z"
   },
   {
     "id": 1759644793663,
@@ -492,8 +523,9 @@
     "type": "success",
     "link": "/admin/zamowienia",
     "userId": null,
-    "read": false,
-    "createdAt": "2025-10-05T06:13:13.230Z"
+    "read": true,
+    "createdAt": "2025-10-05T06:13:13.230Z",
+    "readAt": "2025-10-05T07:24:19.466Z"
   },
   {
     "id": 1759644793723,
@@ -502,8 +534,9 @@
     "type": "info",
     "link": "/admin/rezerwacje",
     "userId": null,
-    "read": false,
-    "createdAt": "2025-10-05T06:13:13.232Z"
+    "read": true,
+    "createdAt": "2025-10-05T06:13:13.232Z",
+    "readAt": "2025-10-05T07:24:19.466Z"
   },
   {
     "id": 1759644797236,
@@ -512,8 +545,9 @@
     "type": "info",
     "link": "/admin/klienci",
     "userId": null,
-    "read": false,
-    "createdAt": "2025-10-05T06:13:16.875Z"
+    "read": true,
+    "createdAt": "2025-10-05T06:13:16.875Z",
+    "readAt": "2025-10-05T07:24:19.466Z"
   },
   {
     "id": 1759644797751,
@@ -522,8 +556,9 @@
     "type": "success",
     "link": "/admin/zamowienia",
     "userId": null,
-    "read": false,
-    "createdAt": "2025-10-05T06:13:16.888Z"
+    "read": true,
+    "createdAt": "2025-10-05T06:13:16.888Z",
+    "readAt": "2025-10-05T07:24:19.466Z"
   },
   {
     "id": 1759644797232,
@@ -532,7 +567,118 @@
     "type": "info",
     "link": "/admin/rezerwacje",
     "userId": null,
+    "read": true,
+    "createdAt": "2025-10-05T06:13:16.890Z",
+    "readAt": "2025-10-05T07:24:19.466Z"
+  },
+  {
+    "id": 1759655639002,
+    "title": "Nowy klient",
+    "message": "Zarejestrowano nowego klienta: Konkonting",
+    "type": "info",
+    "link": "/admin/klienci",
+    "userId": null,
     "read": false,
-    "createdAt": "2025-10-05T06:13:16.890Z"
+    "createdAt": "2025-10-05T09:13:58.082Z"
+  },
+  {
+    "id": 1759655638662,
+    "title": "Nowe zamówienie",
+    "message": "Utworzono zamówienie ORDS252780013 - Pralka",
+    "type": "success",
+    "link": "/admin/zamowienia",
+    "userId": null,
+    "read": false,
+    "createdAt": "2025-10-05T09:13:58.093Z"
+  },
+  {
+    "id": 1759655638597,
+    "title": "Nowa rezerwacja",
+    "message": "Konkonting zgłosił rezerwację: Pralka",
+    "type": "info",
+    "link": "/admin/rezerwacje",
+    "userId": null,
+    "read": false,
+    "createdAt": "2025-10-05T09:13:58.095Z"
+  },
+  {
+    "id": 1759655674159,
+    "title": "Nowy klient",
+    "message": "Zarejestrowano nowego klienta: Konkonting",
+    "type": "info",
+    "link": "/admin/klienci",
+    "userId": null,
+    "read": false,
+    "createdAt": "2025-10-05T09:14:33.420Z"
+  },
+  {
+    "id": 1759655674292,
+    "title": "Nowe zamówienie",
+    "message": "Utworzono zamówienie ORDS252780014 - Pralka",
+    "type": "success",
+    "link": "/admin/zamowienia",
+    "userId": null,
+    "read": false,
+    "createdAt": "2025-10-05T09:14:33.433Z"
+  },
+  {
+    "id": 1759655673487,
+    "title": "Nowa rezerwacja",
+    "message": "Konkonting zgłosił rezerwację: Pralka",
+    "type": "info",
+    "link": "/admin/rezerwacje",
+    "userId": null,
+    "read": false,
+    "createdAt": "2025-10-05T09:14:33.434Z"
+  },
+  {
+    "id": 1759663149206,
+    "title": "Nowy klient",
+    "message": "Zarejestrowano nowego klienta: Technik B",
+    "type": "info",
+    "link": "/admin/klienci",
+    "userId": null,
+    "read": false,
+    "createdAt": "2025-10-05T11:19:08.854Z"
+  },
+  {
+    "id": 1759663149754,
+    "title": "Nowe zamówienie",
+    "message": "Utworzono zamówienie ORDS252780014 - Pralka",
+    "type": "success",
+    "link": "/admin/zamowienia",
+    "userId": null,
+    "read": false,
+    "createdAt": "2025-10-05T11:19:08.870Z"
+  },
+  {
+    "id": 1759663149679,
+    "title": "Nowa rezerwacja",
+    "message": "Technik B zgłosił rezerwację: Pralka",
+    "type": "info",
+    "link": "/admin/rezerwacje",
+    "userId": null,
+    "read": false,
+    "createdAt": "2025-10-05T11:19:08.873Z"
+  },
+  {
+    "id": 1759664340477,
+    "title": "🔴 PILNE Nowe zamówienie części",
+    "message": "Mariusz Bielaszka zamówił 1 części",
+    "type": "error",
+    "link": "/admin/logistyk/zamowienia?id=PR-2025-10-05-7403",
+    "userId": null,
+    "read": false,
+    "createdAt": "2025-10-05T11:39:00.477Z"
+  },
+  {
+    "id": 1759664379823,
+    "title": "🔴 PILNE Nowe zamówienie części",
+    "message": "Mariusz Bielaszka zamówił 1 części",
+    "type": "error",
+    "link": "/admin/logistyk/zamowienia?id=PR-2025-10-05-8637",
+    "userId": null,
+    "read": false,
+    "createdAt": "2025-10-05T11:39:39.823Z"
   }
 ]

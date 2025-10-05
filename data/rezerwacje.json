@@ -16,9 +16,9 @@
     "clientLocation": null,
     "postalCode": "",
     "time": "20:23",
-    "status": "pending",
+    "status": "contacted",
     "fullAddress": "Gliniana 17/30, Kraków",
-    "updatedAt": "2025-10-05T06:24:26.966Z",
+    "updatedAt": "2025-10-05T07:23:10.573Z",
     "updatedBy": "admin"
   },
   {
@@ -38,7 +38,7 @@
     "clientLocation": null,
     "postalCode": "",
     "time": "",
-    "status": "pending",
+    "status": "contacted",
     "fullAddress": "Gliniana 17/30, 30-732 Kraków",
     "phones": [
       {
@@ -75,7 +75,7 @@
     "multiDevice": true,
     "multiPhone": false,
     "multiAddress": false,
-    "updatedAt": "2025-10-05T06:24:26.985Z",
+    "updatedAt": "2025-10-05T07:23:22.102Z",
     "updatedBy": "admin"
   },
   {
@@ -95,7 +95,7 @@
     "clientLocation": null,
     "postalCode": "",
     "time": "",
-    "status": "pending",
+    "status": "contacted",
     "fullAddress": "qwe, qwe qwe",
     "phones": [
       {
@@ -139,7 +139,7 @@
     "multiDevice": true,
     "multiPhone": false,
     "multiAddress": true,
-    "updatedAt": "2025-10-05T06:24:27.001Z",
+    "updatedAt": "2025-10-05T07:23:25.288Z",
     "updatedBy": "admin"
   },
   {
@@ -159,7 +159,7 @@
     "clientLocation": null,
     "postalCode": "",
     "time": "",
-    "status": "pending",
+    "status": "contacted",
     "fullAddress": "Gliniana 17/30, 30-732 Kraków, 30-732 Kraków",
     "phones": [
       {
@@ -196,7 +196,7 @@
     "multiDevice": true,
     "multiPhone": false,
     "multiAddress": false,
-    "updatedAt": "2025-10-05T06:24:27.015Z",
+    "updatedAt": "2025-10-05T07:23:40.903Z",
     "updatedBy": "admin"
   },
   {
@@ -222,7 +222,7 @@
     },
     "dateMode": "range",
     "time": "",
-    "status": "pending",
+    "status": "contacted",
     "physicalAvailability": {
       "timeWindows": [
         {
@@ -294,7 +294,7 @@
     "multiDevice": false,
     "multiPhone": true,
     "multiAddress": true,
-    "updatedAt": "2025-10-05T06:24:27.026Z",
+    "updatedAt": "2025-10-05T07:23:39.924Z",
     "updatedBy": "admin"
   },
   {
@@ -338,8 +338,8 @@
     "timeSlot": "Po 15:00",
     "additionalNotes": "",
     "brand": "Beko",
-    "status": "pending",
-    "updatedAt": "2025-10-05T06:24:27.036Z",
+    "status": "contacted",
+    "updatedAt": "2025-10-05T07:23:38.933Z",
     "updatedBy": "admin"
   },
   {
@@ -383,8 +383,8 @@
     "timeSlot": "Cały dzień",
     "additionalNotes": "",
     "brand": "Aeg",
-    "status": "pending",
-    "updatedAt": "2025-10-05T06:24:27.045Z",
+    "status": "contacted",
+    "updatedAt": "2025-10-05T07:23:37.999Z",
     "updatedBy": "admin"
   },
   {
@@ -428,8 +428,8 @@
     "timeSlot": "12:00-16:00",
     "additionalNotes": "",
     "brand": "Beko",
-    "status": "pending",
-    "updatedAt": "2025-10-05T06:24:27.054Z",
+    "status": "contacted",
+    "updatedAt": "2025-10-05T07:23:36.917Z",
     "updatedBy": "admin"
   },
   {
@@ -473,8 +473,8 @@
     "timeSlot": "8:00-12:00",
     "additionalNotes": "",
     "brand": "Beko",
-    "status": "pending",
-    "updatedAt": "2025-10-05T06:24:27.063Z",
+    "status": "contacted",
+    "updatedAt": "2025-10-05T07:23:35.318Z",
     "updatedBy": "admin"
   },
   {
@@ -518,8 +518,8 @@
     "timeSlot": "8:00-12:00",
     "additionalNotes": "",
     "brand": "Beko",
-    "status": "pending",
-    "updatedAt": "2025-10-05T06:24:27.073Z",
+    "status": "contacted",
+    "updatedAt": "2025-10-05T07:23:32.555Z",
     "updatedBy": "admin"
   },
   {
@@ -563,8 +563,8 @@
     "timeSlot": "8:00-12:00",
     "additionalNotes": "",
     "brand": "Beko",
-    "status": "pending",
-    "updatedAt": "2025-10-05T06:24:27.082Z",
+    "status": "contacted",
+    "updatedAt": "2025-10-05T07:23:31.181Z",
     "updatedBy": "admin"
   },
   {
@@ -608,8 +608,134 @@
     "timeSlot": "8:00-12:00",
     "additionalNotes": "",
     "brand": "Beko",
-    "status": "pending",
-    "updatedAt": "2025-10-05T06:24:27.094Z",
+    "status": "contacted",
+    "updatedAt": "2025-10-05T07:23:28.978Z",
     "updatedBy": "admin"
+  },
+  {
+    "id": 1759655638064,
+    "name": "Konkonting",
+    "phone": "123123123",
+    "email": "bielaszkam2@gmail.com",
+    "city": "Słupia",
+    "street": "asf",
+    "address": "asf, 28-133 Słupia",
+    "category": "Pralka",
+    "device": "",
+    "problem": "Nie włącza się",
+    "availability": "Nie określono",
+    "date": "2025-10-05T09:13:58.064Z",
+    "created_at": "2025-10-05T09:13:58.065Z",
+    "clientLocation": {
+      "address": "asf, 28-133 Słupia (przybliżona lokalizacja, Kraków)",
+      "coordinates": {
+        "lat": 50.0647,
+        "lng": 19.945
+      },
+      "accuracy": "APPROXIMATE",
+      "confidence": 0.3
+    },
+    "postalCode": "28-133",
+    "categories": [
+      "Pralka"
+    ],
+    "devices": [],
+    "brands": [
+      "Amica"
+    ],
+    "problems": [
+      "Nie włącza się"
+    ],
+    "hasBuiltIn": true,
+    "hasDemontaz": true,
+    "hasMontaz": true,
+    "hasTrudnaZabudowa": false,
+    "timeSlot": "Cały dzień",
+    "additionalNotes": "",
+    "brand": "Amica"
+  },
+  {
+    "id": 1759655673397,
+    "name": "Konkonting",
+    "phone": "123123123",
+    "email": "bielaszkam2@gmail.com",
+    "city": "Słupia",
+    "street": "asf",
+    "address": "asf, 28-133 Słupia",
+    "category": "Pralka",
+    "device": "",
+    "problem": "Nie włącza się",
+    "availability": "Nie określono",
+    "date": "2025-10-05T09:14:33.397Z",
+    "created_at": "2025-10-05T09:14:33.397Z",
+    "clientLocation": {
+      "address": "asf, 28-133 Słupia (przybliżona lokalizacja, Kraków)",
+      "coordinates": {
+        "lat": 50.0647,
+        "lng": 19.945
+      },
+      "accuracy": "APPROXIMATE",
+      "confidence": 0.3
+    },
+    "postalCode": "28-133",
+    "categories": [
+      "Pralka"
+    ],
+    "devices": [],
+    "brands": [
+      "Amica"
+    ],
+    "problems": [
+      "Nie włącza się"
+    ],
+    "hasBuiltIn": true,
+    "hasDemontaz": true,
+    "hasMontaz": true,
+    "hasTrudnaZabudowa": false,
+    "timeSlot": "Cały dzień",
+    "additionalNotes": "",
+    "brand": "Amica"
+  },
+  {
+    "id": 1759663148828,
+    "name": "Technik B",
+    "phone": "572772540",
+    "email": "",
+    "city": "Pacanow",
+    "street": "Słupia 114",
+    "address": "Słupia 114, 28-133 Pacanow",
+    "category": "Pralka",
+    "device": "",
+    "problem": "Nie włącza się",
+    "availability": "Nie określono",
+    "date": "2025-10-05T11:19:08.828Z",
+    "created_at": "2025-10-05T11:19:08.829Z",
+    "clientLocation": {
+      "address": "Słupia 114, 28-133 Pacanow (przybliżona lokalizacja, Kraków)",
+      "coordinates": {
+        "lat": 50.0647,
+        "lng": 19.945
+      },
+      "accuracy": "APPROXIMATE",
+      "confidence": 0.3
+    },
+    "postalCode": "28-133",
+    "categories": [
+      "Pralka"
+    ],
+    "devices": [],
+    "brands": [
+      "Amica"
+    ],
+    "problems": [
+      "Nie włącza się"
+    ],
+    "hasBuiltIn": true,
+    "hasDemontaz": true,
+    "hasMontaz": true,
+    "hasTrudnaZabudowa": false,
+    "timeSlot": "8:00-12:00",
+    "additionalNotes": "",
+    "brand": "Amica"
   }
 ]

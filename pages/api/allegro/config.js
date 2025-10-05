@@ -14,6 +14,7 @@ export default async function handler(req, res) {
         return res.status(200).json({
           success: true,
           clientId: data.clientId || null,
+          sandbox: data.sandbox !== undefined ? data.sandbox : true,
           configured: !!(data.clientId && data.clientSecret),
         });
       }
@@ -21,6 +22,7 @@ export default async function handler(req, res) {
       return res.status(200).json({
         success: true,
         clientId: null,
+        sandbox: true,
         configured: false,
       });
     } catch (error) {
@@ -34,7 +36,7 @@ export default async function handler(req, res) {
   if (req.method === 'POST') {
     // Save new configuration
     try {
-      const { clientId, clientSecret } = req.body;
+      const { clientId, clientSecret, sandbox } = req.body;
 
       if (!clientId || !clientSecret) {
         return res.status(400).json({ 
@@ -52,7 +54,10 @@ export default async function handler(req, res) {
       }
 
       // Don't save if it's the masked secret (••••)
-      let configToSave = { clientId };
+      let configToSave = { 
+        clientId,
+        sandbox: sandbox !== undefined ? sandbox : true
+      };
       
       if (!clientSecret.includes('••••')) {
         configToSave.clientSecret = clientSecret;
@@ -73,15 +78,16 @@ export default async function handler(req, res) {
       // Save to file
       fs.writeFileSync(CONFIG_FILE, JSON.stringify(configToSave, null, 2));
 
-      console.log('✅ Allegro OAuth config saved');
+      console.log(`✅ Allegro OAuth config saved (${configToSave.sandbox ? 'SANDBOX' : 'PRODUCTION'})`);
 
       // Also update environment variables for this process
       process.env.ALLEGRO_CLIENT_ID = configToSave.clientId;
       process.env.ALLEGRO_CLIENT_SECRET = configToSave.clientSecret;
+      process.env.ALLEGRO_SANDBOX = configToSave.sandbox ? 'true' : 'false';
 
       return res.status(200).json({ 
         success: true, 
-        message: 'Configuration saved successfully' 
+        message: `Configuration saved successfully (${configToSave.sandbox ? 'SANDBOX' : 'PRODUCTION'} mode)` 
       });
 
     } catch (error) {

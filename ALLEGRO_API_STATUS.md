@@ -1,52 +1,114 @@
 # Status Integracji Allegro API
 
-## 📊 Obecny Stan: DEMO MODE
+## 📊 Obecny Stan: ✅ FULL OAuth 2.0 + SANDBOX SUPPORT
 
-### ⚠️ Problem
-Allegro REST API wymaga autoryzacji OAuth 2.0 nawet dla publicznych wyszukiwań produktów. Nie ma możliwości wykony## 🎯 Jak Włączyć Prawdziwe API (KROK PO KROKU)
+### 🎉 Co jest gotowe
+- ✅ **Full OAuth 2.0** - kompletna implementacja
+- ✅ **Sandbox Mode** - środowisko testowe
+- ✅ **Production Mode** - prawdziwe API
+- ✅ **Auto token management** - cache 12h + refresh
+- ✅ **UI konfiguracji** - łatwa zmiana trybu
+- ✅ **Demo mode** - fallback gdy nie skonfigurowane
 
-### ✅ OAuth już zaimplementowane! Wystarczy skonfigurować:
+## 🎯 Jak Włączyć Prawdziwe API (KROK PO KROKU)
 
-**Krok 1: Zarejestruj aplikację (15-30 min)**
+### ✅ OAuth już zaimplementowane! Masz 2 opcje:
 
-1. Przejdź na: https://apps.developer.allegro.pl/
+---
+
+## 🧪 OPCJA A: SANDBOX (Testowanie) - ZALECANE NA START
+
+**Najlepsze dla:** Nauki, testów, prototypów
+
+**Krok 1: Zarejestruj aplikację Sandbox (10 min)**
+
+1. Przejdź na: **https://apps.developer.allegro.pl.allegrosandbox.pl/**
+2. Zaloguj się (możesz stworzyć testowe konto)
+3. Kliknij **"Dodaj nową aplikację"**
+4. Wypełnij:
+   - Nazwa: `Test AGD` (dowolna)
+   - Redirect URI: `http://localhost:3000/api/allegro/callback`
+   - Zakres: zaznacz wszystko do testów
+5. **Skopiuj Client ID i Client Secret**
+
+**Krok 2: Skonfiguruj w aplikacji (2 min)**
+
+1. Otwórz: **Admin → Allegro → ⚙️ Ustawienia**
+2. ✅ **Zaznacz** checkbox **"🧪 Używaj Sandbox"**
+3. Wklej **Client ID** i **Client Secret** z Sandbox
+4. Kliknij **"💾 Zapisz"**
+5. Kliknij **"🔍 Testuj"** - powinno być ✅
+6. Gotowe! Zobacz badge **"🧪 SANDBOX"** w prawym rogu
+
+**Czas:** ~15 minut | **Koszt:** DARMOWE
+
+📖 **Szczegółowy przewodnik:** `ALLEGRO_SANDBOX_GUIDE.md`
+
+---
+
+## 🚀 OPCJA B: PRODUKCJA (Prawdziwe oferty)
+
+**Najlepsze dla:** Wdrożenia, prawdziwe wyszukiwanie
+
+**Krok 1: Zarejestruj aplikację Production (15-30 min)**
+
+1. Przejdź na: **https://apps.developer.allegro.pl/**
 2. Zaloguj się na swoje konto Allegro
 3. Kliknij **"Utwórz nową aplikację"**
 4. Wybierz typ: **"REST API"**
 5. Podaj nazwę: `Serwis AGD Manager` (lub dowolną)
-6. W polu **Redirect URI** wpisz: `http://localhost:3000`
+6. W polu **Redirect URI** wpisz: `http://localhost:3000/api/allegro/callback`
 7. Zaakceptuj regulamin i zapisz
 8. **Skopiuj Client ID i Client Secret**
 
-**Krok 2: Skonfiguruj w aplikacji (2 minuty)**
+**UWAGA:** Produkcja może wymagać weryfikacji biznesowej!
 
-1. Otwórz aplikację
-2. Przejdź do: **Admin → Allegro (zakupy) → ⚙️ Ustawienia**
-3. Wklej **Client ID** i **Client Secret**
-4. Kliknij **"Zapisz konfigurację"**
-5. Kliknij **"Testuj połączenie"** - powinno być ✅
-6. Gotowe! Przejdź do wyszukiwania
+**Krok 2: Skonfiguruj w aplikacji (2 min)**
 
-**To wszystko! Całość zajmuje ~30 minut.**
+1. Otwórz: **Admin → Allegro → ⚙️ Ustawienia**
+2. ❌ **Odznacz** checkbox **"🧪 Używaj Sandbox"**
+3. Wklej **Client ID** i **Client Secret** z Production
+4. Kliknij **"💾 Zapisz"**
+5. Kliknij **"🔍 Testuj"** - powinno być ✅
+6. Badge **"🧪 SANDBOX"** powinien zniknąć - jesteś LIVE!
+
+**Czas:** ~20-40 minut | **Koszt:** DARMOWE
+
+---
+
+## 🔄 Przełączanie między Sandbox a Production
+
+**To proste!** W ustawieniach:
+- ✅ Checkbox zaznaczony = **Sandbox** (testowe dane)
+- ❌ Checkbox odznaczony = **Production** (prawdziwe oferty)
+
+System automatycznie przełącza URL-e i używa odpowiednich credentials!
 
 ---
 
 ## 📁 Zaimplementowane Pliki
 
 ```
-✅ lib/allegro-oauth.js           - Token manager (cache, refresh)
-✅ pages/api/allegro/search.js    - Wyszukiwanie z OAuth
-✅ pages/api/allegro/config.js    - Zapisz/odczytaj konfigurację
-✅ pages/api/allegro/test.js      - Test połączenia
-✅ pages/api/allegro/clear-cache.js - Wyczyść cache tokenów
-✅ pages/admin/allegro/settings.js - UI konfiguracji
+✅ lib/allegro-oauth.js              - Token manager (cache, refresh, dual-mode)
+✅ pages/api/allegro/search.js       - Wyszukiwanie z OAuth (Sandbox/Production)
+✅ pages/api/allegro/config.js       - Zapisz/odczytaj konfigurację + sandbox flag
+✅ pages/api/allegro/test.js         - Test połączenia
+✅ pages/api/allegro/clear-cache.js  - Wyczyść cache tokenów
+✅ pages/admin/allegro/settings.js   - UI konfiguracji + checkbox Sandbox
+✅ pages/admin/allegro/search.js     - Wyszukiwarka + badge "🧪 SANDBOX"
+✅ .env.local                        - Template z Sandbox config
 ```
 
 **System automatycznie:**
-- Pobiera token OAuth przy pierwszym użyciu
-- Cachuje token na 12 godzin
-- Automatycznie odświeża gdy wygasa
-- Przełącza się między DEMO a prawdziwym APIokenu dostępu.
+- ✅ Pobiera token OAuth przy pierwszym użyciu
+- ✅ Cachuje token na 12 godzin
+- ✅ Automatycznie odświeża gdy wygasa
+- ✅ Przełącza się między DEMO / Sandbox / Production
+- ✅ Używa właściwych URL-i w zależności od trybu:
+  - **Sandbox:** `api.allegro.pl.allegrosandbox.pl`
+  - **Production:** `api.allegro.pl`
+- ✅ Pokazuje badge gdy Sandbox aktywny
+- ✅ Loguje tryb w konsoli
 
 ### ✅ Co Działa
 - ✅ Pełny interfejs użytkownika
@@ -304,15 +366,28 @@ A: Dla produkcji: **OAuth (Opcja A)**. Dla szybkiej prezentacji: **Demo mode**.
 ## 🚀 Status Obecny
 
 ```
-┌─────────────────────────────────────────┐
-│  ✅ UI: 100% Gotowe                     │
-│  ✅ Filtry: 100% Gotowe                 │
-│  ✅ Multi-select: 100% Gotowe           │
-│  ✅ Lista zakupów: 100% Gotowe          │
-│  ⚠️  API: Demo Mode (przykładowe dane)  │
-│  ❌ OAuth: Do implementacji             │
-└─────────────────────────────────────────┘
+┌──────────────────────────────────────────────┐
+│  ✅ UI: 100% Gotowe                          │
+│  ✅ Filtry: 100% Gotowe                      │
+│  ✅ Multi-select: 100% Gotowe                │
+│  ✅ Lista zakupów: 100% Gotowe               │
+│  ✅ OAuth 2.0: 100% ZAIMPLEMENTOWANE         │
+│  ✅ Sandbox Support: 100% GOTOWE             │
+│  ✅ Production Support: 100% GOTOWE          │
+│  ✅ Auto Token Management: DZIAŁA            │
+│  ✅ Demo Mode Fallback: DZIAŁA               │
+└──────────────────────────────────────────────┘
 ```
 
-**System jest gotowy do użycia w trybie DEMO.**
-**Czeka tylko na decyzję o implementacji prawdziwego API.**
+**System jest w pełni gotowy!**
+
+**Użytkownik musi tylko:**
+1. Zarejestrować aplikację (Sandbox lub Production)
+2. Wkleić Client ID i Secret w ustawieniach
+3. Kliknąć "Testuj połączenie"
+4. Gotowe! 🎉
+
+**Tryby działania:**
+- 🧪 **Sandbox** - gdy zaznaczony checkbox (testowe dane Allegro)
+- 🚀 **Production** - gdy odznaczony (prawdziwe oferty Allegro)
+- 🎭 **Demo** - gdy nie skonfigurowane (przykładowe dane z kodu)

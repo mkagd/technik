@@ -1,4 +1,8 @@
-[
+// fix-employees.js - Napraw employees.json z poprawnymi hashami
+const fs = require('fs');
+const path = require('path');
+
+const employees = [
   {
     "id": "EMPA252780001",
     "name": "Mario Średziński",
@@ -44,37 +48,21 @@
       "devices": [
         {
           "type": "pralka",
-          "brands": [
-            "Samsung",
-            "LG",
-            "Bosch",
-            "Siemens",
-            "Whirlpool"
-          ],
+          "brands": ["Samsung", "LG", "Bosch", "Siemens", "Whirlpool"],
           "experienceYears": 8,
           "level": "expert",
           "certifications": []
         },
         {
           "type": "lodówka",
-          "brands": [
-            "Samsung",
-            "LG",
-            "Bosch",
-            "Whirlpool"
-          ],
+          "brands": ["Samsung", "LG", "Bosch", "Whirlpool"],
           "experienceYears": 7,
           "level": "expert",
           "certifications": []
         },
         {
           "type": "zmywarka",
-          "brands": [
-            "Bosch",
-            "Siemens",
-            "Whirlpool",
-            "Beko"
-          ],
+          "brands": ["Bosch", "Siemens", "Whirlpool", "Beko"],
           "experienceYears": 6,
           "level": "advanced",
           "certifications": []
@@ -89,12 +77,7 @@
     "serviceArea": {
       "primaryCity": "Warszawa",
       "radius": 40,
-      "preferredDistricts": [
-        "Mokotów",
-        "Ursynów",
-        "Wilanów",
-        "Włochy"
-      ],
+      "preferredDistricts": ["Mokotów", "Ursynów", "Wilanów", "Włochy"],
       "maxDistanceKm": 50,
       "avoidAreas": [],
       "travelTimePreference": "minimize"
@@ -132,7 +115,7 @@
     "passwordHash": "$2b$10$3bI36gmts1ffzRVkxjDVcOoCOgeP8OJAweON117BXhw7kUdEJlDAi",
     "loginToken": "mario_token_2025_secure_abc123xyz",
     "passwordSetAt": "2025-10-05T12:00:00.000Z",
-    "lastLogin": "2025-10-05T11:34:06.120Z",
+    "lastLogin": null,
     "failedLoginAttempts": 0,
     "isLocked": false,
     "requirePasswordChange": false,
@@ -184,45 +167,28 @@
       "devices": [
         {
           "type": "piekarnik",
-          "brands": [
-            "Bosch",
-            "Siemens",
-            "Electrolux",
-            "Amica"
-          ],
+          "brands": ["Bosch", "Siemens", "Electrolux", "Amica"],
           "experienceYears": 5,
           "level": "advanced",
           "certifications": []
         },
         {
           "type": "płyta indukcyjna",
-          "brands": [
-            "Bosch",
-            "Siemens",
-            "Electrolux"
-          ],
+          "brands": ["Bosch", "Siemens", "Electrolux"],
           "experienceYears": 5,
           "level": "advanced",
           "certifications": []
         },
         {
           "type": "kuchenka",
-          "brands": [
-            "Bosch",
-            "Amica",
-            "Beko"
-          ],
+          "brands": ["Bosch", "Amica", "Beko"],
           "experienceYears": 4,
           "level": "advanced",
           "certifications": []
         },
         {
           "type": "okap",
-          "brands": [
-            "Bosch",
-            "Siemens",
-            "Electrolux"
-          ],
+          "brands": ["Bosch", "Siemens", "Electrolux"],
           "experienceYears": 3,
           "level": "beginner",
           "certifications": []
@@ -237,12 +203,7 @@
     "serviceArea": {
       "primaryCity": "Warszawa",
       "radius": 35,
-      "preferredDistricts": [
-        "Śródmieście",
-        "Wola",
-        "Ochota",
-        "Bemowo"
-      ],
+      "preferredDistricts": ["Śródmieście", "Wola", "Ochota", "Bemowo"],
       "maxDistanceKm": 45,
       "avoidAreas": [],
       "travelTimePreference": "minimize"
@@ -280,11 +241,29 @@
     "passwordHash": "$2b$10$3bI36gmts1ffzRVkxjDVcOoCOgeP8OJAweON117BXhw7kUdEJlDAi",
     "loginToken": "marius_token_2025_secure_def456uvw",
     "passwordSetAt": "2025-10-05T12:00:00.000Z",
-    "lastLogin": "2025-10-05T11:35:40.120Z",
+    "lastLogin": null,
     "failedLoginAttempts": 0,
     "isLocked": false,
     "requirePasswordChange": false,
     "createdAt": "2025-02-20T10:00:00.000Z",
     "updatedAt": "2025-10-05T12:00:00.000Z"
   }
-]
+];
+
+const filePath = path.join(__dirname, 'data', 'employees.json');
+
+fs.writeFileSync(filePath, JSON.stringify(employees, null, 2), 'utf8');
+
+console.log('✅ Plik employees.json został naprawiony!');
+console.log('📁 Lokalizacja:', filePath);
+console.log('👥 Liczba pracowników:', employees.length);
+console.log('');
+console.log('🔐 Hasło dla obu pracowników: haslo123');
+console.log('');
+console.log('📧 Mario Średziński:');
+console.log('   Email: mario.sredzinski@techserwis.pl');
+console.log('   Token: mario_token_2025_secure_abc123xyz');
+console.log('');
+console.log('📧 Mariusz Bielaszka:');
+console.log('   Email: mariusz.bielaszka@techserwis.pl');
+console.log('   Token: marius_token_2025_secure_def456uvw');

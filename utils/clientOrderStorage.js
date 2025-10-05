@@ -326,9 +326,23 @@ export const updateOrder = async (updatedOrder) => {
 // Usuń zamówienie - ATOMIC OPERATION WITH LOCKING
 export const deleteOrder = async (orderId) => {
     try {
+        // Konwertuj orderId na number jeśli jest string (z query params)
+        const orderIdNum = typeof orderId === 'string' ? parseInt(orderId) : orderId;
+        
         await LockedFileOperations.updateJSON(ORDERS_FILE, async (orders) => {
-            const filteredOrders = orders.filter(order => order.id !== orderId);
-            console.log(`🗑️ Order deleted: ${orderId}`);
+            const initialCount = orders.length;
+            const filteredOrders = orders.filter(order => {
+                // Porównaj zarówno id (number) jak i orderNumber (string)
+                return order.id !== orderIdNum && order.id !== orderId && order.orderNumber !== orderId;
+            });
+            
+            const deletedCount = initialCount - filteredOrders.length;
+            if (deletedCount > 0) {
+                console.log(`🗑️ Order deleted: ${orderId} (${deletedCount} zamówień usuniętych)`);
+            } else {
+                console.log(`⚠️ Order not found: ${orderId}`);
+            }
+            
             return filteredOrders;
         }, []);
         

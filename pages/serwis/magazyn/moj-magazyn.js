@@ -11,24 +11,36 @@ export default function SerwisantMojMagazyn() {
   const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
-    // ✅ Pobierz dane pracownika z localStorage (jak w /technician)
-    const employeeData = localStorage.getItem('serwisEmployee') || localStorage.getItem('technicianEmployee');
+    // ✅ Pobierz dane pracownika z localStorage (supports multiple login methods)
+    const technicianData = localStorage.getItem('technicianEmployee');
+    const employeeSessionData = localStorage.getItem('employeeSession');
+    const serwisData = localStorage.getItem('serwisEmployee');
+
+    let employeeData = null;
     
-    if (!employeeData) {
+    if (technicianData) {
+      employeeData = JSON.parse(technicianData);
+    } else if (employeeSessionData) {
+      employeeData = JSON.parse(employeeSessionData);
+    } else if (serwisData) {
+      employeeData = JSON.parse(serwisData);
+    }
+    
+    if (!employeeData || !employeeData.id) {
       console.warn('⚠️ Brak danych pracownika, przekierowanie do logowania');
       router.push('/pracownik-logowanie');
       return;
     }
 
     try {
-      const emp = JSON.parse(employeeData);
-      setEmployee(emp);
-      loadInventory(emp.id);
+      setEmployee(employeeData);
+      loadInventory(employeeData.id);
+      console.log('✅ Załadowano pracownika:', employeeData.fullName || employeeData.name);
     } catch (err) {
       console.error('❌ Błąd parsowania danych pracownika:', err);
       router.push('/pracownik-logowanie');
     }
-  }, []);
+  }, [router]);
 
   const loadInventory = async (employeeId) => {
     if (!employeeId) {

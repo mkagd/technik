@@ -211,5 +211,71 @@
     "consolidatedWith": [],
     "notes": null,
     "logisticianNotes": null
+  },
+  {
+    "requestId": "PR-2025-10-05-7403",
+    "requestedBy": "EMPA252780002",
+    "requestedByName": "Mariusz Bielaszka",
+    "requestedFor": "EMPA252780002",
+    "requestedForName": "Mariusz Bielaszka",
+    "createdBy": "EMPA252780002",
+    "isAdminOrder": false,
+    "deviceInfo": null,
+    "ocrId": null,
+    "parts": [
+      {
+        "partId": "PART001",
+        "quantity": 1,
+        "preferredSupplierId": null
+      }
+    ],
+    "urgency": "urgent",
+    "afterDeadline": false,
+    "expressCharge": 0,
+    "preferredDelivery": "paczkomat",
+    "paczkomatId": "qwe124",
+    "deliveryAddress": null,
+    "finalDelivery": null,
+    "status": "pending",
+    "createdAt": "2025-10-05T11:39:00.475Z",
+    "updatedAt": "2025-10-05T11:39:00.475Z",
+    "approvedAt": null,
+    "approvedBy": null,
+    "consolidatedWith": [],
+    "notes": null,
+    "logisticianNotes": null
+  },
+  {
+    "requestId": "PR-2025-10-05-8637",
+    "requestedBy": "EMPA252780002",
+    "requestedByName": "Mariusz Bielaszka",
+    "requestedFor": "EMPA252780002",
+    "requestedForName": "Mariusz Bielaszka",
+    "createdBy": "EMPA252780002",
+    "isAdminOrder": false,
+    "deviceInfo": null,
+    "ocrId": null,
+    "parts": [
+      {
+        "partId": "PART001",
+        "quantity": 1,
+        "preferredSupplierId": null
+      }
+    ],
+    "urgency": "urgent",
+    "afterDeadline": false,
+    "expressCharge": 0,
+    "preferredDelivery": "paczkomat",
+    "paczkomatId": "12eq",
+    "deliveryAddress": null,
+    "finalDelivery": null,
+    "status": "pending",
+    "createdAt": "2025-10-05T11:39:39.821Z",
+    "updatedAt": "2025-10-05T11:39:39.821Z",
+    "approvedAt": null,
+    "approvedBy": null,
+    "consolidatedWith": [],
+    "notes": null,
+    "logisticianNotes": null
   }
 ]

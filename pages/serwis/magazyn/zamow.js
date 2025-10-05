@@ -1,24 +1,39 @@
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
 import Link from 'next/link';
 import DarkModeToggle from '../../../components/DarkModeToggle';
 
 export default function SerwisantZamow() {
-    const router = useRouter();
+  const router = useRouter();
   
-  // ✅ FIX: Get employeeId from localStorage (like moj-magazyn.js)
+  // ✅ FIX: Get employeeId from localStorage (supports multiple login methods)
   const [employeeId, setEmployeeId] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    const employeeData = localStorage.getItem('serwisEmployee') || localStorage.getItem('technicianEmployee');
-    if (employeeData) {
-      const emp = JSON.parse(employeeData);
-      setEmployeeId(emp.id);
+    // Sprawdź różne źródła danych pracownika
+    const technicianData = localStorage.getItem('technicianEmployee');
+    const employeeSessionData = localStorage.getItem('employeeSession');
+    const serwisData = localStorage.getItem('serwisEmployee');
+
+    let employeeData = null;
+    
+    if (technicianData) {
+      employeeData = JSON.parse(technicianData);
+    } else if (employeeSessionData) {
+      employeeData = JSON.parse(employeeSessionData);
+    } else if (serwisData) {
+      employeeData = JSON.parse(serwisData);
+    }
+
+    if (employeeData && employeeData.id) {
+      setEmployeeId(employeeData.id);
+      console.log('✅ Załadowano pracownika:', employeeData.fullName || employeeData.name, '(ID:', employeeData.id + ')');
     } else {
       alert('❌ Nie znaleziono danych pracownika. Zaloguj się ponownie.');
-      router.push('/serwis/login');
+      router.push('/pracownik-logowanie');
     }
-  }, []);
+  }, [router]);
   const [parts, setParts] = useState([]);
   const [selectedParts, setSelectedParts] = useState([{ partId: '', quantity: 1 }]);
   const [urgency, setUrgency] = useState('standard');
@@ -213,14 +228,20 @@ export default function SerwisantZamow() {
         setUploadingPhotos(false);
       }
 
-      alert(`✅ Zamówienie utworzone: ${requestId}\n${photos.length > 0 ? `📸 Dodano ${photos.length} zdjęć` : ''}`);
+      // Pokaż potwierdzenie
+      const shouldViewOrders = confirm(`✅ Zamówienie utworzone pomyślnie!\n\nNumer: ${requestId}\nStatus: Oczekuje na zatwierdzenie\n${photos.length > 0 ? `📸 Dodano ${photos.length} zdjęć\n` : ''}${urgency === 'urgent' ? '🔴 PILNE\n' : ''}${urgency === 'tomorrow' ? '⚠️ NA JUTRO\n' : ''}\nZostaniesz powiadomiony o statusie.\n\n👉 Kliknij OK aby zobaczyć listę zamówień\n👉 Kliknij Anuluj aby utworzyć kolejne zamówienie`);
       
-      // Reset form
-      setSelectedParts([{ partId: '', quantity: 1 }]);
-      setNotes('');
-      setPaczkomatId('');
-      setPhotos([]);
-      setPhotoUrls([]);
+      if (shouldViewOrders) {
+        // Przekieruj do listy zamówień
+        router.push('/serwis/magazyn/zamowienia');
+      } else {
+        // Reset form dla kolejnego zamówienia
+        setSelectedParts([{ partId: '', quantity: 1 }]);
+        setNotes('');
+        setPaczkomatId('');
+        setPhotos([]);
+        setPhotoUrls([]);
+      }
 
     } catch (error) {
       console.error('Error creating request:', error);

@@ -1,6 +1,9 @@
-[
+const fs = require('fs');
+const path = require('path');
+
+const employees = [
   {
-    "id": "EMPA252780001",
+    "id": "emp_001",
     "name": "Mario Średziński",
     "email": "mario.sredzinski@techserwis.pl",
     "phone": "+48 601 234 567",
@@ -9,13 +12,7 @@
     "experience": "8 lat",
     "isActive": true,
     "role": "Serwisant",
-    "specializations": [
-      "Serwis AGD",
-      "Naprawa pralek",
-      "Lodówki",
-      "Zmywarki",
-      "Piekarniki"
-    ],
+    "specializations": ["Serwis AGD", "Naprawa pralek", "Lodówki", "Zmywarki", "Piekarniki"],
     "repairTimes": {
       "pralka": 25,
       "lodówka": 35,
@@ -44,57 +41,32 @@
       "devices": [
         {
           "type": "pralka",
-          "brands": [
-            "Samsung",
-            "LG",
-            "Bosch",
-            "Siemens",
-            "Whirlpool"
-          ],
+          "brands": ["Samsung", "LG", "Bosch", "Siemens", "Whirlpool"],
           "experienceYears": 8,
           "level": "expert",
           "certifications": []
         },
         {
           "type": "lodówka",
-          "brands": [
-            "Samsung",
-            "LG",
-            "Bosch",
-            "Whirlpool"
-          ],
+          "brands": ["Samsung", "LG", "Bosch", "Whirlpool"],
           "experienceYears": 7,
           "level": "expert",
           "certifications": []
         },
         {
           "type": "zmywarka",
-          "brands": [
-            "Bosch",
-            "Siemens",
-            "Whirlpool",
-            "Beko"
-          ],
+          "brands": ["Bosch", "Siemens", "Whirlpool", "Beko"],
           "experienceYears": 6,
           "level": "advanced",
           "certifications": []
         }
       ],
-      "specialSkills": [
-        "Diagnoza awarii",
-        "Naprawa elektroniki",
-        "Wymiana kompresorów"
-      ]
+      "specialSkills": ["Diagnoza awarii", "Naprawa elektroniki", "Wymiana kompresorów"]
     },
     "serviceArea": {
       "primaryCity": "Warszawa",
       "radius": 40,
-      "preferredDistricts": [
-        "Mokotów",
-        "Ursynów",
-        "Wilanów",
-        "Włochy"
-      ],
+      "preferredDistricts": ["Mokotów", "Ursynów", "Wilanów", "Włochy"],
       "maxDistanceKm": 50,
       "avoidAreas": [],
       "travelTimePreference": "minimize"
@@ -129,10 +101,10 @@
         "socialContributions": 0
       }
     },
-    "passwordHash": "$2b$10$3bI36gmts1ffzRVkxjDVcOoCOgeP8OJAweON117BXhw7kUdEJlDAi",
+    "passwordHash": "$2b$10$K7L/ypJmIEWmZxP6VK0nMOQxXf2WQYF3uT5VZzQ8LJnPxR7YkM2Dm",
     "loginToken": "mario_token_2025_secure_abc123xyz",
     "passwordSetAt": "2025-10-05T12:00:00.000Z",
-    "lastLogin": "2025-10-05T11:34:06.120Z",
+    "lastLogin": null,
     "failedLoginAttempts": 0,
     "isLocked": false,
     "requirePasswordChange": false,
@@ -140,22 +112,16 @@
     "updatedAt": "2025-10-05T12:00:00.000Z"
   },
   {
-    "id": "EMPA252780002",
-    "name": "Mariusz Bielaszka",
-    "email": "mariusz.bielaszka@techserwis.pl",
+    "id": "emp_002",
+    "name": "Marius Bielaszka",
+    "email": "marius.bielaszka@techserwis.pl",
     "phone": "+48 602 345 678",
     "address": "Warszawa",
     "workingHours": "9:00-17:00",
     "experience": "5 lat",
     "isActive": true,
     "role": "Serwisant",
-    "specializations": [
-      "Serwis AGD",
-      "Piekarniki",
-      "Płyty indukcyjne",
-      "Kuchenki",
-      "Okapy"
-    ],
+    "specializations": ["Serwis AGD", "Piekarniki", "Płyty indukcyjne", "Kuchenki", "Okapy"],
     "repairTimes": {
       "pralka": 35,
       "lodówka": 45,
@@ -184,65 +150,39 @@
       "devices": [
         {
           "type": "piekarnik",
-          "brands": [
-            "Bosch",
-            "Siemens",
-            "Electrolux",
-            "Amica"
-          ],
+          "brands": ["Bosch", "Siemens", "Electrolux", "Amica"],
           "experienceYears": 5,
           "level": "advanced",
           "certifications": []
         },
         {
           "type": "płyta indukcyjna",
-          "brands": [
-            "Bosch",
-            "Siemens",
-            "Electrolux"
-          ],
+          "brands": ["Bosch", "Siemens", "Electrolux"],
           "experienceYears": 5,
           "level": "advanced",
           "certifications": []
         },
         {
           "type": "kuchenka",
-          "brands": [
-            "Bosch",
-            "Amica",
-            "Beko"
-          ],
+          "brands": ["Bosch", "Amica", "Beko"],
           "experienceYears": 4,
           "level": "advanced",
           "certifications": []
         },
         {
           "type": "okap",
-          "brands": [
-            "Bosch",
-            "Siemens",
-            "Electrolux"
-          ],
+          "brands": ["Bosch", "Siemens", "Electrolux"],
           "experienceYears": 3,
           "level": "beginner",
           "certifications": []
         }
       ],
-      "specialSkills": [
-        "Naprawa płyt elektronicznych",
-        "Wymiana grzałek",
-        "Serwis okapów"
-      ]
+      "specialSkills": ["Naprawa płyt elektronicznych", "Wymiana grzałek", "Serwis okapów"]
     },
     "serviceArea": {
       "primaryCity": "Warszawa",
       "radius": 35,
-      "preferredDistricts": [
-        "Śródmieście",
-        "Wola",
-        "Ochota",
-        "Bemowo"
-      ],
+      "preferredDistricts": ["Śródmieście", "Wola", "Ochota", "Bemowo"],
       "maxDistanceKm": 45,
       "avoidAreas": [],
       "travelTimePreference": "minimize"
@@ -277,14 +217,23 @@
         "socialContributions": 0
       }
     },
-    "passwordHash": "$2b$10$3bI36gmts1ffzRVkxjDVcOoCOgeP8OJAweON117BXhw7kUdEJlDAi",
+    "passwordHash": "$2b$10$Y8M/zpKnJFXnaQ7WL1oNPRyYg3XRZG4vU6Wa9M8KkoQyS8zlN3En",
     "loginToken": "marius_token_2025_secure_def456uvw",
     "passwordSetAt": "2025-10-05T12:00:00.000Z",
-    "lastLogin": "2025-10-05T11:35:40.120Z",
+    "lastLogin": null,
     "failedLoginAttempts": 0,
     "isLocked": false,
     "requirePasswordChange": false,
     "createdAt": "2025-02-20T10:00:00.000Z",
     "updatedAt": "2025-10-05T12:00:00.000Z"
   }
-]
+];
+
+const filePath = path.join(__dirname, 'data', 'employees.json');
+fs.writeFileSync(filePath, JSON.stringify(employees, null, 2), 'utf8');
+console.log('✅ Plik employees.json został utworzony poprawnie!');
+console.log(`📁 Lokalizacja: ${filePath}`);
+console.log(`👥 Liczba pracowników: ${employees.length}`);
+employees.forEach(emp => {
+  console.log(`   - ${emp.name} (${emp.id})`);
+});

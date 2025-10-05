@@ -179,21 +179,37 @@ export default async function handler(req, res) {
     if (req.method === 'DELETE') {
         try {
             const { id } = req.query;
+            console.log(`🗑️ DELETE request received for order:`, { id, type: typeof id });
 
             if (!id) {
+                console.log('❌ No ID provided in query');
                 return res.status(400).json({ message: 'Brak ID zamówienia' });
             }
 
-            const success = deleteOrder(id);
+            console.log(`🔄 Calling deleteOrder(${id})...`);
+            const success = await deleteOrder(id);
+            console.log(`📊 deleteOrder result:`, success);
+            
             if (success) {
-                console.log(`✅ Order deleted: ${id}`);
-                return res.status(200).json({ message: 'Zamówienie usunięte' });
+                console.log(`✅ Order deleted successfully: ${id}`);
+                return res.status(200).json({ 
+                    message: 'Zamówienie usunięte',
+                    deletedId: id,
+                    success: true
+                });
             } else {
-                return res.status(500).json({ message: 'Błąd usuwania zamówienia' });
+                console.log(`❌ deleteOrder returned false for: ${id}`);
+                return res.status(500).json({ 
+                    message: 'Błąd usuwania zamówienia - funkcja zwróciła false',
+                    success: false 
+                });
             }
         } catch (error) {
             console.error('❌ Error deleting order:', error);
-            return res.status(500).json({ message: 'Błąd serwera' });
+            return res.status(500).json({ 
+                message: 'Błąd serwera',
+                error: error.message 
+            });
         }
     }
 

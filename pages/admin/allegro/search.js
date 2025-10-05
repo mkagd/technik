@@ -14,6 +14,7 @@ export default function AllegroSearch() {
   const [localParts, setLocalParts] = useState([]);
   const [showComparison, setShowComparison] = useState(false);
   const [isDemoMode, setIsDemoMode] = useState(false);
+  const [isSandboxMode, setIsSandboxMode] = useState(false);
 
   // Filters
   const [minPrice, setMinPrice] = useState('');
@@ -23,7 +24,18 @@ export default function AllegroSearch() {
 
   useEffect(() => {
     loadLocalParts();
+    checkSandboxMode();
   }, []);
+
+  const checkSandboxMode = async () => {
+    try {
+      const res = await fetch('/api/allegro/config');
+      const data = await res.json();
+      setIsSandboxMode(data.sandbox || false);
+    } catch (error) {
+      console.error('Error checking sandbox mode:', error);
+    }
+  };
 
   const loadLocalParts = async () => {
     try {
@@ -160,6 +172,11 @@ export default function AllegroSearch() {
               </p>
             </div>
             <div className="flex items-center gap-3">
+              {!isDemoMode && isSandboxMode && (
+                <div className="px-3 py-1 bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200 rounded-lg text-sm font-medium flex items-center gap-2">
+                  🧪 SANDBOX
+                </div>
+              )}
               <button
                 onClick={() => router.push('/admin/allegro/settings')}
                 className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors text-sm font-medium flex items-center gap-2"
@@ -266,7 +283,18 @@ export default function AllegroSearch() {
                     <strong>Aby używać prawdziwego Allegro API:</strong>
                     <ol className="list-decimal ml-5 mt-1 space-y-1">
                       <li>
-                        Zarejestruj aplikację na{' '}
+                        <strong>Dla testów:</strong> Zarejestruj aplikację Sandbox na{' '}
+                        <a 
+                          href="https://apps.developer.allegro.pl.allegrosandbox.pl/" 
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="underline hover:text-yellow-900 dark:hover:text-yellow-100"
+                        >
+                          apps.developer.allegro.pl.allegrosandbox.pl
+                        </a>
+                      </li>
+                      <li>
+                        <strong>Dla produkcji:</strong> Zarejestruj na{' '}
                         <a 
                           href="https://apps.developer.allegro.pl/" 
                           target="_blank"
@@ -285,7 +313,7 @@ export default function AllegroSearch() {
                         >
                           ⚙️ Ustawienia
                         </button>
-                        {' '}i wprowadź dane
+                        {' '}i wprowadź dane (zaznacz Sandbox dla testów)
                       </li>
                     </ol>
                   </div>

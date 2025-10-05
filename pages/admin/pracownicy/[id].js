@@ -6,6 +6,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import AdminLayout from '../../../components/AdminLayout';
 import SecurityTab from '../../../components/admin/SecurityTab';
+import CompensationTab from '../../../components/admin/CompensationTab';
 import { 
   FiSave, FiX, FiUser, FiClock, FiHome, FiTool, FiMapPin, 
   FiTrendingUp, FiTruck, FiAward, FiChevronLeft, FiAlertCircle, FiLock
@@ -77,6 +78,38 @@ export default function PracownikEdycja() {
       maxDistanceKm: 40,
       avoidAreas: [],
       travelTimePreference: 'minimize'
+    },
+
+    // Wynagrodzenia
+    compensation: {
+      baseRate: {
+        type: 'hourly',
+        amount: 0,
+        currency: 'PLN'
+      },
+      paymentMethods: {
+        cash: true,
+        card: true,
+        transfer: true
+      },
+      bonusStructure: {
+        perRepair: 0,
+        perDiagnosis: 0,
+        qualityBonus: 0,
+        overtimeRate: 1.5
+      },
+      earnings: {
+        total: 0,
+        thisMonth: 0,
+        lastMonth: 0,
+        unpaid: 0
+      },
+      paymentHistory: [],
+      settings: {
+        autoCalculate: true,
+        taxRate: 0,
+        socialContributions: 0
+      }
     }
   });
 
@@ -127,6 +160,7 @@ export default function PracownikEdycja() {
     { id: 'built-in-times', label: 'Czasy zabudowy', icon: FiHome },
     { id: 'specializations', label: 'Specjalizacje', icon: FiTool },
     { id: 'service-area', label: 'Obszar działania', icon: FiMapPin },
+    { id: 'compensation', label: '💰 Wynagrodzenia', icon: FiTrendingUp },
     { id: 'security', label: 'Bezpieczeństwo', icon: FiLock }
   ];
 
@@ -152,7 +186,8 @@ export default function PracownikEdycja() {
             repairTimes: employee.repairTimes || employeeData.repairTimes,
             builtInWorkTimes: employee.builtInWorkTimes || employeeData.builtInWorkTimes,
             agdSpecializations: employee.agdSpecializations || employeeData.agdSpecializations,
-            serviceArea: employee.serviceArea || employeeData.serviceArea
+            serviceArea: employee.serviceArea || employeeData.serviceArea,
+            compensation: employee.compensation || employeeData.compensation
           });
         } else {
           showNotification('Pracownik nie znaleziony', 'error');
@@ -928,6 +963,16 @@ export default function PracownikEdycja() {
                 </div>
               </div>
             </div>
+          )}
+
+          {/* TAB: WYNAGRODZENIA */}
+          {activeTab === 'compensation' && (
+            <CompensationTab 
+              employeeData={employeeData}
+              setEmployeeData={setEmployeeData}
+              setHasChanges={setHasChanges}
+              isNewEmployee={isNewEmployee}
+            />
           )}
 
           {/* TAB: BEZPIECZEŃSTWO */}

@@ -10,6 +10,7 @@ export default function AllegroSettings() {
   
   const [clientId, setClientId] = useState('');
   const [clientSecret, setClientSecret] = useState('');
+  const [sandbox, setSandbox] = useState(true); // Default to Sandbox for safety
   const [saving, setSaving] = useState(false);
   const [testing, setTesting] = useState(false);
   const [message, setMessage] = useState(null);
@@ -28,6 +29,7 @@ export default function AllegroSettings() {
         setClientId(data.clientId);
         // Don't show secret for security
         setClientSecret('••••••••••••••••');
+        setSandbox(data.sandbox !== undefined ? data.sandbox : true);
       }
     } catch (error) {
       console.error('Error loading config:', error);
@@ -47,7 +49,7 @@ export default function AllegroSettings() {
       const res = await fetch('/api/allegro/config', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ clientId, clientSecret }),
+        body: JSON.stringify({ clientId, clientSecret, sandbox }),
       });
 
       const data = await res.json();
@@ -178,6 +180,37 @@ export default function AllegroSettings() {
                 <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                   ⚠️ Nigdy nie udostępniaj Client Secret publicznie!
                 </p>
+              </div>
+
+              {/* Sandbox Toggle */}
+              <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
+                <label className="flex items-start space-x-3 cursor-pointer group">
+                  <input
+                    type="checkbox"
+                    checked={sandbox}
+                    onChange={(e) => setSandbox(e.target.checked)}
+                    className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500 mt-0.5"
+                  />
+                  <div className="flex-1">
+                    <span className="font-medium text-gray-900 dark:text-white block">
+                      🧪 Używaj Sandbox (środowisko testowe)
+                    </span>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                      Sandbox to bezpieczne środowisko testowe Allegro. Zalecane do nauki i testów!
+                    </p>
+                    <p className="text-xs text-blue-600 dark:text-blue-400 mt-2">
+                      💡 Zarejestruj aplikację Sandbox na:{' '}
+                      <a 
+                        href="https://apps.developer.allegro.pl.allegrosandbox.pl/" 
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="underline hover:text-blue-700"
+                      >
+                        apps.developer.allegro.pl.allegrosandbox.pl
+                      </a>
+                    </p>
+                  </div>
+                </label>
               </div>
 
               {/* Message */}

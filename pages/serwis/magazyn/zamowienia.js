@@ -1,16 +1,40 @@
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
 import Link from 'next/link';
 import DarkModeToggle from '../../../components/DarkModeToggle';
 
 export default function SerwisantMojeZamowienia() {
-  const [employeeId] = useState('EMP25189002'); // TODO: Get from auth
+  const [employeeId, setEmployeeId] = useState('');
   const [requests, setRequests] = useState([]);
   const [filter, setFilter] = useState('all'); // all, pending, approved, ordered, delivered
   const [loading, setLoading] = useState(true);
 
+  // ✅ Load employee data from localStorage
   useEffect(() => {
-    loadRequests();
-  }, [filter]);
+    const technicianData = localStorage.getItem('technicianEmployee');
+    const employeeSessionData = localStorage.getItem('employeeSession');
+    const serwisData = localStorage.getItem('serwisEmployee');
+
+    let employeeData = null;
+    
+    if (technicianData) {
+      employeeData = JSON.parse(technicianData);
+    } else if (employeeSessionData) {
+      employeeData = JSON.parse(employeeSessionData);
+    } else if (serwisData) {
+      employeeData = JSON.parse(serwisData);
+    }
+
+    if (employeeData && employeeData.id) {
+      setEmployeeId(employeeData.id);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (employeeId) {
+      loadRequests();
+    }
+  }, [filter, employeeId]);
 
   const loadRequests = async () => {
     setLoading(true);

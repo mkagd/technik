@@ -53,10 +53,16 @@ export default async function handler(req, res) {
       searchParams['price.to'] = parseFloat(maxPrice);
     }
 
-    console.log('🔍 Searching Allegro with OAuth:', { query, minPrice, maxPrice, limit });
+    // Check if using Sandbox
+    const isSandbox = process.env.ALLEGRO_SANDBOX === 'true';
+    const apiUrl = isSandbox 
+      ? 'https://api.allegro.pl.allegrosandbox.pl/offers/listing'
+      : 'https://api.allegro.pl/offers/listing';
+
+    console.log(`🔍 Searching Allegro with OAuth (${isSandbox ? 'SANDBOX' : 'PRODUCTION'}):`, { query, minPrice, maxPrice, limit });
 
     // Call Allegro API with OAuth token
-    const response = await axios.get('https://api.allegro.pl/offers/listing', {
+    const response = await axios.get(apiUrl, {
       headers: {
         'Authorization': `Bearer ${accessToken}`,
         'Accept': 'application/vnd.allegro.public.v1+json',

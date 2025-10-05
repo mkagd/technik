@@ -806,92 +806,9 @@
     "updatedBy": null
   },
   {
-    "clientId": "CLIS252780010",
-    "clientName": "Bruno Bielaszka",
-    "clientPhone": "696969696969",
-    "email": "Bielaszkam2@gmail.com",
-    "address": "Gliniana 17/69, 30-732 Kraków, 30-732 Kraków",
-    "city": "Kraków",
-    "street": "Gliniana 17/69, 30-732 Kraków",
-    "postalCode": "30-732",
-    "phones": [],
-    "addresses": [],
-    "clientLocation": {
-      "address": "Gliniana 17/69, 30-732 Kraków, 30-732 Kraków,  Polska",
-      "coordinates": {
-        "lat": 50.06113324501884,
-        "lng": 19.94207114754714
-      },
-      "accuracy": "APPROXIMATE",
-      "confidence": 0.7
-    },
-    "latitude": 50.06113324501884,
-    "longitude": 19.94207114754714,
-    "deviceType": "Lodówka",
-    "brand": "Beko",
-    "model": "Nie określono",
-    "serialNumber": "",
-    "description": "Nie świeci oświetlenie",
-    "priority": "medium",
-    "status": "scheduled",
-    "visits": [],
-    "category": "Lodówka",
-    "serviceType": "",
-    "scheduledDate": "2025-10-05T06:13:08.026Z",
-    "availability": "Nie określono",
-    "devices": [
-      {
-        "name": "Lodówka",
-        "brand": "Beko",
-        "model": "",
-        "serialNumber": "",
-        "description": "Nie świeci oświetlenie",
-        "hasBuiltIn": false,
-        "builtInParams": {
-          "demontaz": false,
-          "montaz": false,
-          "trudna": false,
-          "wolnostojacy": false,
-          "ograniczony": false,
-          "front": false,
-          "czas": false
-        },
-        "builtInParamsNotes": {}
-      }
-    ],
-    "builtInParams": {
-      "demontaz": false,
-      "montaz": false,
-      "trudna": false,
-      "wolnostojacy": false,
-      "ograniczony": false,
-      "front": false,
-      "czas": false
-    },
-    "deviceDetails": {
-      "deviceType": "lodówka",
-      "hasBuiltIn": true,
-      "hasDemontaz": true,
-      "hasMontaz": true,
-      "hasTrudnaZabudowa": false,
-      "manualAdditionalTime": 0
-    },
-    "dates": [],
-    "hours": null,
-    "end": null,
     "id": 1759644788055,
-    "orderNumber": "ORDS252780010",
-    "source": "system-auto",
-    "sourceDetails": null,
-    "createdBy": "system",
-    "createdByName": "System",
-    "userId": null,
-    "isUserCreated": false,
-    "createdFromIP": null,
-    "dateAdded": "2025-10-05T06:13:08.055Z",
-    "createdAt": "2025-10-05T06:13:08.055Z",
-    "updatedAt": "2025-10-05T06:13:08.055Z",
-    "updatedBy": null
+    "status": "pending",
+    "updatedAt": "2025-10-05T09:08:54.997Z"
   },
   {
     "clientId": "CLIS252780011",
@@ -1083,6 +1000,182 @@
     "dateAdded": "2025-10-05T06:13:16.880Z",
     "createdAt": "2025-10-05T06:13:16.880Z",
     "updatedAt": "2025-10-05T06:15:39.099Z",
+    "updatedBy": null
+  },
+  {
+    "clientId": "CLIS252780013",
+    "clientName": "Konkonting",
+    "clientPhone": "123123123",
+    "email": "bielaszkam2@gmail.com",
+    "address": "asf, 28-133 Słupia",
+    "city": "Słupia",
+    "street": "asf",
+    "postalCode": "28-133",
+    "phones": [],
+    "addresses": [],
+    "clientLocation": {
+      "address": "asf, 28-133 Słupia (przybliżona lokalizacja, Kraków)",
+      "coordinates": {
+        "lat": 50.0647,
+        "lng": 19.945
+      },
+      "accuracy": "APPROXIMATE",
+      "confidence": 0.3
+    },
+    "latitude": 50.0647,
+    "longitude": 19.945,
+    "deviceType": "Pralka",
+    "brand": "Amica",
+    "model": "Nie określono",
+    "serialNumber": "",
+    "description": "Nie włącza się",
+    "priority": "medium",
+    "status": "pending",
+    "visits": [],
+    "category": "Pralka",
+    "serviceType": "",
+    "scheduledDate": "2025-10-05T09:13:58.064Z",
+    "availability": "Nie określono",
+    "devices": [
+      {
+        "name": "Pralka",
+        "brand": "Amica",
+        "model": "",
+        "serialNumber": "",
+        "description": "Nie włącza się",
+        "hasBuiltIn": false,
+        "builtInParams": {
+          "demontaz": false,
+          "montaz": false,
+          "trudna": false,
+          "wolnostojacy": false,
+          "ograniczony": false,
+          "front": false,
+          "czas": false
+        },
+        "builtInParamsNotes": {}
+      }
+    ],
+    "builtInParams": {
+      "demontaz": false,
+      "montaz": false,
+      "trudna": false,
+      "wolnostojacy": false,
+      "ograniczony": false,
+      "front": false,
+      "czas": false
+    },
+    "deviceDetails": {
+      "deviceType": "pralka",
+      "hasBuiltIn": true,
+      "hasDemontaz": true,
+      "hasMontaz": true,
+      "hasTrudnaZabudowa": false,
+      "manualAdditionalTime": 0
+    },
+    "dates": [],
+    "hours": null,
+    "end": null,
+    "id": 1759655638086,
+    "orderNumber": "ORDS252780013",
+    "source": "system-auto",
+    "sourceDetails": null,
+    "createdBy": "system",
+    "createdByName": "System",
+    "userId": null,
+    "isUserCreated": false,
+    "createdFromIP": null,
+    "dateAdded": "2025-10-05T09:13:58.086Z",
+    "createdAt": "2025-10-05T09:13:58.086Z",
+    "updatedAt": "2025-10-05T09:13:58.086Z",
+    "updatedBy": null
+  },
+  {
+    "clientId": "CLIS252780015",
+    "clientName": "Technik B",
+    "clientPhone": "572772540",
+    "email": "",
+    "address": "Słupia 114, 28-133 Pacanow",
+    "city": "Pacanow",
+    "street": "Słupia 114",
+    "postalCode": "28-133",
+    "phones": [],
+    "addresses": [],
+    "clientLocation": {
+      "address": "Słupia 114, 28-133 Pacanow (przybliżona lokalizacja, Kraków)",
+      "coordinates": {
+        "lat": 50.0647,
+        "lng": 19.945
+      },
+      "accuracy": "APPROXIMATE",
+      "confidence": 0.3
+    },
+    "latitude": 50.0647,
+    "longitude": 19.945,
+    "deviceType": "Pralka",
+    "brand": "Amica",
+    "model": "Nie określono",
+    "serialNumber": "",
+    "description": "Nie włącza się",
+    "priority": "medium",
+    "status": "pending",
+    "visits": [],
+    "category": "Pralka",
+    "serviceType": "",
+    "scheduledDate": "2025-10-05T11:19:08.828Z",
+    "availability": "Nie określono",
+    "devices": [
+      {
+        "name": "Pralka",
+        "brand": "Amica",
+        "model": "",
+        "serialNumber": "",
+        "description": "Nie włącza się",
+        "hasBuiltIn": false,
+        "builtInParams": {
+          "demontaz": false,
+          "montaz": false,
+          "trudna": false,
+          "wolnostojacy": false,
+          "ograniczony": false,
+          "front": false,
+          "czas": false
+        },
+        "builtInParamsNotes": {}
+      }
+    ],
+    "builtInParams": {
+      "demontaz": false,
+      "montaz": false,
+      "trudna": false,
+      "wolnostojacy": false,
+      "ograniczony": false,
+      "front": false,
+      "czas": false
+    },
+    "deviceDetails": {
+      "deviceType": "pralka",
+      "hasBuiltIn": true,
+      "hasDemontaz": true,
+      "hasMontaz": true,
+      "hasTrudnaZabudowa": false,
+      "manualAdditionalTime": 0
+    },
+    "dates": [],
+    "hours": null,
+    "end": null,
+    "id": 1759663148860,
+    "orderNumber": "ORDS252780014",
+    "source": "system-auto",
+    "sourceDetails": null,
+    "createdBy": "system",
+    "createdByName": "System",
+    "userId": null,
+    "isUserCreated": false,
+    "createdFromIP": null,
+    "dateAdded": "2025-10-05T11:19:08.860Z",
+    "createdAt": "2025-10-05T11:19:08.860Z",
+    "updatedAt": "2025-10-05T11:19:08.860Z",
     "updatedBy": null
   }
 ]
