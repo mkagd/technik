@@ -4,12 +4,12 @@
     "name": "Mariusz Bielaszka",
     "phone": "792392870",
     "email": "bielaszkam2@gmail.com",
-    "city": "Kraków",
+    "city": "KrakÄ‚Ĺ‚w",
     "street": "Gliniana 17/30",
     "address": "",
     "category": "Pralki",
     "device": "Pralki",
-    "problem": "nie dizałą",
+    "problem": "nie dizaÄąâ€šĂ„â€¦",
     "availability": "po 15",
     "date": "2025-10-05",
     "created_at": "2025-10-04T17:24:08.030Z",
@@ -17,16 +17,21 @@
     "postalCode": "",
     "time": "20:23",
     "status": "contacted",
-    "fullAddress": "Gliniana 17/30, Kraków",
-    "updatedAt": "2025-10-05T07:23:10.573Z",
-    "updatedBy": "admin"
+    "fullAddress": "Gliniana 17/30, KrakÄ‚Ĺ‚w",
+    "updatedAt": "2025-10-06T21:11:54.739Z",
+    "updatedBy": "manual_fix_script",
+    "orderId": 1759641532412,
+    "orderNumber": "ORDS252780002",
+    "clientId": "CLIS252780002",
+    "convertedToOrder": true,
+    "convertedAt": "2025-10-06T21:11:54.738Z"
   },
   {
     "id": 1759599520671,
     "name": "Mariusz Bielaszka",
     "phone": "792392870",
     "email": "Bielaszkam2@gmail.com",
-    "city": "Kraków",
+    "city": "KrakÄ‚Ĺ‚w",
     "street": "Gliniana 17/30",
     "address": "",
     "category": "Pralki",
@@ -39,20 +44,20 @@
     "postalCode": "",
     "time": "",
     "status": "contacted",
-    "fullAddress": "Gliniana 17/30, 30-732 Kraków",
+    "fullAddress": "Gliniana 17/30, 30-732 KrakÄ‚Ĺ‚w",
     "phones": [
       {
         "number": "792392870",
-        "label": "Główny",
+        "label": "GÄąâ€šÄ‚Ĺ‚wny",
         "isPrimary": true
       }
     ],
     "addresses": [
       {
         "street": "Gliniana 17/30",
-        "city": "Kraków",
+        "city": "KrakÄ‚Ĺ‚w",
         "postalCode": "30-732",
-        "label": "Główny",
+        "label": "GÄąâ€šÄ‚Ĺ‚wny",
         "isPrimary": true
       }
     ],
@@ -75,8 +80,13 @@
     "multiDevice": true,
     "multiPhone": false,
     "multiAddress": false,
-    "updatedAt": "2025-10-05T07:23:22.102Z",
-    "updatedBy": "admin"
+    "updatedAt": "2025-10-06T21:11:54.740Z",
+    "updatedBy": "manual_fix_script",
+    "orderId": 1759641532412,
+    "orderNumber": "ORDS252780002",
+    "clientId": "CLIS252780002",
+    "convertedToOrder": true,
+    "convertedAt": "2025-10-06T21:11:54.740Z"
   },
   {
     "id": 1759600719462,
@@ -100,7 +110,7 @@
     "phones": [
       {
         "number": "123123123",
-        "label": "Główny",
+        "label": "GÄąâ€šÄ‚Ĺ‚wny",
         "isPrimary": true
       }
     ],
@@ -109,7 +119,7 @@
         "street": "qwe",
         "city": "qwe",
         "postalCode": "qwe",
-        "label": "Główny",
+        "label": "GÄąâ€šÄ‚Ĺ‚wny",
         "isPrimary": true
       },
       {
@@ -129,7 +139,7 @@
         "serialNumber": ""
       },
       {
-        "category": "Płyty indukcyjne",
+        "category": "PÄąâ€šyty indukcyjne",
         "brand": "",
         "model": "",
         "problem": "",
@@ -139,16 +149,21 @@
     "multiDevice": true,
     "multiPhone": false,
     "multiAddress": true,
-    "updatedAt": "2025-10-05T07:23:25.288Z",
-    "updatedBy": "admin"
+    "updatedAt": "2025-10-06T21:11:54.741Z",
+    "updatedBy": "manual_fix_script",
+    "orderId": "ORD1759785114741B0N8RPCJE",
+    "orderNumber": "ORDS2527900011",
+    "clientId": "CLIS252780014",
+    "convertedToOrder": true,
+    "convertedAt": "2025-10-06T21:11:54.741Z"
   },
   {
     "id": 1759602863848,
     "name": "Oliwia Bielaszka",
     "phone": "987654987",
     "email": "Bielaszkam2@gmail.com",
-    "city": "Kraków",
-    "street": "Gliniana 17/30, 30-732 Kraków",
+    "city": "KrakÄ‚Ĺ‚w",
+    "street": "Gliniana 17/30, 30-732 KrakÄ‚Ĺ‚w",
     "address": "",
     "category": "Pralki",
     "device": "1242",
@@ -160,20 +175,20 @@
     "postalCode": "",
     "time": "",
     "status": "contacted",
-    "fullAddress": "Gliniana 17/30, 30-732 Kraków, 30-732 Kraków",
+    "fullAddress": "Gliniana 17/30, 30-732 KrakÄ‚Ĺ‚w, 30-732 KrakÄ‚Ĺ‚w",
     "phones": [
       {
         "number": "987654987",
-        "label": "Główny",
+        "label": "GÄąâ€šÄ‚Ĺ‚wny",
         "isPrimary": true
       }
     ],
     "addresses": [
       {
-        "street": "Gliniana 17/30, 30-732 Kraków",
-        "city": "Kraków",
+        "street": "Gliniana 17/30, 30-732 KrakÄ‚Ĺ‚w",
+        "city": "KrakÄ‚Ĺ‚w",
         "postalCode": "30-732",
-        "label": "Główny",
+        "label": "GÄąâ€šÄ‚Ĺ‚wny",
         "isPrimary": true
       }
     ],
@@ -186,7 +201,7 @@
         "serialNumber": "12312"
       },
       {
-        "category": "Lodówki",
+        "category": "LodÄ‚Ĺ‚wki",
         "brand": "Beko",
         "model": "12424",
         "problem": "124124",
@@ -196,8 +211,13 @@
     "multiDevice": true,
     "multiPhone": false,
     "multiAddress": false,
-    "updatedAt": "2025-10-05T07:23:40.903Z",
-    "updatedBy": "admin"
+    "updatedAt": "2025-10-06T21:11:54.742Z",
+    "updatedBy": "manual_fix_script",
+    "orderId": "ORD1759785114741P6ILTM8RR",
+    "orderNumber": "ORDS2527900013",
+    "clientId": "CLIS252780004",
+    "convertedToOrder": true,
+    "convertedAt": "2025-10-06T21:11:54.742Z"
   },
   {
     "id": 1759610021868,
@@ -205,7 +225,7 @@
     "phone": "987987987",
     "email": "",
     "city": "Pacanow",
-    "street": "Słupia 114",
+    "street": "SÄąâ€šupia 114",
     "address": "",
     "category": "Pralki",
     "device": "Beko",
@@ -236,7 +256,7 @@
           ],
           "timeFrom": "08:00",
           "timeTo": "20:00",
-          "label": "Cały dzień"
+          "label": "CaÄąâ€šy dzieÄąâ€ž"
         }
       ],
       "preferences": {
@@ -251,11 +271,11 @@
       "notes": [],
       "lastUpdated": "2025-10-04T20:33:29.361Z"
     },
-    "fullAddress": "Słupia 114, 28-133 Pacanow",
+    "fullAddress": "SÄąâ€šupia 114, 28-133 Pacanow",
     "phones": [
       {
         "number": "987987987",
-        "label": "Główny",
+        "label": "GÄąâ€šÄ‚Ĺ‚wny",
         "isPrimary": true
       },
       {
@@ -266,15 +286,15 @@
     ],
     "addresses": [
       {
-        "street": "Słupia 114",
+        "street": "SÄąâ€šupia 114",
         "city": "Pacanow",
         "postalCode": "28-133",
-        "label": "Główny",
+        "label": "GÄąâ€šÄ‚Ĺ‚wny",
         "isPrimary": true
       },
       {
-        "street": "Gliniana 17/30, 30-732 Kraków",
-        "city": "Kraków",
+        "street": "Gliniana 17/30, 30-732 KrakÄ‚Ĺ‚w",
+        "city": "KrakÄ‚Ĺ‚w",
         "postalCode": "30-732",
         "label": "Buiro",
         "isPrimary": false
@@ -294,8 +314,13 @@
     "multiDevice": false,
     "multiPhone": true,
     "multiAddress": true,
-    "updatedAt": "2025-10-05T07:23:39.924Z",
-    "updatedBy": "admin"
+    "updatedAt": "2025-10-06T21:11:54.742Z",
+    "updatedBy": "manual_fix_script",
+    "orderId": "ORD1759785114742GJHCQN0SL",
+    "orderNumber": "ORDS2527900015",
+    "clientId": "CLIS252790001",
+    "convertedToOrder": true,
+    "convertedAt": "2025-10-06T21:11:54.742Z"
   },
   {
     "id": 1759642076747,
@@ -303,16 +328,16 @@
     "phone": "789654987",
     "email": "Bielaszkam2@gmail.com",
     "city": "Pacanow",
-    "street": "Słupia 114",
-    "address": "Słupia 114, 28-133 Pacanow",
+    "street": "SÄąâ€šupia 114",
+    "address": "SÄąâ€šupia 114, 28-133 Pacanow",
     "category": "Pralka",
     "device": "",
     "problem": "Nie odpompowuje wody",
-    "availability": "Nie określono",
+    "availability": "Nie okreÄąâ€şlono",
     "date": "2025-10-05T05:27:56.747Z",
     "created_at": "2025-10-05T05:27:56.747Z",
     "clientLocation": {
-      "address": "Słupia 114, 28-133 Pacanow (przybliżona lokalizacja, Kraków)",
+      "address": "SÄąâ€šupia 114, 28-133 Pacanow (przybliÄąÄ˝ona lokalizacja, KrakÄ‚Ĺ‚w)",
       "coordinates": {
         "lat": 50.0647,
         "lng": 19.945
@@ -339,8 +364,13 @@
     "additionalNotes": "",
     "brand": "Beko",
     "status": "contacted",
-    "updatedAt": "2025-10-05T07:23:38.933Z",
-    "updatedBy": "admin"
+    "updatedAt": "2025-10-06T21:11:54.743Z",
+    "updatedBy": "manual_fix_script",
+    "orderId": "ORD1759785114742PWEBT7RXO",
+    "orderNumber": "ORDS2527900017",
+    "clientId": "CLIS252780006",
+    "convertedToOrder": true,
+    "convertedAt": "2025-10-06T21:11:54.743Z"
   },
   {
     "id": 1759642102016,
@@ -348,16 +378,16 @@
     "phone": "987987987",
     "email": "",
     "city": "Pacanow",
-    "street": "Słupia 114",
-    "address": "Słupia 114, 28-133 Pacanow",
+    "street": "SÄąâ€šupia 114",
+    "address": "SÄąâ€šupia 114, 28-133 Pacanow",
     "category": "Zmywarka",
     "device": "",
     "problem": "Nie odpompowuje wody",
-    "availability": "Nie określono",
+    "availability": "Nie okreÄąâ€şlono",
     "date": "2025-10-05T05:28:22.016Z",
     "created_at": "2025-10-05T05:28:22.016Z",
     "clientLocation": {
-      "address": "Słupia 114, 28-133 Pacanow (przybliżona lokalizacja, Kraków)",
+      "address": "SÄąâ€šupia 114, 28-133 Pacanow (przybliÄąÄ˝ona lokalizacja, KrakÄ‚Ĺ‚w)",
       "coordinates": {
         "lat": 50.0647,
         "lng": 19.945
@@ -380,29 +410,34 @@
     "hasDemontaz": false,
     "hasMontaz": false,
     "hasTrudnaZabudowa": false,
-    "timeSlot": "Cały dzień",
+    "timeSlot": "CaÄąâ€šy dzieÄąâ€ž",
     "additionalNotes": "",
     "brand": "Aeg",
     "status": "contacted",
-    "updatedAt": "2025-10-05T07:23:37.999Z",
-    "updatedBy": "admin"
+    "updatedAt": "2025-10-06T21:11:54.743Z",
+    "updatedBy": "manual_fix_script",
+    "orderId": "ORD17597851147437YKF2P13M",
+    "orderNumber": "ORDS2527900019",
+    "clientId": "CLIS252790001",
+    "convertedToOrder": true,
+    "convertedAt": "2025-10-06T21:11:54.743Z"
   },
   {
     "id": 1759644726598,
     "name": "Bruno Bielaszka",
     "phone": "696969696969",
     "email": "Bielaszkam2@gmail.com",
-    "city": "Kraków",
-    "street": "Gliniana 17/30, 30-732 Kraków",
-    "address": "Gliniana 17/30, 30-732 Kraków, 30-732 Kraków",
-    "category": "Lodówka",
+    "city": "KrakÄ‚Ĺ‚w",
+    "street": "Gliniana 17/30, 30-732 KrakÄ‚Ĺ‚w",
+    "address": "Gliniana 17/30, 30-732 KrakÄ‚Ĺ‚w, 30-732 KrakÄ‚Ĺ‚w",
+    "category": "LodÄ‚Ĺ‚wka",
     "device": "",
-    "problem": "Nie świeci oświetlenie",
-    "availability": "Nie określono",
+    "problem": "Nie Äąâ€şwieci oÄąâ€şwietlenie",
+    "availability": "Nie okreÄąâ€şlono",
     "date": "2025-10-05T06:12:06.598Z",
     "created_at": "2025-10-05T06:12:06.598Z",
     "clientLocation": {
-      "address": "Gliniana 17/30, 30-732 Kraków, 30-732 Kraków,  Polska",
+      "address": "Gliniana 17/30, 30-732 KrakÄ‚Ĺ‚w, 30-732 KrakÄ‚Ĺ‚w,  Polska",
       "coordinates": {
         "lat": 50.06525080997225,
         "lng": 19.944747059057534
@@ -412,14 +447,14 @@
     },
     "postalCode": "30-732",
     "categories": [
-      "Lodówka"
+      "LodÄ‚Ĺ‚wka"
     ],
     "devices": [],
     "brands": [
       "Beko"
     ],
     "problems": [
-      "Nie świeci oświetlenie"
+      "Nie Äąâ€şwieci oÄąâ€şwietlenie"
     ],
     "hasBuiltIn": true,
     "hasDemontaz": true,
@@ -429,25 +464,30 @@
     "additionalNotes": "",
     "brand": "Beko",
     "status": "contacted",
-    "updatedAt": "2025-10-05T07:23:36.917Z",
-    "updatedBy": "admin"
+    "updatedAt": "2025-10-06T21:11:54.743Z",
+    "updatedBy": "manual_fix_script",
+    "orderId": "ORD1759785114743FC8CZYZIE",
+    "orderNumber": "ORDS2527900021",
+    "clientId": "CLIS252780012",
+    "convertedToOrder": true,
+    "convertedAt": "2025-10-06T21:11:54.743Z"
   },
   {
     "id": 1759644776879,
     "name": "Bruno Bielaszka",
     "phone": "696969696969",
     "email": "Bielaszkam2@gmail.com",
-    "city": "Kraków",
-    "street": "Gliniana 17/69, 30-732 Kraków",
-    "address": "Gliniana 17/69, 30-732 Kraków, 30-732 Kraków",
-    "category": "Lodówka",
+    "city": "KrakÄ‚Ĺ‚w",
+    "street": "Gliniana 17/69, 30-732 KrakÄ‚Ĺ‚w",
+    "address": "Gliniana 17/69, 30-732 KrakÄ‚Ĺ‚w, 30-732 KrakÄ‚Ĺ‚w",
+    "category": "LodÄ‚Ĺ‚wka",
     "device": "",
-    "problem": "Nie świeci oświetlenie",
-    "availability": "Nie określono",
+    "problem": "Nie Äąâ€şwieci oÄąâ€şwietlenie",
+    "availability": "Nie okreÄąâ€şlono",
     "date": "2025-10-05T06:12:56.879Z",
     "created_at": "2025-10-05T06:12:56.879Z",
     "clientLocation": {
-      "address": "Gliniana 17/69, 30-732 Kraków, 30-732 Kraków,  Polska",
+      "address": "Gliniana 17/69, 30-732 KrakÄ‚Ĺ‚w, 30-732 KrakÄ‚Ĺ‚w,  Polska",
       "coordinates": {
         "lat": 50.06314242177787,
         "lng": 19.944246781231225
@@ -457,14 +497,14 @@
     },
     "postalCode": "30-732",
     "categories": [
-      "Lodówka"
+      "LodÄ‚Ĺ‚wka"
     ],
     "devices": [],
     "brands": [
       "Beko"
     ],
     "problems": [
-      "Nie świeci oświetlenie"
+      "Nie Äąâ€şwieci oÄąâ€şwietlenie"
     ],
     "hasBuiltIn": true,
     "hasDemontaz": true,
@@ -474,25 +514,30 @@
     "additionalNotes": "",
     "brand": "Beko",
     "status": "contacted",
-    "updatedAt": "2025-10-05T07:23:35.318Z",
-    "updatedBy": "admin"
+    "updatedAt": "2025-10-06T21:11:54.743Z",
+    "updatedBy": "manual_fix_script",
+    "orderId": "ORD17597851147434KGUP71WT",
+    "orderNumber": "ORDS2527900023",
+    "clientId": "CLIS252780012",
+    "convertedToOrder": true,
+    "convertedAt": "2025-10-06T21:11:54.743Z"
   },
   {
     "id": 1759644788026,
     "name": "Bruno Bielaszka",
     "phone": "696969696969",
     "email": "Bielaszkam2@gmail.com",
-    "city": "Kraków",
-    "street": "Gliniana 17/69, 30-732 Kraków",
-    "address": "Gliniana 17/69, 30-732 Kraków, 30-732 Kraków",
-    "category": "Lodówka",
+    "city": "KrakÄ‚Ĺ‚w",
+    "street": "Gliniana 17/69, 30-732 KrakÄ‚Ĺ‚w",
+    "address": "Gliniana 17/69, 30-732 KrakÄ‚Ĺ‚w, 30-732 KrakÄ‚Ĺ‚w",
+    "category": "LodÄ‚Ĺ‚wka",
     "device": "",
-    "problem": "Nie świeci oświetlenie",
-    "availability": "Nie określono",
+    "problem": "Nie Äąâ€şwieci oÄąâ€şwietlenie",
+    "availability": "Nie okreÄąâ€şlono",
     "date": "2025-10-05T06:13:08.026Z",
     "created_at": "2025-10-05T06:13:08.026Z",
     "clientLocation": {
-      "address": "Gliniana 17/69, 30-732 Kraków, 30-732 Kraków,  Polska",
+      "address": "Gliniana 17/69, 30-732 KrakÄ‚Ĺ‚w, 30-732 KrakÄ‚Ĺ‚w,  Polska",
       "coordinates": {
         "lat": 50.06113324501884,
         "lng": 19.94207114754714
@@ -502,14 +547,14 @@
     },
     "postalCode": "30-732",
     "categories": [
-      "Lodówka"
+      "LodÄ‚Ĺ‚wka"
     ],
     "devices": [],
     "brands": [
       "Beko"
     ],
     "problems": [
-      "Nie świeci oświetlenie"
+      "Nie Äąâ€şwieci oÄąâ€şwietlenie"
     ],
     "hasBuiltIn": true,
     "hasDemontaz": true,
@@ -519,25 +564,30 @@
     "additionalNotes": "",
     "brand": "Beko",
     "status": "contacted",
-    "updatedAt": "2025-10-05T07:23:32.555Z",
-    "updatedBy": "admin"
+    "updatedAt": "2025-10-06T21:11:54.744Z",
+    "updatedBy": "manual_fix_script",
+    "orderId": "ORD1759785114744ML60M5E6L",
+    "orderNumber": "ORDS2527900025",
+    "clientId": "CLIS252780012",
+    "convertedToOrder": true,
+    "convertedAt": "2025-10-06T21:11:54.744Z"
   },
   {
     "id": 1759644793193,
     "name": "Bruno Bielaszka",
     "phone": "696969696969",
     "email": "Bielaszkam2@gmail.com",
-    "city": "Kraków",
-    "street": "Gliniana 17/69, 30-732 Kraków",
-    "address": "Gliniana 17/69, 30-732 Kraków, 30-732 Kraków",
-    "category": "Lodówka",
+    "city": "KrakÄ‚Ĺ‚w",
+    "street": "Gliniana 17/69, 30-732 KrakÄ‚Ĺ‚w",
+    "address": "Gliniana 17/69, 30-732 KrakÄ‚Ĺ‚w, 30-732 KrakÄ‚Ĺ‚w",
+    "category": "LodÄ‚Ĺ‚wka",
     "device": "",
-    "problem": "Nie świeci oświetlenie",
-    "availability": "Nie określono",
+    "problem": "Nie Äąâ€şwieci oÄąâ€şwietlenie",
+    "availability": "Nie okreÄąâ€şlono",
     "date": "2025-10-05T06:13:13.193Z",
     "created_at": "2025-10-05T06:13:13.193Z",
     "clientLocation": {
-      "address": "Gliniana 17/69, 30-732 Kraków, 30-732 Kraków,  Polska",
+      "address": "Gliniana 17/69, 30-732 KrakÄ‚Ĺ‚w, 30-732 KrakÄ‚Ĺ‚w,  Polska",
       "coordinates": {
         "lat": 50.06843599148388,
         "lng": 19.9420432017694
@@ -547,14 +597,14 @@
     },
     "postalCode": "30-732",
     "categories": [
-      "Lodówka"
+      "LodÄ‚Ĺ‚wka"
     ],
     "devices": [],
     "brands": [
       "Beko"
     ],
     "problems": [
-      "Nie świeci oświetlenie"
+      "Nie Äąâ€şwieci oÄąâ€şwietlenie"
     ],
     "hasBuiltIn": true,
     "hasDemontaz": true,
@@ -564,25 +614,30 @@
     "additionalNotes": "",
     "brand": "Beko",
     "status": "contacted",
-    "updatedAt": "2025-10-05T07:23:31.181Z",
-    "updatedBy": "admin"
+    "updatedAt": "2025-10-06T21:11:54.745Z",
+    "updatedBy": "manual_fix_script",
+    "orderId": "ORD1759785114745OPP74X5ZE",
+    "orderNumber": "ORDS2527900027",
+    "clientId": "CLIS252780012",
+    "convertedToOrder": true,
+    "convertedAt": "2025-10-06T21:11:54.745Z"
   },
   {
     "id": 1759644796860,
     "name": "Bruno Bielaszka",
     "phone": "696969696969",
     "email": "Bielaszkam2@gmail.com",
-    "city": "Kraków",
-    "street": "Gliniana 17/69, 30-732 Kraków",
-    "address": "Gliniana 17/69, 30-732 Kraków, 30-732 Kraków",
-    "category": "Lodówka",
+    "city": "KrakÄ‚Ĺ‚w",
+    "street": "Gliniana 17/69, 30-732 KrakÄ‚Ĺ‚w",
+    "address": "Gliniana 17/69, 30-732 KrakÄ‚Ĺ‚w, 30-732 KrakÄ‚Ĺ‚w",
+    "category": "LodÄ‚Ĺ‚wka",
     "device": "",
-    "problem": "Nie świeci oświetlenie",
-    "availability": "Nie określono",
+    "problem": "Nie Äąâ€şwieci oÄąâ€şwietlenie",
+    "availability": "Nie okreÄąâ€şlono",
     "date": "2025-10-05T06:13:16.860Z",
     "created_at": "2025-10-05T06:13:16.860Z",
     "clientLocation": {
-      "address": "Gliniana 17/69, 30-732 Kraków, 30-732 Kraków,  Polska",
+      "address": "Gliniana 17/69, 30-732 KrakÄ‚Ĺ‚w, 30-732 KrakÄ‚Ĺ‚w,  Polska",
       "coordinates": {
         "lat": 50.06059095114332,
         "lng": 19.948664383885014
@@ -592,14 +647,14 @@
     },
     "postalCode": "30-732",
     "categories": [
-      "Lodówka"
+      "LodÄ‚Ĺ‚wka"
     ],
     "devices": [],
     "brands": [
       "Beko"
     ],
     "problems": [
-      "Nie świeci oświetlenie"
+      "Nie Äąâ€şwieci oÄąâ€şwietlenie"
     ],
     "hasBuiltIn": true,
     "hasDemontaz": true,
@@ -609,25 +664,30 @@
     "additionalNotes": "",
     "brand": "Beko",
     "status": "contacted",
-    "updatedAt": "2025-10-05T07:23:28.978Z",
-    "updatedBy": "admin"
+    "updatedAt": "2025-10-06T21:11:54.745Z",
+    "updatedBy": "manual_fix_script",
+    "orderId": "ORD1759785114745PEITJ3N5N",
+    "orderNumber": "ORDS2527900029",
+    "clientId": "CLIS252780012",
+    "convertedToOrder": true,
+    "convertedAt": "2025-10-06T21:11:54.745Z"
   },
   {
     "id": 1759655638064,
     "name": "Konkonting",
     "phone": "123123123",
     "email": "bielaszkam2@gmail.com",
-    "city": "Słupia",
+    "city": "SÄąâ€šupia",
     "street": "asf",
-    "address": "asf, 28-133 Słupia",
+    "address": "asf, 28-133 SÄąâ€šupia",
     "category": "Pralka",
     "device": "",
-    "problem": "Nie włącza się",
-    "availability": "Nie określono",
+    "problem": "Nie wÄąâ€šĂ„â€¦cza siĂ„â„˘",
+    "availability": "Nie okreÄąâ€şlono",
     "date": "2025-10-05T09:13:58.064Z",
     "created_at": "2025-10-05T09:13:58.065Z",
     "clientLocation": {
-      "address": "asf, 28-133 Słupia (przybliżona lokalizacja, Kraków)",
+      "address": "asf, 28-133 SÄąâ€šupia (przybliÄąÄ˝ona lokalizacja, KrakÄ‚Ĺ‚w)",
       "coordinates": {
         "lat": 50.0647,
         "lng": 19.945
@@ -644,32 +704,40 @@
       "Amica"
     ],
     "problems": [
-      "Nie włącza się"
+      "Nie wÄąâ€šĂ„â€¦cza siĂ„â„˘"
     ],
     "hasBuiltIn": true,
     "hasDemontaz": true,
     "hasMontaz": true,
     "hasTrudnaZabudowa": false,
-    "timeSlot": "Cały dzień",
+    "timeSlot": "CaÄąâ€šy dzieÄąâ€ž",
     "additionalNotes": "",
-    "brand": "Amica"
+    "brand": "Amica",
+    "status": "contacted",
+    "updatedAt": "2025-10-06T21:11:54.746Z",
+    "updatedBy": "manual_fix_script",
+    "orderId": "ORD1759785114745PTTIOG715",
+    "orderNumber": "ORDS2527900031",
+    "clientId": "CLIS252780014",
+    "convertedToOrder": true,
+    "convertedAt": "2025-10-06T21:11:54.746Z"
   },
   {
     "id": 1759655673397,
     "name": "Konkonting",
     "phone": "123123123",
     "email": "bielaszkam2@gmail.com",
-    "city": "Słupia",
+    "city": "SÄąâ€šupia",
     "street": "asf",
-    "address": "asf, 28-133 Słupia",
+    "address": "asf, 28-133 SÄąâ€šupia",
     "category": "Pralka",
     "device": "",
-    "problem": "Nie włącza się",
-    "availability": "Nie określono",
+    "problem": "Nie wÄąâ€šĂ„â€¦cza siĂ„â„˘",
+    "availability": "Nie okreÄąâ€şlono",
     "date": "2025-10-05T09:14:33.397Z",
     "created_at": "2025-10-05T09:14:33.397Z",
     "clientLocation": {
-      "address": "asf, 28-133 Słupia (przybliżona lokalizacja, Kraków)",
+      "address": "asf, 28-133 SÄąâ€šupia (przybliÄąÄ˝ona lokalizacja, KrakÄ‚Ĺ‚w)",
       "coordinates": {
         "lat": 50.0647,
         "lng": 19.945
@@ -686,15 +754,23 @@
       "Amica"
     ],
     "problems": [
-      "Nie włącza się"
+      "Nie wÄąâ€šĂ„â€¦cza siĂ„â„˘"
     ],
     "hasBuiltIn": true,
     "hasDemontaz": true,
     "hasMontaz": true,
     "hasTrudnaZabudowa": false,
-    "timeSlot": "Cały dzień",
+    "timeSlot": "CaÄąâ€šy dzieÄąâ€ž",
     "additionalNotes": "",
-    "brand": "Amica"
+    "brand": "Amica",
+    "status": "contacted",
+    "updatedAt": "2025-10-06T21:11:54.746Z",
+    "updatedBy": "manual_fix_script",
+    "orderId": "ORD1759785114746OOEM55A4W",
+    "orderNumber": "ORDS2527900033",
+    "clientId": "CLIS252780014",
+    "convertedToOrder": true,
+    "convertedAt": "2025-10-06T21:11:54.746Z"
   },
   {
     "id": 1759663148828,
@@ -702,16 +778,16 @@
     "phone": "572772540",
     "email": "",
     "city": "Pacanow",
-    "street": "Słupia 114",
-    "address": "Słupia 114, 28-133 Pacanow",
+    "street": "SÄąâ€šupia 114",
+    "address": "SÄąâ€šupia 114, 28-133 Pacanow",
     "category": "Pralka",
     "device": "",
-    "problem": "Nie włącza się",
-    "availability": "Nie określono",
+    "problem": "Nie wÄąâ€šĂ„â€¦cza siĂ„â„˘",
+    "availability": "Nie okreÄąâ€şlono",
     "date": "2025-10-05T11:19:08.828Z",
     "created_at": "2025-10-05T11:19:08.829Z",
     "clientLocation": {
-      "address": "Słupia 114, 28-133 Pacanow (przybliżona lokalizacja, Kraków)",
+      "address": "SÄąâ€šupia 114, 28-133 Pacanow (przybliÄąÄ˝ona lokalizacja, KrakÄ‚Ĺ‚w)",
       "coordinates": {
         "lat": 50.0647,
         "lng": 19.945
@@ -728,7 +804,7 @@
       "Amica"
     ],
     "problems": [
-      "Nie włącza się"
+      "Nie wÄąâ€šĂ„â€¦cza siĂ„â„˘"
     ],
     "hasBuiltIn": true,
     "hasDemontaz": true,
@@ -736,6 +812,426 @@
     "hasTrudnaZabudowa": false,
     "timeSlot": "8:00-12:00",
     "additionalNotes": "",
-    "brand": "Amica"
+    "brand": "Amica",
+    "status": "contacted",
+    "updatedAt": "2025-10-06T21:11:54.746Z",
+    "updatedBy": "manual_fix_script",
+    "orderId": 1759663148860,
+    "orderNumber": "ORDS252780014",
+    "clientId": "CLIS252780015",
+    "convertedToOrder": true,
+    "convertedAt": "2025-10-06T21:11:54.746Z"
+  },
+  {
+    "id": 1759670278537,
+    "name": "Krzysztof Bielaszka",
+    "phone": "121212",
+    "email": "Bielaszkam2@gmail.com",
+    "city": "Pacanow",
+    "street": "SÄąâ€šupia 114",
+    "address": "SÄąâ€šupia 114, 28-133 Pacanow",
+    "category": "Zmywarka",
+    "device": "",
+    "problem": "Nie pobiera wody",
+    "availability": "Nie okreÄąâ€şlono",
+    "date": "2025-10-05T13:17:58.537Z",
+    "created_at": "2025-10-05T13:17:58.537Z",
+    "clientLocation": {
+      "address": "SÄąâ€šupia 114, 28-133 Pacanow (przybliÄąÄ˝ona lokalizacja, KrakÄ‚Ĺ‚w)",
+      "coordinates": {
+        "lat": 50.0647,
+        "lng": 19.945
+      },
+      "accuracy": "APPROXIMATE",
+      "confidence": 0.3
+    },
+    "postalCode": "28-133",
+    "categories": [
+      "Zmywarka"
+    ],
+    "devices": [],
+    "brands": [
+      "Amica"
+    ],
+    "problems": [
+      "Nie pobiera wody"
+    ],
+    "hasBuiltIn": false,
+    "hasDemontaz": false,
+    "hasMontaz": false,
+    "hasTrudnaZabudowa": false,
+    "timeSlot": "8:00-12:00",
+    "additionalNotes": "",
+    "brand": "Amica",
+    "status": "contacted",
+    "updatedAt": "2025-10-06T21:11:54.746Z",
+    "updatedBy": "manual_fix_script",
+    "orderId": 1759670278555,
+    "orderNumber": "ORDS252780015",
+    "clientId": "CLIS252780016",
+    "convertedToOrder": true,
+    "convertedAt": "2025-10-06T21:11:54.746Z"
+  },
+  {
+    "id": 1759729766393,
+    "name": "MAriusz Bielaszka",
+    "phone": "987987987",
+    "email": "bielaszkam2@gmail.com",
+    "city": "SÄąâ€šupia",
+    "street": "zsc",
+    "address": "zsc, 28-133 SÄąâ€šupia",
+    "category": "Zmywarka",
+    "device": "",
+    "problem": "Nie wÄąâ€šĂ„â€¦cza siĂ„â„˘",
+    "availability": "Nie okreÄąâ€şlono",
+    "date": "2025-10-06T05:49:26.393Z",
+    "created_at": "2025-10-06T05:49:26.393Z",
+    "status": "contacted",
+    "clientLocation": {
+      "address": "zsc, 28-133 SÄąâ€šupia (przybliÄąÄ˝ona lokalizacja, KrakÄ‚Ĺ‚w)",
+      "coordinates": {
+        "lat": 50.0647,
+        "lng": 19.945
+      },
+      "accuracy": "APPROXIMATE",
+      "confidence": 0.3
+    },
+    "postalCode": "28-133",
+    "categories": [
+      "Zmywarka"
+    ],
+    "devices": [],
+    "brands": [
+      "Aeg"
+    ],
+    "problems": [
+      "Nie wÄąâ€šĂ„â€¦cza siĂ„â„˘"
+    ],
+    "hasBuiltIn": false,
+    "hasDemontaz": false,
+    "hasMontaz": false,
+    "hasTrudnaZabudowa": false,
+    "timeSlot": "12:00-16:00",
+    "additionalNotes": "",
+    "brand": "Aeg",
+    "updatedAt": "2025-10-06T21:11:54.747Z",
+    "updatedBy": "manual_fix_script",
+    "orderId": 1759729766413,
+    "orderNumber": "ORDS252790001",
+    "clientId": "CLIS252790001",
+    "convertedToOrder": true,
+    "convertedAt": "2025-10-06T21:11:54.747Z"
+  },
+  {
+    "id": 1759730716900,
+    "name": "wÄąâ€šĂ„â€¦dysÄąâ€šĂ„â€¦wa",
+    "phone": "510935221",
+    "email": "",
+    "city": "Mielec",
+    "street": "Piotra Skargi 3/22",
+    "address": "",
+    "category": "LodÄ‚Ĺ‚wki",
+    "device": "Indesit",
+    "problem": "nie chÄąâ€šodzi gÄ‚Ĺ‚ra",
+    "availability": "",
+    "date": "2025-10-06",
+    "created_at": "2025-10-06T06:05:16.900Z",
+    "status": "contacted",
+    "clientLocation": null,
+    "postalCode": "",
+    "dateRange": null,
+    "dateMode": "single",
+    "time": "",
+    "physicalAvailability": null,
+    "clientType": "private",
+    "fullAddress": "Piotra Skargi 3/22, 39-300 Mielec",
+    "phones": [
+      {
+        "number": "510935221",
+        "label": "GÄąâ€šÄ‚Ĺ‚wny",
+        "isPrimary": true
+      }
+    ],
+    "addresses": [
+      {
+        "street": "Piotra Skargi 3/22",
+        "city": "Mielec",
+        "postalCode": "39-300",
+        "label": "GÄąâ€šÄ‚Ĺ‚wny",
+        "isPrimary": true
+      }
+    ],
+    "devices": [
+      {
+        "category": "LodÄ‚Ĺ‚wki",
+        "brand": "Indesit",
+        "model": "",
+        "problem": "nie chÄąâ€šodzi gÄ‚Ĺ‚ra",
+        "serialNumber": "",
+        "hasBuiltIn": false
+      }
+    ],
+    "isFlexibleDate": false,
+    "companyData": null,
+    "multiDevice": false,
+    "multiPhone": false,
+    "multiAddress": false,
+    "updatedAt": "2025-10-06T21:11:54.747Z",
+    "updatedBy": "manual_fix_script",
+    "orderId": 1759730716915,
+    "orderNumber": "ORDS252790002",
+    "clientId": "CLIS252790002",
+    "convertedToOrder": true,
+    "convertedAt": "2025-10-06T21:11:54.747Z"
+  },
+  {
+    "id": 1759732855613,
+    "name": "salsk wbigniew",
+    "phone": "788389901",
+    "email": "",
+    "city": "dĂ„â„˘bica",
+    "street": "chotowa 56",
+    "address": "",
+    "category": "Zmywarki",
+    "device": "Hotpoint",
+    "problem": "Brak opisu problemu",
+    "availability": "",
+    "date": "2025-10-06",
+    "created_at": "2025-10-06T06:40:55.613Z",
+    "status": "contacted",
+    "clientLocation": null,
+    "postalCode": "",
+    "dateRange": null,
+    "dateMode": "single",
+    "time": "",
+    "physicalAvailability": null,
+    "clientType": "private",
+    "fullAddress": "chotowa 56,  dĂ„â„˘bica",
+    "phones": [
+      {
+        "number": "788389901",
+        "label": "GÄąâ€šÄ‚Ĺ‚wny",
+        "isPrimary": true
+      }
+    ],
+    "addresses": [
+      {
+        "street": "chotowa 56",
+        "city": "dĂ„â„˘bica",
+        "postalCode": "",
+        "label": "GÄąâ€šÄ‚Ĺ‚wny",
+        "isPrimary": true
+      }
+    ],
+    "devices": [
+      {
+        "category": "Zmywarki",
+        "brand": "Hotpoint",
+        "model": "",
+        "problem": "",
+        "serialNumber": "",
+        "hasBuiltIn": false
+      }
+    ],
+    "isFlexibleDate": false,
+    "companyData": null,
+    "multiDevice": false,
+    "multiPhone": false,
+    "multiAddress": false,
+    "updatedAt": "2025-10-06T21:11:54.748Z",
+    "updatedBy": "manual_fix_script",
+    "orderId": 1759732855689,
+    "orderNumber": "ORDS252790003",
+    "clientId": "CLIS252790003",
+    "convertedToOrder": true,
+    "convertedAt": "2025-10-06T21:11:54.748Z"
+  },
+  {
+    "id": 1759777737299,
+    "name": "Mariusz Bielaszka",
+    "phone": "572772540",
+    "email": "",
+    "city": "Pacanow",
+    "street": "SÄąâ€šupia 114",
+    "address": "SÄąâ€šupia 114, 28-133 Pacanow",
+    "category": "Pralka",
+    "device": "",
+    "problem": "Nie pobiera wody",
+    "availability": "Nie okreÄąâ€şlono",
+    "date": "2025-10-06T19:08:57.299Z",
+    "created_at": "2025-10-06T19:08:57.299Z",
+    "status": "contacted",
+    "clientLocation": {
+      "address": "SÄąâ€šupia 114, 28-133 Pacanow (przybliÄąÄ˝ona lokalizacja, KrakÄ‚Ĺ‚w)",
+      "coordinates": {
+        "lat": 50.0647,
+        "lng": 19.945
+      },
+      "accuracy": "APPROXIMATE",
+      "confidence": 0.3
+    },
+    "postalCode": "28-133",
+    "userId": "ADMIN-1759777694426",
+    "isAuthenticated": true,
+    "categories": [
+      "Pralka"
+    ],
+    "devices": [],
+    "brands": [
+      "Amica"
+    ],
+    "problems": [
+      "Nie pobiera wody"
+    ],
+    "hasBuiltIn": true,
+    "hasDemontaz": true,
+    "hasMontaz": true,
+    "hasTrudnaZabudowa": false,
+    "timeSlot": "CaÄąâ€šy dzieÄąâ€ž",
+    "additionalNotes": "",
+    "brand": "Amica",
+    "updatedAt": "2025-10-06T21:11:54.748Z",
+    "updatedBy": "manual_fix_script",
+    "orderId": "ORD1759785114748QO2DA8ZCC",
+    "orderNumber": "ORDS2527900035",
+    "clientId": "CLIS252780015",
+    "convertedToOrder": true,
+    "convertedAt": "2025-10-06T21:11:54.748Z"
+  },
+  {
+    "id": 1759781390647,
+    "name": "Klient #390352",
+    "phone": "987654987",
+    "email": "",
+    "city": "DĂ„â„˘bica",
+    "street": "Lipowa 17",
+    "address": "",
+    "category": "Pralki",
+    "device": "Pralki",
+    "problem": "Brak opisu problemu",
+    "availability": "",
+    "date": "",
+    "created_at": "2025-10-06T20:09:50.647Z",
+    "status": "contacted",
+    "clientLocation": null,
+    "postalCode": "",
+    "userId": null,
+    "isAuthenticated": false,
+    "dateRange": {
+      "from": "2025-10-06",
+      "to": "2025-10-10",
+      "flexible": true
+    },
+    "dateMode": "range",
+    "time": "",
+    "physicalAvailability": null,
+    "clientType": "private",
+    "fullAddress": "Lipowa 17, 39-200 DĂ„â„˘bica",
+    "phones": [
+      {
+        "number": "987654987",
+        "label": "GÄąâ€šÄ‚Ĺ‚wny",
+        "isPrimary": true
+      }
+    ],
+    "addresses": [
+      {
+        "street": "Lipowa 17",
+        "city": "DĂ„â„˘bica",
+        "postalCode": "39-200",
+        "label": "GÄąâ€šÄ‚Ĺ‚wny",
+        "isPrimary": true
+      }
+    ],
+    "devices": [
+      {
+        "category": "Pralki",
+        "brand": "",
+        "model": "",
+        "problem": "",
+        "serialNumber": "",
+        "hasBuiltIn": false
+      }
+    ],
+    "isFlexibleDate": true,
+    "companyData": null,
+    "multiDevice": false,
+    "multiPhone": false,
+    "multiAddress": false,
+    "updatedAt": "2025-10-06T21:11:54.749Z",
+    "updatedBy": "manual_fix_script",
+    "orderId": "ORD1759785114741P6ILTM8RR",
+    "orderNumber": "ORDS2527900013",
+    "clientId": "CLIS252780004",
+    "convertedToOrder": true,
+    "convertedAt": "2025-10-06T21:11:54.749Z"
+  },
+  {
+    "id": 1759782144445,
+    "name": "Klient #144415",
+    "phone": "792392870",
+    "email": "",
+    "city": "DĂ„â„˘bica",
+    "street": "SÄąâ€šupia 114",
+    "address": "",
+    "category": "Pralki",
+    "device": "Pralki",
+    "problem": "Brak opisu problemu",
+    "availability": "",
+    "date": "",
+    "created_at": "2025-10-06T20:22:24.445Z",
+    "status": "contacted",
+    "clientLocation": null,
+    "postalCode": "",
+    "userId": null,
+    "isAuthenticated": false,
+    "dateRange": {
+      "from": "2025-10-06",
+      "to": "2025-10-09",
+      "flexible": true
+    },
+    "dateMode": "range",
+    "time": "",
+    "physicalAvailability": null,
+    "clientType": "private",
+    "fullAddress": "SÄąâ€šupia 114, 39-200 DĂ„â„˘bica",
+    "phones": [
+      {
+        "number": "792392870",
+        "label": "GÄąâ€šÄ‚Ĺ‚wny",
+        "isPrimary": true
+      }
+    ],
+    "addresses": [
+      {
+        "street": "SÄąâ€šupia 114",
+        "city": "DĂ„â„˘bica",
+        "postalCode": "39-200",
+        "label": "GÄąâ€šÄ‚Ĺ‚wny",
+        "isPrimary": true
+      }
+    ],
+    "devices": [
+      {
+        "category": "Pralki",
+        "brand": "",
+        "model": "",
+        "problem": "",
+        "serialNumber": "",
+        "hasBuiltIn": false
+      }
+    ],
+    "isFlexibleDate": true,
+    "companyData": null,
+    "multiDevice": false,
+    "multiPhone": false,
+    "multiAddress": false,
+    "updatedAt": "2025-10-06T21:11:54.749Z",
+    "updatedBy": "manual_fix_script",
+    "orderId": "ORD1759785114749AX126DA0E",
+    "orderNumber": "ORDS2527900037",
+    "clientId": "CLIS252780002",
+    "convertedToOrder": true,
+    "convertedAt": "2025-10-06T21:11:54.749Z"
   }
 ]

@@ -45,16 +45,21 @@ export default function ClientDashboard() {
   const loadOrders = async (clientId) => {
     try {
       setLoading(true);
+      setError(''); // Clear previous errors
       const response = await fetch(`/api/orders?clientId=${clientId}`);
       const data = await response.json();
 
-      if (data.success) {
+      if (response.ok && data.success) {
+        // ✅ FIXED: Pusta tablica to NIE błąd - nowy klient może nie mieć jeszcze zleceń
         setOrders(data.orders || []);
+        console.log(`✅ Loaded ${data.orders?.length || 0} orders for client ${clientId}`);
       } else {
-        setError('Nie udało się pobrać zleceń');
+        // Błąd tylko gdy API zwróciło error, nie gdy brak zleceń
+        setError(data.message || 'Nie udało się pobrać zleceń');
+        console.error('❌ API error:', data);
       }
     } catch (err) {
-      console.error('Error loading orders:', err);
+      console.error('❌ Error loading orders:', err);
       setError('Błąd połączenia z serwerem');
     } finally {
       setLoading(false);
@@ -205,7 +210,7 @@ export default function ClientDashboard() {
             </div>
           )}
 
-          {orders.length === 0 ? (
+          {!error && orders.length === 0 ? (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -213,7 +218,13 @@ export default function ClientDashboard() {
             >
               <FiPackage className="text-gray-400 text-6xl mx-auto mb-4" />
               <h3 className="text-xl font-semibold text-gray-900 mb-2">Brak zleceń</h3>
-              <p className="text-gray-600">Nie masz jeszcze żadnych zleceń serwisowych.</p>
+              <p className="text-gray-600 mb-4">Nie masz jeszcze żadnych zleceń serwisowych.</p>
+              <Link href="/client/new-order">
+                <button className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium">
+                  <FiPackage />
+                  Złóż pierwsze zgłoszenie
+                </button>
+              </Link>
             </motion.div>
           ) : (
             <div className="grid grid-cols-1 gap-4">

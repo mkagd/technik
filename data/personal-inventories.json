@@ -10,27 +10,27 @@
         "partId": "PART001",
         "partNumber": "DC97-16151A",
         "name": "Łożysko bębna Samsung",
-        "quantity": 1,
+        "quantity": 2,
         "assignedDate": "2025-10-01T10:00:00Z",
         "assignedBy": "LOG001",
         "assignedByName": "Jan Kowalski (Logistyk)",
         "location": "Schowek przedni",
         "status": "available",
-        "lastRestocked": "2025-10-04T22:21:25.871Z",
-        "restockedBy": "MIGRATION"
+        "lastRestocked": "2025-10-05T15:46:16.394Z",
+        "restockedBy": "ADMIN"
       },
       {
         "partId": "PART002",
         "partNumber": "DC96-01414G",
         "name": "Pompa odpływowa Samsung",
-        "quantity": 1,
+        "quantity": 2,
         "assignedDate": "2025-09-30T14:30:00Z",
         "assignedBy": "LOG001",
         "assignedByName": "Jan Kowalski (Logistyk)",
         "location": "Schowek boczny lewy",
         "status": "available",
-        "lastRestocked": "2025-10-04T22:21:25.867Z",
-        "restockedBy": "MIGRATION"
+        "lastRestocked": "2025-10-05T15:46:16.397Z",
+        "restockedBy": "ADMIN"
       },
       {
         "partId": "PART005",
@@ -86,9 +86,9 @@
       }
     ],
     "totalValue": 0,
-    "lastUpdated": "2025-10-05T05:40:19.682Z",
+    "lastUpdated": "2025-10-05T15:46:16.399Z",
     "statistics": {
-      "totalParts": 6,
+      "totalParts": 8,
       "totalTypes": 6,
       "usedThisMonth": 5,
       "valueUsedThisMonth": 425

@@ -231,17 +231,37 @@ async function handleRegister(req, res) {
   }
 
   // Generuj ID dla nowego klienta
+  // Format: CLI2025XXXXXX gdzie XXXXXX to 6-cyfrowy numer sekwencyjny
   const lastClient = clients.length > 0 
-    ? clients.sort((a, b) => b.id.localeCompare(a.id))[0]
+    ? clients.sort((a, b) => {
+        // Convert both IDs to strings to safely use localeCompare
+        const idA = String(a.id || '');
+        const idB = String(b.id || '');
+        return idB.localeCompare(idA);
+      })[0]
     : null;
   
   let newIdNumber = 1;
   if (lastClient && lastClient.id) {
-    const lastNumber = parseInt(lastClient.id.replace('CLI', ''));
-    newIdNumber = lastNumber + 1;
+    // Wyciągnij tylko ostatnie 6 cyfr (numer sekwencyjny)
+    const idString = String(lastClient.id);
+    const match = idString.match(/CLI2025(\d{6})/);
+    if (match && match[1]) {
+      const lastNumber = parseInt(match[1], 10);
+      // Walidacja - upewnij się że nie jest NaN
+      if (!isNaN(lastNumber) && lastNumber > 0) {
+        newIdNumber = lastNumber + 1;
+      } else {
+        console.warn('⚠️ Invalid client ID number parsed:', match[1], '- defaulting to 1');
+        newIdNumber = 1;
+      }
+    } else {
+      console.warn('⚠️ Could not parse client ID from:', idString, '- defaulting to 1');
+    }
   }
   
   const newId = `CLI2025${String(newIdNumber).padStart(6, '0')}`;
+  console.log('🆔 Generated new client ID:', newId, '(previous:', lastClient?.id || 'none', ')');
 
   // Hashuj hasło
   const passwordHash = await bcrypt.hash(password, 10);
@@ -321,11 +341,112 @@ async function handleRegister(req, res) {
 
   console.log('✅ New client registered:', newClient.id, newClient.email);
 
+  // ✅ NOWE: Wyślij email powitalny
+  let emailSent = false;
+  let emailError = null;
+
+  if (process.env.RESEND_API_KEY && process.env.RESEND_EMAIL_FROM && newClient.email) {
+    try {
+      const emailHtml = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="utf-8">
+          <style>
+            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+            .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+            .content { background: #f9fafb; padding: 30px; border-radius: 0 0 10px 10px; }
+            .button { display: inline-block; background: #667eea; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; margin: 20px 0; }
+            .info-box { background: white; border-left: 4px solid #667eea; padding: 15px; margin: 20px 0; }
+            .footer { text-align: center; color: #666; font-size: 12px; margin-top: 30px; }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="header">
+              <h1>🎉 Witaj w naszym serwisie!</h1>
+            </div>
+            <div class="content">
+              <p>Cześć <strong>${newClient.firstName}</strong>!</p>
+              
+              <p>Dziękujemy za założenie konta w naszym serwisie AGD. Twoje konto zostało pomyślnie utworzone i jest już aktywne.</p>
+              
+              <div class="info-box">
+                <h3>📋 Twoje dane logowania:</h3>
+                <p><strong>Email:</strong> ${newClient.email}</p>
+                <p><strong>Numer klienta:</strong> ${newClient.id}</p>
+              </p>
+              
+              <div class="info-box">
+                <h3>✨ Co możesz teraz zrobić?</h3>
+                <ul>
+                  <li>📱 Przeglądać swoje zlecenia i ich statusy</li>
+                  <li>🛠️ Zgłaszać nowe naprawy online</li>
+                  <li>📅 Sprawdzać historię wizyt serwisowych</li>
+                  <li>💳 Przeglądać faktury i płatności</li>
+                </ul>
+              </div>
+              
+              <div style="text-align: center;">
+                <a href="${process.env.NEXT_PUBLIC_APP_URL || 'https://twoja-strona.pl'}/login" class="button">
+                  Zaloguj się teraz
+                </a>
+              </div>
+              
+              <p style="margin-top: 30px;">W razie pytań lub problemów, skontaktuj się z nami:</p>
+              <p>
+                📞 Telefon: ${process.env.CONTACT_PHONE || '123-456-789'}<br>
+                📧 Email: ${process.env.RESEND_EMAIL_FROM}<br>
+              </p>
+              
+              <div class="footer">
+                <p>Ten email został wysłany automatycznie. Prosimy nie odpowiadać na tę wiadomość.</p>
+                <p>&copy; ${new Date().getFullYear()} Twój Serwis AGD. Wszelkie prawa zastrzeżone.</p>
+              </div>
+            </div>
+          </div>
+        </body>
+        </html>
+      `;
+
+      const emailResponse = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${process.env.RESEND_API_KEY}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          from: process.env.RESEND_EMAIL_FROM,
+          to: newClient.email,
+          subject: '🎉 Witamy w naszym serwisie - Konto utworzone!',
+          html: emailHtml
+        })
+      });
+
+      if (emailResponse.ok) {
+        emailSent = true;
+        console.log('✅ Welcome email sent to:', newClient.email);
+      } else {
+        const errorData = await emailResponse.json();
+        emailError = errorData.message || 'Nieznany błąd Resend API';
+        console.error('❌ Failed to send welcome email:', emailError);
+      }
+    } catch (error) {
+      emailError = error.message;
+      console.error('❌ Error sending welcome email:', error);
+    }
+  } else {
+    console.log('⚠️ Email service not configured - skipping welcome email');
+  }
+
   return res.status(201).json({
     success: true,
-    message: '✅ Konto zostało utworzone pomyślnie',
+    message: '✅ Konto zostało utworzone pomyślnie' + (emailSent ? ' - email powitalny wysłany' : ''),
     client: clientData,
-    token
+    token,
+    emailSent,
+    emailError
   });
 }
 

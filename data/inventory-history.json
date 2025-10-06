@@ -1,1 +1,28 @@
-[]
+[
+  {
+    "id": "HIST-1759679176394",
+    "action": "UPDATE",
+    "timestamp": "2025-10-05T15:46:16.394Z",
+    "employeeId": "EMP25189001",
+    "employeeName": "Oliwia Kowalczyk",
+    "partId": "PART001",
+    "partName": "Łożysko bębna Samsung",
+    "quantityChange": 1,
+    "oldQuantity": 1,
+    "newQuantity": 2,
+    "performedBy": "ADMIN"
+  },
+  {
+    "id": "HIST-1759679176398",
+    "action": "UPDATE",
+    "timestamp": "2025-10-05T15:46:16.398Z",
+    "employeeId": "EMP25189001",
+    "employeeName": "Oliwia Kowalczyk",
+    "partId": "PART002",
+    "partName": "Pompa odpływowa uniwersalna",
+    "quantityChange": 1,
+    "oldQuantity": 1,
+    "newQuantity": 2,
+    "performedBy": "ADMIN"
+  }
+]

@@ -1,9 +1,26 @@
 import { useState, useEffect, useRef } from 'react';
-import { FiTool, FiMapPin, FiUser, FiClock, FiArrowRight, FiArrowLeft, FiCheck } from 'react-icons/fi';
+import { FiTool, FiMapPin, FiUser, FiClock, FiArrowRight, FiArrowLeft, FiCheck, FiX } from 'react-icons/fi';
 import GoogleGeocoder from '../geocoding/simple/GoogleGeocoder.js';
 import ModelAIScanner from '../components/ModelAIScanner';
+import { getDeviceCode, getDeviceBadgeProps } from '../utils/deviceCodes';
 
 export default function RezerwacjaNowa() {
+    // Symulacja sesji - w tym projekcie autoryzacja jest na poziomie routingu
+    const [session, setSession] = useState(null);
+    const [status, setStatus] = useState('loading');
+    
+    useEffect(() => {
+        // Sprawdź czy użytkownik jest na stronie admin (prosty check)
+        // W tym projekcie nie ma next-auth, więc symulujemy sesję
+        const checkAuth = () => {
+            // Zakładamy że użytkownik jest zalogowany jeśli jest w panelu admin
+            // (AdminLayout już sprawdza autoryzację)
+            setSession({ user: { id: 'ADMIN-' + Date.now() } });
+            setStatus('authenticated');
+        };
+        
+        checkAuth();
+    }, []);
     const geocoder = useRef(null);
     const [currentStep, setCurrentStep] = useState(1);
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -15,6 +32,12 @@ export default function RezerwacjaNowa() {
     const [scanningDeviceIndex, setScanningDeviceIndex] = useState(null);
     const [availabilityData, setAvailabilityData] = useState(null);
     const [loadingAvailability, setLoadingAvailability] = useState(false);
+    
+    // ✅ NOWE: Auto-save drafts
+    const [currentDraftId, setCurrentDraftId] = useState(null);
+    const [lastSaved, setLastSaved] = useState(null);
+    const [isSaving, setIsSaving] = useState(false);
+    const [showNewReservationButton, setShowNewReservationButton] = useState(true);
     
     const [formData, setFormData] = useState({
         // Multi-device support
@@ -51,6 +74,112 @@ export default function RezerwacjaNowa() {
             }
         }
     }, []);
+
+    // Przywracanie draftu przy montowaniu komponentu
+    useEffect(() => {
+        const restoreDraft = async () => {
+            if (!session?.user?.id) return;
+            
+            try {
+                // Sprawdź localStorage
+                const localDraftData = localStorage.getItem('reservationDraft');
+                const localDraft = localDraftData ? JSON.parse(localDraftData) : null;
+
+                // Pobierz z API
+                const response = await fetch(`/api/drafts?adminId=${session.user.id}`);
+                if (!response.ok) return;
+                
+                const serverDrafts = await response.json();
+                const serverDraft = serverDrafts.length > 0 ? serverDrafts[0] : null;
+
+                // Użyj nowszego draftu
+                let draftToRestore = null;
+                if (localDraft && serverDraft) {
+                    const localTime = new Date(localDraft.updatedAt).getTime();
+                    const serverTime = new Date(serverDraft.updatedAt).getTime();
+                    draftToRestore = serverTime > localTime ? serverDraft : localDraft;
+                } else {
+                    draftToRestore = serverDraft || localDraft;
+                }
+
+                if (draftToRestore) {
+                    const shouldRestore = window.confirm(
+                        `Znaleziono zapisany draft z ${new Date(draftToRestore.updatedAt).toLocaleString('pl-PL')}.\n\nCzy chcesz przywrócić dane?`
+                    );
+                    
+                    if (shouldRestore) {
+                        setFormData(draftToRestore.formData);
+                        setCurrentStep(draftToRestore.currentStep || 1);
+                        setCurrentDraftId(draftToRestore.id);
+                        setLastSaved(draftToRestore.updatedAt);
+                        console.log('✅ Draft przywrócony:', draftToRestore.id);
+                    }
+                }
+            } catch (error) {
+                console.error('❌ Błąd przywracania draftu:', error);
+            }
+        };
+
+        restoreDraft();
+    }, [session]);
+
+    // Auto-save co 5 sekund
+    useEffect(() => {
+        if (!session?.user?.id) return;
+        if (showSummary) return; // Nie zapisuj po złożeniu rezerwacji
+
+        const autoSave = async () => {
+            // Sprawdź czy jest coś do zapisania (przynajmniej jeden niepusty field)
+            const hasData = Object.values(formData).some(value => {
+                if (Array.isArray(value)) return value.length > 0;
+                return value !== '' && value !== null;
+            });
+
+            if (!hasData) return;
+
+            setIsSaving(true);
+
+            try {
+                // Zapisz lokalnie
+                const draftData = {
+                    id: currentDraftId || `DRAFT-${Date.now()}`,
+                    adminId: session.user.id,
+                    formData,
+                    currentStep,
+                    updatedAt: new Date().toISOString(),
+                    status: 'active'
+                };
+                localStorage.setItem('reservationDraft', JSON.stringify(draftData));
+
+                // Zapisz na serwerze
+                const response = await fetch('/api/drafts', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        draftId: currentDraftId,
+                        adminId: session.user.id,
+                        formData,
+                        currentStep
+                    })
+                });
+
+                if (response.ok) {
+                    const saved = await response.json();
+                    setCurrentDraftId(saved.draft.id);
+                    setLastSaved(new Date().toISOString());
+                    console.log('💾 Draft zapisany:', saved.draft.id);
+                }
+            } catch (error) {
+                console.error('❌ Błąd zapisu draftu:', error);
+            } finally {
+                setIsSaving(false);
+            }
+        };
+
+        const intervalId = setInterval(autoSave, 5000); // Co 5 sekund
+
+        return () => clearInterval(intervalId);
+    }, [formData, currentStep, session, currentDraftId, showSummary]);
 
     // Lista popularnych marek AGD
     const brands = [
@@ -276,6 +405,19 @@ export default function RezerwacjaNowa() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        // ✅ OCHRONA 1: Zgłoszenie tylko na kroku 5 (podsumowanie)
+        if (currentStep !== 5) {
+            console.log(`⚠️ Zgłoszenie można wysłać tylko na kroku 5! Obecny krok: ${currentStep}`);
+            return;
+        }
+
+        // ✅ OCHRONA 2: Zapobiegaj wielokrotnym wysyłkom
+        if (isSubmitting) {
+            console.log('⚠️ Zgłoszenie już jest wysyłane - zignorowano kolejne kliknięcie');
+            return;
+        }
+
         setIsSubmitting(true);
         setMessage('');
 
@@ -323,8 +465,12 @@ export default function RezerwacjaNowa() {
             }
         }
 
+        // Auto-generuj nazwisko jeśli nie podano
+        const finalName = formData.name?.trim() || `Klient #${Date.now().toString().slice(-6)}`;
+
         const submitData = {
             ...formData,
+            name: finalName, // Użyj wygenerowanej lub podanej nazwy
             address: fullAddress,
             clientLocation: clientLocation, // ← DODANE: Współrzędne GPS!
             // Dla kompatybilności z API, wysyłamy również stare pola z pierwszego urządzenia
@@ -335,7 +481,10 @@ export default function RezerwacjaNowa() {
             hasBuiltIn: formData.hasBuiltIn[0] || false,
             hasDemontaz: formData.hasDemontaz[0] || false,
             hasMontaz: formData.hasMontaz[0] || false,
-            hasTrudnaZabudowa: formData.hasTrudnaZabudowa[0] || false
+            hasTrudnaZabudowa: formData.hasTrudnaZabudowa[0] || false,
+            // ✅ Dodaj userId jeśli użytkownik jest zalogowany
+            userId: session?.user?.id || null,
+            isAuthenticated: !!session
         };
 
         try {
@@ -381,6 +530,18 @@ export default function RezerwacjaNowa() {
                 console.log('✅ Sukces! Ustawiam komunikat:', successMessage);
                 setMessage(successMessage);
                 
+                // Usuń draft z localStorage i serwera
+                if (currentDraftId) {
+                    try {
+                        localStorage.removeItem('reservationDraft');
+                        await fetch(`/api/drafts?id=${currentDraftId}`, { method: 'DELETE' });
+                        setCurrentDraftId(null);
+                        console.log('🗑️ Draft usunięty po wysłaniu');
+                    } catch (error) {
+                        console.error('❌ Błąd usuwania draftu:', error);
+                    }
+                }
+                
                 // Scroll do komunikatu
                 setTimeout(() => {
                     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -401,13 +562,21 @@ export default function RezerwacjaNowa() {
     const isStepValid = (step) => {
         switch (step) {
             case 1: 
-                // Multi-device: musi być wybrana przynajmniej jedna kategoria i każda musi mieć opis problemu
+                // Krok 1: Lokalizacja
+                return formData.postalCode && formData.city && formData.street;
+            case 2: 
+                // Krok 2: Kontakt - tylko telefon wymagany, imię opcjonalne (auto-generujemy)
+                return formData.phone;
+            case 3:
+                // Krok 3: Urządzenie - Multi-device: musi być wybrana przynajmniej jedna kategoria i każda musi mieć opis problemu
                 return formData.categories.length > 0 && 
                        formData.categories.every((_, index) => formData.problems[index]?.trim());
-            case 2: return formData.postalCode && formData.city && formData.street;
-            case 3: return formData.name && formData.phone;
-            case 4: return formData.timeSlot;
-            case 5: return true; // Podsumowanie - zawsze valid
+            case 4: 
+                // Krok 4: Dostępność
+                return formData.timeSlot;
+            case 5: 
+                // Krok 5: Podsumowanie - zawsze valid
+                return true;
             default: return false;
         }
     };
@@ -422,8 +591,48 @@ export default function RezerwacjaNowa() {
         setCurrentStep(step);
     };
 
+    // Obsługa anulowania z potwierdzeniem
+    const handleCancel = () => {
+        if (currentDraftId || Object.values(formData).some(val => Array.isArray(val) ? val.length > 0 : val !== '')) {
+            const confirmed = window.confirm(
+                '⚠️ Czy na pewno chcesz anulować?\n\nTwoje dane są automatycznie zapisywane co 5 sekund.\nMożesz wrócić do tego formularza później.'
+            );
+            if (!confirmed) return;
+        }
+        
+        // Przekieruj do strony głównej
+        window.location.href = '/';
+    };
+
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8 px-4">
+            {/* Sticky Header z przyciskiem "Nowe zgłoszenie" */}
+            {showNewReservationButton && !showSummary && (
+                <div className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-blue-600 to-indigo-700 shadow-lg">
+                    <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+                        <div className="flex items-center space-x-4">
+                            <button
+                                onClick={handleCancel}
+                                className="flex items-center px-3 py-1.5 text-sm text-gray-300 hover:text-white transition-colors"
+                            >
+                                <FiX className="w-4 h-4 mr-1" />
+                                Anuluj
+                            </button>
+                        </div>
+                        
+                        <h2 className="text-white font-semibold text-lg flex items-center">
+                            <FiTool className="w-5 h-5 mr-2" />
+                            Nowe zgłoszenie AGD
+                        </h2>
+                        
+                        <div className="w-20"></div> {/* Spacer dla wyśrodkowania */}
+                    </div>
+                </div>
+            )}
+
+            {/* Spacer dla sticky header */}
+            {showNewReservationButton && !showSummary && <div className="h-14"></div>}
+
             <div className="max-w-2xl mx-auto">
                 {/* Header */}
                 <div className="text-center mb-8">
@@ -454,9 +663,9 @@ export default function RezerwacjaNowa() {
                         ))}
                     </div>
                     <div className="flex justify-between text-xs text-gray-600">
-                        <span>Urządzenie</span>
                         <span>Lokalizacja</span>
                         <span>Kontakt</span>
+                        <span>Urządzenie</span>
                         <span>Termin</span>
                         <span>Podsumowanie</span>
                     </div>
@@ -483,8 +692,143 @@ export default function RezerwacjaNowa() {
                 {/* Form Card */}
                 <form onSubmit={handleSubmit}>
                     <div className="bg-white rounded-lg shadow-lg">
-                        {/* Step 1: Urządzenie - Multi-select z checkboxami */}
+                        {/* Step 1: Lokalizacja */}
                         {currentStep === 1 && (
+                            <div className="p-6">
+                                <div className="flex items-center mb-4">
+                                    <FiMapPin className="w-6 h-6 text-blue-600 mr-3" />
+                                    <h2 className="text-xl font-semibold text-gray-900">Gdzie jesteś?</h2>
+                                </div>
+
+                                <div className="space-y-4">
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                                            Kod pocztowy *
+                                        </label>
+                                        <input
+                                            type="text"
+                                            name="postalCode"
+                                            value={formData.postalCode}
+                                            onChange={handleChange}
+                                            required
+                                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                            placeholder="00-000"
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                                            Miasto *
+                                        </label>
+                                        <input
+                                            type="text"
+                                            name="city"
+                                            value={formData.city}
+                                            onChange={handleChange}
+                                            required
+                                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                            placeholder="Warszawa"
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                                            Ulica i numer *
+                                        </label>
+                                        <input
+                                            type="text"
+                                            name="street"
+                                            value={formData.street}
+                                            onChange={handleChange}
+                                            required
+                                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                            placeholder="ul. Główna 123"
+                                        />
+                                    </div>
+
+                                    {formData.postalCode && formData.city && formData.street && (
+                                        <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
+                                            <div className="text-sm text-green-700">
+                                                <strong>📍 Twój adres:</strong><br/>
+                                                {formData.street}, {formData.postalCode} {formData.city}
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Step 2: Dane kontaktowe */}
+                        {currentStep === 2 && (
+                            <div className="p-6">
+                                <div className="flex items-center mb-4">
+                                    <FiUser className="w-6 h-6 text-blue-600 mr-3" />
+                                    <h2 className="text-xl font-semibold text-gray-900">Twoje dane</h2>
+                                </div>
+
+                                <div className="space-y-4">
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                                            Imię i nazwisko (opcjonalnie)
+                                        </label>
+                                        <input
+                                            type="text"
+                                            name="name"
+                                            value={formData.name}
+                                            onChange={handleChange}
+                                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                            placeholder="Jan Kowalski"
+                                        />
+                                        <p className="text-xs text-gray-500 mt-1">
+                                            💡 Jeśli nie podasz imienia, wygenerujemy automatyczny identyfikator klienta
+                                        </p>
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                                            Telefon *
+                                        </label>
+                                        <input
+                                            type="tel"
+                                            name="phone"
+                                            value={formData.phone}
+                                            onChange={handleChange}
+                                            required
+                                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                            placeholder="+48 123 456 789"
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                                            Email (opcjonalnie)
+                                        </label>
+                                        <input
+                                            type="email"
+                                            name="email"
+                                            value={formData.email}
+                                            onChange={handleChange}
+                                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                            placeholder="jan@example.com"
+                                        />
+                                        <div className="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                                            <p className="text-sm text-blue-800 flex items-start">
+                                                <span className="mr-2 mt-0.5">📧</span>
+                                                <span>
+                                                    <strong>Podaj email, a otrzymasz:</strong><br/>
+                                                    • Potwierdzenie rezerwacji z numerem zamówienia<br/>
+                                                    • Link do sprawdzenia statusu online<br/>
+                                                    • Wszystkie ważne informacje o wizycie
+                                                </span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Step 3: Urządzenie - Multi-select z checkboxami */}
+                        {currentStep === 3 && (
                             <div className="p-6">
                                 <div className="flex items-center mb-4">
                                     <FiTool className="w-6 h-6 text-blue-600 mr-3" />
@@ -507,7 +851,9 @@ export default function RezerwacjaNowa() {
                                                 { value: 'Mikrofalówka', icon: '/icons/agd/mikrofalowka.svg', label: 'Mikrofalówka', desc: 'Do podgrzewania', color: 'from-yellow-400 to-yellow-600' },
                                                 { value: 'Okap', icon: '/icons/agd/okap.svg', label: 'Okap', desc: 'Wyciąg kuchenny', color: 'from-gray-400 to-gray-600' },
                                                 { value: 'Inne AGD', icon: '/icons/agd/inne.svg', label: 'Inne AGD', desc: 'Pozostałe', color: 'from-green-400 to-green-600' },
-                                            ].map((option) => (
+                                            ].map((option) => {
+                                                const deviceBadge = getDeviceBadgeProps(option.value);
+                                                return (
                                                 <label key={option.value} className={`cursor-pointer border-2 rounded-xl p-4 text-center transition-all duration-300 transform hover:scale-105 ${
                                                     formData.categories.includes(option.value)
                                                         ? 'border-blue-500 bg-gradient-to-br from-blue-50 to-blue-100 shadow-lg' 
@@ -521,6 +867,10 @@ export default function RezerwacjaNowa() {
                                                         onChange={handleCategoryToggle}
                                                         className="sr-only"
                                                     />
+                                                    {/* Kod urządzenia na górze */}
+                                                    <div className={`inline-flex items-center px-2 py-1 mb-2 text-xs font-bold rounded border ${deviceBadge.className}`}>
+                                                        [{deviceBadge.code}]
+                                                    </div>
                                                     <div className={`w-12 h-12 mx-auto mb-2 rounded-full bg-gradient-to-br ${option.color} flex items-center justify-center text-white shadow-md p-2`}>
                                                         <img 
                                                             src={option.icon} 
@@ -534,7 +884,8 @@ export default function RezerwacjaNowa() {
                                                         <div className="mt-2 text-blue-600 text-sm font-semibold">✓ Wybrane</div>
                                                     )}
                                                 </label>
-                                            ))}
+                                                );
+                                            })}
                                         </div>
                                     </div>
 
@@ -544,9 +895,14 @@ export default function RezerwacjaNowa() {
                                             <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">
                                                 Szczegóły urządzeń ({formData.categories.length})
                                             </h3>
-                                            {formData.categories.map((category, index) => (
+                                            {formData.categories.map((category, index) => {
+                                                const deviceBadge = getDeviceBadgeProps(category);
+                                                return (
                                                 <div key={category} className="border rounded-lg p-4 bg-gray-50">
                                                     <h4 className="text-md font-semibold mb-3 flex items-center">
+                                                        <span className={`inline-flex items-center px-2 py-1 mr-2 text-xs font-bold rounded border ${deviceBadge.className}`}>
+                                                            [{deviceBadge.code}]
+                                                        </span>
                                                         <span className="w-6 h-6 mr-2 flex items-center justify-center">
                                                             <img 
                                                                 src={`/icons/agd/${category === 'Pralka' ? 'pralka' : category === 'Zmywarka' ? 'zmywarka' : category === 'Lodówka' ? 'lodowka' : category === 'Piekarnik' ? 'piekarnik' : category === 'Suszarka' ? 'suszarka' : category === 'Kuchenka' ? 'kuchenka' : category === 'Mikrofalówka' ? 'mikrofalowka' : category === 'Okap' ? 'okap' : 'inne'}.svg`}
@@ -656,7 +1012,8 @@ export default function RezerwacjaNowa() {
                                                         </p>
                                                     </div>
                                                 </div>
-                                            ))}
+                                            );
+                                            })}
                                         </div>
                                     )}
 
@@ -723,139 +1080,6 @@ export default function RezerwacjaNowa() {
                                             </div>
                                         </div>
                                     )}
-                                </div>
-                            </div>
-                        )}
-
-                        {/* Step 2: Lokalizacja */}
-                        {currentStep === 2 && (
-                            <div className="p-6">
-                                <div className="flex items-center mb-4">
-                                    <FiMapPin className="w-6 h-6 text-blue-600 mr-3" />
-                                    <h2 className="text-xl font-semibold text-gray-900">Gdzie jesteś?</h2>
-                                </div>
-
-                                <div className="space-y-4">
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                                            Kod pocztowy *
-                                        </label>
-                                        <input
-                                            type="text"
-                                            name="postalCode"
-                                            value={formData.postalCode}
-                                            onChange={handleChange}
-                                            required
-                                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                                            placeholder="00-000"
-                                        />
-                                    </div>
-
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                                            Miasto *
-                                        </label>
-                                        <input
-                                            type="text"
-                                            name="city"
-                                            value={formData.city}
-                                            onChange={handleChange}
-                                            required
-                                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                                            placeholder="Warszawa"
-                                        />
-                                    </div>
-
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                                            Ulica i numer *
-                                        </label>
-                                        <input
-                                            type="text"
-                                            name="street"
-                                            value={formData.street}
-                                            onChange={handleChange}
-                                            required
-                                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                                            placeholder="ul. Główna 123"
-                                        />
-                                    </div>
-
-                                    {formData.postalCode && formData.city && formData.street && (
-                                        <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
-                                            <div className="text-sm text-green-700">
-                                                <strong>📍 Twój adres:</strong><br/>
-                                                {formData.street}, {formData.postalCode} {formData.city}
-                                            </div>
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-                        )}
-
-                        {/* Step 3: Dane kontaktowe */}
-                        {currentStep === 3 && (
-                            <div className="p-6">
-                                <div className="flex items-center mb-4">
-                                    <FiUser className="w-6 h-6 text-blue-600 mr-3" />
-                                    <h2 className="text-xl font-semibold text-gray-900">Twoje dane</h2>
-                                </div>
-
-                                <div className="space-y-4">
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                                            Imię i nazwisko *
-                                        </label>
-                                        <input
-                                            type="text"
-                                            name="name"
-                                            value={formData.name}
-                                            onChange={handleChange}
-                                            required
-                                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                                            placeholder="Jan Kowalski"
-                                        />
-                                    </div>
-
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                                            Telefon *
-                                        </label>
-                                        <input
-                                            type="tel"
-                                            name="phone"
-                                            value={formData.phone}
-                                            onChange={handleChange}
-                                            required
-                                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                                            placeholder="+48 123 456 789"
-                                        />
-                                    </div>
-
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                                            Email (opcjonalnie)
-                                        </label>
-                                        <input
-                                            type="email"
-                                            name="email"
-                                            value={formData.email}
-                                            onChange={handleChange}
-                                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                                            placeholder="jan@example.com"
-                                        />
-                                        <div className="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                                            <p className="text-sm text-blue-800 flex items-start">
-                                                <span className="mr-2 mt-0.5">📧</span>
-                                                <span>
-                                                    <strong>Podaj email, a otrzymasz:</strong><br/>
-                                                    • Potwierdzenie rezerwacji z numerem zamówienia<br/>
-                                                    • Link do sprawdzenia statusu online<br/>
-                                                    • Wszystkie ważne informacje o wizycie
-                                                </span>
-                                            </p>
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
                         )}
@@ -1120,10 +1344,15 @@ export default function RezerwacjaNowa() {
                                                     🔧 Urządzenia do naprawy ({formData.categories.length})
                                                 </h3>
                                                 <div className="space-y-3">
-                                                    {formData.categories.map((category, index) => (
+                                                    {formData.categories.map((category, index) => {
+                                                        const deviceBadge = getDeviceBadgeProps(category);
+                                                        return (
                                                         <div key={category} className="pl-3 border-l-2 border-blue-300">
                                                             <div className="text-sm text-gray-700">
                                                                 <div className="font-semibold mb-1 flex items-center">
+                                                                    <span className={`inline-flex items-center px-2 py-0.5 mr-2 text-xs font-bold rounded border ${deviceBadge.className}`}>
+                                                                        [{deviceBadge.code}]
+                                                                    </span>
                                                                     <img 
                                                                         src={`/icons/agd/${category === 'Pralka' ? 'pralka' : category === 'Zmywarka' ? 'zmywarka' : category === 'Lodówka' ? 'lodowka' : category === 'Piekarnik' ? 'piekarnik' : category === 'Suszarka' ? 'suszarka' : category === 'Kuchenka' ? 'kuchenka' : category === 'Mikrofalówka' ? 'mikrofalowka' : category === 'Okap' ? 'okap' : 'inne'}.svg`}
                                                                         alt={category}
@@ -1139,7 +1368,8 @@ export default function RezerwacjaNowa() {
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                    ))}
+                                                        );
+                                                    })}
                                                 </div>
 
                                                 {/* Informacje o zabudowie */}
@@ -1315,6 +1545,32 @@ export default function RezerwacjaNowa() {
                     </div>
                 </form>
             </div>
+
+            {/* Wskaźnik auto-save - fixed bottom right */}
+            {!showSummary && session?.user?.id && (
+                <div className="fixed bottom-4 right-4 z-40 bg-white rounded-lg shadow-lg px-4 py-2 border border-gray-200">
+                    <div className="flex items-center space-x-2 text-sm">
+                        {isSaving ? (
+                            <>
+                                <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                                <span className="text-gray-600">Zapisuję...</span>
+                            </>
+                        ) : lastSaved ? (
+                            <>
+                                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                                <span className="text-gray-500 text-xs">
+                                    Zapisano {new Date(lastSaved).toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+                                </span>
+                            </>
+                        ) : (
+                            <>
+                                <div className="w-2 h-2 bg-gray-400 rounded-full"></div>
+                                <span className="text-gray-400 text-xs">Auto-save aktywny</span>
+                            </>
+                        )}
+                    </div>
+                </div>
+            )}
 
             {/* Modal AI Scanner */}
             {showAIScanner && (

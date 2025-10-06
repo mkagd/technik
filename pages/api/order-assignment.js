@@ -178,7 +178,9 @@ async function getOrdersWithVisits(req, res) {
         const employees = readEmployees();
         
         // Filtruj zlecenia które mają wizyty lub potrzebują przydziału
+        // USUŃ usunięte zlecenia (isDeleted flag)
         const activeOrders = orders.filter(order => 
+            !order.isDeleted && // Nie pokazuj usuniętych zleceń
             order.status !== 'completed' && 
             order.status !== 'cancelled'
         );

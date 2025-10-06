@@ -19,13 +19,23 @@ export default function LogistykaMagazyny() {
       // Pobierz wszystkich serwisantów
       const empRes = await fetch('/api/employees');
       const empData = await empRes.json();
-      const technicians = empData.employees.filter(emp => emp.role === 'serwisant');
+      
+      if (!empData.success || !empData.employees) {
+        console.error('Failed to load employees:', empData);
+        setLoading(false);
+        return;
+      }
+      
+      const technicians = empData.employees.filter(emp => emp.role === 'Serwisant' || emp.role === 'serwisant');
       setEmployees(technicians);
+
+      console.log('📦 Ładowanie magazynów dla', technicians.length, 'serwisantów');
 
       // Pobierz magazyny dla każdego serwisanta
       const warehousePromises = technicians.map(async (tech) => {
         try {
-          const res = await fetch(`/api/inventory/personal?employeeId=${tech.employeeId}`);
+          console.log('Pobieranie magazynu dla:', tech.id, tech.name);
+          const res = await fetch(`/api/inventory/personal?employeeId=${tech.id}`);
           const data = await res.json();
           
           const totalValue = data.inventory?.reduce((sum, item) => 
@@ -36,10 +46,16 @@ export default function LogistykaMagazyny() {
 
           const lowStockCount = data.inventory?.filter(item => item.quantity < 2).length || 0;
 
+          console.log(`✅ Magazyn ${tech.id}:`, {
+            items: data.inventory?.length,
+            totalParts,
+            totalValue
+          });
+
           return {
-            employeeId: tech.employeeId,
+            employeeId: tech.id,
             employeeName: tech.name,
-            vehicleId: tech.vehicleId || 'Brak',
+            vehicleId: tech.vehicleId || 'Brak pojazdu',
             totalValue: totalValue,
             totalParts: totalParts,
             uniqueParts: data.inventory?.length || 0,
@@ -47,11 +63,11 @@ export default function LogistykaMagazyny() {
             inventory: data.inventory || []
           };
         } catch (err) {
-          console.error(`Error loading warehouse for ${tech.employeeId}:`, err);
+          console.error(`❌ Error loading warehouse for ${tech.id}:`, err);
           return {
-            employeeId: tech.employeeId,
+            employeeId: tech.id,
             employeeName: tech.name,
-            vehicleId: tech.vehicleId || 'Brak',
+            vehicleId: tech.vehicleId || 'Brak pojazdu',
             totalValue: 0,
             totalParts: 0,
             uniqueParts: 0,

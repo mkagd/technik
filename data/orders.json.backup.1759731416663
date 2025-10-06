@@ -1,0 +1,1574 @@
+[
+  {
+    "clientId": "CLIS252780001",
+    "clientName": "Mariusz Bielaszka",
+    "clientPhone": "792392870",
+    "email": "bielaszkam2@gmail.com",
+    "address": "Gliniana 17/30, Kraków",
+    "city": "Kraków",
+    "street": "Gliniana 17/30",
+    "postalCode": "",
+    "phones": [],
+    "addresses": [],
+    "clientLocation": null,
+    "latitude": null,
+    "longitude": null,
+    "deviceType": "Pralki",
+    "brand": "Nie określono",
+    "model": "Pralki",
+    "serialNumber": "",
+    "description": "nie dizałą",
+    "priority": "medium",
+    "status": "contacted",
+    "visits": [],
+    "category": "Pralki",
+    "serviceType": "Pralki",
+    "scheduledDate": "2025-10-05",
+    "availability": "po 15",
+    "devices": [
+      {
+        "name": "Pralki",
+        "brand": "",
+        "model": "Pralki",
+        "serialNumber": "",
+        "description": "nie dizałą",
+        "hasBuiltIn": false,
+        "builtInParams": {
+          "demontaz": false,
+          "montaz": false,
+          "trudna": false,
+          "wolnostojacy": false,
+          "ograniczony": false,
+          "front": false,
+          "czas": false
+        },
+        "builtInParamsNotes": {}
+      }
+    ],
+    "builtInParams": {
+      "demontaz": false,
+      "montaz": false,
+      "trudna": false,
+      "wolnostojacy": false,
+      "ograniczony": false,
+      "front": false,
+      "czas": false
+    },
+    "deviceDetails": {
+      "deviceType": "pralki",
+      "hasBuiltIn": false,
+      "hasDemontaz": false,
+      "hasMontaz": false,
+      "hasTrudnaZabudowa": false,
+      "manualAdditionalTime": 0
+    },
+    "dates": [
+      "2025-10-05"
+    ],
+    "hours": null,
+    "end": null,
+    "id": 1759641532404,
+    "orderNumber": "ORDS252780001",
+    "source": "system-auto",
+    "sourceDetails": null,
+    "createdBy": "system",
+    "createdByName": "System",
+    "userId": null,
+    "isUserCreated": false,
+    "createdFromIP": null,
+    "dateAdded": "2025-10-05T05:18:52.404Z",
+    "createdAt": "2025-10-05T05:18:52.404Z",
+    "updatedAt": "2025-10-05T05:18:52.404Z",
+    "updatedBy": null
+  },
+  {
+    "clientId": "CLIS252780002",
+    "clientName": "Mariusz Bielaszka",
+    "clientPhone": "792392870",
+    "email": "Bielaszkam2@gmail.com",
+    "address": "Gliniana 17/30, 30-732 Kraków",
+    "city": "Kraków",
+    "street": "Gliniana 17/30",
+    "postalCode": "",
+    "phones": [
+      {
+        "number": "792392870",
+        "label": "Główny",
+        "isPrimary": true
+      }
+    ],
+    "addresses": [
+      {
+        "street": "Gliniana 17/30",
+        "city": "Kraków",
+        "postalCode": "30-732",
+        "label": "Główny",
+        "isPrimary": true
+      }
+    ],
+    "clientLocation": null,
+    "latitude": null,
+    "longitude": null,
+    "deviceType": "Pralki",
+    "brand": "Nie określono",
+    "model": "Bosch",
+    "serialNumber": "",
+    "description": "Brak opisu problemu",
+    "priority": "medium",
+    "status": "pending",
+    "visits": [],
+    "category": "Pralki",
+    "serviceType": "Bosch",
+    "scheduledDate": "2025-10-07",
+    "availability": "po 14",
+    "devices": [
+      {
+        "name": "Pralki",
+        "brand": "Bosch",
+        "model": "",
+        "serialNumber": "",
+        "description": "Brak opisu",
+        "hasBuiltIn": false,
+        "builtInParams": {
+          "demontaz": false,
+          "montaz": false,
+          "trudna": false,
+          "wolnostojacy": false,
+          "ograniczony": false,
+          "front": false,
+          "czas": false
+        },
+        "builtInParamsNotes": {}
+      },
+      {
+        "name": "Zmywarki",
+        "brand": "",
+        "model": "",
+        "serialNumber": "",
+        "description": "Brak opisu",
+        "hasBuiltIn": false,
+        "builtInParams": {
+          "demontaz": false,
+          "montaz": false,
+          "trudna": false,
+          "wolnostojacy": false,
+          "ograniczony": false,
+          "front": false,
+          "czas": false
+        },
+        "builtInParamsNotes": {}
+      }
+    ],
+    "builtInParams": {
+      "demontaz": false,
+      "montaz": false,
+      "trudna": false,
+      "wolnostojacy": false,
+      "ograniczony": false,
+      "front": false,
+      "czas": false
+    },
+    "deviceDetails": {
+      "deviceType": "pralki",
+      "hasBuiltIn": false,
+      "hasDemontaz": false,
+      "hasMontaz": false,
+      "hasTrudnaZabudowa": false,
+      "manualAdditionalTime": 0
+    },
+    "dates": [
+      "2025-10-07"
+    ],
+    "hours": null,
+    "end": null,
+    "id": 1759641532412,
+    "orderNumber": "ORDS252780002",
+    "source": "system-auto",
+    "sourceDetails": null,
+    "createdBy": "system",
+    "createdByName": "System",
+    "userId": null,
+    "isUserCreated": false,
+    "createdFromIP": null,
+    "dateAdded": "2025-10-05T05:18:52.412Z",
+    "createdAt": "2025-10-05T05:18:52.412Z",
+    "updatedAt": "2025-10-05T05:18:52.412Z",
+    "updatedBy": null
+  },
+  {
+    "clientId": "CLIS252780003",
+    "clientName": "qweqwe",
+    "clientPhone": "123123123",
+    "email": "",
+    "address": "qwe, qwe qwe",
+    "city": "qwe",
+    "street": "qwe",
+    "postalCode": "",
+    "phones": [
+      {
+        "number": "123123123",
+        "label": "Główny",
+        "isPrimary": true
+      }
+    ],
+    "addresses": [
+      {
+        "street": "qwe",
+        "city": "qwe",
+        "postalCode": "qwe",
+        "label": "Główny",
+        "isPrimary": true
+      },
+      {
+        "street": "qwe",
+        "city": "qwe",
+        "postalCode": "qwe",
+        "label": "",
+        "isPrimary": false
+      }
+    ],
+    "clientLocation": null,
+    "latitude": null,
+    "longitude": null,
+    "deviceType": "Pralki",
+    "brand": "Nie określono",
+    "model": "Pralki",
+    "serialNumber": "",
+    "description": "Brak opisu problemu",
+    "priority": "medium",
+    "status": "pending",
+    "visits": [],
+    "category": "Pralki",
+    "serviceType": "Pralki",
+    "scheduledDate": "2025-10-11",
+    "availability": "8:00-13:00",
+    "devices": [
+      {
+        "name": "Pralki",
+        "brand": "",
+        "model": "",
+        "serialNumber": "",
+        "description": "Brak opisu",
+        "hasBuiltIn": false,
+        "builtInParams": {
+          "demontaz": false,
+          "montaz": false,
+          "trudna": false,
+          "wolnostojacy": false,
+          "ograniczony": false,
+          "front": false,
+          "czas": false
+        },
+        "builtInParamsNotes": {}
+      },
+      {
+        "name": "Płyty indukcyjne",
+        "brand": "",
+        "model": "",
+        "serialNumber": "",
+        "description": "Brak opisu",
+        "hasBuiltIn": false,
+        "builtInParams": {
+          "demontaz": false,
+          "montaz": false,
+          "trudna": false,
+          "wolnostojacy": false,
+          "ograniczony": false,
+          "front": false,
+          "czas": false
+        },
+        "builtInParamsNotes": {}
+      }
+    ],
+    "builtInParams": {
+      "demontaz": false,
+      "montaz": false,
+      "trudna": false,
+      "wolnostojacy": false,
+      "ograniczony": false,
+      "front": false,
+      "czas": false
+    },
+    "deviceDetails": {
+      "deviceType": "pralki",
+      "hasBuiltIn": false,
+      "hasDemontaz": false,
+      "hasMontaz": false,
+      "hasTrudnaZabudowa": false,
+      "manualAdditionalTime": 0
+    },
+    "dates": [
+      "2025-10-11"
+    ],
+    "hours": null,
+    "end": null,
+    "id": 1759641532418,
+    "orderNumber": "ORDS252780003",
+    "source": "system-auto",
+    "sourceDetails": null,
+    "createdBy": "system",
+    "createdByName": "System",
+    "userId": null,
+    "isUserCreated": false,
+    "createdFromIP": null,
+    "dateAdded": "2025-10-05T05:18:52.418Z",
+    "createdAt": "2025-10-05T05:18:52.418Z",
+    "updatedAt": "2025-10-05T05:18:52.418Z",
+    "updatedBy": null
+  },
+  {
+    "clientId": "CLIS252780004",
+    "clientName": "Oliwia Bielaszka",
+    "clientPhone": "987654987",
+    "email": "Bielaszkam2@gmail.com",
+    "address": "Gliniana 17/30, 30-732 Kraków, 30-732 Kraków",
+    "city": "Kraków",
+    "street": "Gliniana 17/30, 30-732 Kraków",
+    "postalCode": "",
+    "phones": [
+      {
+        "number": "987654987",
+        "label": "Główny",
+        "isPrimary": true
+      }
+    ],
+    "addresses": [
+      {
+        "street": "Gliniana 17/30, 30-732 Kraków",
+        "city": "Kraków",
+        "postalCode": "30-732",
+        "label": "Główny",
+        "isPrimary": true
+      }
+    ],
+    "clientLocation": null,
+    "latitude": null,
+    "longitude": null,
+    "deviceType": "Pralki",
+    "brand": "Nie określono",
+    "model": "1242",
+    "serialNumber": "",
+    "description": "1241242141",
+    "priority": "medium",
+    "status": "scheduled",
+    "visits": [],
+    "category": "Pralki",
+    "serviceType": "1242",
+    "scheduledDate": "2025-10-05",
+    "availability": "Po 15:00",
+    "devices": [
+      {
+        "name": "Pralki",
+        "brand": "Bosch",
+        "model": "1242",
+        "serialNumber": "12312",
+        "description": "1241242141",
+        "hasBuiltIn": false,
+        "builtInParams": {
+          "demontaz": false,
+          "montaz": false,
+          "trudna": false,
+          "wolnostojacy": false,
+          "ograniczony": false,
+          "front": false,
+          "czas": false
+        },
+        "builtInParamsNotes": {}
+      },
+      {
+        "name": "Lodówki",
+        "brand": "Beko",
+        "model": "12424",
+        "serialNumber": "1241242",
+        "description": "124124",
+        "hasBuiltIn": false,
+        "builtInParams": {
+          "demontaz": false,
+          "montaz": false,
+          "trudna": false,
+          "wolnostojacy": false,
+          "ograniczony": false,
+          "front": false,
+          "czas": false
+        },
+        "builtInParamsNotes": {}
+      }
+    ],
+    "builtInParams": {
+      "demontaz": false,
+      "montaz": false,
+      "trudna": false,
+      "wolnostojacy": false,
+      "ograniczony": false,
+      "front": false,
+      "czas": false
+    },
+    "deviceDetails": {
+      "deviceType": "pralki",
+      "hasBuiltIn": false,
+      "hasDemontaz": false,
+      "hasMontaz": false,
+      "hasTrudnaZabudowa": false,
+      "manualAdditionalTime": 0
+    },
+    "dates": [
+      "2025-10-05"
+    ],
+    "hours": null,
+    "end": null,
+    "id": 1759641532424,
+    "orderNumber": "ORDS252780004",
+    "source": "system-auto",
+    "sourceDetails": null,
+    "createdBy": "system",
+    "createdByName": "System",
+    "userId": null,
+    "isUserCreated": false,
+    "createdFromIP": null,
+    "dateAdded": "2025-10-05T05:18:52.424Z",
+    "createdAt": "2025-10-05T05:18:52.424Z",
+    "updatedAt": "2025-10-05T05:18:52.424Z",
+    "updatedBy": null
+  },
+  {
+    "clientId": "CLIS252780005",
+    "clientName": "Konting",
+    "clientPhone": "987987987",
+    "email": "",
+    "address": "Słupia 114, 28-133 Pacanow",
+    "city": "Pacanow",
+    "street": "Słupia 114",
+    "postalCode": "",
+    "phones": [
+      {
+        "number": "987987987",
+        "label": "Główny",
+        "isPrimary": true
+      },
+      {
+        "number": "654654654",
+        "label": "Mama kota",
+        "isPrimary": false
+      }
+    ],
+    "addresses": [
+      {
+        "street": "Słupia 114",
+        "city": "Pacanow",
+        "postalCode": "28-133",
+        "label": "Główny",
+        "isPrimary": true
+      },
+      {
+        "street": "Gliniana 17/30, 30-732 Kraków",
+        "city": "Kraków",
+        "postalCode": "30-732",
+        "label": "Buiro",
+        "isPrimary": false
+      }
+    ],
+    "clientLocation": null,
+    "latitude": null,
+    "longitude": null,
+    "deviceType": "Pralki",
+    "brand": "Nie określono",
+    "model": "Beko",
+    "serialNumber": "",
+    "description": "Brak opisu problemu",
+    "priority": "medium",
+    "status": "confirmed",
+    "visits": [],
+    "category": "Pralki",
+    "serviceType": "Beko",
+    "scheduledDate": "",
+    "availability": "Nie określono",
+    "devices": [
+      {
+        "name": "Pralki",
+        "brand": "Beko",
+        "model": "",
+        "serialNumber": "",
+        "description": "Brak opisu",
+        "hasBuiltIn": true,
+        "builtInParams": {
+          "demontaz": true,
+          "montaz": true,
+          "trudna": false,
+          "wolnostojacy": false,
+          "ograniczony": false,
+          "front": false,
+          "czas": false
+        },
+        "builtInParamsNotes": {}
+      }
+    ],
+    "builtInParams": {
+      "demontaz": true,
+      "montaz": true,
+      "trudna": false,
+      "wolnostojacy": false,
+      "ograniczony": false,
+      "front": false,
+      "czas": false
+    },
+    "deviceDetails": {
+      "deviceType": "pralki",
+      "hasBuiltIn": true,
+      "hasDemontaz": true,
+      "hasMontaz": true,
+      "hasTrudnaZabudowa": false,
+      "manualAdditionalTime": 0
+    },
+    "dates": [],
+    "hours": null,
+    "end": null,
+    "id": 1759641532430,
+    "orderNumber": "ORDS252780005",
+    "source": "system-auto",
+    "sourceDetails": null,
+    "createdBy": "system",
+    "createdByName": "System",
+    "userId": null,
+    "isUserCreated": false,
+    "createdFromIP": null,
+    "dateAdded": "2025-10-05T05:18:52.430Z",
+    "createdAt": "2025-10-05T05:18:52.430Z",
+    "updatedAt": "2025-10-05T05:18:52.430Z",
+    "updatedBy": null
+  },
+  {
+    "id": 1759642076797,
+    "status": "cancelled",
+    "updatedAt": "2025-10-05T05:43:11.586Z"
+  },
+  {
+    "clientId": "CLIS252780007",
+    "clientName": "Technik B",
+    "clientPhone": "987987987",
+    "email": "",
+    "address": "Słupia 114, 28-133 Pacanow",
+    "city": "Pacanow",
+    "street": "Słupia 114",
+    "postalCode": "28-133",
+    "phones": [],
+    "addresses": [],
+    "clientLocation": {
+      "address": "Słupia 114, 28-133 Pacanow (przybliżona lokalizacja, Kraków)",
+      "coordinates": {
+        "lat": 50.0647,
+        "lng": 19.945
+      },
+      "accuracy": "APPROXIMATE",
+      "confidence": 0.3
+    },
+    "latitude": 50.0647,
+    "longitude": 19.945,
+    "deviceType": "Zmywarka",
+    "brand": "Aeg",
+    "model": "Nie określono",
+    "serialNumber": "",
+    "description": "Nie odpompowuje wody",
+    "priority": "medium",
+    "status": "scheduled",
+    "visits": [],
+    "category": "Zmywarka",
+    "serviceType": "",
+    "scheduledDate": "2025-10-05T05:28:22.016Z",
+    "availability": "Nie określono",
+    "devices": [
+      {
+        "name": "Zmywarka",
+        "brand": "Aeg",
+        "model": "",
+        "serialNumber": "",
+        "description": "Nie odpompowuje wody",
+        "hasBuiltIn": false,
+        "builtInParams": {
+          "demontaz": false,
+          "montaz": false,
+          "trudna": false,
+          "wolnostojacy": false,
+          "ograniczony": false,
+          "front": false,
+          "czas": false
+        },
+        "builtInParamsNotes": {}
+      }
+    ],
+    "builtInParams": {
+      "demontaz": false,
+      "montaz": false,
+      "trudna": false,
+      "wolnostojacy": false,
+      "ograniczony": false,
+      "front": false,
+      "czas": false
+    },
+    "deviceDetails": {
+      "deviceType": "zmywarka",
+      "hasBuiltIn": false,
+      "hasDemontaz": false,
+      "hasMontaz": false,
+      "hasTrudnaZabudowa": false,
+      "manualAdditionalTime": 0
+    },
+    "dates": [],
+    "hours": null,
+    "end": null,
+    "id": 1759642102036,
+    "orderNumber": "ORDS252780007",
+    "source": "system-auto",
+    "sourceDetails": null,
+    "createdBy": "system",
+    "createdByName": "System",
+    "userId": null,
+    "isUserCreated": false,
+    "createdFromIP": null,
+    "dateAdded": "2025-10-05T05:28:22.036Z",
+    "createdAt": "2025-10-05T05:28:22.036Z",
+    "updatedAt": "2025-10-05T05:28:22.036Z",
+    "updatedBy": null
+  },
+  {
+    "clientId": "CLIS252780008",
+    "clientName": "Bruno Bielaszka",
+    "clientPhone": "696969696969",
+    "email": "Bielaszkam2@gmail.com",
+    "address": "Gliniana 17/30, 30-732 Kraków, 30-732 Kraków",
+    "city": "Kraków",
+    "street": "Gliniana 17/30, 30-732 Kraków",
+    "postalCode": "30-732",
+    "phones": [],
+    "addresses": [],
+    "clientLocation": {
+      "address": "Gliniana 17/30, 30-732 Kraków, 30-732 Kraków,  Polska",
+      "coordinates": {
+        "lat": 50.06525080997225,
+        "lng": 19.944747059057534
+      },
+      "accuracy": "APPROXIMATE",
+      "confidence": 0.7
+    },
+    "latitude": 50.06525080997225,
+    "longitude": 19.944747059057534,
+    "deviceType": "Lodówka",
+    "brand": "Beko",
+    "model": "Nie określono",
+    "serialNumber": "",
+    "description": "Nie świeci oświetlenie",
+    "priority": "medium",
+    "status": "scheduled",
+    "visits": [],
+    "category": "Lodówka",
+    "serviceType": "",
+    "scheduledDate": "2025-10-05T06:12:06.598Z",
+    "availability": "Nie określono",
+    "devices": [
+      {
+        "name": "Lodówka",
+        "brand": "Beko",
+        "model": "",
+        "serialNumber": "",
+        "description": "Nie świeci oświetlenie",
+        "hasBuiltIn": false,
+        "builtInParams": {
+          "demontaz": false,
+          "montaz": false,
+          "trudna": false,
+          "wolnostojacy": false,
+          "ograniczony": false,
+          "front": false,
+          "czas": false
+        },
+        "builtInParamsNotes": {}
+      }
+    ],
+    "builtInParams": {
+      "demontaz": false,
+      "montaz": false,
+      "trudna": false,
+      "wolnostojacy": false,
+      "ograniczony": false,
+      "front": false,
+      "czas": false
+    },
+    "deviceDetails": {
+      "deviceType": "lodówka",
+      "hasBuiltIn": true,
+      "hasDemontaz": true,
+      "hasMontaz": true,
+      "hasTrudnaZabudowa": false,
+      "manualAdditionalTime": 0
+    },
+    "dates": [],
+    "hours": null,
+    "end": null,
+    "id": 1759644726624,
+    "orderNumber": "ORDS252780008",
+    "source": "system-auto",
+    "sourceDetails": null,
+    "createdBy": "system",
+    "createdByName": "System",
+    "userId": null,
+    "isUserCreated": false,
+    "createdFromIP": null,
+    "dateAdded": "2025-10-05T06:12:06.624Z",
+    "createdAt": "2025-10-05T06:12:06.624Z",
+    "updatedAt": "2025-10-05T06:12:06.624Z",
+    "updatedBy": null
+  },
+  {
+    "clientId": "CLIS252780009",
+    "clientName": "Bruno Bielaszka",
+    "clientPhone": "696969696969",
+    "email": "Bielaszkam2@gmail.com",
+    "address": "Gliniana 17/69, 30-732 Kraków, 30-732 Kraków",
+    "city": "Kraków",
+    "street": "Gliniana 17/69, 30-732 Kraków",
+    "postalCode": "30-732",
+    "phones": [],
+    "addresses": [],
+    "clientLocation": {
+      "address": "Gliniana 17/69, 30-732 Kraków, 30-732 Kraków,  Polska",
+      "coordinates": {
+        "lat": 50.06314242177787,
+        "lng": 19.944246781231225
+      },
+      "accuracy": "APPROXIMATE",
+      "confidence": 0.7
+    },
+    "latitude": 50.06314242177787,
+    "longitude": 19.944246781231225,
+    "deviceType": "Lodówka",
+    "brand": "Beko",
+    "model": "Nie określono",
+    "serialNumber": "",
+    "description": "Nie świeci oświetlenie",
+    "priority": "medium",
+    "status": "scheduled",
+    "visits": [],
+    "category": "Lodówka",
+    "serviceType": "",
+    "scheduledDate": "2025-10-05T06:12:56.879Z",
+    "availability": "Nie określono",
+    "devices": [
+      {
+        "name": "Lodówka",
+        "brand": "Beko",
+        "model": "",
+        "serialNumber": "",
+        "description": "Nie świeci oświetlenie",
+        "hasBuiltIn": false,
+        "builtInParams": {
+          "demontaz": false,
+          "montaz": false,
+          "trudna": false,
+          "wolnostojacy": false,
+          "ograniczony": false,
+          "front": false,
+          "czas": false
+        },
+        "builtInParamsNotes": {}
+      }
+    ],
+    "builtInParams": {
+      "demontaz": false,
+      "montaz": false,
+      "trudna": false,
+      "wolnostojacy": false,
+      "ograniczony": false,
+      "front": false,
+      "czas": false
+    },
+    "deviceDetails": {
+      "deviceType": "lodówka",
+      "hasBuiltIn": true,
+      "hasDemontaz": true,
+      "hasMontaz": true,
+      "hasTrudnaZabudowa": false,
+      "manualAdditionalTime": 0
+    },
+    "dates": [],
+    "hours": null,
+    "end": null,
+    "id": 1759644776902,
+    "orderNumber": "ORDS252780009",
+    "source": "system-auto",
+    "sourceDetails": null,
+    "createdBy": "system",
+    "createdByName": "System",
+    "userId": null,
+    "isUserCreated": false,
+    "createdFromIP": null,
+    "dateAdded": "2025-10-05T06:12:56.902Z",
+    "createdAt": "2025-10-05T06:12:56.902Z",
+    "updatedAt": "2025-10-05T06:12:56.902Z",
+    "updatedBy": null
+  },
+  {
+    "id": 1759644788055,
+    "status": "pending",
+    "updatedAt": "2025-10-05T09:08:54.997Z"
+  },
+  {
+    "clientId": "CLIS252780011",
+    "clientName": "Bruno Bielaszka",
+    "clientPhone": "696969696969",
+    "email": "Bielaszkam2@gmail.com",
+    "address": "Gliniana 17/69, 30-732 Kraków, 30-732 Kraków",
+    "city": "Kraków",
+    "street": "Gliniana 17/69, 30-732 Kraków",
+    "postalCode": "30-732",
+    "phones": [],
+    "addresses": [],
+    "clientLocation": {
+      "address": "Gliniana 17/69, 30-732 Kraków, 30-732 Kraków,  Polska",
+      "coordinates": {
+        "lat": 50.06843599148388,
+        "lng": 19.9420432017694
+      },
+      "accuracy": "APPROXIMATE",
+      "confidence": 0.7
+    },
+    "latitude": 50.06843599148388,
+    "longitude": 19.9420432017694,
+    "deviceType": "Lodówka",
+    "brand": "Beko",
+    "model": "Nie określono",
+    "serialNumber": "",
+    "description": "Nie świeci oświetlenie",
+    "priority": "medium",
+    "status": "scheduled",
+    "visits": [],
+    "category": "Lodówka",
+    "serviceType": "",
+    "scheduledDate": "2025-10-05T06:13:13.193Z",
+    "availability": "Nie określono",
+    "devices": [
+      {
+        "name": "Lodówka",
+        "brand": "Beko",
+        "model": "",
+        "serialNumber": "",
+        "description": "Nie świeci oświetlenie",
+        "hasBuiltIn": false,
+        "builtInParams": {
+          "demontaz": false,
+          "montaz": false,
+          "trudna": false,
+          "wolnostojacy": false,
+          "ograniczony": false,
+          "front": false,
+          "czas": false
+        },
+        "builtInParamsNotes": {}
+      }
+    ],
+    "builtInParams": {
+      "demontaz": false,
+      "montaz": false,
+      "trudna": false,
+      "wolnostojacy": false,
+      "ograniczony": false,
+      "front": false,
+      "czas": false
+    },
+    "deviceDetails": {
+      "deviceType": "lodówka",
+      "hasBuiltIn": true,
+      "hasDemontaz": true,
+      "hasMontaz": true,
+      "hasTrudnaZabudowa": false,
+      "manualAdditionalTime": 0
+    },
+    "dates": [],
+    "hours": null,
+    "end": null,
+    "id": 1759644793219,
+    "orderNumber": "ORDS252780011",
+    "source": "system-auto",
+    "sourceDetails": null,
+    "createdBy": "system",
+    "createdByName": "System",
+    "userId": null,
+    "isUserCreated": false,
+    "createdFromIP": null,
+    "dateAdded": "2025-10-05T06:13:13.219Z",
+    "createdAt": "2025-10-05T06:13:13.219Z",
+    "updatedAt": "2025-10-05T06:13:13.219Z",
+    "updatedBy": null
+  },
+  {
+    "clientId": "CLIS252780012",
+    "clientName": "Bruno Bielaszka",
+    "clientPhone": "696969696969",
+    "email": "Bielaszkam2@gmail.com",
+    "address": "Gliniana 17/69, 30-732 Kraków, 30-732 Kraków",
+    "city": "Kraków",
+    "street": "Gliniana 17/69, 30-732 Kraków",
+    "postalCode": "30-732",
+    "phones": [],
+    "addresses": [],
+    "clientLocation": {
+      "address": "Gliniana 17/69, 30-732 Kraków, 30-732 Kraków,  Polska",
+      "coordinates": {
+        "lat": 50.06059095114332,
+        "lng": 19.948664383885014
+      },
+      "accuracy": "APPROXIMATE",
+      "confidence": 0.7
+    },
+    "latitude": 50.06059095114332,
+    "longitude": 19.948664383885014,
+    "deviceType": "Lodówka",
+    "brand": "Beko",
+    "model": "Nie określono",
+    "serialNumber": "00175708335521",
+    "description": "Nie świeci oświetlenie",
+    "priority": "medium",
+    "status": "scheduled",
+    "visits": [
+      {
+        "visitId": "VIS25280001",
+        "visitNumber": 1,
+        "type": "diagnosis",
+        "status": "scheduled",
+        "scheduledDate": "2025-10-07",
+        "scheduledTime": "09:00",
+        "date": "2025-10-07",
+        "time": "09:00",
+        "technicianId": "EMP25189001",
+        "technicianName": "Jan Kowalski",
+        "notes": "",
+        "createdAt": "2025-10-05T06:15:39.099Z",
+        "createdBy": "admin"
+      },
+      {
+        "visitId": "VIS25279002",
+        "visitNumber": 2,
+        "type": "diagnosis",
+        "status": "scheduled",
+        "scheduledDate": "2025-10-06",
+        "scheduledTime": "09:00",
+        "date": "2025-10-06",
+        "time": "09:00",
+        "technicianId": "EMPA252780001",
+        "technicianName": "Mario Średziński",
+        "notes": "",
+        "createdAt": "2025-10-05T12:34:40.645Z",
+        "createdBy": "admin"
+      },
+      {
+        "visitId": "VIS25279003",
+        "visitNumber": 3,
+        "type": "diagnosis",
+        "status": "scheduled",
+        "scheduledDate": "2025-10-06",
+        "scheduledTime": "09:00",
+        "date": "2025-10-06",
+        "time": "09:00",
+        "technicianId": "EMPA252780002",
+        "technicianName": "Mariusz Bielaszka",
+        "notes": "",
+        "createdAt": "2025-10-05T12:34:58.945Z",
+        "createdBy": "admin",
+        "models": [
+          {
+            "id": 1759696084857,
+            "brand": "Amica",
+            "model": "6111IE3.475EHTakDp:Xx",
+            "name": "Amica 6111IE3.475EHTakDp:Xx",
+            "type": "Płyta indukcyjna",
+            "serialNumber": "00175708335521",
+            "notes": "Rozpoznane ze zdjęcia tabliczki. ELECTRIC COOKER / KUCHNIA ELEKTRYCZNA\nMODEL: 6111IED3.475HTakDp(Xx)\nTYPE / TYP: 6111IE3.475EHTakDp:Xx\n230/400V~ 50Hz\n11,0kW\nInduction hob / Płyta indukcyjna\n\nCE\n\nProduct code / Kod wyrobu: 57083\nSerial No. / Nr seryjny 00175708335521",
+            "dateAdded": "2025-10-05T20:28:04.857Z",
+            "source": "scanner",
+            "parts": []
+          }
+        ],
+        "deviceIndex": 0,
+        "updatedAt": "2025-10-05T20:28:07.930Z",
+        "lastUpdatedBy": "EMPA252780002",
+        "deviceModels": [
+          {
+            "deviceIndex": 0,
+            "models": [
+              {
+                "id": 1759696084857,
+                "brand": "Amica",
+                "model": "6111IE3.475EHTakDp:Xx",
+                "name": "Amica 6111IE3.475EHTakDp:Xx",
+                "type": "Płyta indukcyjna",
+                "serialNumber": "00175708335521",
+                "notes": "Rozpoznane ze zdjęcia tabliczki. ELECTRIC COOKER / KUCHNIA ELEKTRYCZNA\nMODEL: 6111IED3.475HTakDp(Xx)\nTYPE / TYP: 6111IE3.475EHTakDp:Xx\n230/400V~ 50Hz\n11,0kW\nInduction hob / Płyta indukcyjna\n\nCE\n\nProduct code / Kod wyrobu: 57083\nSerial No. / Nr seryjny 00175708335521",
+                "dateAdded": "2025-10-05T20:28:04.857Z",
+                "source": "scanner",
+                "parts": []
+              }
+            ]
+          }
+        ],
+        "duringPhotos": [
+          {
+            "id": "PHOTO-1759696013812-8amafve25",
+            "type": "during",
+            "url": "/uploads/visits/visit-1759696013806-zlimg6kh7.png",
+            "filename": "visit-1759696013806-zlimg6kh7.png",
+            "originalName": "Zrzut ekranu 2025-09-26 223535.png",
+            "mimeType": "image/png",
+            "size": 79086,
+            "caption": "",
+            "description": "",
+            "tags": [],
+            "location": null,
+            "uploadedBy": "EMPA252780002",
+            "uploadedAt": "2025-10-05T20:26:53.812Z",
+            "relatedTo": null,
+            "isPrivate": false
+          }
+        ],
+        "allPhotos": [
+          {
+            "id": "PHOTO-1759696013812-8amafve25",
+            "type": "during",
+            "url": "/uploads/visits/visit-1759696013806-zlimg6kh7.png",
+            "filename": "visit-1759696013806-zlimg6kh7.png",
+            "originalName": "Zrzut ekranu 2025-09-26 223535.png",
+            "mimeType": "image/png",
+            "size": 79086,
+            "caption": "",
+            "description": "",
+            "tags": [],
+            "location": null,
+            "uploadedBy": "EMPA252780002",
+            "uploadedAt": "2025-10-05T20:26:53.812Z",
+            "relatedTo": null,
+            "isPrivate": false
+          }
+        ],
+        "photoCount": 1
+      },
+      {
+        "visitId": "VIS25279004",
+        "visitNumber": 4,
+        "type": "diagnosis",
+        "status": "scheduled",
+        "scheduledDate": "2025-10-06",
+        "scheduledTime": "09:00",
+        "date": "2025-10-06",
+        "time": "09:00",
+        "technicianId": "EMPA252780002",
+        "technicianName": "Mariusz Bielaszka",
+        "notes": "",
+        "createdAt": "2025-10-05T19:58:56.432Z",
+        "createdBy": "admin"
+      }
+    ],
+    "category": "Lodówka",
+    "serviceType": "",
+    "scheduledDate": "2025-10-05T06:13:16.860Z",
+    "availability": "Nie określono",
+    "devices": [
+      {
+        "name": "Lodówka",
+        "brand": "Beko",
+        "model": "6111IE3.475EHTakDp",
+        "serialNumber": "00175708335521",
+        "description": "Nie świeci oświetlenie",
+        "hasBuiltIn": false,
+        "builtInParams": {
+          "demontaz": false,
+          "montaz": false,
+          "trudna": false,
+          "wolnostojacy": false,
+          "ograniczony": false,
+          "front": false,
+          "czas": false
+        },
+        "builtInParamsNotes": {},
+        "deviceType": "Płyta indukcyjna"
+      }
+    ],
+    "builtInParams": {
+      "demontaz": false,
+      "montaz": false,
+      "trudna": false,
+      "wolnostojacy": false,
+      "ograniczony": false,
+      "front": false,
+      "czas": false
+    },
+    "deviceDetails": {
+      "deviceType": "lodówka",
+      "hasBuiltIn": true,
+      "hasDemontaz": true,
+      "hasMontaz": true,
+      "hasTrudnaZabudowa": false,
+      "manualAdditionalTime": 0
+    },
+    "dates": [],
+    "hours": null,
+    "end": null,
+    "id": 1759644796880,
+    "orderNumber": "ORDS252780012",
+    "source": "system-auto",
+    "sourceDetails": null,
+    "createdBy": "system",
+    "createdByName": "System",
+    "userId": null,
+    "isUserCreated": false,
+    "createdFromIP": null,
+    "dateAdded": "2025-10-05T06:13:16.880Z",
+    "createdAt": "2025-10-05T06:13:16.880Z",
+    "updatedAt": "2025-10-05T20:28:07.931Z",
+    "updatedBy": null
+  },
+  {
+    "clientId": "CLIS252780013",
+    "clientName": "Konkonting",
+    "clientPhone": "123123123",
+    "email": "bielaszkam2@gmail.com",
+    "address": "asf, 28-133 Słupia",
+    "city": "Słupia",
+    "street": "asf",
+    "postalCode": "28-133",
+    "phones": [],
+    "addresses": [],
+    "clientLocation": {
+      "address": "asf, 28-133 Słupia (przybliżona lokalizacja, Kraków)",
+      "coordinates": {
+        "lat": 50.0647,
+        "lng": 19.945
+      },
+      "accuracy": "APPROXIMATE",
+      "confidence": 0.3
+    },
+    "latitude": 50.0647,
+    "longitude": 19.945,
+    "deviceType": "Pralka",
+    "brand": "Amica",
+    "model": "Nie określono",
+    "serialNumber": "",
+    "description": "Nie włącza się",
+    "priority": "medium",
+    "status": "pending",
+    "visits": [],
+    "category": "Pralka",
+    "serviceType": "",
+    "scheduledDate": "2025-10-05T09:13:58.064Z",
+    "availability": "Nie określono",
+    "devices": [
+      {
+        "name": "Pralka",
+        "brand": "Amica",
+        "model": "",
+        "serialNumber": "",
+        "description": "Nie włącza się",
+        "hasBuiltIn": false,
+        "builtInParams": {
+          "demontaz": false,
+          "montaz": false,
+          "trudna": false,
+          "wolnostojacy": false,
+          "ograniczony": false,
+          "front": false,
+          "czas": false
+        },
+        "builtInParamsNotes": {}
+      }
+    ],
+    "builtInParams": {
+      "demontaz": false,
+      "montaz": false,
+      "trudna": false,
+      "wolnostojacy": false,
+      "ograniczony": false,
+      "front": false,
+      "czas": false
+    },
+    "deviceDetails": {
+      "deviceType": "pralka",
+      "hasBuiltIn": true,
+      "hasDemontaz": true,
+      "hasMontaz": true,
+      "hasTrudnaZabudowa": false,
+      "manualAdditionalTime": 0
+    },
+    "dates": [],
+    "hours": null,
+    "end": null,
+    "id": 1759655638086,
+    "orderNumber": "ORDS252780013",
+    "source": "system-auto",
+    "sourceDetails": null,
+    "createdBy": "system",
+    "createdByName": "System",
+    "userId": null,
+    "isUserCreated": false,
+    "createdFromIP": null,
+    "dateAdded": "2025-10-05T09:13:58.086Z",
+    "createdAt": "2025-10-05T09:13:58.086Z",
+    "updatedAt": "2025-10-05T09:13:58.086Z",
+    "updatedBy": null
+  },
+  {
+    "clientId": "CLIS252780015",
+    "clientName": "Technik B",
+    "clientPhone": "572772540",
+    "email": "",
+    "address": "Słupia 114, 28-133 Pacanow",
+    "city": "Pacanow",
+    "street": "Słupia 114",
+    "postalCode": "28-133",
+    "phones": [],
+    "addresses": [],
+    "clientLocation": {
+      "address": "Słupia 114, 28-133 Pacanow (przybliżona lokalizacja, Kraków)",
+      "coordinates": {
+        "lat": 50.0647,
+        "lng": 19.945
+      },
+      "accuracy": "APPROXIMATE",
+      "confidence": 0.3
+    },
+    "latitude": 50.0647,
+    "longitude": 19.945,
+    "deviceType": "Pralka",
+    "brand": "Amica",
+    "model": "Nie określono",
+    "serialNumber": "",
+    "description": "Nie włącza się",
+    "priority": "medium",
+    "status": "pending",
+    "visits": [],
+    "category": "Pralka",
+    "serviceType": "",
+    "scheduledDate": "2025-10-05T11:19:08.828Z",
+    "availability": "Nie określono",
+    "devices": [
+      {
+        "name": "Pralka",
+        "brand": "Amica",
+        "model": "",
+        "serialNumber": "",
+        "description": "Nie włącza się",
+        "hasBuiltIn": false,
+        "builtInParams": {
+          "demontaz": false,
+          "montaz": false,
+          "trudna": false,
+          "wolnostojacy": false,
+          "ograniczony": false,
+          "front": false,
+          "czas": false
+        },
+        "builtInParamsNotes": {}
+      }
+    ],
+    "builtInParams": {
+      "demontaz": false,
+      "montaz": false,
+      "trudna": false,
+      "wolnostojacy": false,
+      "ograniczony": false,
+      "front": false,
+      "czas": false
+    },
+    "deviceDetails": {
+      "deviceType": "pralka",
+      "hasBuiltIn": true,
+      "hasDemontaz": true,
+      "hasMontaz": true,
+      "hasTrudnaZabudowa": false,
+      "manualAdditionalTime": 0
+    },
+    "dates": [],
+    "hours": null,
+    "end": null,
+    "id": 1759663148860,
+    "orderNumber": "ORDS252780014",
+    "source": "system-auto",
+    "sourceDetails": null,
+    "createdBy": "system",
+    "createdByName": "System",
+    "userId": null,
+    "isUserCreated": false,
+    "createdFromIP": null,
+    "dateAdded": "2025-10-05T11:19:08.860Z",
+    "createdAt": "2025-10-05T11:19:08.860Z",
+    "updatedAt": "2025-10-05T11:19:08.860Z",
+    "updatedBy": null
+  },
+  {
+    "clientId": "CLIS252780016",
+    "clientName": "Krzysztof Bielaszka",
+    "clientPhone": "121212",
+    "email": "Bielaszkam2@gmail.com",
+    "address": "Słupia 114, 28-133 Pacanow",
+    "city": "Pacanow",
+    "street": "Słupia 114",
+    "postalCode": "28-133",
+    "phones": [],
+    "addresses": [],
+    "clientLocation": {
+      "address": "Słupia 114, 28-133 Pacanow (przybliżona lokalizacja, Kraków)",
+      "coordinates": {
+        "lat": 50.0647,
+        "lng": 19.945
+      },
+      "accuracy": "APPROXIMATE",
+      "confidence": 0.3
+    },
+    "latitude": 50.0647,
+    "longitude": 19.945,
+    "deviceType": "Zmywarka",
+    "brand": "Amica",
+    "model": "Nie określono",
+    "serialNumber": "",
+    "description": "Nie pobiera wody",
+    "priority": "medium",
+    "status": "pending",
+    "visits": [],
+    "category": "Zmywarka",
+    "serviceType": "",
+    "scheduledDate": "2025-10-05T13:17:58.537Z",
+    "availability": "Nie określono",
+    "devices": [
+      {
+        "name": "Zmywarka",
+        "brand": "Amica",
+        "model": "",
+        "serialNumber": "",
+        "description": "Nie pobiera wody",
+        "hasBuiltIn": false,
+        "builtInParams": {
+          "demontaz": false,
+          "montaz": false,
+          "trudna": false,
+          "wolnostojacy": false,
+          "ograniczony": false,
+          "front": false,
+          "czas": false
+        },
+        "builtInParamsNotes": {}
+      }
+    ],
+    "builtInParams": {
+      "demontaz": false,
+      "montaz": false,
+      "trudna": false,
+      "wolnostojacy": false,
+      "ograniczony": false,
+      "front": false,
+      "czas": false
+    },
+    "deviceDetails": {
+      "deviceType": "zmywarka",
+      "hasBuiltIn": false,
+      "hasDemontaz": false,
+      "hasMontaz": false,
+      "hasTrudnaZabudowa": false,
+      "manualAdditionalTime": 0
+    },
+    "dates": [],
+    "hours": null,
+    "end": null,
+    "id": 1759670278555,
+    "orderNumber": "ORDS252780015",
+    "source": "system-auto",
+    "sourceDetails": null,
+    "createdBy": "system",
+    "createdByName": "System",
+    "userId": null,
+    "isUserCreated": false,
+    "createdFromIP": null,
+    "dateAdded": "2025-10-05T13:17:58.555Z",
+    "createdAt": "2025-10-05T13:17:58.555Z",
+    "updatedAt": "2025-10-05T13:17:58.555Z",
+    "updatedBy": null
+  },
+  {
+    "clientId": "CLIS252790001",
+    "clientName": "MAriusz Bielaszka",
+    "clientPhone": "987987987",
+    "email": "bielaszkam2@gmail.com",
+    "address": "zsc, 28-133 Słupia",
+    "city": "Słupia",
+    "street": "zsc",
+    "postalCode": "28-133",
+    "phones": [],
+    "addresses": [],
+    "clientLocation": {
+      "address": "zsc, 28-133 Słupia (przybliżona lokalizacja, Kraków)",
+      "coordinates": {
+        "lat": 50.0647,
+        "lng": 19.945
+      },
+      "accuracy": "APPROXIMATE",
+      "confidence": 0.3
+    },
+    "latitude": 50.0647,
+    "longitude": 19.945,
+    "deviceType": "Zmywarka",
+    "brand": "Aeg",
+    "model": "Nie określono",
+    "serialNumber": "",
+    "description": "Nie włącza się",
+    "priority": "medium",
+    "status": "pending",
+    "visits": [],
+    "category": "Zmywarka",
+    "serviceType": "",
+    "scheduledDate": "2025-10-06T05:49:26.393Z",
+    "availability": "Nie określono",
+    "devices": [
+      {
+        "name": "Zmywarka",
+        "brand": "Aeg",
+        "model": "",
+        "serialNumber": "",
+        "description": "Nie włącza się",
+        "hasBuiltIn": false,
+        "builtInParams": {
+          "demontaz": false,
+          "montaz": false,
+          "trudna": false,
+          "wolnostojacy": false,
+          "ograniczony": false,
+          "front": false,
+          "czas": false
+        },
+        "builtInParamsNotes": {}
+      }
+    ],
+    "builtInParams": {
+      "demontaz": false,
+      "montaz": false,
+      "trudna": false,
+      "wolnostojacy": false,
+      "ograniczony": false,
+      "front": false,
+      "czas": false
+    },
+    "deviceDetails": {
+      "deviceType": "zmywarka",
+      "hasBuiltIn": false,
+      "hasDemontaz": false,
+      "hasMontaz": false,
+      "hasTrudnaZabudowa": false,
+      "manualAdditionalTime": 0
+    },
+    "dates": [],
+    "hours": null,
+    "end": null,
+    "id": 1759729766413,
+    "orderNumber": "ORDS252790001",
+    "source": "system-auto",
+    "sourceDetails": null,
+    "createdBy": "system",
+    "createdByName": "System",
+    "userId": null,
+    "isUserCreated": false,
+    "createdFromIP": null,
+    "dateAdded": "2025-10-06T05:49:26.413Z",
+    "createdAt": "2025-10-06T05:49:26.413Z",
+    "updatedAt": "2025-10-06T05:49:26.413Z",
+    "updatedBy": null
+  },
+  {
+    "clientId": "CLIS252790002",
+    "clientName": "włądysłąwa",
+    "clientPhone": "510935221",
+    "email": "",
+    "address": "Piotra Skargi 3/22, 39-300 Mielec",
+    "city": "Mielec",
+    "street": "Piotra Skargi 3/22",
+    "postalCode": "",
+    "phones": [
+      {
+        "number": "510935221",
+        "label": "Główny",
+        "isPrimary": true
+      }
+    ],
+    "addresses": [
+      {
+        "street": "Piotra Skargi 3/22",
+        "city": "Mielec",
+        "postalCode": "39-300",
+        "label": "Główny",
+        "isPrimary": true
+      }
+    ],
+    "clientLocation": null,
+    "latitude": null,
+    "longitude": null,
+    "deviceType": "Lodówki",
+    "brand": "Nie określono",
+    "model": "Indesit",
+    "serialNumber": "",
+    "description": "nie chłodzi góra",
+    "priority": "medium",
+    "status": "pending",
+    "visits": [],
+    "category": "Lodówki",
+    "serviceType": "Indesit",
+    "scheduledDate": "2025-10-06",
+    "availability": "Nie określono",
+    "devices": [
+      {
+        "name": "Lodówki",
+        "brand": "Indesit",
+        "model": "",
+        "serialNumber": "",
+        "description": "nie chłodzi góra",
+        "hasBuiltIn": false,
+        "builtInParams": {
+          "demontaz": false,
+          "montaz": false,
+          "trudna": false,
+          "wolnostojacy": false,
+          "ograniczony": false,
+          "front": false,
+          "czas": false
+        },
+        "builtInParamsNotes": {}
+      }
+    ],
+    "builtInParams": {
+      "demontaz": false,
+      "montaz": false,
+      "trudna": false,
+      "wolnostojacy": false,
+      "ograniczony": false,
+      "front": false,
+      "czas": false
+    },
+    "deviceDetails": {
+      "deviceType": "lodówki",
+      "hasBuiltIn": false,
+      "hasDemontaz": false,
+      "hasMontaz": false,
+      "hasTrudnaZabudowa": false,
+      "manualAdditionalTime": 0
+    },
+    "dates": [
+      "2025-10-06"
+    ],
+    "hours": null,
+    "end": null,
+    "id": 1759730716915,
+    "orderNumber": "ORDS252790002",
+    "source": "system-auto",
+    "sourceDetails": null,
+    "createdBy": "system",
+    "createdByName": "System",
+    "userId": null,
+    "isUserCreated": false,
+    "createdFromIP": null,
+    "dateAdded": "2025-10-06T06:05:16.915Z",
+    "createdAt": "2025-10-06T06:05:16.915Z",
+    "updatedAt": "2025-10-06T06:05:16.915Z",
+    "updatedBy": null
+  }
+]

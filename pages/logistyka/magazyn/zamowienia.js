@@ -7,6 +7,25 @@ export default function LogistykaZamowienia() {
   const [filter, setFilter] = useState('pending'); // pending, urgent, all
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(null);
+  const [logisticianId, setLogisticianId] = useState(null);
+
+  useEffect(() => {
+    // Pobierz ID zalogowanego logistyka
+    const employeeData = localStorage.getItem('employeeSession') || localStorage.getItem('logistykEmployee');
+    if (employeeData) {
+      try {
+        const parsed = JSON.parse(employeeData);
+        setLogisticianId(parsed.id);
+      } catch (e) {
+        console.error('Error parsing employee data:', e);
+      }
+    }
+    
+    // Fallback: jeśli nie ma sesji, użyj domyślnego ID logistyka
+    if (!employeeData) {
+      setLogisticianId('EMPLOGISTYK001');
+    }
+  }, []);
 
   useEffect(() => {
     loadRequests();
@@ -30,26 +49,41 @@ export default function LogistykaZamowienia() {
   };
 
   const handleApprove = async (requestId) => {
+    if (!logisticianId) {
+      alert('Błąd: Brak danych logistyka. Zaloguj się ponownie.');
+      return;
+    }
+    
+    console.log('🔍 DEBUG: logisticianId =', logisticianId);
+    console.log('🔍 DEBUG: requestId =', requestId);
+    
     if (!confirm('Czy na pewno zatwierdzić to zamówienie?')) return;
 
     setActionLoading(requestId);
+    
+    const requestBody = {
+      approvedBy: logisticianId,
+      finalDelivery: 'paczkomat',
+      paczkomatId: 'KRA01M',
+      logisticianNotes: 'Zatwierdzone'
+    };
+    
+    console.log('🔍 DEBUG: Wysyłam do API:', requestBody);
+    
     try {
       const res = await fetch(`/api/part-requests/approve?requestId=${requestId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          approvedBy: 'EMPLOGISTYK001', // TODO: Get from auth
-          finalDelivery: 'paczkomat',
-          paczkomatId: 'KRA01M',
-          logisticianNotes: 'Zatwierdzone'
-        })
+        body: JSON.stringify(requestBody)
       });
 
       if (res.ok) {
         alert('✅ Zamówienie zatwierdzone!');
         loadRequests();
       } else {
-        alert('❌ Błąd podczas zatwierdzania');
+        const errorData = await res.json();
+        console.error('API Error:', errorData);
+        alert('❌ Błąd: ' + (errorData.error || 'Nieznany błąd'));
       }
     } catch (error) {
       console.error('Error approving:', error);
@@ -60,6 +94,11 @@ export default function LogistykaZamowienia() {
   };
 
   const handleReject = async (requestId) => {
+    if (!logisticianId) {
+      alert('Błąd: Brak danych logistyka. Zaloguj się ponownie.');
+      return;
+    }
+    
     const reason = prompt('Podaj powód odrzucenia:');
     if (!reason) return;
 
@@ -69,7 +108,7 @@ export default function LogistykaZamowienia() {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          rejectedBy: 'EMPLOGISTYK001', // TODO: Get from auth
+          rejectedBy: logisticianId,
           rejectionReason: reason
         })
       });

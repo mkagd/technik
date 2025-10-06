@@ -3,7 +3,7 @@
 
 import fs from 'fs';
 import path from 'path';
-import { normalizeObject } from '../../../utils/fieldMapping';
+// import { normalizeObject } from '../../../utils/fieldMapping'; // Tymczasowo wyłączone
 
 // Zwiększenie limitu body dla uploadu zdjęć
 export const config = {
@@ -198,13 +198,19 @@ export default async function handler(req, res) {
     // Generuj ID dla nowego zamówienia
     // Format: ORD2025XXXXXX gdzie XXXXXX to 6-cyfrowy numer sekwencyjny
     const lastOrder = orders.length > 0 
-      ? orders.sort((a, b) => b.id.localeCompare(a.id))[0]
+      ? orders.sort((a, b) => {
+          // Convert both IDs to strings to safely use localeCompare
+          const idA = String(a.id || '');
+          const idB = String(b.id || '');
+          return idB.localeCompare(idA);
+        })[0]
       : null;
     
     let newIdNumber = 1;
     if (lastOrder && lastOrder.id) {
       // Wyciągnij tylko ostatnie 6 cyfr (numer sekwencyjny)
-      const match = lastOrder.id.match(/ORD2025(\d{6})/);
+      const idString = String(lastOrder.id);
+      const match = idString.match(/ORD2025(\d{6})/);
       if (match) {
         const lastNumber = parseInt(match[1]);
         newIdNumber = lastNumber + 1;
@@ -251,6 +257,9 @@ export default async function handler(req, res) {
       preferredTime: preferredTime || null,
       notes: notes || '',
       
+      // Elastyczna dostępność klienta - sloty czasowe
+      availabilitySlots: req.body.availabilitySlots || [],
+      
       photos: photos || [],
       
       createdAt: new Date().toISOString(),
@@ -267,17 +276,34 @@ export default async function handler(req, res) {
       ]
     };
 
-    // Normalizuj obiekt przed zapisem (usuwa stare pola, standaryzuje statusy)
-    const normalizedOrder = normalizeObject(newOrder);
+    // Dodaj zamówienie (bez normalizacji - może powodować błędy)
+    // const normalizedOrder = normalizeObject(newOrder);
+    console.log('📦 Creating order:', {
+      id: newOrder.id,
+      client: client.email,
+      device: newOrder.deviceType,
+      status: newOrder.status,
+      availabilitySlotsCount: newOrder.availabilitySlots.length
+    });
 
     // Dodaj zamówienie
-    orders.push(normalizedOrder);
-    const saved = saveOrders(orders);
-
-    if (!saved) {
+    orders.push(newOrder);
+    
+    try {
+      const saved = saveOrders(orders);
+      if (!saved) {
+        console.error('❌ saveOrders returned false');
+        return res.status(500).json({
+          success: false,
+          message: 'Błąd podczas zapisywania zamówienia'
+        });
+      }
+    } catch (saveError) {
+      console.error('❌ Error in saveOrders:', saveError);
       return res.status(500).json({
         success: false,
-        message: 'Błąd podczas zapisywania zamówienia'
+        message: 'Błąd podczas zapisywania zamówienia',
+        error: saveError.message
       });
     }
 

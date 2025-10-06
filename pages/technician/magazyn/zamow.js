@@ -282,32 +282,49 @@ export default function TechnicianZamow() {
       let uploadedPhotos = [];
       if (photos.length > 0) {
         setUploadingPhotos(true);
-        const formData = new FormData();
-        formData.append('requestId', requestId);
-        photos.forEach((photo) => {
-          formData.append('photo', photo);
-        });
-
-        const uploadRes = await fetch('/api/upload/part-photo', {
-          method: 'POST',
-          body: formData
-        });
-
-        if (uploadRes.ok) {
-          const uploadData = await uploadRes.json();
-          uploadedPhotos = uploadData.photos;
+        try {
+          console.log('📸 Uploading', photos.length, 'photos...');
+          const formData = new FormData();
+          formData.append('requestId', requestId);
           
-          // Update request with photo URLs
-          await fetch('/api/part-requests', {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              requestId,
-              attachedPhotos: uploadedPhotos
-            })
+          photos.forEach((photo, index) => {
+            console.log(`📎 Adding photo ${index + 1}:`, photo.name, photo.type, photo.size);
+            formData.append('photo', photo);
           });
+
+          console.log('🚀 Sending upload request...');
+          const uploadRes = await fetch('/api/upload/part-photo', {
+            method: 'POST',
+            body: formData
+          });
+
+          console.log('📥 Upload response status:', uploadRes.status);
+          
+          if (uploadRes.ok) {
+            const uploadData = await uploadRes.json();
+            uploadedPhotos = uploadData.photos;
+            console.log('✅ Upload successful:', uploadedPhotos);
+            
+            // Update request with photo URLs
+            await fetch('/api/part-requests', {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                requestId,
+                attachedPhotos: uploadedPhotos
+              })
+            });
+          } else {
+            const errorData = await uploadRes.json();
+            console.error('❌ Upload failed:', errorData);
+            alert('⚠️ Nie udało się przesłać zdjęć: ' + (errorData.error || errorData.details || 'Unknown error'));
+          }
+        } catch (uploadError) {
+          console.error('❌ Upload exception:', uploadError);
+          alert('⚠️ Błąd podczas przesyłania zdjęć: ' + uploadError.message);
+        } finally {
+          setUploadingPhotos(false);
         }
-        setUploadingPhotos(false);
       }
 
       // Pokaż potwierdzenie

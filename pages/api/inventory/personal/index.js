@@ -117,9 +117,11 @@ export default function handler(req, res) {
         ...part,
         partName: partDetails?.name || 'Nieznana część',
         partNumber: partDetails?.partNumber || '',
-        price: partDetails?.price || 0,
+        price: partDetails?.pricing?.retailPrice || partDetails?.price || 0,
+        unitPrice: partDetails?.pricing?.retailPrice || partDetails?.price || 0,
         category: partDetails?.category || '',
-        brand: partDetails?.brand || ''
+        brand: partDetails?.brand || '',
+        stock: partDetails?.availability?.inStock || 0
       };
     });
     

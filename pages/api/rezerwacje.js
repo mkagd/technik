@@ -67,9 +67,13 @@ export default async function handler(req, res) {
       availability: availability || 'Nie określono', // New availability field
       date: date || new Date().toISOString(), // Keep date for backward compatibility
       created_at: new Date().toISOString(),
+      status: 'pending', // ✅ Dodaj domyślny status
       // 🌍 WSPÓŁRZĘDNE GPS z geocodingu
       clientLocation: req.body.clientLocation || null,
       postalCode: req.body.postalCode || '',
+      // ✅ Dodaj userId i isAuthenticated
+      userId: req.body.userId || null,
+      isAuthenticated: req.body.isAuthenticated || false,
       // Przekaż wszystkie dodatkowe pola z formularza
       ...req.body
     };
@@ -83,40 +87,114 @@ export default async function handler(req, res) {
     let orderData = null;
 
     try {
-      // Konwertuj na format klient + zamówienie
-      const converted = await convertReservationToClientOrder({
-        ...newReservation,
-        clientName: name,
-        clientPhone: phone,
-        serviceType: device,
-        description: problem,
-        scheduledDate: date,
-        availability: availability, // Pass availability to conversion
-        // Przekaż tablice z multi-item danych
-        phones: req.body.phones || [],
-        addresses: req.body.addresses || [],
-        devices: req.body.devices || []
-      });
+      // ✅ NOWE: Sprawdź czy klient już istnieje (zapobieganie duplikatom)
+      const { isLoggedIn, userId, clientPhone } = req.body;
+      const clients = await readClients();
+      let existingClient = null;
 
-      clientData = converted.client;
-      orderData = converted.order;
+      console.log('🔍 Sprawdzanie istniejącego klienta...', { isLoggedIn, userId, clientPhone });
 
-      console.log('📦 Converted client data:', clientData);
-      console.log('📦 Converted order data:', orderData);
+      // Priorytet 1: Zalogowany użytkownik - szukaj po userId
+      if (isLoggedIn && userId) {
+        existingClient = clients.find(c => c.userId === userId);
+        if (existingClient) {
+          console.log(`✅ Znaleziono klienta po userId: ${existingClient.id} - ${existingClient.name}`);
+        }
+      }
 
-      // Dodaj klienta
-      newClient = await addClient(clientData);
+      // Priorytet 2: Nie znaleziono po userId - szukaj po numerze telefonu
+      if (!existingClient && clientPhone) {
+        const normalizedPhone = clientPhone.replace(/\s+/g, '').replace(/\+48/, '');
+        existingClient = clients.find(c => {
+          const clientMainPhone = (c.phone || '').replace(/\s+/g, '').replace(/\+48/, '');
+          const hasMatchingPhone = c.phones?.some(p => {
+            const phoneNum = (p.number || '').replace(/\s+/g, '').replace(/\+48/, '');
+            return phoneNum === normalizedPhone;
+          });
+          return clientMainPhone === normalizedPhone || hasMatchingPhone;
+        });
+        if (existingClient) {
+          console.log(`✅ Znaleziono klienta po numerze telefonu: ${existingClient.id} - ${existingClient.name}`);
+        }
+      }
+
+      // Jeśli klient istnieje - użyj jego danych
+      if (existingClient) {
+        newClient = existingClient;
+        console.log(`♻️ Używam istniejącego klienta - zapobieganie duplikatom`);
+      } else {
+        // Klient nie istnieje - utwórz nowego
+        console.log('➕ Klient nie istnieje - tworzenie nowego...');
+
+        // Konwertuj na format klient + zamówienie
+        const converted = await convertReservationToClientOrder({
+          ...newReservation,
+          clientName: name,
+          clientPhone: phone,
+          serviceType: device,
+          description: problem,
+          scheduledDate: date,
+          availability: availability, // Pass availability to conversion
+          // ✅ Przekaż userId do konwersji
+          userId: newReservation.userId,
+          isAuthenticated: newReservation.isAuthenticated,
+          // Przekaż tablice z multi-item danych
+          phones: req.body.phones || [],
+          addresses: req.body.addresses || [],
+          devices: req.body.devices || []
+        });
+
+        clientData = converted.client;
+        orderData = converted.order;
+
+        console.log('📦 Converted client data:', clientData);
+        console.log('📦 Converted order data:', orderData);
+
+        // Dodaj klienta
+        newClient = await addClient(clientData);
+      }
+
+      // Jeśli nie mamy orderData (bo użyliśmy istniejącego klienta), konwertuj teraz
+      if (!orderData) {
+        const converted = await convertReservationToClientOrder({
+          ...newReservation,
+          clientName: name,
+          clientPhone: phone,
+          serviceType: device,
+          description: problem,
+          scheduledDate: date,
+          availability: availability,
+          userId: newReservation.userId,
+          isAuthenticated: newReservation.isAuthenticated,
+          phones: req.body.phones || [],
+          addresses: req.body.addresses || [],
+          devices: req.body.devices || []
+        });
+        orderData = converted.order;
+      }
       if (newClient) {
         console.log(`✅ Client created: ${newClient.id} - ${newClient.name} (source: ${newClient.source})`);
         
         // Utwórz notyfikację o nowym kliencie
         await createNotification(NotificationTemplates.newClient(newClient.name));
 
-        // Dodaj zamówienie z ID klienta
-        newOrder = await addOrder({
+        // Przygotuj dane zamówienia z ID klienta
+        const orderWithClientId = {
           ...orderData,
           clientId: newClient.id
+        };
+        
+        console.log('📦 Adding order with data:', {
+          clientId: orderWithClientId.clientId,
+          deviceType: orderWithClientId.deviceType,
+          brand: orderWithClientId.brand,
+          model: orderWithClientId.model,
+          status: orderWithClientId.status,
+          devicesCount: orderWithClientId.devices?.length || 0
         });
+
+        // Dodaj zamówienie z ID klienta
+        newOrder = await addOrder(orderWithClientId);
 
         if (newOrder) {
           console.log(`✅ Order created: ${newOrder.orderNumber} (ID: ${newOrder.id}) for client ${newClient.id}`);
@@ -126,7 +204,12 @@ export default async function handler(req, res) {
             newOrder.orderNumber, 
             newOrder.deviceType || 'AGD'
           ));
+        } else {
+          console.error('❌ Order creation returned null/undefined - check addOrder function logs above');
+          console.error('❌ Order data that failed:', JSON.stringify(orderWithClientId, null, 2));
         }
+      } else {
+        console.error('❌ Client creation returned null/undefined');
       }
     } catch (clientOrderError) {
       console.error('❌ Error creating client/order:', clientOrderError);
@@ -541,8 +624,138 @@ export default async function handler(req, res) {
       if (reservationIndex !== -1) {
         // Znaleziono rezerwację - aktualizuj ją
         console.log('✅ Found reservation at index:', reservationIndex);
+        const reservation = reservations[reservationIndex];
         
-        const result = updateReservation(reservations[reservationIndex].id, {
+        // Sprawdź czy zmiana statusu na "contacted" - konwertuj na zlecenie
+        if (updateData.status === 'contacted' && reservation.status !== 'contacted') {
+          console.log('🔄 Status changed to "contacted" - converting to order');
+          
+          try {
+            // Przygotuj dane rezerwacji do konwersji
+            const reservationToConvert = {
+              ...reservation,
+              ...updateData
+            };
+            
+            // Konwertuj rezerwację na klienta i zamówienie
+            const converted = await convertReservationToClientOrder(reservationToConvert);
+            let clientData = converted.client;
+            let orderData = converted.order;
+            
+            // Sprawdź czy klient już istnieje (po telefonie lub emailu)
+            const clients = await readClients();
+            let existingClient = null;
+            
+            if (clientData.phone) {
+              existingClient = clients.find(c => c.phone === clientData.phone);
+            }
+            
+            if (!existingClient && clientData.email) {
+              existingClient = clients.find(c => c.email === clientData.email);
+            }
+            
+            let clientId;
+            let client;
+            
+            if (existingClient) {
+              console.log('📋 Client already exists, using existing ID:', existingClient.id);
+              clientId = existingClient.id;
+              client = existingClient;
+              
+              // Aktualizuj dane istniejącego klienta
+              const updatedClient = {
+                ...existingClient,
+                ...clientData,
+                id: existingClient.id, // Zachowaj oryginalny ID
+                updatedAt: new Date().toISOString()
+              };
+              await updateClient(updatedClient);
+            } else {
+              // Dodaj metadane o źródle
+              clientData.source = 'reservation_conversion';
+              clientData.createdBy = 'admin';
+              clientData.originalReservationId = reservation.id;
+              
+              // Utwórz nowego klienta
+              const newClient = await addClient(clientData);
+              clientId = newClient.id;
+              client = newClient;
+              console.log('✅ New client created from reservation:', clientId);
+            }
+            
+            // Sprawdź czy zamówienie dla tej rezerwacji już istnieje
+            const orders = await readOrders();
+            const existingOrder = orders.find(o => 
+              o.originalReservationId === reservation.id || 
+              o.reservationId === reservation.id
+            );
+            
+            if (existingOrder) {
+              console.log('📋 Order already exists for this reservation:', existingOrder.orderNumber);
+              
+              // ✅ FIX: Aktualizuj rezerwację z danymi istniejącego zamówienia
+              const result = updateReservation(reservation.id, {
+                ...updateData,
+                orderId: existingOrder.id,
+                orderNumber: existingOrder.orderNumber,
+                clientId: clientId,
+                convertedToOrder: true,
+                convertedAt: existingOrder.createdAt || new Date().toISOString(),
+                updatedAt: new Date().toISOString(),
+                updatedBy: 'admin'
+              });
+              
+              console.log('✅ Reservation linked to existing order');
+              return res.status(200).json({ 
+                message: 'Rezerwacja połączona z istniejącym zleceniem', 
+                data: result,
+                client: client,
+                order: existingOrder
+              });
+            } else {
+              // Połącz zamówienie z klientem
+              orderData.clientId = clientId;
+              orderData.source = 'reservation_conversion';
+              orderData.originalReservationId = reservation.id;
+              orderData.reservationId = reservation.id;
+              orderData.createdBy = 'admin';
+              orderData.createdFrom = 'reservation';
+              
+              // Utwórz zamówienie
+              const newOrder = await addOrder(orderData);
+              console.log('✅ Order created from reservation:', newOrder.orderNumber);
+              
+              // ✅ FIX: Aktualizuj rezerwację ze statusem i numerem zamówienia
+              const result = updateReservation(reservation.id, {
+                ...updateData,
+                orderId: newOrder.id,
+                orderNumber: newOrder.orderNumber,
+                clientId: clientId,
+                convertedToOrder: true,
+                convertedAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString(),
+                updatedBy: 'admin'
+              });
+              
+              console.log('✅ Reservation converted to order successfully');
+              console.log('📋 Order ID:', newOrder.id, 'Order Number:', newOrder.orderNumber);
+              console.log('📋 Updated reservation:', result);
+              
+              return res.status(200).json({ 
+                message: 'Rezerwacja przekonwertowana na zlecenie', 
+                data: result,
+                client: client,
+                order: newOrder
+              });
+            }
+          } catch (conversionError) {
+            console.error('❌ Error converting reservation to order:', conversionError);
+            // Kontynuuj z normalną aktualizacją jeśli konwersja się nie powiodła
+          }
+        }
+        
+        // Standardowa aktualizacja rezerwacji
+        const result = updateReservation(reservation.id, {
           ...updateData,
           updatedAt: new Date().toISOString(),
           updatedBy: 'admin'

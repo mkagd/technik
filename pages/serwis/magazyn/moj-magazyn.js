@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import DarkModeToggle from '../../../components/DarkModeToggle';
+import AllegroQuickSearch from '../../../components/AllegroQuickSearch';
 
 export default function SerwisantMojMagazyn() {
   const router = useRouter();
@@ -245,6 +246,15 @@ export default function SerwisantMojMagazyn() {
                           <span className="font-bold text-gray-900">{(part.unitPrice * part.quantity).toFixed(2)} zł</span>
                         </div>
                       )}
+                    </div>
+
+                    {/* Allegro Search Button */}
+                    <div className="mb-4 border-t pt-4">
+                      <AllegroQuickSearch 
+                        partName={part.partName || part.partId}
+                        partNumber={part.partNumber}
+                        compact={false}
+                      />
                     </div>
 
                     {/* Last Restocked */}

@@ -249,7 +249,7 @@ export default function AdminMagazyn() {
                         <div
                           key={request.requestId}
                           className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg hover:shadow-md transition-shadow cursor-pointer"
-                          onClick={() => router.push(`/admin/magazyn/zamowienia/${request.requestId}`)}
+                          onClick={() => router.push('/admin/magazyn/zamowienia')}
                         >
                           <div className="flex-1">
                             <div className="flex items-center space-x-3">
@@ -264,7 +264,7 @@ export default function AdminMagazyn() {
                               )}
                             </div>
                             <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                              {request.requestedFor} • {new Date(request.requestDate).toLocaleDateString('pl-PL')}
+                              {request.requestedFor} • {request.createdAt ? new Date(request.createdAt).toLocaleDateString('pl-PL') : 'Brak daty'}
                             </p>
                           </div>
                           <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">

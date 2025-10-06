@@ -1,6 +1,8 @@
 // API endpoint for searching Allegro listings with OAuth 2.0
 import { getAccessToken, isConfigured } from '../../../lib/allegro-oauth';
 import axios from 'axios';
+import fs from 'fs';
+import path from 'path';
 
 export default async function handler(req, res) {
   if (req.method !== 'GET') {
@@ -53,13 +55,34 @@ export default async function handler(req, res) {
       searchParams['price.to'] = parseFloat(maxPrice);
     }
 
-    // Check if using Sandbox
-    const isSandbox = process.env.ALLEGRO_SANDBOX === 'true';
-    const apiUrl = isSandbox 
-      ? 'https://api.allegro.pl.allegrosandbox.pl/offers/listing'
-      : 'https://api.allegro.pl/offers/listing';
+    // Check if using Sandbox - read directly from config file
+    let useSandbox = false;
+    try {
+      const configPath = path.join(process.cwd(), 'data', 'allegro-config.json');
+      if (fs.existsSync(configPath)) {
+        const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+        useSandbox = config.sandbox || false;
+      } else {
+        useSandbox = process.env.ALLEGRO_SANDBOX === 'true';
+      }
+    } catch (error) {
+      useSandbox = process.env.ALLEGRO_SANDBOX === 'true';
+    }
+    
+    // FIXED: Use correct production endpoint
+    const baseUrl = useSandbox 
+      ? 'https://api.allegro.pl.allegrosandbox.pl'
+      : 'https://api.allegro.pl';
+    
+    const apiUrl = `${baseUrl}/offers/listing`;
 
-    console.log(`🔍 Searching Allegro with OAuth (${isSandbox ? 'SANDBOX' : 'PRODUCTION'}):`, { query, minPrice, maxPrice, limit });
+    console.log(`🔍 Searching Allegro with OAuth (${useSandbox ? 'SANDBOX' : 'PRODUCTION'}):`, { 
+      query, 
+      minPrice, 
+      maxPrice, 
+      limit,
+      apiUrl 
+    });
 
     // Call Allegro API with OAuth token
     const response = await axios.get(apiUrl, {
@@ -109,6 +132,13 @@ export default async function handler(req, res) {
 
   } catch (error) {
     console.error('❌ Allegro search error:', error.response?.data || error.message);
+    console.error('❌ Full error:', {
+      status: error.response?.status,
+      statusText: error.response?.statusText,
+      data: error.response?.data,
+      message: error.message,
+      stack: error.stack
+    });
     
     // Fallback to demo mode on error
     if (error.message.includes('credentials not configured')) {
@@ -127,6 +157,8 @@ export default async function handler(req, res) {
     return res.status(500).json({ 
       error: 'Failed to search Allegro',
       details: error.message,
+      responseData: error.response?.data,
+      responseStatus: error.response?.status
     });
   }
 }

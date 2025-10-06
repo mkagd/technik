@@ -170,19 +170,11 @@ export default function VisitDetailsPage() {
     });
   };
 
-  // Handler dla AI Scanner - dodaje rozpoznane modele do wizyty
-  const handleAIModelDetected = async (models) => {
-    console.log('🔍 handleAIModelDetected - models:', models);
+  // ✅ FIXED: Handler dla ModelAIScanner - wykryty pojedynczy model z tabliczki
+  const handleAIModelDetected = async (detectedModel) => {
+    console.log('� Model wykryty przez AI Scanner:', detectedModel);
     
-    if (!models || models.length === 0) {
-      alert('❌ Nie wykryto modelu na tabliczce');
-      setShowAIScanner(false);
-      return;
-    }
-
-    const detectedModel = models[0];
-    
-    // Walidacja modelu
+    // ModelAIScanner przekazuje pojedynczy obiekt model (nie tablicę!)
     if (!detectedModel || typeof detectedModel !== 'object') {
       console.error('❌ Nieprawidłowy format modelu:', detectedModel);
       alert('❌ Błąd: Nieprawidłowe dane z skanera');
@@ -190,53 +182,47 @@ export default function VisitDetailsPage() {
       return;
     }
 
-    const deviceInfo = {
-      type: detectedModel.type || detectedModel.finalType || '',
-      brand: detectedModel.brand || '',
-      model: detectedModel.model || detectedModel.finalModel || '',
-      serialNumber: detectedModel.serialNumber || ''
+    // Konwertuj do formatu zgodnego z API
+    const modelToSave = {
+      brand: detectedModel.brand || detectedModel.clean || '',
+      model: detectedModel.model || detectedModel.clean || detectedModel.finalModel || '',
+      finalModel: detectedModel.finalModel || detectedModel.model || detectedModel.clean || '',
+      finalType: detectedModel.finalType || detectedModel.type || '',
+      finalName: detectedModel.finalName || detectedModel.name || `${detectedModel.brand || ''} ${detectedModel.model || ''}`.trim(),
+      serialNumber: detectedModel.serialNumber || '',
+      confidence: detectedModel.confidence || 'medium',
+      source: detectedModel.source || 'ai_scanner',
+      timestamp: new Date().toISOString()
     };
 
-    // Sprawdź czy wykryto przynajmniej markę lub model
-    if (!deviceInfo.brand && !deviceInfo.model) {
+    // Walidacja - sprawdź czy wykryto przynajmniej markę lub model
+    if (!modelToSave.brand && !modelToSave.finalModel) {
       alert('❌ Nie udało się rozpoznać marki ani modelu');
       setShowAIScanner(false);
       return;
     }
 
-    // Aktualizuj dane wizyty
-    try {
-      const token = localStorage.getItem('technicianToken');
-      
-      const response = await fetch(`/api/technician/visits/${visitId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          deviceType: deviceInfo.type,
-          deviceBrand: deviceInfo.brand,
-          deviceModel: deviceInfo.model,
-          serialNumber: deviceInfo.serialNumber
-        })
-      });
+    console.log('💾 Zapisuję model z AI Scanner:', modelToSave);
 
-      if (!response.ok) {
-        throw new Error('Błąd aktualizacji wizyty');
-      }
+    // Sprawdź czy już nie ma tego modelu w visitModels (unikaj duplikatów)
+    const isDuplicate = visitModels.some(
+      m => m.finalModel === modelToSave.finalModel && m.brand === modelToSave.brand
+    );
 
-      // Odśwież dane wizyty
-      await loadVisitDetails();
-      
-      alert(`✅ Rozpoznano:\n${deviceInfo.brand} ${deviceInfo.model}\nTyp: ${deviceInfo.type}`);
+    if (isDuplicate) {
+      alert('⚠️ Ten model został już dodany do tej wizyty');
       setShowAIScanner(false);
-      
-    } catch (err) {
-      console.error('Error updating visit:', err);
-      alert('❌ Błąd zapisywania danych: ' + err.message);
-      setShowAIScanner(false);
+      return;
     }
+
+    // Dodaj nowy model do istniejących modeli
+    const updatedModels = [...visitModels, modelToSave];
+
+    // Zapisz przez istniejący handler (który obsługuje API i odświeżanie)
+    await handleSaveModels(updatedModels);
+    
+    // Modal zostanie zamknięty przez handleSaveModels po sukcesie
+    setShowAIScanner(false);
   };
 
   // Handler dla ModelManagerModal - zapisuje modele do wizyty

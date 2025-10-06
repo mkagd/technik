@@ -1,0 +1,7 @@
+{
+  "_comment": "Aplikacja Production wymaga weryfikacji w Allegro Developer Portal",
+  "_instruction": "Użyj DEMO mode lub zarejestruj aplikację Sandbox na allegrosandbox.pl",
+  "clientId": "",
+  "clientSecret": "",
+  "sandbox": true
+}

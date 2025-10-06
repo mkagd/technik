@@ -14,6 +14,8 @@ const SimpleBookingForm = () => {
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [submittedBooking, setSubmittedBooking] = useState(null);
     const [errors, setErrors] = useState({});
+    const [showAccountModal, setShowAccountModal] = useState(false);
+    const [isCreatingAccount, setIsCreatingAccount] = useState(false);
 
     // Stan dla kodu pocztowego
     const addressInputRef = useRef(null);
@@ -123,6 +125,12 @@ const SimpleBookingForm = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        // ✅ OCHRONA: Zapobiegaj wielokrotnym wysyłkom
+        if (isSubmitting) {
+            console.log('⚠️ Zgłoszenie już jest wysyłane - zignorowano kolejne kliknięcie');
+            return;
+        }
+
         if (!validateForm()) {
             return;
         }
@@ -153,7 +161,50 @@ const SimpleBookingForm = () => {
             // Zapisz zgłoszenie
             const savedBooking = reportManager.saveReport(unifiedBooking);
 
-            // Dodaj także do starego systemu rezerwacji dla kompatybilności
+            // ✅ NOWE: Wyślij rezerwację do API
+            try {
+                const reservationData = {
+                    name: currentUser ? `${currentUser.firstName} ${currentUser.lastName}` : 'Gość',
+                    phone: phone.trim(),
+                    email: email.trim() || '',
+                    address: address.trim(),
+                    fullAddress: address.trim(),
+                    city: '', // Parsowanie miasta z adresu można dodać później
+                    street: address.trim(),
+                    category: 'AGD',
+                    device: 'Nie określono',
+                    problem: description.trim() || 'Rezerwacja terminu',
+                    availability: availability.trim() || 'Brak preferencji',
+                    date: new Date().toISOString(),
+                    isLoggedIn: !!currentUser,
+                    userId: currentUser?.id || null,
+                    clientPhone: phone.trim(),
+                    source: 'simple_booking_form'
+                };
+
+                console.log('📤 Wysyłanie rezerwacji do API:', reservationData);
+
+                const apiResponse = await fetch('/api/rezerwacje', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(reservationData)
+                });
+
+                if (apiResponse.ok) {
+                    const apiData = await apiResponse.json();
+                    console.log('✅ Rezerwacja zapisana na serwerze:', apiData);
+                } else {
+                    const errorData = await apiResponse.json();
+                    console.error('❌ Błąd API:', errorData);
+                }
+            } catch (apiError) {
+                console.error('❌ Błąd podczas wysyłania do API:', apiError);
+                // Kontynuuj mimo błędu - localStorage backup działa
+            }
+
+            // Dodaj także do starego systemu rezerwacji dla kompatybilności (backup)
             const legacyBooking = {
                 id: savedBooking.internalId,
                 reportNumber: savedBooking.reportNumber,
@@ -174,11 +225,81 @@ const SimpleBookingForm = () => {
 
             setSubmittedBooking(savedBooking);
             setIsSubmitted(true);
+
+            // ✅ NOWE: Zaproponuj utworzenie konta jeśli to gość i ma email
+            if (!currentUser && email.trim()) {
+                setTimeout(() => {
+                    setShowAccountModal(true);
+                }, 2000); // Pokaż po 2 sekundach
+            }
         } catch (error) {
             console.error('Błąd podczas wysyłania:', error);
             alert('Wystąpił błąd. Spróbuj ponownie.');
         } finally {
             setIsSubmitting(false);
+        }
+    };
+
+    // Funkcja tworzenia konta dla gościa
+    const handleCreateAccount = async () => {
+        if (!email || !phone || !address) {
+            alert('Brak wymaganych danych do utworzenia konta');
+            return;
+        }
+
+        setIsCreatingAccount(true);
+
+        try {
+            // Parsuj adres (zakładając format "33-100" lub "Miasto, 33-100")
+            const addressParts = address.split(',').map(p => p.trim());
+            const postalCode = addressParts.find(p => /^\d{2}-\d{3}$/.test(p)) || address;
+            const city = addressParts.find(p => !/^\d{2}-\d{3}$/.test(p)) || '';
+
+            const registerData = {
+                firstName: 'Klient',
+                lastName: `#${Date.now()}`,
+                email: email,
+                phone: phone,
+                address: {
+                    street: '',
+                    buildingNumber: '',
+                    city: city || 'Nie podano',
+                    postalCode: postalCode,
+                    voivodeship: 'podkarpackie',
+                    country: 'Polska'
+                },
+                password: Math.random().toString(36).slice(-8), // Losowe hasło
+                type: 'individual'
+            };
+
+            const response = await fetch('/api/client/auth?action=register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(registerData)
+            });
+
+            const result = await response.json();
+
+            if (response.ok && result.success) {
+                alert(`✅ Konto utworzone!\n\nEmail: ${email}\nHasło: ${registerData.password}\n\nZapisz te dane! Email powitalny został wysłany.`);
+                setShowAccountModal(false);
+                
+                // Opcjonalnie zaloguj automatycznie
+                if (result.token) {
+                    localStorage.setItem('authToken', result.token);
+                    localStorage.setItem('currentUser', JSON.stringify(result.client));
+                    setCurrentUser(result.client);
+                }
+            } else {
+                alert(`❌ Nie udało się utworzyć konta:\n${result.message}`);
+            }
+        } catch (error) {
+            console.error('Błąd podczas tworzenia konta:', error);
+            alert('Wystąpił błąd podczas tworzenia konta');
+        } finally {
+            setIsCreatingAccount(false);
         }
     };
 
@@ -263,6 +384,68 @@ const SimpleBookingForm = () => {
                     >
                         Wyślij kolejne zgłoszenie
                     </button>
+
+                    {/* ✅ MODAL: Propozycja utworzenia konta */}
+                    {showAccountModal && !currentUser && email && (
+                        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+                            <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 animate-fade-in">
+                                <div className="text-center mb-6">
+                                    <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                        <FaCheckCircle className="w-8 h-8 text-purple-600" />
+                                    </div>
+                                    <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                                        Utwórz konto?
+                                    </h3>
+                                    <p className="text-gray-600">
+                                        Chcesz śledzić status swojego zgłoszenia online?
+                                    </p>
+                                </div>
+
+                                <div className="bg-purple-50 border border-purple-200 rounded-lg p-4 mb-6">
+                                    <h4 className="font-semibold text-purple-900 mb-2">✨ Korzyści z konta:</h4>
+                                    <ul className="text-sm text-purple-800 space-y-1">
+                                        <li>📱 Śledzenie statusu zgłoszeń</li>
+                                        <li>📧 Powiadomienia email</li>
+                                        <li>📋 Historia wszystkich napraw</li>
+                                        <li>⚡ Szybsze składanie zleceń</li>
+                                    </ul>
+                                </div>
+
+                                <div className="bg-gray-50 rounded-lg p-3 mb-6">
+                                    <p className="text-sm text-gray-700">
+                                        <strong>Email:</strong> {email}
+                                    </p>
+                                    <p className="text-xs text-gray-500 mt-1">
+                                        Hasło zostanie wygenerowane i wysłane na Twój email
+                                    </p>
+                                </div>
+
+                                <div className="flex gap-3">
+                                    <button
+                                        onClick={() => setShowAccountModal(false)}
+                                        className="flex-1 py-3 px-6 bg-gray-200 text-gray-700 font-medium rounded-lg hover:bg-gray-300 transition-colors"
+                                        disabled={isCreatingAccount}
+                                    >
+                                        Nie, dziękuję
+                                    </button>
+                                    <button
+                                        onClick={handleCreateAccount}
+                                        disabled={isCreatingAccount}
+                                        className="flex-1 py-3 px-6 bg-purple-600 text-white font-medium rounded-lg hover:bg-purple-700 transition-colors disabled:bg-gray-400"
+                                    >
+                                        {isCreatingAccount ? (
+                                            <div className="flex items-center justify-center">
+                                                <div className="animate-spin h-4 w-4 mr-2 border-2 border-white border-t-transparent rounded-full"></div>
+                                                Tworzę...
+                                            </div>
+                                        ) : (
+                                            'Tak, utwórz konto'
+                                        )}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
         );

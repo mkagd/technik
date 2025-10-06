@@ -111,6 +111,14 @@ export default function KlientDetale() {
     try {
       setSaving(true);
       
+      // Debug: sprawdź co zapisujemy
+      console.log('💾 Zapisywanie klienta:', {
+        id: klient.id,
+        name: klient.name,
+        hasPhysicalAvailability: !!klient.physicalAvailability,
+        physicalAvailabilityDetails: klient.physicalAvailability
+      });
+      
       const response = await fetch('/api/clients', {
         method: 'PUT',
         headers: {

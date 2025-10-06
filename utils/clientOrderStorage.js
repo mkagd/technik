@@ -82,7 +82,36 @@ export const addClient = async (clientData, metadata = {}) => {
                 updatedBy: null,
                 
                 // HISTORIA:
-                history: clientData.history || []
+                history: clientData.history || [],
+                
+                // DOMYŚLNA DOSTĘPNOŚĆ (jeśli nie podano)
+                physicalAvailability: clientData.physicalAvailability || {
+                    timeWindows: [
+                        {
+                            days: ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'],
+                            timeFrom: '08:00',
+                            timeTo: '20:00',
+                            label: 'Dni robocze'
+                        },
+                        {
+                            days: ['saturday'],
+                            timeFrom: '09:00',
+                            timeTo: '18:00',
+                            label: 'Sobota'
+                        }
+                    ],
+                    preferences: {
+                        flexibleSchedule: true,
+                        requiresAdvanceNotice: true,
+                        advanceNoticeHours: 24
+                    },
+                    presenceHistory: [],
+                    stats: {},
+                    score: 85,
+                    category: 'weekdays',
+                    notes: [],
+                    lastUpdated: now
+                }
             };
 
             clients.push(clientToAdd);
@@ -373,7 +402,10 @@ export const convertReservationToClientOrder = async (reservationData) => {
         phones: reservationData.phones || [],
         addresses: reservationData.addresses || [],
         // Dostępność fizyczna klienta
-        physicalAvailability: reservationData.physicalAvailability || null
+        physicalAvailability: reservationData.physicalAvailability || null,
+        // ✅ Zachowaj userId i isAuthenticated
+        userId: reservationData.userId || null,
+        isAuthenticated: reservationData.isAuthenticated || false
     };
 
     // Stwórz zamówienie - zgodne ze strukturą orders.json

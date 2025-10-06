@@ -1,0 +1,662 @@
+[
+  {
+    "name": "Krzysztof Bielaszka",
+    "phone": "121212",
+    "email": "Bielaszkam2@gmail.com",
+    "address": "Słupia 114, 28-133 Pacanow",
+    "city": "Pacanow",
+    "street": "Słupia 114",
+    "dateAdded": "2025-10-05T13:17:58.546Z",
+    "history": [],
+    "phones": [],
+    "addresses": [],
+    "physicalAvailability": null,
+    "id": "CLIS252780016",
+    "clientId": "CLIS252780016",
+    "source": "system-auto",
+    "sourceDetails": null,
+    "createdBy": "system",
+    "createdByName": "System",
+    "userId": null,
+    "isAuthenticated": false,
+    "createdFromIP": null,
+    "createdAt": "2025-10-05T13:17:58.546Z",
+    "updatedAt": "2025-10-05T13:17:58.546Z",
+    "updatedBy": null
+  },
+  {
+    "name": "Technik B",
+    "phone": "572772540",
+    "email": "",
+    "address": "Słupia 114, 28-133 Pacanow",
+    "city": "Pacanow",
+    "street": "Słupia 114",
+    "dateAdded": "2025-10-05T11:19:08.844Z",
+    "history": [],
+    "phones": [],
+    "addresses": [],
+    "physicalAvailability": null,
+    "id": "CLIS252780015",
+    "clientId": "CLIS252780015",
+    "source": "system-auto",
+    "sourceDetails": null,
+    "createdBy": "system",
+    "createdByName": "System",
+    "userId": null,
+    "isAuthenticated": false,
+    "createdFromIP": null,
+    "createdAt": "2025-10-05T11:19:08.844Z",
+    "updatedAt": "2025-10-05T11:19:08.844Z",
+    "updatedBy": null
+  },
+  {
+    "name": "Konkonting",
+    "phone": "123123123",
+    "email": "bielaszkam2@gmail.com",
+    "address": "asf, 28-133 Słupia",
+    "city": "Słupia",
+    "street": "asf",
+    "dateAdded": "2025-10-05T09:14:33.410Z",
+    "history": [],
+    "phones": [],
+    "addresses": [],
+    "physicalAvailability": null,
+    "id": "CLIS252780014",
+    "clientId": "CLIS252780014",
+    "source": "system-auto",
+    "sourceDetails": null,
+    "createdBy": "system",
+    "createdByName": "System",
+    "userId": null,
+    "isAuthenticated": false,
+    "createdFromIP": null,
+    "createdAt": "2025-10-05T09:14:33.410Z",
+    "updatedAt": "2025-10-05T09:14:33.410Z",
+    "updatedBy": null
+  },
+  {
+    "name": "Konkonting",
+    "phone": "123123123",
+    "email": "bielaszkam2@gmail.com",
+    "address": "asf, 28-133 Słupia",
+    "city": "Słupia",
+    "street": "asf",
+    "dateAdded": "2025-10-05T09:13:58.074Z",
+    "history": [],
+    "phones": [],
+    "addresses": [],
+    "physicalAvailability": null,
+    "id": "CLIS252780013",
+    "clientId": "CLIS252780013",
+    "source": "system-auto",
+    "sourceDetails": null,
+    "createdBy": "system",
+    "createdByName": "System",
+    "userId": null,
+    "isAuthenticated": false,
+    "createdFromIP": null,
+    "createdAt": "2025-10-05T09:13:58.074Z",
+    "updatedAt": "2025-10-05T09:13:58.074Z",
+    "updatedBy": null
+  },
+  {
+    "id": "CLIS252780012",
+    "name": "Bruno Bielaszka",
+    "phone": "696969696969",
+    "email": "Bielaszkam2@gmail.com",
+    "address": "Gliniana 17/69, 30-732 Kraków, 30-732 Kraków",
+    "city": "Kraków",
+    "street": "Gliniana 17/69, 30-732 Kraków",
+    "dateAdded": "2025-10-05T06:13:16.868Z",
+    "history": [],
+    "phones": [],
+    "addresses": [],
+    "physicalAvailability": {
+      "timeWindows": [
+        {
+          "days": [
+            "monday",
+            "tuesday",
+            "wednesday",
+            "thursday",
+            "friday",
+            "saturday",
+            "sunday"
+          ],
+          "timeFrom": "08:00",
+          "timeTo": "20:00",
+          "label": "Cały dzień"
+        }
+      ],
+      "preferences": {
+        "flexibleSchedule": false,
+        "requiresAdvanceNotice": false,
+        "advanceNoticeHours": 24
+      },
+      "presenceHistory": [],
+      "stats": {},
+      "score": 100,
+      "category": "full-day",
+      "notes": [],
+      "lastUpdated": "2025-10-05T20:08:12.171Z"
+    },
+    "clientId": "CLIS252780012",
+    "source": "system-auto",
+    "sourceDetails": null,
+    "createdBy": "system",
+    "createdByName": "System",
+    "userId": null,
+    "isAuthenticated": false,
+    "createdFromIP": null,
+    "createdAt": "2025-10-05T06:13:16.868Z",
+    "updatedAt": "2025-10-05T20:08:28.412Z",
+    "updatedBy": null
+  },
+  {
+    "name": "Technik B",
+    "phone": "987987987",
+    "email": "",
+    "address": "Słupia 114, 28-133 Pacanow",
+    "city": "Pacanow",
+    "street": "Słupia 114",
+    "dateAdded": "2025-10-05T05:28:22.026Z",
+    "history": [],
+    "phones": [],
+    "addresses": [],
+    "physicalAvailability": null,
+    "id": "CLIS252780007",
+    "clientId": "CLIS252780007",
+    "source": "system-auto",
+    "sourceDetails": null,
+    "createdBy": "system",
+    "createdByName": "System",
+    "userId": null,
+    "isAuthenticated": false,
+    "createdFromIP": null,
+    "createdAt": "2025-10-05T05:28:22.026Z",
+    "updatedAt": "2025-10-05T05:28:22.026Z",
+    "updatedBy": null
+  },
+  {
+    "name": "Mariusz Bielaszka",
+    "phone": "789654987",
+    "email": "Bielaszkam2@gmail.com",
+    "address": "Słupia 114, 28-133 Pacanow",
+    "city": "Pacanow",
+    "street": "Słupia 114",
+    "dateAdded": "2025-10-05T05:27:56.759Z",
+    "history": [],
+    "phones": [],
+    "addresses": [],
+    "physicalAvailability": null,
+    "id": "CLIS252780006",
+    "clientId": "CLIS252780006",
+    "source": "system-auto",
+    "sourceDetails": null,
+    "createdBy": "system",
+    "createdByName": "System",
+    "userId": null,
+    "isAuthenticated": false,
+    "createdFromIP": null,
+    "createdAt": "2025-10-05T05:27:56.759Z",
+    "updatedAt": "2025-10-05T05:27:56.759Z",
+    "updatedBy": null
+  },
+  {
+    "name": "Konting",
+    "phone": "987987987",
+    "email": "",
+    "address": "Słupia 114, 28-133 Pacanow",
+    "city": "Pacanow",
+    "street": "Słupia 114",
+    "dateAdded": "2025-10-05T05:18:52.428Z",
+    "history": [],
+    "phones": [
+      {
+        "number": "987987987",
+        "label": "Główny",
+        "isPrimary": true
+      },
+      {
+        "number": "654654654",
+        "label": "Mama kota",
+        "isPrimary": false
+      }
+    ],
+    "addresses": [
+      {
+        "street": "Słupia 114",
+        "city": "Pacanow",
+        "postalCode": "28-133",
+        "label": "Główny",
+        "isPrimary": true
+      },
+      {
+        "street": "Gliniana 17/30, 30-732 Kraków",
+        "city": "Kraków",
+        "postalCode": "30-732",
+        "label": "Buiro",
+        "isPrimary": false
+      }
+    ],
+    "physicalAvailability": {
+      "timeWindows": [
+        {
+          "days": [
+            "monday",
+            "tuesday",
+            "wednesday",
+            "thursday",
+            "saturday",
+            "sunday"
+          ],
+          "timeFrom": "08:00",
+          "timeTo": "20:00",
+          "label": "Cały dzień"
+        }
+      ],
+      "preferences": {
+        "flexibleSchedule": true,
+        "requiresAdvanceNotice": true,
+        "advanceNoticeHours": 24
+      },
+      "presenceHistory": [],
+      "stats": {},
+      "score": 96,
+      "category": "full-day",
+      "notes": [],
+      "lastUpdated": "2025-10-04T20:33:29.361Z"
+    },
+    "id": "CLIS252780005",
+    "clientId": "CLIS252780005",
+    "source": "system-auto",
+    "sourceDetails": null,
+    "createdBy": "system",
+    "createdByName": "System",
+    "userId": null,
+    "isAuthenticated": false,
+    "createdFromIP": null,
+    "createdAt": "2025-10-05T05:18:52.428Z",
+    "updatedAt": "2025-10-05T05:18:52.428Z",
+    "updatedBy": null
+  },
+  {
+    "name": "Oliwia Bielaszka",
+    "phone": "987654987",
+    "email": "Bielaszkam2@gmail.com",
+    "address": "Gliniana 17/30, 30-732 Kraków, 30-732 Kraków",
+    "city": "Kraków",
+    "street": "Gliniana 17/30, 30-732 Kraków",
+    "dateAdded": "2025-10-05T05:18:52.421Z",
+    "history": [],
+    "phones": [
+      {
+        "number": "987654987",
+        "label": "Główny",
+        "isPrimary": true
+      }
+    ],
+    "addresses": [
+      {
+        "street": "Gliniana 17/30, 30-732 Kraków",
+        "city": "Kraków",
+        "postalCode": "30-732",
+        "label": "Główny",
+        "isPrimary": true
+      }
+    ],
+    "physicalAvailability": null,
+    "id": "CLIS252780004",
+    "clientId": "CLIS252780004",
+    "source": "system-auto",
+    "sourceDetails": null,
+    "createdBy": "system",
+    "createdByName": "System",
+    "userId": null,
+    "isAuthenticated": false,
+    "createdFromIP": null,
+    "createdAt": "2025-10-05T05:18:52.421Z",
+    "updatedAt": "2025-10-05T05:18:52.421Z",
+    "updatedBy": null
+  },
+  {
+    "name": "qweqwe",
+    "phone": "123123123",
+    "email": "",
+    "address": "qwe, qwe qwe",
+    "city": "qwe",
+    "street": "qwe",
+    "dateAdded": "2025-10-05T05:18:52.415Z",
+    "history": [],
+    "phones": [
+      {
+        "number": "123123123",
+        "label": "Główny",
+        "isPrimary": true
+      }
+    ],
+    "addresses": [
+      {
+        "street": "qwe",
+        "city": "qwe",
+        "postalCode": "qwe",
+        "label": "Główny",
+        "isPrimary": true
+      },
+      {
+        "street": "qwe",
+        "city": "qwe",
+        "postalCode": "qwe",
+        "label": "",
+        "isPrimary": false
+      }
+    ],
+    "physicalAvailability": null,
+    "id": "CLIS252780003",
+    "clientId": "CLIS252780003",
+    "source": "system-auto",
+    "sourceDetails": null,
+    "createdBy": "system",
+    "createdByName": "System",
+    "userId": null,
+    "isAuthenticated": false,
+    "createdFromIP": null,
+    "createdAt": "2025-10-05T05:18:52.415Z",
+    "updatedAt": "2025-10-05T05:18:52.415Z",
+    "updatedBy": null
+  },
+  {
+    "name": "Mariusz Bielaszka",
+    "phone": "792392870",
+    "email": "Bielaszkam2@gmail.com",
+    "address": "Gliniana 17/30, 30-732 Kraków",
+    "city": "Kraków",
+    "street": "Gliniana 17/30",
+    "dateAdded": "2025-10-05T05:18:52.408Z",
+    "history": [],
+    "phones": [
+      {
+        "number": "792392870",
+        "label": "Główny",
+        "isPrimary": true
+      }
+    ],
+    "addresses": [
+      {
+        "street": "Gliniana 17/30",
+        "city": "Kraków",
+        "postalCode": "30-732",
+        "label": "Główny",
+        "isPrimary": true
+      }
+    ],
+    "physicalAvailability": null,
+    "id": "CLIS252780002",
+    "clientId": "CLIS252780002",
+    "source": "system-auto",
+    "sourceDetails": null,
+    "createdBy": "system",
+    "createdByName": "System",
+    "userId": null,
+    "isAuthenticated": false,
+    "createdFromIP": null,
+    "createdAt": "2025-10-05T05:18:52.408Z",
+    "updatedAt": "2025-10-05T05:18:52.408Z",
+    "updatedBy": null
+  },
+  {
+    "name": "Mariusz Bielaszka",
+    "phone": "792392870",
+    "email": "bielaszkam2@gmail.com",
+    "address": "Gliniana 17/30, Kraków",
+    "city": "Kraków",
+    "street": "Gliniana 17/30",
+    "dateAdded": "2025-10-05T05:18:52.400Z",
+    "history": [],
+    "phones": [],
+    "addresses": [],
+    "physicalAvailability": null,
+    "id": "CLIS252780001",
+    "clientId": "CLIS252780001",
+    "source": "system-auto",
+    "sourceDetails": null,
+    "createdBy": "system",
+    "createdByName": "System",
+    "userId": null,
+    "isAuthenticated": false,
+    "createdFromIP": null,
+    "createdAt": "2025-10-05T05:18:52.400Z",
+    "updatedAt": "2025-10-05T05:18:52.400Z",
+    "updatedBy": null
+  },
+  {
+    "name": "Konting",
+    "phone": "987987987",
+    "email": "",
+    "address": "Słupia 114, 28-133 Pacanow",
+    "city": "Pacanow",
+    "street": "Słupia 114",
+    "dateAdded": "2025-10-04T20:33:41.877Z",
+    "history": [],
+    "phones": [
+      {
+        "number": "987987987",
+        "label": "Główny",
+        "isPrimary": true
+      },
+      {
+        "number": "654654654",
+        "label": "Mama kota",
+        "isPrimary": false
+      }
+    ],
+    "addresses": [
+      {
+        "street": "Słupia 114",
+        "city": "Pacanow",
+        "postalCode": "28-133",
+        "label": "Główny",
+        "isPrimary": true
+      },
+      {
+        "street": "Gliniana 17/30, 30-732 Kraków",
+        "city": "Kraków",
+        "postalCode": "30-732",
+        "label": "Buiro",
+        "isPrimary": false
+      }
+    ],
+    "physicalAvailability": {
+      "timeWindows": [
+        {
+          "days": [
+            "monday",
+            "tuesday",
+            "wednesday",
+            "thursday",
+            "saturday",
+            "sunday"
+          ],
+          "timeFrom": "08:00",
+          "timeTo": "20:00",
+          "label": "Cały dzień"
+        }
+      ],
+      "preferences": {
+        "flexibleSchedule": true,
+        "requiresAdvanceNotice": true,
+        "advanceNoticeHours": 24
+      },
+      "presenceHistory": [],
+      "stats": {},
+      "score": 96,
+      "category": "full-day",
+      "notes": [],
+      "lastUpdated": "2025-10-04T20:33:29.361Z"
+    },
+    "id": "CLIS252770005",
+    "clientId": "CLIS252770005",
+    "source": "system-auto",
+    "sourceDetails": null,
+    "createdBy": "system",
+    "createdByName": "System",
+    "userId": null,
+    "isAuthenticated": false,
+    "createdFromIP": null,
+    "createdAt": "2025-10-04T20:33:41.877Z",
+    "updatedAt": "2025-10-04T20:33:41.877Z",
+    "updatedBy": null
+  },
+  {
+    "name": "Oliwia Bielaszka",
+    "phone": "987654987",
+    "email": "Bielaszkam2@gmail.com",
+    "address": "Gliniana 17/30, 30-732 Kraków, 30-732 Kraków",
+    "city": "Kraków",
+    "street": "Gliniana 17/30, 30-732 Kraków",
+    "dateAdded": "2025-10-04T18:34:23.863Z",
+    "history": [],
+    "phones": [
+      {
+        "number": "987654987",
+        "label": "Główny",
+        "isPrimary": true
+      }
+    ],
+    "addresses": [
+      {
+        "street": "Gliniana 17/30, 30-732 Kraków",
+        "city": "Kraków",
+        "postalCode": "30-732",
+        "label": "Główny",
+        "isPrimary": true
+      }
+    ],
+    "id": "CLIS252770004",
+    "clientId": "CLIS252770004",
+    "source": "system-auto",
+    "sourceDetails": null,
+    "createdBy": "system",
+    "createdByName": "System",
+    "userId": null,
+    "isAuthenticated": false,
+    "createdFromIP": null,
+    "createdAt": "2025-10-04T18:34:23.863Z",
+    "updatedAt": "2025-10-04T18:34:23.863Z",
+    "updatedBy": null
+  },
+  {
+    "name": "qweqwe",
+    "phone": "123123123",
+    "email": "",
+    "address": "qwe, qwe qwe",
+    "city": "qwe",
+    "street": "qwe",
+    "dateAdded": "2025-10-04T17:58:39.482Z",
+    "history": [],
+    "phones": [
+      {
+        "number": "123123123",
+        "label": "Główny",
+        "isPrimary": true
+      }
+    ],
+    "addresses": [
+      {
+        "street": "qwe",
+        "city": "qwe",
+        "postalCode": "qwe",
+        "label": "Główny",
+        "isPrimary": true
+      },
+      {
+        "street": "qwe",
+        "city": "qwe",
+        "postalCode": "qwe",
+        "label": "",
+        "isPrimary": false
+      }
+    ],
+    "id": "CLIS252770003",
+    "clientId": "CLIS252770003",
+    "source": "system-auto",
+    "sourceDetails": null,
+    "createdBy": "system",
+    "createdByName": "System",
+    "userId": null,
+    "isAuthenticated": false,
+    "createdFromIP": null,
+    "createdAt": "2025-10-04T17:58:39.482Z",
+    "updatedAt": "2025-10-04T17:58:39.482Z",
+    "updatedBy": null
+  },
+  {
+    "name": "Mariusz Bielaszka",
+    "phone": "792392870",
+    "email": "Bielaszkam2@gmail.com",
+    "address": "Gliniana 17/30, 30-732 Kraków",
+    "city": "Kraków",
+    "street": "Gliniana 17/30",
+    "dateAdded": "2025-10-04T17:38:40.690Z",
+    "history": [],
+    "id": "CLIS252770002",
+    "clientId": "CLIS252770002",
+    "source": "system-auto",
+    "sourceDetails": null,
+    "createdBy": "system",
+    "createdByName": "System",
+    "userId": null,
+    "isAuthenticated": false,
+    "createdFromIP": null,
+    "createdAt": "2025-10-04T17:38:40.690Z",
+    "updatedAt": "2025-10-04T17:38:40.690Z",
+    "updatedBy": null
+  },
+  {
+    "name": "Mariusz Bielaszka",
+    "phone": "792392870",
+    "email": "bielaszkam2@gmail.com",
+    "address": "Gliniana 17/30, Kraków",
+    "city": "Kraków",
+    "street": "Gliniana 17/30",
+    "dateAdded": "2025-10-04T17:24:08.043Z",
+    "history": [],
+    "id": "CLIS252770001",
+    "clientId": "CLIS252770001",
+    "source": "system-auto",
+    "sourceDetails": null,
+    "createdBy": "system",
+    "createdByName": "System",
+    "userId": null,
+    "isAuthenticated": false,
+    "createdFromIP": null,
+    "createdAt": "2025-10-04T17:24:08.043Z",
+    "updatedAt": "2025-10-04T17:24:08.043Z",
+    "updatedBy": null
+  },
+  {
+    "id": "CLI2025000NaN",
+    "name": "Technik B",
+    "firstName": "Technik",
+    "lastName": "B",
+    "type": "individual",
+    "email": "kot.kotik@gmail.com",
+    "phone": "31313131",
+    "mobile": "31313131",
+    "address": {
+      "street": "Słupia",
+      "buildingNumber": "114",
+      "apartmentNumber": "",
+      "city": "Pacanow",
+      "postalCode": "28-133",
+      "voivodeship": "podkarpackie",
+      "country": "Polska"
+    },
+    "passwordHash": "$2b$10$udDuYIYA6WaCoDEAUZZHbuSs5XZgO3HGndsnITDFGS1diGFvx/68a",
+    "status": "active",
+    "failedLoginAttempts": 0,
+    "isLocked": false,
+    "createdAt": "2025-10-05T19:15:52.598Z",
+    "updatedAt": "2025-10-05T19:15:52.598Z"
+  }
+]

@@ -14,6 +14,7 @@ import {
   FiImage,
   FiMapPin
 } from 'react-icons/fi';
+import FlexibleAvailabilitySelector from '../../components/FlexibleAvailabilitySelector';
 
 /**
  * New Order Form
@@ -44,8 +45,8 @@ export default function NewOrder() {
       city: '',
       postalCode: ''
     },
-    // Dostępność fizyczna
-    physicalAvailability: null
+    // Dostępność fizyczna - elastyczne sloty czasowe
+    availabilitySlots: []
   });
   
   const [photos, setPhotos] = useState([]);
@@ -822,58 +823,21 @@ export default function NewOrder() {
                       />
                     </div>
 
-                    {/* Dostępność fizyczna - opcjonalnie */}
+                    {/* Dostępność fizyczna - elastyczne sloty */}
                     <div className="border-t border-gray-200 pt-6 mt-6">
-                      <h3 className="text-lg font-medium text-gray-900 mb-3 flex items-center gap-2">
-                        🏠 Kiedy jesteś dostępny w domu?
-                        <span className="text-sm font-normal text-gray-500">(opcjonalnie)</span>
-                      </h3>
-                      <p className="text-sm text-gray-600 mb-4">
-                        Powiedz nam, w jakich godzinach jesteś zwykle w domu. Pomożemy dopasować wizytę technika do Twojego harmonogramu.
-                      </p>
+                      <FlexibleAvailabilitySelector
+                        value={formData.availabilitySlots}
+                        onChange={(slots) => setFormData({ ...formData, availabilitySlots: slots })}
+                        minDate={new Date().toISOString().split('T')[0]}
+                        compact={true}
+                      />
                       
-                      {client && !client.physicalAvailability && (
-                        <div className="mb-4">
-                          <button
-                            type="button"
-                            onClick={() => {
-                              alert('Możesz dodać dostępność w Ustawieniach konta po złożeniu zamówienia, lub napisać w uwagach poniżej!');
-                            }}
-                            className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium"
-                          >
-                            ➕ Dodaj moje godziny dostępności
-                          </button>
-                          <p className="text-xs text-gray-500 mt-2">
-                            💡 To zaoszczędzi czas - technik przyjdzie wtedy, gdy będziesz w domu!
-                          </p>
-                        </div>
-                      )}
-                      
-                      {client && client.physicalAvailability && (
-                        <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
-                          <p className="text-sm text-green-700 font-medium mb-2">
-                            ✅ Masz już ustawioną dostępność:
-                          </p>
-                          <div className="flex items-center gap-2">
-                            <span className="text-2xl">{client.physicalAvailability.category?.emoji || '🏠'}</span>
-                            <div className="text-sm text-green-600">
-                              <div className="font-medium">
-                                Score: {client.physicalAvailability.score || 0}/100
-                              </div>
-                              <div>
-                                {client.physicalAvailability.category?.label || 'Dostępność ustawiona'}
-                              </div>
-                            </div>
-                          </div>
-                          <button
-                            type="button"
-                            onClick={() => router.push('/client/settings')}
-                            className="mt-3 text-sm text-green-700 hover:text-green-800 underline"
-                          >
-                            Edytuj w ustawieniach →
-                          </button>
-                        </div>
-                      )}
+                      <div className="mt-4 bg-blue-50 border border-blue-200 rounded-lg p-3">
+                        <p className="text-xs text-blue-700">
+                          💡 <strong>Wskazówka:</strong> Podanie przedziałów dostępności pomoże nam dopasować wizytę do Twojego harmonogramu.
+                          Możesz dodać wiele terminów jeśli Twoja dostępność się zmienia.
+                        </p>
+                      </div>
                     </div>
 
                     <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 space-y-2">

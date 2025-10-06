@@ -415,6 +415,55 @@ export default function AdminRezerwacje() {
           </div>
         </div>
       )}
+      
+      {/* Bug Fix Banner - show if there are "contacted" reservations without orderId */}
+      {rezerwacje.filter(r => r.status === 'contacted' && !r.orderId && !r.orderNumber).length > 0 && (
+        <div className="bg-yellow-50 border-2 border-yellow-400 rounded-lg p-4 mb-6">
+          <div className="flex items-start justify-between">
+            <div className="flex items-start flex-1">
+              <div className="flex-shrink-0">
+                <svg className="h-5 w-5 text-yellow-600" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                </svg>
+              </div>
+              <div className="ml-3">
+                <h3 className="text-sm font-semibold text-yellow-900">
+                  ⚠️ Znaleziono {rezerwacje.filter(r => r.status === 'contacted' && !r.orderId && !r.orderNumber).length} rezerwacji do naprawy
+                </h3>
+                <p className="mt-1 text-sm text-yellow-800">
+                  Te rezerwacje mają status "Skontaktowano się", ale nie zostały przekonwertowane na zlecenia.
+                  Kliknij przycisk poniżej, aby automatycznie naprawić konwersję.
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={async () => {
+                if (!confirm('Czy chcesz naprawić wszystkie uszkodzone rezerwacje?\n\nZostanie utworzonych ' + rezerwacje.filter(r => r.status === 'contacted' && !r.orderId && !r.orderNumber).length + ' zleceń.')) {
+                  return;
+                }
+                
+                try {
+                  const response = await fetch('/api/rezerwacje/fix-conversions', { method: 'POST' });
+                  const result = await response.json();
+                  
+                  if (result.success) {
+                    toast.success(`✅ Naprawiono ${result.summary.fixed} rezerwacji!`);
+                    await loadRezerwacje();
+                  } else {
+                    toast.error('Błąd podczas naprawy: ' + result.message);
+                  }
+                } catch (error) {
+                  console.error('Error fixing conversions:', error);
+                  toast.error('Błąd połączenia z serwerem');
+                }
+              }}
+              className="ml-4 px-4 py-2 bg-yellow-600 text-white rounded-lg text-sm font-medium hover:bg-yellow-700 transition-colors whitespace-nowrap"
+            >
+              🔧 Napraw wszystkie
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Filters */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6">

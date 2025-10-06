@@ -67,6 +67,15 @@ export default async function handler(req, res) {
                 return res.status(400).json({ message: 'Brak ID klienta' });
             }
 
+            // Debug: sprawdź co przychodzi
+            console.log('📝 Aktualizacja klienta:', {
+                id,
+                hasPhysicalAvailability: !!updateData.physicalAvailability,
+                physicalAvailabilityKeys: updateData.physicalAvailability 
+                    ? Object.keys(updateData.physicalAvailability) 
+                    : null
+            });
+
             const updatedClient = await updateClient({ id, ...updateData });
             if (updatedClient) {
                 console.log(`✅ Client updated: ${updatedClient.id}`);

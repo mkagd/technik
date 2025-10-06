@@ -7,6 +7,8 @@ import PhotoUploadZone from '../../../components/PhotoUploadZone';
 import PartCard from '../../../components/PartCard';
 import SmartSearchAutocomplete from '../../../components/SmartSearchAutocomplete';
 import PartNameplateScanner from '../../../components/PartNameplateScanner';
+import AllegroQuickSearch from '../../../components/AllegroQuickSearch';
+import NorthQuickSearch from '../../../components/NorthQuickSearch';
 
 export default function AdminMagazynCzesci() {
   const router = useRouter();
@@ -714,14 +716,17 @@ export default function AdminMagazynCzesci() {
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                       Cena
                     </th>
+                    <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                      Sklepy
+                    </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                       Akcje
                     </th>
                   </tr>
                 </thead>
                 <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                  {filteredParts.map((part) => (
-                    <tr key={part.partId} id={`part-${part.id}`} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-300">
+                  {filteredParts.map((part, index) => (
+                    <tr key={part.partId || part.id || `part-${index}`} id={`part-${part.id || index}`} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-300">
                       {/* Photo Cell */}
                       <td className="px-6 py-4 whitespace-nowrap">
                         {part.images && part.images.length > 0 ? (
@@ -751,33 +756,59 @@ export default function AdminMagazynCzesci() {
                           </div>
                         )}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
+                      <td 
+                        className="px-6 py-4 whitespace-nowrap cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600"
+                        onClick={() => handleEdit(part)}
+                      >
                         <div>
                           <div className="text-sm font-medium text-gray-900 dark:text-white">
-                            {part.partName}
+                            {part.name || part.partName}
                           </div>
                           <div className="text-sm text-gray-500 dark:text-gray-400">
-                            {part.partId} • {part.partNumber}
+                            {part.id || part.partId} • {part.partNumber}
                           </div>
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="text-sm text-gray-900 dark:text-white">
-                          {part.category || 'Brak'}
-                        </span>
+                        <div className="flex flex-col gap-1">
+                          <span className="text-sm text-gray-900 dark:text-white">
+                            {part.category || 'Brak'}
+                          </span>
+                          {part.subcategory && (
+                            <span className="text-xs text-gray-500 dark:text-gray-400">
+                              {part.subcategory}
+                            </span>
+                          )}
+                        </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center space-x-2">
-                          <span className={`px-2 py-1 text-xs font-medium rounded-full ${getStockBadge(part.stockQuantity || 0)}`}>
-                            {getStockLabel(part.stockQuantity || 0)}
+                          <span className={`px-2 py-1 text-xs font-medium rounded-full ${getStockBadge(part.availability?.inStock || part.stockQuantity || 0)}`}>
+                            {getStockLabel(part.availability?.inStock || part.stockQuantity || 0)}
                           </span>
                           <span className="text-sm text-gray-900 dark:text-white">
-                            {part.stockQuantity || 0} szt
+                            {part.availability?.inStock || part.stockQuantity || 0} szt
                           </span>
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                        {part.unitPrice?.toFixed(2)} zł
+                        {(part.pricing?.retailPrice || part.unitPrice || 0).toFixed(2)} zł
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="flex items-center justify-center gap-2">
+                          <AllegroQuickSearch
+                            partName={part.name || part.partName}
+                            partNumber={part.partNumber}
+                            compact={true}
+                            maxResults={100}
+                          />
+                          <NorthQuickSearch
+                            partName={part.name || part.partName}
+                            partNumber={part.partNumber}
+                            compact={true}
+                            maxResults={20}
+                          />
+                        </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
                         <button

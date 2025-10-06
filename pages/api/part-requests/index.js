@@ -311,6 +311,15 @@ export default function handler(req, res) {
       null // Dla wszystkich logistyków
     );
     
+    // 🔔 Wyślij notyfikację do adminów/magazynu (dzwoneczek u góry)
+    sendNotification(
+      `🔔 Nowe zamówienie części`,
+      `${requester.name} zamówił ${parts.length} części${urgencyLabel ? ` - ${urgencyLabel}` : ''}`,
+      urgency === 'urgent' ? 'error' : 'info',
+      `/admin/magazyn/zamowienia`,
+      null // Dla wszystkich adminów
+    );
+    
     // Jeśli urgent po deadline → dodatkowa notyfikacja
     if (afterDeadline && urgency === 'urgent') {
       sendNotification(

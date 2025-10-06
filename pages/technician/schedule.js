@@ -186,7 +186,15 @@ export default function TechnicianSchedule() {
           showToast('🗑️ Slot usunięty');
           setSlotToDelete(null);
         } else {
-          showToast('❌ ' + data.message, 'error');
+          // Jeśli slot nie został znaleziony, odśwież harmonogram z serwera
+          if (data.error === 'SLOT_NOT_FOUND' || data.error === 'NOT_FOUND') {
+            showToast('⚠️ Slot już nie istnieje - odświeżam...', 'warning');
+            const token = localStorage.getItem('technicianToken');
+            await loadSchedule(token, currentWeekStart);
+            setSlotToDelete(null);
+          } else {
+            showToast('❌ ' + data.message, 'error');
+          }
         }
       } catch (err) {
         console.error('❌ Delete error:', err);
@@ -335,10 +343,19 @@ export default function TechnicianSchedule() {
     setDrawStartY(null);
     setDrawEndY(null);
     
-    // Zapisz nowy slot
-    if (startTime !== endTime) {
-      await saveDrawnSlot(dayIndex, startTime, endTime);
+    // Walidacja: sprawdź czy slot ma sensowną długość
+    const startMinutes = timeToMinutes(startTime);
+    const endMinutes = timeToMinutes(endTime);
+    const duration = endMinutes - startMinutes;
+    
+    // Minimalna długość: 15 minut
+    if (duration < 15) {
+      console.log(`⚠️ Slot zbyt krótki: ${duration} minut (${startTime}-${endTime})`);
+      return; // Pomijamy bez błędu
     }
+    
+    // Zapisz nowy slot
+    await saveDrawnSlot(dayIndex, startTime, endTime);
   };
 
   const saveDrawnSlot = async (dayIndex, startTime, endTime) => {
@@ -348,12 +365,22 @@ export default function TechnicianSchedule() {
       return;
     }
 
+    // 🔍 LOGOWANIE: Co wysyłamy
+    console.log(`📤 Saving slot: day=${dayIndex}, ${startTime}-${endTime}, type=${drawMode}`);
+
     // Sprawdź lokalnie czy slot się nakłada
     const targetArray = drawMode === 'break' ? schedule?.breaks : schedule?.workSlots;
     const existingSlots = targetArray?.filter(s => s.dayOfWeek === dayIndex) || [];
     
     const newStartMinutes = timeToMinutes(startTime);
     const newEndMinutes = timeToMinutes(endTime);
+    
+    // Dodatkowa walidacja
+    if (newStartMinutes >= newEndMinutes) {
+      console.error(`❌ INVALID TIME RANGE: ${startTime} >= ${endTime}`);
+      showToast('❌ Nieprawidłowy czas: koniec nie może być przed początkiem', 'error');
+      return;
+    }
     
     // Sprawdź nakładanie
     for (const existing of existingSlots) {
@@ -362,7 +389,7 @@ export default function TechnicianSchedule() {
       
       // Sprawdź czy się nakładają
       if (newStartMinutes < existingEnd && newEndMinutes > existingStart) {
-        console.log('⚠️ Slot nakłada się - pomijam zapis');
+        console.log(`⚠️ Slot nakłada się z ${existing.startTime}-${existing.endTime} - pomijam zapis`);
         return; // Pomijamy bez błędu
       }
     }
@@ -381,6 +408,8 @@ export default function TechnicianSchedule() {
       slotData: slotData,
       weekStart: currentWeekStart
     };
+    
+    console.log('📦 Payload:', JSON.stringify(payload));
 
     try {
       const res = await fetch('/api/technician/work-schedule', {
@@ -395,22 +424,36 @@ export default function TechnicianSchedule() {
       const data = await res.json();
       
       if (data.success) {
-        // Płynna aktualizacja bez przeładowania
+        // ✅ ZAWSZE używaj danych z serwera (źródło prawdy)
         setSchedule(data.schedule);
         setStats(data.stats);
         setIncentives(data.incentives);
         showToast(drawMode === 'work' ? '✅ Dodano blok pracy' : '☕ Dodano przerwę');
+        
+        // Dodatkowa weryfikacja - załaduj ponownie z API aby upewnić się że dane są aktualne
+        console.log('✅ Slot saved, schedule updated from server');
       } else {
+        // 🔍 LOGOWANIE BŁĘDU
+        console.error(`❌ API Error: ${data.error}`, data);
+        
         // Specjalna obsługa nakładania się slotów
         if (data.error === 'OVERLAP') {
           // Nie pokazuj toasta dla nakładania - to normalne podczas rysowania
+          console.log('⚠️ Slot overlaps with existing slot - silently ignored');
         } else {
+          // Wszystkie inne błędy - pokaż użytkownikowi
           showToast('❌ ' + data.message, 'error');
+          // Odśwież dane z serwera
+          const token = localStorage.getItem('technicianToken');
+          await loadSchedule(token, currentWeekStart);
         }
       }
     } catch (err) {
       console.error('Error saving slot:', err);
       showToast('❌ Błąd podczas zapisywania', 'error');
+      // Odśwież dane z serwera w przypadku błędu
+      const token = localStorage.getItem('technicianToken');
+      await loadSchedule(token, currentWeekStart);
     }
   };
 

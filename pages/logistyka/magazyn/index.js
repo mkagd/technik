@@ -183,6 +183,14 @@ export default function LogistykaMagazyn() {
               <h2 className="text-lg font-semibold text-gray-900 mb-4">Szybkie akcje</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <button
+                  onClick={() => router.push('/logistyka/allegro/suggestions')}
+                  className="flex items-center p-4 border-2 border-purple-200 rounded-lg hover:border-purple-500 hover:bg-purple-50 transition-all bg-gradient-to-br from-purple-50 to-white"
+                >
+                  <div className="text-3xl mr-3">🛒</div>
+                  <span className="font-medium text-gray-700">Allegro - Sugestie zakupów</span>
+                </button>
+
+                <button
                   onClick={() => router.push('/logistyka/magazyn/zamowienia')}
                   className="flex items-center p-4 border-2 border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all"
                 >

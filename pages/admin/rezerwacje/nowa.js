@@ -1,7 +1,7 @@
 // pages/admin/rezerwacje/nowa.js
 // Formularz dodawania nowej rezerwacji
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import AdminLayout from '../../../components/AdminLayout';
 import AvailabilityScheduler from '../../../components/AvailabilityScheduler';
@@ -56,6 +56,31 @@ export default function NowaRezerwacja() {
   const [addresses, setAddresses] = useState([
     { street: '', city: '', postalCode: '', label: 'Główny', isPrimary: true }
   ]);
+
+  // Popularne miasta - szybkie wypełnianie (z API)
+  const [popularCities, setPopularCities] = useState([]);
+  const [newCityName, setNewCityName] = useState('');
+  const [newCityPostal, setNewCityPostal] = useState('');
+  const [loadingCities, setLoadingCities] = useState(true);
+
+  // Wczytaj popularne miasta z API
+  useEffect(() => {
+    fetchPopularCities();
+  }, []);
+
+  const fetchPopularCities = async () => {
+    try {
+      const response = await fetch('/api/popular-cities');
+      const data = await response.json();
+      if (data.success) {
+        setPopularCities(data.cities);
+      }
+    } catch (error) {
+      console.error('Błąd wczytywania miast:', error);
+    } finally {
+      setLoadingCities(false);
+    }
+  };
 
   // Wiele urządzeń
   const [devices, setDevices] = useState([
@@ -132,6 +157,61 @@ export default function NowaRezerwacja() {
     const updated = [...addresses];
     updated[index][field] = value;
     setAddresses(updated);
+  };
+
+  // ========== POPULARNE MIASTA ==========
+  const fillCityData = (cityName, postalCode, addressIndex = 0) => {
+    const updated = [...addresses];
+    updated[addressIndex].city = cityName;
+    updated[addressIndex].postalCode = postalCode;
+    setAddresses(updated);
+  };
+
+  const addPopularCity = async () => {
+    if (!newCityName.trim() || !newCityPostal.trim()) return;
+
+    try {
+      const response = await fetch('/api/popular-cities', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: newCityName.trim(),
+          postalCode: newCityPostal.trim()
+        })
+      });
+
+      const data = await response.json();
+      
+      if (data.success) {
+        setPopularCities(data.cities);
+        setNewCityName('');
+        setNewCityPostal('');
+      } else {
+        alert(data.error || 'Nie udało się dodać miasta');
+      }
+    } catch (error) {
+      console.error('Błąd dodawania miasta:', error);
+      alert('Błąd połączenia z serwerem');
+    }
+  };
+
+  const removePopularCity = async (index) => {
+    try {
+      const response = await fetch(`/api/popular-cities?index=${index}`, {
+        method: 'DELETE'
+      });
+
+      const data = await response.json();
+      
+      if (data.success) {
+        setPopularCities(data.cities);
+      } else {
+        alert(data.error || 'Nie udało się usunąć miasta');
+      }
+    } catch (error) {
+      console.error('Błąd usuwania miasta:', error);
+      alert('Błąd połączenia z serwerem');
+    }
   };
 
   // ========== URZĄDZENIA ==========
@@ -281,9 +361,10 @@ export default function NowaRezerwacja() {
   const validateForm = () => {
     const newErrors = {};
 
-    if (!formData.name || formData.name.trim().length < 2) {
-      newErrors.name = 'Imię i nazwisko wymagane (min. 2 znaki)';
-    }
+    // Imię i nazwisko jest OPCJONALNE - zostanie wygenerowane automatycznie jeśli puste
+    // if (!formData.name || formData.name.trim().length < 2) {
+    //   newErrors.name = 'Imię i nazwisko wymagane (min. 2 znaki)';
+    // }
 
     // Walidacja telefonów
     const primaryPhone = phones.find(p => p.isPrimary);
@@ -340,9 +421,13 @@ export default function NowaRezerwacja() {
       const primaryAddress = addresses.find(a => a.isPrimary) || addresses[0];
       const primaryDevice = devices[0];
 
+      // Auto-generuj nazwę jeśli nie podano
+      const finalName = formData.name?.trim() || `Klient #${Date.now().toString().slice(-6)}`;
+
       // Przygotuj dane do wysłania
       const submitData = {
         ...formData,
+        name: finalName, // Użyj wygenerowanej lub podanej nazwy
         // Główny telefon (dla kompatybilności)
         phone: primaryPhone.number,
         // Główny adres (dla kompatybilności)
@@ -410,25 +495,26 @@ export default function NowaRezerwacja() {
       ]}
     >
       {/* Action bar */}
-      <div className="mb-6 flex justify-between items-center">
+      <div className="mb-4 sm:mb-6 flex justify-between items-center">
         <button
           onClick={() => router.push('/admin/rezerwacje')}
-          className="inline-flex items-center text-gray-600 hover:text-gray-900"
+          className="inline-flex items-center text-sm sm:text-base text-gray-600 hover:text-gray-900"
         >
           <FiArrowLeft className="mr-2 h-4 w-4" />
-          Powrót do listy
+          <span className="hidden sm:inline">Powrót do listy</span>
+          <span className="sm:hidden">Powrót</span>
         </button>
       </div>
 
-      <form onSubmit={handleSubmit}>
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <form onSubmit={handleSubmit} className="px-2 sm:px-0">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
           
           {/* Main form - 2 columns */}
           <div className="lg:col-span-2 space-y-6">
             
             {/* Dane klienta */}
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6">
+              <h2 className="text-base sm:text-lg font-semibold text-gray-900 mb-4 flex items-center">
                 <FiUser className="mr-2 h-5 w-5 text-blue-600" />
                 Dane klienta
               </h2>
@@ -438,7 +524,7 @@ export default function NowaRezerwacja() {
                 <label className="block text-sm font-medium text-gray-700 mb-3">
                   Typ klienta *
                 </label>
-                <div className="flex gap-4">
+                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
                   <label className={`flex-1 flex items-center justify-center px-4 py-3 border-2 rounded-lg cursor-pointer transition-all ${
                     formData.clientType === 'private' 
                       ? 'border-blue-500 bg-blue-50 text-blue-700' 
@@ -553,29 +639,7 @@ export default function NowaRezerwacja() {
               )}
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    {formData.clientType === 'company' ? 'Osoba kontaktowa *' : 'Imię i nazwisko *'}
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.name}
-                    onChange={(e) => handleChange('name', e.target.value)}
-                    className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 ${
-                      errors.name ? 'border-red-500' : 'border-gray-300'
-                    }`}
-                    placeholder="Jan Kowalski"
-                    required
-                  />
-                  {errors.name && (
-                    <p className="mt-1 text-sm text-red-600 flex items-center">
-                      <FiAlertCircle className="mr-1 h-3 w-3" />
-                      {errors.name}
-                    </p>
-                  )}
-                </div>
-
-                {/* Telefony - wiele numerów */}
+                {/* Telefony - wiele numerów - NAJPIERW */}
                 <div className="md:col-span-2">
                   <div className="flex items-center justify-between mb-2">
                     <label className="block text-sm font-medium text-gray-700">
@@ -688,7 +752,7 @@ export default function NowaRezerwacja() {
                             </button>
                           )}
                         </div>
-                        <div className="grid grid-cols-2 gap-2">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                           <input
                             type="text"
                             value={addr.street}
@@ -711,7 +775,7 @@ export default function NowaRezerwacja() {
                             type="text"
                             value={addr.postalCode}
                             onChange={(e) => updateAddress(index, 'postalCode', e.target.value)}
-                            className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 col-span-2"
+                            className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 sm:col-span-2"
                             placeholder="Kod pocztowy (np. 00-000)"
                           />
                         </div>
@@ -724,7 +788,130 @@ export default function NowaRezerwacja() {
                       {errors.address}
                     </p>
                   )}
+
+                  {/* Popularne miasta - szybkie wypełnianie */}
+                  <div className="mt-4 pt-4 border-t border-gray-200">
+                    <div className="flex items-center justify-between mb-3">
+                      <label className="text-sm font-medium text-gray-700 flex items-center">
+                        <svg className="w-4 h-4 mr-1.5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                        Szybkie wypełnianie miasta
+                      </label>
+                    </div>
+
+                    {/* Kafelki z miastami */}
+                    <div className="flex flex-wrap sm:flex-nowrap sm:overflow-x-auto gap-2 mb-3 pb-2">
+                      {loadingCities ? (
+                        <div className="text-sm text-gray-500 py-2">
+                          Ładowanie miast...
+                        </div>
+                      ) : popularCities.length === 0 ? (
+                        <div className="text-sm text-gray-400 py-2">
+                          Brak zapisanych miast. Dodaj pierwsze miasto poniżej.
+                        </div>
+                      ) : (
+                        popularCities.map((city, index) => (
+                          <div key={index} className="group relative">
+                            <button
+                              type="button"
+                              onClick={() => fillCityData(city.name, city.postalCode, 0)}
+                              className="inline-flex items-center px-3 py-1.5 bg-gradient-to-r from-blue-50 to-indigo-50 hover:from-blue-100 hover:to-indigo-100 border border-blue-200 rounded-lg text-sm font-medium text-blue-700 transition-all hover:shadow-sm"
+                            >
+                              <svg className="w-3.5 h-3.5 mr-1.5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
+                              </svg>
+                              {city.name}
+                              <span className="ml-1.5 text-xs text-blue-600 font-mono">{city.postalCode}</span>
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => removePopularCity(index)}
+                              className="absolute -top-1.5 -right-1.5 hidden group-hover:flex items-center justify-center w-5 h-5 bg-red-500 hover:bg-red-600 text-white rounded-full text-xs shadow-sm transition-colors"
+                              title="Usuń miasto"
+                            >
+                              ×
+                            </button>
+                          </div>
+                        ))
+                      )}
+                    </div>
+
+                    {/* Formularz dodawania nowego miasta */}
+                    <div className="grid grid-cols-1 sm:grid-cols-[1fr_auto_auto] gap-2 items-end">
+                      <div>
+                        <input
+                          type="text"
+                          value={newCityName}
+                          onChange={(e) => setNewCityName(e.target.value)}
+                          className="w-full px-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                          placeholder="Nazwa miasta"
+                        />
+                      </div>
+                      <div className="sm:w-32">
+                        <input
+                          type="text"
+                          value={newCityPostal}
+                          onChange={(e) => setNewCityPostal(e.target.value)}
+                          className="w-full px-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 font-mono"
+                          placeholder="00-000"
+                          maxLength="6"
+                        />
+                      </div>
+                      <button
+                        type="button"
+                        onClick={addPopularCity}
+                        disabled={!newCityName.trim() || !newCityPostal.trim()}
+                        className="w-full sm:w-auto px-4 py-1.5 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white text-sm font-medium rounded-lg transition-colors flex items-center justify-center"
+                      >
+                        <FiPlus className="mr-1 h-3.5 w-3.5" />
+                        Dodaj
+                      </button>
+                    </div>
+
+                    <p className="mt-2 text-xs text-gray-500 flex items-start">
+                      <svg className="w-3.5 h-3.5 mr-1 mt-0.5 text-blue-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                      </svg>
+                      Kliknij miasto, aby automatycznie wypełnić kod pocztowy i miejscowość w pierwszym adresie
+                    </p>
+                  </div>
                 </div>
+              </div>
+            </div>
+
+            {/* Imię i nazwisko - OPCJONALNE */}
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+              <div className="mb-4">
+                <h2 className="text-lg font-semibold text-gray-900 flex items-center">
+                  <svg className="w-5 h-5 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  </svg>
+                  Imię i nazwisko klienta
+                </h2>
+                <p className="text-sm text-gray-500 mt-1">
+                  Pole opcjonalne - jeśli pozostawisz puste, zostanie wygenerowany automatyczny identyfikator
+                </p>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Imię i nazwisko <span className="text-gray-400 text-xs">(opcjonalnie)</span>
+                </label>
+                <input
+                  type="text"
+                  value={formData.name}
+                  onChange={(e) => handleChange('name', e.target.value)}
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                  placeholder="np. Jan Kowalski"
+                />
+                <p className="mt-2 text-xs text-gray-500 flex items-start">
+                  <svg className="w-4 h-4 mr-1 mt-0.5 text-blue-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                  </svg>
+                  <span>Jeśli nie podasz imienia i nazwiska, system automatycznie wygeneruje identyfikator w formacie: <strong>Klient #XXXXXX</strong></span>
+                </p>
               </div>
             </div>
 
@@ -738,10 +925,11 @@ export default function NowaRezerwacja() {
                 <button
                   type="button"
                   onClick={addDevice}
-                  className="text-sm px-3 py-1.5 bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center"
+                  className="text-xs sm:text-sm px-3 py-1.5 bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center whitespace-nowrap"
                 >
                   <FiPlus className="mr-1 h-3 w-3" />
-                  Dodaj urządzenie
+                  <span className="hidden sm:inline">Dodaj urządzenie</span>
+                  <span className="sm:hidden">Dodaj</span>
                 </button>
               </div>
               
@@ -1151,22 +1339,14 @@ export default function NowaRezerwacja() {
             </div>
 
             {/* Action buttons */}
-            <div className="space-y-3">
+            <div className="space-y-3 sticky bottom-0 sm:relative bg-white sm:bg-transparent pt-4 sm:pt-0 pb-4 sm:pb-0 -mx-2 sm:mx-0 px-2 sm:px-0 border-t sm:border-t-0 border-gray-200">
               <button
                 type="submit"
                 disabled={saving}
-                className="w-full inline-flex items-center justify-center px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+                className="w-full inline-flex items-center justify-center px-4 py-3 sm:py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed font-medium text-sm sm:text-base shadow-lg sm:shadow-none"
               >
                 <FiSave className="mr-2 h-4 w-4" />
                 {saving ? 'Zapisywanie...' : 'Utwórz rezerwację'}
-              </button>
-              
-              <button
-                type="button"
-                onClick={() => router.push('/admin/rezerwacje')}
-                className="w-full inline-flex items-center justify-center px-4 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 font-medium"
-              >
-                Anuluj
               </button>
             </div>
           </div>

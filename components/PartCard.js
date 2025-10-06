@@ -3,6 +3,8 @@
 
 import { useState } from 'react';
 import PhotoGallery from './PhotoGallery';
+import AllegroQuickSearch from './AllegroQuickSearch';
+import NorthQuickSearch from './NorthQuickSearch';
 
 export default function PartCard({ part, onEdit, onDelete }) {
   const [showGallery, setShowGallery] = useState(false);
@@ -131,6 +133,22 @@ export default function PartCard({ part, onEdit, onDelete }) {
               na stanie
             </div>
           </div>
+        </div>
+
+        {/* Sklepy - Allegro & North */}
+        <div className="mb-3 border-t border-gray-200 dark:border-gray-700 pt-3 space-y-2">
+          <AllegroQuickSearch
+            partName={part.name || part.partName}
+            partNumber={part.partNumber}
+            compact={false}
+            maxResults={100}
+          />
+          <NorthQuickSearch
+            partName={part.name || part.partName}
+            partNumber={part.partNumber}
+            compact={false}
+            maxResults={20}
+          />
         </div>
 
         {/* Actions */}

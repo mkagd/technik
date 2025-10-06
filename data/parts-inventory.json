@@ -1,27 +1,686 @@
 {
   "inventory": [
     {
-      "id": "PART001",
-      "name": "Łożysko bębna Samsung",
-      "partNumber": "DC97-16151A",
+      "id": "PART-LOD-001",
+      "name": "Termostat lodówki Ranco K59-L1287",
+      "partNumber": "K59-L1287",
       "category": "AGD",
-      "subcategory": "Pralka",
-      "imageUrl": "/uploads/parts/lożysko-bębna-samsung.svg",
+      "subcategory": "Lodówka",
+      "imageUrl": "https://north.pl/media/catalog/product/cache/1/image/600x600/9df78eab33525d08d6e5fb8d27136e95/t/e/termostat-k59-l1287-ranco_1.jpg",
+      "compatibleBrands": [
+        "Whirlpool",
+        "Indesit",
+        "Hotpoint",
+        "Ariston",
+        "Bauknecht"
+      ],
+      "compatibleModels": [
+        "universal"
+      ],
+      "description": "Termostat Ranco K59-L1287 do lodówek i zamrażarek. Oryginalny termostat mechaniczny z kapilarą 900mm. Gwarancja 24 miesiące.",
+      "specifications": {
+        "manufacturer": "Ranco",
+        "capillaryLength": "900mm",
+        "connectionType": "6.3mm faston",
+        "temperatureRange": "-35°C do +5°C",
+        "warranty": "24 miesiące",
+        "oem": true
+      },
+      "pricing": {
+        "retailPrice": 75,
+        "wholesalePrice": 58,
+        "currency": "PLN",
+        "taxIncluded": true
+      },
+      "availability": {
+        "inStock": 15,
+        "minStock": 5,
+        "maxStock": 30,
+        "reserved": 2,
+        "available": 13
+      },
+      "supplier": {
+        "name": "North Polska",
+        "supplierCode": "NORTH-RANCO-001",
+        "contactInfo": {
+          "phone": "+48 22 123 45 67",
+          "email": "zamowienia@north.pl"
+        },
+        "deliveryTime": "24h",
+        "minOrderQuantity": 1
+      },
+      "installation": {
+        "difficulty": "medium",
+        "estimatedTime": 45,
+        "requiredTools": [
+          "Śrubokręt krzyżakowy",
+          "Klucz nasadowy 8mm",
+          "Multimetr"
+        ]
+      }
+    },
+    {
+      "id": "PART-LOD-002",
+      "name": "Uszczelka drzwi lodówki Gorenje 616254",
+      "partNumber": "616254",
+      "category": "AGD",
+      "subcategory": "Lodówka",
+      "imageUrl": "https://north.pl/media/catalog/product/cache/1/image/600x600/9df78eab33525d08d6e5fb8d27136e95/u/s/uszczelka-gorenje-616254_1.jpg",
+      "compatibleBrands": [
+        "Gorenje",
+        "Amica",
+        "Hisense"
+      ],
+      "compatibleModels": [
+        "RK6192",
+        "RK6191",
+        "NRK6192",
+        "NRK6191"
+      ],
+      "description": "Oryginalna uszczelka magnetyczna do drzwi lodówki Gorenje. Wymiary: 570x1210mm. Kolor biały. Montaż bez klejenia.",
+      "specifications": {
+        "dimensions": "570x1210mm",
+        "color": "biały",
+        "material": "PVC + magnes",
+        "mountingType": "wpinany",
+        "warranty": "12 miesięcy",
+        "oem": true
+      },
+      "pricing": {
+        "retailPrice": 145,
+        "wholesalePrice": 112,
+        "currency": "PLN",
+        "taxIncluded": true
+      },
+      "availability": {
+        "inStock": 8,
+        "minStock": 3,
+        "maxStock": 15,
+        "reserved": 1,
+        "available": 7
+      },
+      "supplier": {
+        "name": "Gorenje Service",
+        "supplierCode": "GOR-616254",
+        "contactInfo": {
+          "phone": "+48 22 333 44 55",
+          "email": "service@gorenje.pl"
+        },
+        "deliveryTime": "48h",
+        "minOrderQuantity": 1
+      },
+      "installation": {
+        "difficulty": "easy",
+        "estimatedTime": 30,
+        "requiredTools": [
+          "Suszarka (opcjonalnie)",
+          "Szpatułka plastikowa"
+        ]
+      }
+    },
+    {
+      "id": "PART-LOD-003",
+      "name": "Dmuchawa wentylatora No Frost Samsung DA31-00146E",
+      "partNumber": "DA31-00146E",
+      "category": "AGD",
+      "subcategory": "Lodówka",
+      "imageUrl": "https://north.pl/media/catalog/product/cache/1/image/600x600/9df78eab33525d08d6e5fb8d27136e95/d/a/da31-00146e-samsung_1.jpg",
       "compatibleBrands": [
         "Samsung"
       ],
       "compatibleModels": [
-        "WW90T4540AE",
-        "WW80T4540AE",
-        "WW70T4540AE",
-        "WW90T4040CE",
-        "WW80T4040CE"
+        "RL56",
+        "RB31",
+        "RB33",
+        "RL60",
+        "RB37"
       ],
-      "description": "Łożysko bębna do pralek Samsung, wysokiej jakości zamiennik",
+      "description": "Oryginalny wentylator No Frost do lodówek Samsung Side by Side. Napięcie 12V DC, moc 2.5W. Kompletny z obudową.",
       "specifications": {
-        "diameter": "35mm",
-        "material": "Stal nierdzewna + uszczelka NBR",
+        "voltage": "12V DC",
+        "power": "2.5W",
+        "dimensions": "92x92x25mm",
+        "motorType": "DC bezszczotkowy",
+        "warranty": "24 miesiące",
+        "oem": true
+      },
+      "pricing": {
+        "retailPrice": 125,
+        "wholesalePrice": 95,
+        "currency": "PLN",
+        "taxIncluded": true
+      },
+      "availability": {
+        "inStock": 12,
+        "minStock": 4,
+        "maxStock": 20,
+        "reserved": 0,
+        "available": 12
+      },
+      "supplier": {
+        "name": "Samsung Parts",
+        "supplierCode": "SAM-DA31-00146E",
+        "contactInfo": {
+          "phone": "+48 22 777 88 99",
+          "email": "parts@samsung.pl"
+        },
+        "deliveryTime": "24h",
+        "minOrderQuantity": 1
+      },
+      "installation": {
+        "difficulty": "medium",
+        "estimatedTime": 60,
+        "requiredTools": [
+          "Śrubokręt krzyżakowy",
+          "Klucz nasadowy 8mm",
+          "Multimetr"
+        ]
+      }
+    },
+    {
+      "id": "PART-LOD-004",
+      "name": "Półka szklana do lodówki Whirlpool 481245088142",
+      "partNumber": "481245088142",
+      "category": "AGD",
+      "subcategory": "Lodówka",
+      "imageUrl": "https://north.pl/media/catalog/product/cache/1/image/600x600/9df78eab33525d08d6e5fb8d27136e95/4/8/481245088142-whirlpool_1.jpg",
+      "compatibleBrands": [
+        "Whirlpool",
+        "Bauknecht",
+        "Ignis",
+        "IKEA"
+      ],
+      "compatibleModels": [
+        "ART",
+        "ARG",
+        "WBA",
+        "WBE"
+      ],
+      "description": "Oryginalna półka szklana z ramką plastikową do lodówek Whirlpool. Wymiary: 490x320mm, szkło hartowane 4mm.",
+      "specifications": {
+        "dimensions": "490x320mm",
+        "glassThickness": "4mm",
+        "material": "Szkło hartowane + ramka ABS",
+        "loadCapacity": "15kg",
+        "warranty": "6 miesięcy",
+        "oem": true
+      },
+      "pricing": {
+        "retailPrice": 89,
+        "wholesalePrice": 68,
+        "currency": "PLN",
+        "taxIncluded": true
+      },
+      "availability": {
+        "inStock": 6,
+        "minStock": 2,
+        "maxStock": 12,
+        "reserved": 1,
+        "available": 5
+      },
+      "supplier": {
+        "name": "Whirlpool Service",
+        "supplierCode": "WP-481245088142",
+        "contactInfo": {
+          "phone": "+48 22 555 66 77",
+          "email": "service@whirlpool.pl"
+        },
+        "deliveryTime": "48h",
+        "minOrderQuantity": 1
+      },
+      "installation": {
+        "difficulty": "easy",
+        "estimatedTime": 5,
+        "requiredTools": [
+          "Brak - montaż ręczny"
+        ]
+      }
+    },
+    {
+      "id": "PART-LOD-005",
+      "name": "Filtr wody do lodówki Samsung DA29-00020B",
+      "partNumber": "DA29-00020B",
+      "category": "AGD",
+      "subcategory": "Lodówka",
+      "imageUrl": "https://north.pl/media/catalog/product/cache/1/image/600x600/9df78eab33525d08d6e5fb8d27136e95/d/a/da29-00020b-samsung_1.jpg",
+      "compatibleBrands": [
+        "Samsung"
+      ],
+      "compatibleModels": [
+        "RS",
+        "RSH",
+        "RSA",
+        "RSG",
+        "RFG"
+      ],
+      "description": "Oryginalny filtr wody HAF-CIN do lodówek Samsung z dystrybutorem wody. Usuwa chlor, pestycydy, bakterie. Żywotność 6 miesięcy.",
+      "specifications": {
+        "filterType": "HAF-CIN",
+        "lifespan": "6 miesięcy / 1500L",
+        "filtrationLevel": "0.5 mikronów",
+        "removes": "Chlor, pestycydy, bakterie, rdza",
         "warranty": "12 miesięcy",
+        "oem": true
+      },
+      "pricing": {
+        "retailPrice": 165,
+        "wholesalePrice": 128,
+        "currency": "PLN",
+        "taxIncluded": true
+      },
+      "availability": {
+        "inStock": 20,
+        "minStock": 8,
+        "maxStock": 40,
+        "reserved": 3,
+        "available": 17
+      },
+      "supplier": {
+        "name": "Samsung Parts",
+        "supplierCode": "SAM-DA29-00020B",
+        "contactInfo": {
+          "phone": "+48 22 777 88 99",
+          "email": "parts@samsung.pl"
+        },
+        "deliveryTime": "24h",
+        "minOrderQuantity": 1
+      },
+      "installation": {
+        "difficulty": "easy",
+        "estimatedTime": 10,
+        "requiredTools": [
+          "Brak - montaż ręczny"
+        ]
+      }
+    },
+    {
+      "id": "PART-ZMY-001",
+      "name": "Pompa odpływowa do zmywarki Askoll M224 XP",
+      "partNumber": "M224XP",
+      "category": "AGD",
+      "subcategory": "Zmywarka",
+      "imageUrl": "https://north.pl/media/catalog/product/cache/1/image/600x600/9df78eab33525d08d6e5fb8d27136e95/a/s/askoll-m224xp_1.jpg",
+      "compatibleBrands": [
+        "Bosch",
+        "Siemens",
+        "Neff",
+        "Gaggenau"
+      ],
+      "compatibleModels": [
+        "universal"
+      ],
+      "description": "Oryginalna pompa odpływowa Askoll M224 XP. Moc 30W, 220-240V. Pasuje do większości zmywarek Bosch/Siemens. Gwarancja 24 miesiące.",
+      "specifications": {
+        "manufacturer": "Askoll",
+        "power": "30W",
+        "voltage": "220-240V 50Hz",
+        "pumpType": "Synchroniczny",
+        "connectionType": "Faston 6.3mm",
+        "warranty": "24 miesiące",
+        "oem": true
+      },
+      "pricing": {
+        "retailPrice": 135,
+        "wholesalePrice": 105,
+        "currency": "PLN",
+        "taxIncluded": true
+      },
+      "availability": {
+        "inStock": 18,
+        "minStock": 6,
+        "maxStock": 30,
+        "reserved": 2,
+        "available": 16
+      },
+      "supplier": {
+        "name": "North Polska",
+        "supplierCode": "NORTH-ASKOLL-M224",
+        "contactInfo": {
+          "phone": "+48 22 123 45 67",
+          "email": "zamowienia@north.pl"
+        },
+        "deliveryTime": "24h",
+        "minOrderQuantity": 1
+      },
+      "installation": {
+        "difficulty": "medium",
+        "estimatedTime": 45,
+        "requiredTools": [
+          "Śrubokręt krzyżakowy",
+          "Klucz nasadowy 10mm",
+          "Multimetr",
+          "Szczypce"
+        ]
+      }
+    },
+    {
+      "id": "PART-ZMY-002",
+      "name": "Ramię spryskujące górne Bosch 00289859",
+      "partNumber": "00289859",
+      "category": "AGD",
+      "subcategory": "Zmywarka",
+      "imageUrl": "https://north.pl/media/catalog/product/cache/1/image/600x600/9df78eab33525d08d6e5fb8d27136e95/0/0/00289859-bosch_1.jpg",
+      "compatibleBrands": [
+        "Bosch",
+        "Siemens",
+        "Neff",
+        "Constructa"
+      ],
+      "compatibleModels": [
+        "SMS",
+        "SBV",
+        "SPV",
+        "SPS",
+        "SN",
+        "SX"
+      ],
+      "description": "Oryginalne ramię spryskujące górne do zmywarek Bosch i Siemens. Kompletne z dyszami i kołpakiem. Średnica 420mm.",
+      "specifications": {
+        "diameter": "420mm",
+        "nozzlesCount": 8,
+        "mountingType": "Click-on",
+        "material": "Tworzywo PP",
+        "warranty": "12 miesięcy",
+        "oem": true
+      },
+      "pricing": {
+        "retailPrice": 95,
+        "wholesalePrice": 72,
+        "currency": "PLN",
+        "taxIncluded": true
+      },
+      "availability": {
+        "inStock": 10,
+        "minStock": 4,
+        "maxStock": 20,
+        "reserved": 1,
+        "available": 9
+      },
+      "supplier": {
+        "name": "BSH Service",
+        "supplierCode": "BSH-00289859",
+        "contactInfo": {
+          "phone": "+48 22 444 55 66",
+          "email": "service@bshg.pl"
+        },
+        "deliveryTime": "48h",
+        "minOrderQuantity": 1
+      },
+      "installation": {
+        "difficulty": "easy",
+        "estimatedTime": 10,
+        "requiredTools": [
+          "Brak - montaż ręczny"
+        ]
+      }
+    },
+    {
+      "id": "PART-ZMY-003",
+      "name": "Kosz dolny do zmywarki Electrolux 1524746409",
+      "partNumber": "1524746409",
+      "category": "AGD",
+      "subcategory": "Zmywarka",
+      "imageUrl": "https://north.pl/media/catalog/product/cache/1/image/600x600/9df78eab33525d08d6e5fb8d27136e95/1/5/1524746409-electrolux_1.jpg",
+      "compatibleBrands": [
+        "Electrolux",
+        "AEG",
+        "Zanussi"
+      ],
+      "compatibleModels": [
+        "ESF",
+        "ESI",
+        "ESL",
+        "ZDF",
+        "ZDI"
+      ],
+      "description": "Oryginalny kosz dolny do zmywarki Electrolux/AEG. Kompletny z kółkami i uchwytem. Wymiary: 470x500x120mm.",
+      "specifications": {
+        "dimensions": "470x500x120mm",
+        "material": "Stal nierdzewna powlekana",
+        "wheelsIncluded": true,
+        "adjustableHeight": false,
+        "warranty": "12 miesięcy",
+        "oem": true
+      },
+      "pricing": {
+        "retailPrice": 245,
+        "wholesalePrice": 189,
+        "currency": "PLN",
+        "taxIncluded": true
+      },
+      "availability": {
+        "inStock": 5,
+        "minStock": 2,
+        "maxStock": 10,
+        "reserved": 0,
+        "available": 5
+      },
+      "supplier": {
+        "name": "Electrolux Service",
+        "supplierCode": "ELX-1524746409",
+        "contactInfo": {
+          "phone": "+48 22 666 77 88",
+          "email": "service@electrolux.pl"
+        },
+        "deliveryTime": "72h",
+        "minOrderQuantity": 1
+      },
+      "installation": {
+        "difficulty": "easy",
+        "estimatedTime": 5,
+        "requiredTools": [
+          "Brak - montaż ręczny"
+        ]
+      }
+    },
+    {
+      "id": "PART-ZMY-004",
+      "name": "Elektrozawór dopływu wody Whirlpool 481228128468",
+      "partNumber": "481228128468",
+      "category": "AGD",
+      "subcategory": "Zmywarka",
+      "imageUrl": "https://north.pl/media/catalog/product/cache/1/image/600x600/9df78eab33525d08d6e5fb8d27136e95/4/8/481228128468-whirlpool_1.jpg",
+      "compatibleBrands": [
+        "Whirlpool",
+        "Bauknecht",
+        "Ignis",
+        "IKEA"
+      ],
+      "compatibleModels": [
+        "ADG",
+        "ADP",
+        "WFC",
+        "DWF"
+      ],
+      "description": "Oryginalny elektrozawór 2-drożny do zmywarek Whirlpool. Napięcie 220-240V, przyłącze 3/4 cala. Gwarancja 24 miesiące.",
+      "specifications": {
+        "voltage": "220-240V 50Hz",
+        "outlets": 2,
+        "connectionThread": "3/4 cala",
+        "pressure": "0.1-1.0 MPa",
+        "warranty": "24 miesiące",
+        "oem": true
+      },
+      "pricing": {
+        "retailPrice": 115,
+        "wholesalePrice": 88,
+        "currency": "PLN",
+        "taxIncluded": true
+      },
+      "availability": {
+        "inStock": 14,
+        "minStock": 5,
+        "maxStock": 25,
+        "reserved": 2,
+        "available": 12
+      },
+      "supplier": {
+        "name": "Whirlpool Service",
+        "supplierCode": "WP-481228128468",
+        "contactInfo": {
+          "phone": "+48 22 555 66 77",
+          "email": "service@whirlpool.pl"
+        },
+        "deliveryTime": "48h",
+        "minOrderQuantity": 1
+      },
+      "installation": {
+        "difficulty": "medium",
+        "estimatedTime": 40,
+        "requiredTools": [
+          "Śrubokręt krzyżakowy",
+          "Klucz nastawny",
+          "Multimetr"
+        ]
+      }
+    },
+    {
+      "id": "PART-ZMY-005",
+      "name": "Uszczelka drzwi zmywarki Bosch 00754869",
+      "partNumber": "00754869",
+      "category": "AGD",
+      "subcategory": "Zmywarka",
+      "imageUrl": "https://north.pl/media/catalog/product/cache/1/image/600x600/9df78eab33525d08d6e5fb8d27136e95/0/0/00754869-bosch_1.jpg",
+      "compatibleBrands": [
+        "Bosch",
+        "Siemens",
+        "Neff"
+      ],
+      "compatibleModels": [
+        "SMS",
+        "SBV",
+        "SPV",
+        "SN",
+        "SX"
+      ],
+      "description": "Oryginalna uszczelka drzwi do zmywarek Bosch/Siemens. Materiał elastyczny, odporny na detergenty. Długość 2000mm.",
+      "specifications": {
+        "length": "2000mm",
+        "material": "TPE (elastomer termoplastyczny)",
+        "color": "szary",
+        "temperatureResistance": "-20°C do +80°C",
+        "warranty": "12 miesięcy",
+        "oem": true
+      },
+      "pricing": {
+        "retailPrice": 65,
+        "wholesalePrice": 48,
+        "currency": "PLN",
+        "taxIncluded": true
+      },
+      "availability": {
+        "inStock": 22,
+        "minStock": 8,
+        "maxStock": 40,
+        "reserved": 3,
+        "available": 19
+      },
+      "supplier": {
+        "name": "BSH Service",
+        "supplierCode": "BSH-00754869",
+        "contactInfo": {
+          "phone": "+48 22 444 55 66",
+          "email": "service@bshg.pl"
+        },
+        "deliveryTime": "24h",
+        "minOrderQuantity": 1
+      },
+      "installation": {
+        "difficulty": "easy",
+        "estimatedTime": 20,
+        "requiredTools": [
+          "Suszarka",
+          "Szpatułka plastikowa"
+        ]
+      }
+    },
+    {
+      "id": "PART-PIE-001",
+      "name": "Grzałka górna piekarnika Bosch 00471375",
+      "partNumber": "00471375",
+      "category": "AGD",
+      "subcategory": "Piekarnik",
+      "imageUrl": "https://north.pl/media/catalog/product/cache/1/image/600x600/9df78eab33525d08d6e5fb8d27136e95/0/0/00471375-bosch_1.jpg",
+      "compatibleBrands": [
+        "Bosch",
+        "Siemens",
+        "Neff",
+        "Constructa"
+      ],
+      "compatibleModels": [
+        "HBA",
+        "HBN",
+        "HB",
+        "HE",
+        "HS"
+      ],
+      "description": "Oryginalna grzałka górna do piekarników Bosch/Siemens. Moc 1400W, długość 385mm. Gwarancja 24 miesiące.",
+      "specifications": {
+        "power": "1400W",
+        "voltage": "220-240V",
+        "length": "385mm",
+        "heatingElement": "Ni-Cr",
+        "warranty": "24 miesiące",
+        "oem": true
+      },
+      "pricing": {
+        "retailPrice": 155,
+        "wholesalePrice": 119,
+        "currency": "PLN",
+        "taxIncluded": true
+      },
+      "availability": {
+        "inStock": 12,
+        "minStock": 4,
+        "maxStock": 20,
+        "reserved": 1,
+        "available": 11
+      },
+      "supplier": {
+        "name": "BSH Service",
+        "supplierCode": "BSH-00471375",
+        "contactInfo": {
+          "phone": "+48 22 444 55 66",
+          "email": "service@bshg.pl"
+        },
+        "deliveryTime": "48h",
+        "minOrderQuantity": 1
+      },
+      "installation": {
+        "difficulty": "medium",
+        "estimatedTime": 45,
+        "requiredTools": [
+          "Śrubokręt krzyżakowy",
+          "Klucz nasadowy 8mm",
+          "Multimetr",
+          "Rękawice izolacyjne"
+        ]
+      }
+    },
+    {
+      "id": "PART-PIE-002",
+      "name": "Termostat bezpieczeństwa piekarnika EGO 55.17059.180",
+      "partNumber": "55.17059.180",
+      "category": "AGD",
+      "subcategory": "Piekarnik",
+      "imageUrl": "https://north.pl/media/catalog/product/cache/1/image/600x600/9df78eab33525d08d6e5fb8d27136e95/e/g/ego-55-17059-180_1.jpg",
+      "compatibleBrands": [
+        "Electrolux",
+        "AEG",
+        "Zanussi",
+        "Whirlpool",
+        "Indesit"
+      ],
+      "compatibleModels": [
+        "universal"
+      ],
+      "description": "Oryginalny termostat bezpieczeństwa EGO. Temperatura wyłączenia 245°C, automatyczny reset. Uniwersalny montaż.",
+      "specifications": {
+        "manufacturer": "EGO",
+        "cutoffTemperature": "245°C",
+        "resetType": "Automatyczny",
+        "capillaryLength": "1150mm",
+        "warranty": "24 miesiące",
         "oem": true
       },
       "pricing": {
@@ -31,144 +690,293 @@
         "taxIncluded": true
       },
       "availability": {
-        "inStock": 10,
-        "minStock": 3,
-        "maxStock": 20,
-        "reserved": 0,
-        "available": 10
+        "inStock": 16,
+        "minStock": 6,
+        "maxStock": 30,
+        "reserved": 2,
+        "available": 14
       },
       "supplier": {
-        "name": "Samsung Parts Europe",
-        "supplierCode": "SPE-001",
+        "name": "North Polska",
+        "supplierCode": "NORTH-EGO-180",
         "contactInfo": {
           "phone": "+48 22 123 45 67",
+          "email": "zamowienia@north.pl"
+        },
+        "deliveryTime": "24h",
+        "minOrderQuantity": 1
+      },
+      "installation": {
+        "difficulty": "medium",
+        "estimatedTime": 35,
+        "requiredTools": [
+          "Śrubokręt krzyżakowy",
+          "Multimetr",
+          "Rękawice izolacyjne"
+        ]
+      }
+    },
+    {
+      "id": "PART-PIE-003",
+      "name": "Szyba wewnętrzna drzwi piekarnika Whirlpool 481244019316",
+      "partNumber": "481244019316",
+      "category": "AGD",
+      "subcategory": "Piekarnik",
+      "imageUrl": "https://north.pl/media/catalog/product/cache/1/image/600x600/9df78eab33525d08d6e5fb8d27136e95/4/8/481244019316-whirlpool_1.jpg",
+      "compatibleBrands": [
+        "Whirlpool",
+        "Bauknecht",
+        "Ignis",
+        "IKEA"
+      ],
+      "compatibleModels": [
+        "AKP",
+        "AKZM",
+        "AKZ",
+        "OBI"
+      ],
+      "description": "Oryginalna szyba wewnętrzna do piekarników Whirlpool. Szkło hartowane, odporność do 300°C. Wymiary: 410x335mm.",
+      "specifications": {
+        "dimensions": "410x335mm",
+        "thickness": "4mm",
+        "material": "Szkło hartowane termoodporne",
+        "temperatureResistance": "300°C",
+        "warranty": "6 miesięcy",
+        "oem": true
+      },
+      "pricing": {
+        "retailPrice": 125,
+        "wholesalePrice": 95,
+        "currency": "PLN",
+        "taxIncluded": true
+      },
+      "availability": {
+        "inStock": 7,
+        "minStock": 3,
+        "maxStock": 15,
+        "reserved": 0,
+        "available": 7
+      },
+      "supplier": {
+        "name": "Whirlpool Service",
+        "supplierCode": "WP-481244019316",
+        "contactInfo": {
+          "phone": "+48 22 555 66 77",
+          "email": "service@whirlpool.pl"
+        },
+        "deliveryTime": "48h",
+        "minOrderQuantity": 1
+      },
+      "installation": {
+        "difficulty": "easy",
+        "estimatedTime": 25,
+        "requiredTools": [
+          "Śrubokręt krzyżakowy"
+        ]
+      }
+    },
+    {
+      "id": "PART-PIE-004",
+      "name": "Wentylator chłodzenia piekarnika Samsung DG31-00005A",
+      "partNumber": "DG31-00005A",
+      "category": "AGD",
+      "subcategory": "Piekarnik",
+      "imageUrl": "https://north.pl/media/catalog/product/cache/1/image/600x600/9df78eab33525d08d6e5fb8d27136e95/d/g/dg31-00005a-samsung_1.jpg",
+      "compatibleBrands": [
+        "Samsung"
+      ],
+      "compatibleModels": [
+        "NV",
+        "BQ",
+        "NQ"
+      ],
+      "description": "Oryginalny wentylator chłodzenia obudowy do piekarników Samsung. Moc 25W, 220-240V. Kompletny z osłoną.",
+      "specifications": {
+        "power": "25W",
+        "voltage": "220-240V 50Hz",
+        "diameter": "120mm",
+        "airflow": "85 m³/h",
+        "warranty": "24 miesiące",
+        "oem": true
+      },
+      "pricing": {
+        "retailPrice": 145,
+        "wholesalePrice": 112,
+        "currency": "PLN",
+        "taxIncluded": true
+      },
+      "availability": {
+        "inStock": 9,
+        "minStock": 3,
+        "maxStock": 18,
+        "reserved": 1,
+        "available": 8
+      },
+      "supplier": {
+        "name": "Samsung Parts",
+        "supplierCode": "SAM-DG31-00005A",
+        "contactInfo": {
+          "phone": "+48 22 777 88 99",
           "email": "parts@samsung.pl"
         },
         "deliveryTime": "24h",
         "minOrderQuantity": 1
       },
       "installation": {
-        "difficulty": "high",
-        "estimatedTime": 120,
+        "difficulty": "medium",
+        "estimatedTime": 40,
         "requiredTools": [
-          "klucze do AGD",
-          "ściągacz łożysk",
-          "klucz dynamometryczny"
-        ],
-        "specialRequirements": [
-          "demontaż bębna",
-          "wymiana jednoczesna z uszczelkami"
+          "Śrubokręt krzyżakowy",
+          "Klucz nasadowy 8mm",
+          "Multimetr"
         ]
-      },
-      "failureIndicators": [
-        "hałas podczas wirowania",
-        "wyciek wody pod pralką",
-        "wibracje podczas prania",
-        "zablokowany bęben"
-      ],
-      "metadata": {
-        "createdAt": "2025-09-30T12:00:00Z",
-        "updatedAt": "2025-10-03T19:07:20.025Z",
-        "lastOrderDate": "2025-09-25T10:30:00Z",
-        "popularityScore": 8.5,
-        "seasonalDemand": "stable"
-      },
-      "stockQuantity": 9,
-      "images": [
-        {
-          "id": "IMG_PART001_001",
-          "url": "/uploads/parts/lożysko-bębna-samsung.svg",
-          "type": "main",
-          "order": 0,
-          "caption": "",
-          "uploadedAt": "2025-10-04T04:14:58.880Z"
-        }
-      ],
-      "model3D": null
+      }
     },
     {
-      "id": "PART002",
-      "name": "Pompa odpływowa uniwersalna",
-      "partNumber": "DC96-01414G",
+      "id": "PART-PIE-005",
+      "name": "Uszczelka drzwi piekarnika Gorenje 617468",
+      "partNumber": "617468",
       "category": "AGD",
-      "subcategory": "Pralka",
-      "imageUrl": "/uploads/parts/pompa-odplywowa.svg",
+      "subcategory": "Piekarnik",
+      "imageUrl": "https://north.pl/media/catalog/product/cache/1/image/600x600/9df78eab33525d08d6e5fb8d27136e95/6/1/617468-gorenje_1.jpg",
       "compatibleBrands": [
-        "Samsung",
-        "LG",
-        "Bosch"
+        "Gorenje",
+        "Amica"
       ],
       "compatibleModels": [
-        "universal"
+        "BO",
+        "BC",
+        "BI",
+        "BPS"
       ],
-      "description": "Uniwersalna pompa odpływowa do pralek, pasuje do większości modeli",
+      "description": "Oryginalna uszczelka drzwi piekarnika Gorenje. Materiał termoizolacyjny, odporność do 300°C. Długość 3000mm.",
       "specifications": {
-        "power": "30W",
-        "voltage": "230V",
-        "flow": "12L/min",
-        "warranty": "6 miesięcy"
+        "length": "3000mm",
+        "width": "15mm",
+        "material": "Włókno szklane + silikon",
+        "temperatureResistance": "300°C",
+        "warranty": "12 miesięcy",
+        "oem": true
       },
       "pricing": {
-        "retailPrice": 120,
-        "wholesalePrice": 90,
+        "retailPrice": 75,
+        "wholesalePrice": 58,
         "currency": "PLN",
         "taxIncluded": true
       },
       "availability": {
-        "inStock": 10,
-        "minStock": 2,
-        "maxStock": 15,
-        "reserved": 0,
-        "available": 10
+        "inStock": 18,
+        "minStock": 6,
+        "maxStock": 30,
+        "reserved": 2,
+        "available": 16
       },
       "supplier": {
-        "name": "Universal Parts Ltd",
-        "supplierCode": "UPL-002",
+        "name": "Gorenje Service",
+        "supplierCode": "GOR-617468",
+        "contactInfo": {
+          "phone": "+48 22 333 44 55",
+          "email": "service@gorenje.pl"
+        },
         "deliveryTime": "48h",
-        "minOrderQuantity": 2
+        "minOrderQuantity": 1
+      },
+      "installation": {
+        "difficulty": "easy",
+        "estimatedTime": 30,
+        "requiredTools": [
+          "Szpatułka",
+          "Klej wysokotemperaturowy"
+        ]
+      }
+    },
+    {
+      "id": "PART-PIE-006",
+      "name": "Grzałka dolna piekarnika Electrolux 3872108503",
+      "partNumber": "3872108503",
+      "category": "AGD",
+      "subcategory": "Piekarnik",
+      "imageUrl": "https://north.pl/media/catalog/product/cache/1/image/600x600/9df78eab33525d08d6e5fb8d27136e95/3/8/3872108503-electrolux_1.jpg",
+      "compatibleBrands": [
+        "Electrolux",
+        "AEG",
+        "Zanussi"
+      ],
+      "compatibleModels": [
+        "EOB",
+        "EOC",
+        "EZB",
+        "ZOB"
+      ],
+      "description": "Oryginalna grzałka dolna do piekarników Electrolux/AEG. Moc 1200W, długość 400mm. Gwarancja 24 miesiące.",
+      "specifications": {
+        "power": "1200W",
+        "voltage": "220-240V",
+        "length": "400mm",
+        "heatingElement": "Ni-Cr",
+        "warranty": "24 miesiące",
+        "oem": true
+      },
+      "pricing": {
+        "retailPrice": 135,
+        "wholesalePrice": 105,
+        "currency": "PLN",
+        "taxIncluded": true
+      },
+      "availability": {
+        "inStock": 11,
+        "minStock": 4,
+        "maxStock": 20,
+        "reserved": 0,
+        "available": 11
+      },
+      "supplier": {
+        "name": "Electrolux Service",
+        "supplierCode": "ELX-3872108503",
+        "contactInfo": {
+          "phone": "+48 22 666 77 88",
+          "email": "service@electrolux.pl"
+        },
+        "deliveryTime": "72h",
+        "minOrderQuantity": 1
       },
       "installation": {
         "difficulty": "medium",
-        "estimatedTime": 45,
+        "estimatedTime": 50,
         "requiredTools": [
-          "klucze płaskie",
-          "szczypce do węży"
+          "Śrubokręt krzyżakowy",
+          "Klucz nasadowy 8mm",
+          "Multimetr",
+          "Rękawice izolacyjne"
         ]
-      },
-      "failureIndicators": [
-        "woda nie odpływa",
-        "komunikat błędu na wyświetlaczu",
-        "hałas z dolnej części pralki"
-      ],
-      "images": [
-        {
-          "id": "IMG_PART002_001",
-          "url": "/uploads/parts/pompa-odplywowa.svg",
-          "type": "main",
-          "order": 0,
-          "caption": "",
-          "uploadedAt": "2025-10-04T04:14:58.881Z"
-        }
-      ],
-      "model3D": null
+      }
     },
     {
-      "id": "PART003",
-      "name": "Pasek napędowy HTD",
-      "partNumber": "6PH1871",
+      "id": "PART-PIE-007",
+      "name": "Pokrętło programatora piekarnika Bosch 00614175",
+      "partNumber": "00614175",
       "category": "AGD",
-      "subcategory": "Pralka",
+      "subcategory": "Piekarnik",
+      "imageUrl": "https://north.pl/media/catalog/product/cache/1/image/600x600/9df78eab33525d08d6e5fb8d27136e95/0/0/00614175-bosch_1.jpg",
       "compatibleBrands": [
-        "Samsung",
-        "LG",
-        "Whirlpool"
+        "Bosch",
+        "Siemens",
+        "Neff"
       ],
-      "description": "Pasek napędowy HTD o długości 1871mm",
+      "compatibleModels": [
+        "HBA",
+        "HBN",
+        "HB",
+        "HE"
+      ],
+      "description": "Oryginalne pokrętło programatora do piekarników Bosch/Siemens. Kolor czarny, średnica 42mm. Montaż na oś 6mm.",
       "specifications": {
-        "length": "1871mm",
-        "width": "6mm",
-        "type": "HTD",
-        "material": "Guma + aramid"
+        "diameter": "42mm",
+        "color": "czarny",
+        "shaftDiameter": "6mm",
+        "material": "ABS",
+        "warranty": "12 miesięcy",
+        "oem": true
       },
       "pricing": {
         "retailPrice": 35,
@@ -177,1074 +985,70 @@
         "taxIncluded": true
       },
       "availability": {
-        "inStock": 10,
-        "minStock": 5,
-        "available": 10
+        "inStock": 25,
+        "minStock": 10,
+        "maxStock": 50,
+        "reserved": 3,
+        "available": 22
+      },
+      "supplier": {
+        "name": "BSH Service",
+        "supplierCode": "BSH-00614175",
+        "contactInfo": {
+          "phone": "+48 22 444 55 66",
+          "email": "service@bshg.pl"
+        },
+        "deliveryTime": "24h",
+        "minOrderQuantity": 1
       },
       "installation": {
-        "difficulty": "low",
-        "estimatedTime": 20,
+        "difficulty": "easy",
+        "estimatedTime": 5,
         "requiredTools": [
-          "podstawowy zestaw narzędzi"
+          "Brak - montaż ręczny"
         ]
-      },
-      "failureIndicators": [
-        "bęben nie obraca się",
-        "pęknięty pasek",
-        "poślizg paska"
-      ],
-      "images": [
-        {
-          "id": "IMG_1759556720077_0x7jjfdxe",
-          "url": "/uploads/orders/PART_1759556719974/parts/PART_1759556719974_parts_20251004T054520_SYSTEM_zrzut_ekranu_2025-09-26_223535.png",
-          "type": "main",
-          "order": 0,
-          "caption": "",
-          "uploadedAt": "2025-10-04T05:45:20.077Z"
-        },
-        {
-          "id": "IMG_1759556738223_oq9pfmk7a",
-          "url": "/uploads/orders/PART_1759556738031/parts/PART_1759556738031_parts_20251004T054538_SYSTEM_zrzut_ekranu_2025-09-22_212041.png",
-          "type": "detail",
-          "order": 1,
-          "caption": "",
-          "uploadedAt": "2025-10-04T05:45:38.223Z"
-        },
-        {
-          "id": "IMG_1759556741674_7qx78czdn",
-          "url": "/uploads/orders/PART_1759556741322/parts/PART_1759556741322_parts_20251004T054541_SYSTEM_zrzut_ekranu_2025-09-28_153511.png",
-          "type": "detail",
-          "order": 2,
-          "caption": "",
-          "uploadedAt": "2025-10-04T05:45:41.674Z"
-        },
-        {
-          "id": "IMG_1759556744886_hczxr7a3t",
-          "url": "/uploads/orders/PART_1759556744694/parts/PART_1759556744694_parts_20251004T054544_SYSTEM_zrzut_ekranu_2025-09-28_150622.png",
-          "type": "detail",
-          "order": 3,
-          "caption": "",
-          "uploadedAt": "2025-10-04T05:45:44.886Z"
-        }
-      ],
-      "model3D": null,
-      "metadata": {
-        "updatedAt": "2025-10-04T05:45:46.011Z"
-      },
-      "imageUrl": "/uploads/orders/PART_1759556719974/parts/PART_1759556719974_parts_20251004T054520_SYSTEM_zrzut_ekranu_2025-09-26_223535.png"
+      }
     },
     {
-      "id": "PART005",
-      "name": "Amortyzator pralki",
-      "partNumber": "DC66-00343A",
+      "name": "beko",
+      "partNumber": "beko",
       "category": "AGD",
-      "subcategory": "Pralka",
-      "compatibleBrands": [
-        "Samsung"
-      ],
-      "description": "Amortyzator tylny do pralek Samsung - tłumienie wibracji",
-      "specifications": {
-        "length": "185mm",
-        "force": "120N",
-        "mounting": "górne i dolne"
-      },
-      "pricing": {
-        "retailPrice": 45,
-        "wholesalePrice": 35,
-        "currency": "PLN"
-      },
-      "availability": {
-        "inStock": 10,
-        "available": 10
-      },
-      "installation": {
-        "difficulty": "medium",
-        "estimatedTime": 40
-      },
-      "failureIndicators": [
-        "nadmierne wibracje",
-        "hałas podczas wirowania",
-        "przemieszczanie się pralki"
-      ],
+      "subcategory": "",
+      "compatibleBrands": [],
+      "compatibleModels": [],
+      "description": "",
       "images": [],
-      "model3D": null
-    },
-    {
-      "id": "PART006",
-      "name": "Pompa myjąca zmywarki",
-      "partNumber": "DW-PUMP-001",
-      "category": "AGD",
-      "subcategory": "Zmywarka",
-      "compatibleBrands": [
-        "Bosch",
-        "Siemens"
-      ],
-      "description": "Pompa myjąca do zmywarek Bosch/Siemens",
-      "specifications": {
-        "power": "65W",
-        "voltage": "230V",
-        "flow": "250L/h"
-      },
+      "imageUrl": null,
       "pricing": {
-        "retailPrice": 180,
-        "wholesalePrice": 140,
-        "currency": "PLN"
+        "retailPrice": 1,
+        "wholesalePrice": 1,
+        "currency": "PLN",
+        "taxIncluded": true
       },
       "availability": {
-        "inStock": 10,
-        "available": 10
+        "inStock": 1,
+        "minStock": 3,
+        "maxStock": 20,
+        "reserved": 0,
+        "available": 1
       },
-      "installation": {
-        "difficulty": "high",
-        "estimatedTime": 90
-      },
-      "images": [],
-      "model3D": null
-    },
-    {
-      "id": "PART007",
-      "name": "Ramię spryskujące dolne",
-      "partNumber": "DW-ARM-BOT",
-      "category": "AGD",
-      "subcategory": "Zmywarka",
-      "compatibleBrands": [
-        "universal"
-      ],
-      "description": "Uniwersalne ramię spryskujące dolne do zmywarek",
-      "pricing": {
-        "retailPrice": 75,
-        "currency": "PLN"
-      },
-      "availability": {
-        "inStock": 10,
-        "available": 10
-      },
-      "installation": {
-        "difficulty": "low",
-        "estimatedTime": 15
-      },
-      "images": [],
-      "model3D": null
-    },
-    {
-      "id": "PART008",
-      "name": "Filtr pompy zmywarki",
-      "partNumber": "DW-FILTER-01",
-      "category": "AGD",
-      "subcategory": "Zmywarka",
-      "compatibleBrands": [
-        "universal"
-      ],
-      "description": "Filtr cylindryczny do pompy zmywarki",
-      "pricing": {
-        "retailPrice": 25,
-        "currency": "PLN"
-      },
-      "availability": {
-        "inStock": 10,
-        "available": 10
-      },
-      "installation": {
-        "difficulty": "low",
-        "estimatedTime": 10
-      },
-      "images": [],
-      "model3D": null
-    },
-    {
-      "id": "PART009",
-      "name": "Termostat lodówki",
-      "partNumber": "FR-THERM-01",
-      "category": "AGD",
-      "subcategory": "Lodówka",
-      "compatibleBrands": [
-        "Samsung",
-        "LG"
-      ],
-      "description": "Termostat elektroniczny do lodówek",
-      "specifications": {
-        "range": "-30°C do +30°C",
-        "accuracy": "±1°C"
-      },
-      "pricing": {
-        "retailPrice": 85,
-        "currency": "PLN"
-      },
-      "availability": {
-        "inStock": 10,
-        "available": 10
-      },
-      "installation": {
-        "difficulty": "medium",
-        "estimatedTime": 45
-      },
-      "images": [],
-      "model3D": null
-    },
-    {
-      "id": "PART010",
-      "name": "Element grzejny piekarnika",
-      "partNumber": "OV-HEAT-TOP",
-      "category": "AGD",
-      "subcategory": "Piekarnik",
-      "compatibleBrands": [
-        "Bosch",
-        "Siemens",
-        "Electrolux"
-      ],
-      "description": "Element grzejny górny do piekarników",
-      "specifications": {
-        "power": "1200W",
-        "voltage": "230V",
-        "length": "440mm"
-      },
-      "pricing": {
-        "retailPrice": 95,
-        "currency": "PLN"
-      },
-      "availability": {
-        "inStock": 10,
-        "available": 10
+      "specifications": {},
+      "supplier": {
+        "name": "",
+        "deliveryTime": "48h"
       },
       "installation": {
         "difficulty": "medium",
         "estimatedTime": 60
       },
-      "images": [],
-      "model3D": null
-    },
-    {
-      "id": "PART011",
-      "name": "Uszczelka drzwi lodówki",
-      "partNumber": "FR-SEAL-4545",
-      "category": "AGD",
-      "subcategory": "Lodówka",
-      "compatibleBrands": [
-        "Samsung",
-        "LG",
-        "Bosch"
-      ],
-      "compatibleModels": [
-        "universal - dopasowanie po wymiarach"
-      ],
-      "description": "Uniwersalna uszczelka drzwi do lodówek - magnetyczna, wymiary 45x45cm",
-      "specifications": {
-        "width": "450mm",
-        "height": "450mm",
-        "material": "PVC magnetyczny",
-        "color": "szary",
-        "warranty": "24 miesiące",
-        "temperature": "-30°C do +50°C"
-      },
-      "pricing": {
-        "retailPrice": 120,
-        "wholesalePrice": 85,
-        "currency": "PLN",
-        "taxIncluded": true
-      },
-      "availability": {
-        "inStock": 10,
-        "minStock": 5,
-        "maxStock": 25,
-        "reserved": 0,
-        "available": 10
-      },
-      "supplier": {
-        "name": "AGD Parts Polska",
-        "supplierCode": "APP-003",
-        "contactInfo": {
-          "phone": "+48 22 555 44 33",
-          "email": "zamowienia@agdparts.pl"
-        },
-        "deliveryTime": "24h",
-        "minOrderQuantity": 1
-      },
-      "installation": {
-        "difficulty": "low",
-        "estimatedTime": 30,
-        "requiredTools": [
-          "śrubokręt płaski",
-          "nóż do uszczelnień"
-        ],
-        "specialRequirements": [
-          "dokładne wyczyszczenie rowka",
-          "dopasowanie wymiarów"
-        ]
-      },
-      "failureIndicators": [
-        "kondensacja wody wokół drzwi",
-        "zwiększone zużycie energii",
-        "słabe domykanie drzwi",
-        "szron na tylnej ścianie"
-      ],
+      "id": "PART001",
       "metadata": {
-        "createdAt": "2025-10-03T10:00:00Z",
-        "updatedAt": "2025-10-03T10:00:00Z",
-        "popularityScore": 7.8,
+        "createdAt": "2025-10-05T15:57:08.637Z",
+        "updatedAt": "2025-10-05T15:57:08.637Z",
+        "lastOrderDate": null,
+        "popularityScore": 0,
         "seasonalDemand": "stable"
-      },
-      "images": [],
-      "model3D": null
-    },
-    {
-      "id": "PART012",
-      "name": "Sprężarka lodówki R600a",
-      "partNumber": "FR-COMP-R600-180",
-      "category": "AGD",
-      "subcategory": "Lodówka",
-      "compatibleBrands": [
-        "Samsung",
-        "LG"
-      ],
-      "compatibleModels": [
-        "modele 180L-250L"
-      ],
-      "description": "Sprężarka do lodówek z czynnikiem R600a (izobutanem) - ekologiczny, cichy",
-      "specifications": {
-        "power": "90W",
-        "voltage": "230V 50Hz",
-        "refrigerant": "R600a",
-        "capacity": "180W chłodnicza",
-        "noiseLevel": "38dB",
-        "warranty": "36 miesięcy",
-        "weight": "8.5kg"
-      },
-      "pricing": {
-        "retailPrice": 450,
-        "wholesalePrice": 350,
-        "currency": "PLN",
-        "taxIncluded": true
-      },
-      "availability": {
-        "inStock": 10,
-        "minStock": 2,
-        "maxStock": 8,
-        "reserved": 0,
-        "available": 10
-      },
-      "supplier": {
-        "name": "Compressor Tech Europe",
-        "supplierCode": "CTE-001",
-        "contactInfo": {
-          "phone": "+48 22 666 77 88",
-          "email": "sales@compressor-tech.eu"
-        },
-        "deliveryTime": "72h",
-        "minOrderQuantity": 1
-      },
-      "installation": {
-        "difficulty": "high",
-        "estimatedTime": 180,
-        "requiredTools": [
-          "zestaw chłodniczy",
-          "manometry",
-          "waga elektroniczna",
-          "lutownica"
-        ],
-        "specialRequirements": [
-          "wymagane uprawnienia F-gazowe",
-          "próżniowanie układu",
-          "dokładne dozowanie czynnika",
-          "test szczelności"
-        ]
-      },
-      "failureIndicators": [
-        "lodówka nie chłodzi",
-        "sprężarka nie startuje",
-        "nadmierne nagrzewanie",
-        "hałas/stukanie sprężarki"
-      ],
-      "metadata": {
-        "createdAt": "2025-10-03T10:00:00Z",
-        "updatedAt": "2025-10-03T10:00:00Z",
-        "popularityScore": 9.2,
-        "seasonalDemand": "summer-peak"
-      },
-      "images": [],
-      "model3D": null
-    },
-    {
-      "id": "PART013",
-      "name": "Wentylator No-Frost",
-      "partNumber": "FR-FAN-NF-12",
-      "category": "AGD",
-      "subcategory": "Lodówka",
-      "compatibleBrands": [
-        "Samsung",
-        "LG",
-        "Whirlpool"
-      ],
-      "compatibleModels": [
-        "modele z systemem No-Frost"
-      ],
-      "description": "Wentylator do lodówek No-Frost - wymuszony obieg powietrza",
-      "specifications": {
-        "power": "4.5W",
-        "voltage": "12V DC",
-        "diameter": "80mm",
-        "rpm": "2800",
-        "airflow": "25m³/h",
-        "warranty": "12 miesięcy"
-      },
-      "pricing": {
-        "retailPrice": 95,
-        "wholesalePrice": 70,
-        "currency": "PLN",
-        "taxIncluded": true
-      },
-      "availability": {
-        "inStock": 10,
-        "minStock": 3,
-        "maxStock": 15,
-        "reserved": 0,
-        "available": 10
-      },
-      "supplier": {
-        "name": "AGD Parts Polska",
-        "supplierCode": "APP-003",
-        "deliveryTime": "24h",
-        "minOrderQuantity": 1
-      },
-      "installation": {
-        "difficulty": "medium",
-        "estimatedTime": 60,
-        "requiredTools": [
-          "śrubokręt krzyżakowy",
-          "klucze nasadowe"
-        ],
-        "specialRequirements": [
-          "dostęp do komory wentylatora",
-          "odłączenie zasilania"
-        ]
-      },
-      "failureIndicators": [
-        "brak wentylatora/cichy wentylator",
-        "lód w komorze chłodniczej",
-        "nierównomierne chłodzenie",
-        "nadmierny szron"
-      ],
-      "metadata": {
-        "createdAt": "2025-10-03T10:00:00Z",
-        "updatedAt": "2025-10-03T10:00:00Z",
-        "popularityScore": 8.1,
-        "seasonalDemand": "stable"
-      },
-      "images": [],
-      "model3D": null
-    },
-    {
-      "id": "PART014",
-      "name": "Grzałka odszraniania",
-      "partNumber": "FR-HEAT-DEF-450",
-      "category": "AGD",
-      "subcategory": "Lodówka",
-      "compatibleBrands": [
-        "Samsung",
-        "LG",
-        "Whirlpool",
-        "Bosch"
-      ],
-      "compatibleModels": [
-        "lodówki No-Frost"
-      ],
-      "description": "Grzałka do odszraniania parownika w lodówkach No-Frost",
-      "specifications": {
-        "power": "450W",
-        "voltage": "230V",
-        "length": "480mm",
-        "type": "rurowa",
-        "warranty": "18 miesięcy"
-      },
-      "pricing": {
-        "retailPrice": 110,
-        "wholesalePrice": 85,
-        "currency": "PLN",
-        "taxIncluded": true
-      },
-      "availability": {
-        "inStock": 10,
-        "minStock": 2,
-        "maxStock": 12,
-        "reserved": 0,
-        "available": 10
-      },
-      "supplier": {
-        "name": "AGD Parts Polska",
-        "supplierCode": "APP-003",
-        "deliveryTime": "24h",
-        "minOrderQuantity": 1
-      },
-      "installation": {
-        "difficulty": "medium",
-        "estimatedTime": 90,
-        "requiredTools": [
-          "śrubokręty",
-          "multimetr",
-          "klucze"
-        ],
-        "specialRequirements": [
-          "dostęp do parownika",
-          "test rezystancji",
-          "sprawdzenie czujników"
-        ]
-      },
-      "failureIndicators": [
-        "nadmierny lód na parowniku",
-        "lodówka przestaje chłodzić",
-        "cykliczne problemy z chłodzeniem",
-        "woda pod szufladami"
-      ],
-      "metadata": {
-        "createdAt": "2025-10-03T10:00:00Z",
-        "updatedAt": "2025-10-03T10:00:00Z",
-        "popularityScore": 7.5,
-        "seasonalDemand": "stable"
-      },
-      "images": [],
-      "model3D": null
-    },
-    {
-      "id": "PART015",
-      "name": "Programator zmywarki elektroniczny",
-      "partNumber": "DW-PROG-E500",
-      "category": "AGD",
-      "subcategory": "Zmywarka",
-      "compatibleBrands": [
-        "Bosch",
-        "Siemens"
-      ],
-      "compatibleModels": [
-        "seria E500",
-        "modele 2015-2020"
-      ],
-      "description": "Programator elektroniczny do zmywarek Bosch/Siemens - pełna kontrola cyklu zmywania",
-      "specifications": {
-        "voltage": "230V",
-        "programs": "12",
-        "display": "LED",
-        "warranty": "24 miesiące",
-        "interface": "przyciski dotykowe"
-      },
-      "pricing": {
-        "retailPrice": 380,
-        "wholesalePrice": 290,
-        "currency": "PLN",
-        "taxIncluded": true
-      },
-      "availability": {
-        "inStock": 10,
-        "minStock": 2,
-        "maxStock": 8,
-        "reserved": 0,
-        "available": 10
-      },
-      "supplier": {
-        "name": "Bosch Home Connect",
-        "supplierCode": "BHC-001",
-        "contactInfo": {
-          "phone": "+48 22 777 88 99",
-          "email": "parts@bosch-service.pl"
-        },
-        "deliveryTime": "48h",
-        "minOrderQuantity": 1
-      },
-      "installation": {
-        "difficulty": "high",
-        "estimatedTime": 120,
-        "requiredTools": [
-          "śrubokręty precyzyjne",
-          "multimetr",
-          "tester elektroniczny"
-        ],
-        "specialRequirements": [
-          "demontaż panelu sterowania",
-          "programowanie po wymianie",
-          "test wszystkich programów"
-        ]
-      },
-      "failureIndicators": [
-        "brak reakcji na przyciski",
-        "zawieszanie się programu",
-        "błędne wyświetlanie",
-        "losowe komunikaty błędów"
-      ],
-      "metadata": {
-        "createdAt": "2025-10-03T10:00:00Z",
-        "updatedAt": "2025-10-03T10:00:00Z",
-        "popularityScore": 6.8,
-        "seasonalDemand": "stable"
-      },
-      "images": [],
-      "model3D": null
-    },
-    {
-      "id": "PART016",
-      "name": "Dozownik soli/nabłyszczacza",
-      "partNumber": "DW-DISP-SALT-01",
-      "category": "AGD",
-      "subcategory": "Zmywarka",
-      "compatibleBrands": [
-        "universal"
-      ],
-      "compatibleModels": [
-        "większość zmywarek wolnostojących"
-      ],
-      "description": "Uniwersalny dozownik soli i nabłyszczacza do zmywarek - podwójna komora",
-      "specifications": {
-        "capacity": "1.5L sól + 150ml nabłyszczacz",
-        "material": "tworzywo ABS",
-        "warranty": "12 miesięcy",
-        "mounting": "dolna komora"
-      },
-      "pricing": {
-        "retailPrice": 145,
-        "wholesalePrice": 110,
-        "currency": "PLN",
-        "taxIncluded": true
-      },
-      "availability": {
-        "inStock": 10,
-        "minStock": 3,
-        "maxStock": 12,
-        "reserved": 0,
-        "available": 10
-      },
-      "supplier": {
-        "name": "Universal Parts Ltd",
-        "supplierCode": "UPL-002",
-        "deliveryTime": "48h",
-        "minOrderQuantity": 2
-      },
-      "installation": {
-        "difficulty": "low",
-        "estimatedTime": 25,
-        "requiredTools": [
-          "śrubokręt",
-          "klucz nasadowy"
-        ],
-        "specialRequirements": [
-          "dostęp do dolnej komory",
-          "test szczelności"
-        ]
-      },
-      "failureIndicators": [
-        "lampka soli świeci ciągle",
-        "wyciek nabłyszczacza",
-        "białe plamy na naczyniach",
-        "zatkany dozownik"
-      ],
-      "metadata": {
-        "createdAt": "2025-10-03T10:00:00Z",
-        "updatedAt": "2025-10-03T10:00:00Z",
-        "popularityScore": 7.2,
-        "seasonalDemand": "stable"
-      },
-      "images": [],
-      "model3D": null
-    },
-    {
-      "id": "PART017",
-      "name": "Czujnik temperatury NTC",
-      "partNumber": "DW-NTC-10K",
-      "category": "AGD",
-      "subcategory": "Zmywarka",
-      "compatibleBrands": [
-        "Bosch",
-        "Siemens",
-        "Samsung",
-        "LG"
-      ],
-      "compatibleModels": [
-        "universal - sprawdź rezystancję"
-      ],
-      "description": "Czujnik temperatury NTC 10kΩ do zmywarek - kontrola temperatury wody",
-      "specifications": {
-        "resistance": "10kΩ przy 25°C",
-        "range": "0-90°C",
-        "accuracy": "±1°C",
-        "cableLength": "300mm",
-        "warranty": "12 miesięcy"
-      },
-      "pricing": {
-        "retailPrice": 55,
-        "wholesalePrice": 40,
-        "currency": "PLN",
-        "taxIncluded": true
-      },
-      "availability": {
-        "inStock": 10,
-        "minStock": 4,
-        "maxStock": 20,
-        "reserved": 0,
-        "available": 10
-      },
-      "supplier": {
-        "name": "Electronics Components EU",
-        "supplierCode": "ECE-005",
-        "contactInfo": {
-          "phone": "+48 22 444 55 66",
-          "email": "order@ec-eu.com"
-        },
-        "deliveryTime": "24h",
-        "minOrderQuantity": 1
-      },
-      "installation": {
-        "difficulty": "low",
-        "estimatedTime": 20,
-        "requiredTools": [
-          "śrubokręt",
-          "multimetr"
-        ],
-        "specialRequirements": [
-          "test rezystancji przed montażem",
-          "izolacja połączeń"
-        ]
-      },
-      "failureIndicators": [
-        "błąd temperatury na wyświetlaczu",
-        "woda nie grzeje/przegrzewa",
-        "program się nie uruchamia",
-        "ciągłe grzanie"
-      ],
-      "metadata": {
-        "createdAt": "2025-10-03T10:00:00Z",
-        "updatedAt": "2025-10-03T10:00:00Z",
-        "popularityScore": 8.5,
-        "seasonalDemand": "stable"
-      },
-      "images": [],
-      "model3D": null
-    },
-    {
-      "id": "PART019",
-      "name": "Grzałka przepływowa 2000W",
-      "partNumber": "DW-HEAT-FLOW-2000",
-      "category": "AGD",
-      "subcategory": "Zmywarka",
-      "compatibleBrands": [
-        "Bosch",
-        "Siemens",
-        "Beko"
-      ],
-      "compatibleModels": [
-        "zmywarki z grzałką przepływową"
-      ],
-      "description": "Grzałka przepływowa do zmywarek 2000W - szybkie nagrzewanie wody",
-      "specifications": {
-        "power": "2000W",
-        "voltage": "230V",
-        "type": "przepływowa",
-        "material": "stal nierdzewna",
-        "warranty": "18 miesięcy",
-        "resistance": "26Ω"
-      },
-      "pricing": {
-        "retailPrice": 165,
-        "wholesalePrice": 125,
-        "currency": "PLN",
-        "taxIncluded": true
-      },
-      "availability": {
-        "inStock": 10,
-        "minStock": 3,
-        "maxStock": 15,
-        "reserved": 0,
-        "available": 10
-      },
-      "supplier": {
-        "name": "Heating Elements Pro",
-        "supplierCode": "HEP-002",
-        "contactInfo": {
-          "phone": "+48 22 333 22 11",
-          "email": "sales@heatingpro.pl"
-        },
-        "deliveryTime": "24h",
-        "minOrderQuantity": 1
-      },
-      "installation": {
-        "difficulty": "medium",
-        "estimatedTime": 45,
-        "requiredTools": [
-          "śrubokręty",
-          "multimetr",
-          "klucze"
-        ],
-        "specialRequirements": [
-          "test rezystancji",
-          "sprawdzenie izolacji",
-          "test szczelności"
-        ]
-      },
-      "failureIndicators": [
-        "woda nie grzeje",
-        "zmywarka nie uruchamia programu",
-        "błąd grzałki na wyświetlaczu",
-        "wyłączanie podczas pracy"
-      ],
-      "metadata": {
-        "createdAt": "2025-10-03T10:00:00Z",
-        "updatedAt": "2025-10-04T05:23:00.367Z",
-        "popularityScore": 8.9,
-        "seasonalDemand": "winter-peak"
-      },
-      "images": [
-        {
-          "id": "IMG_1759555376629_72fa36kqb",
-          "type": "main",
-          "order": 0,
-          "caption": "",
-          "uploadedAt": "2025-10-04T05:22:56.629Z"
-        }
-      ],
-      "model3D": null
-    },
-    {
-      "id": "PART020",
-      "name": "Moduł elektroniczny pralki",
-      "partNumber": "WM-PCB-MAIN-2024",
-      "category": "AGD",
-      "subcategory": "Pralka",
-      "compatibleBrands": [
-        "Samsung"
-      ],
-      "compatibleModels": [
-        "EcoBubble 2020-2024",
-        "AddWash"
-      ],
-      "description": "Główny moduł elektroniczny do pralek Samsung EcoBubble - sterowanie wszystkimi funkcjami",
-      "specifications": {
-        "voltage": "230V",
-        "processor": "ARM Cortex",
-        "programs": "16",
-        "warranty": "24 miesiące",
-        "firmware": "v2024.1",
-        "connectivity": "WiFi opcjonalnie"
-      },
-      "pricing": {
-        "retailPrice": 580,
-        "wholesalePrice": 450,
-        "currency": "PLN",
-        "taxIncluded": true
-      },
-      "availability": {
-        "inStock": 10,
-        "minStock": 1,
-        "maxStock": 5,
-        "reserved": 0,
-        "available": 10
-      },
-      "supplier": {
-        "name": "Samsung Parts Europe",
-        "supplierCode": "SPE-001",
-        "deliveryTime": "24h",
-        "minOrderQuantity": 1
-      },
-      "installation": {
-        "difficulty": "high",
-        "estimatedTime": 150,
-        "requiredTools": [
-          "śrubokręty precyzyjne",
-          "multimetr",
-          "laptop z oprogramowaniem"
-        ],
-        "specialRequirements": [
-          "autoryzowany serwis Samsung",
-          "konieczne programowanie",
-          "test wszystkich funkcji",
-          "aktualizacja firmware"
-        ]
-      },
-      "failureIndicators": [
-        "całkowity brak reakcji",
-        "losowe błędy",
-        "nieprawidłowe działanie programów",
-        "brak komunikacji z wyświetlaczem"
-      ],
-      "metadata": {
-        "createdAt": "2025-10-03T10:00:00Z",
-        "updatedAt": "2025-10-03T10:00:00Z",
-        "popularityScore": 9.5,
-        "seasonalDemand": "stable"
-      },
-      "images": [],
-      "model3D": null
-    }
-  ],
-  "categories": {
-    "AGD": {
-      "Pralka": {
-        "commonParts": [
-          "łożysko",
-          "pompa",
-          "pasek",
-          "elektrozawór",
-          "amortyzator"
-        ],
-        "averageRepairCost": 180,
-        "complexityLevel": "medium"
-      },
-      "Zmywarka": {
-        "commonParts": [
-          "pompa",
-          "ramię",
-          "filtr",
-          "czujnik"
-        ],
-        "averageRepairCost": 220,
-        "complexityLevel": "medium"
-      },
-      "Lodówka": {
-        "commonParts": [
-          "termostat",
-          "wentylator",
-          "uszczelka"
-        ],
-        "averageRepairCost": 150,
-        "complexityLevel": "low"
-      },
-      "Piekarnik": {
-        "commonParts": [
-          "element grzejny",
-          "termostat",
-          "uszczelka"
-        ],
-        "averageRepairCost": 130,
-        "complexityLevel": "medium"
       }
     }
-  },
-  "suppliers": {
-    "SPE-001": {
-      "name": "Samsung Parts Europe",
-      "contact": {
-        "phone": "+48 22 123 45 67",
-        "email": "parts@samsung.pl",
-        "website": "parts.samsung.com"
-      },
-      "deliveryOptions": {
-        "standard": "24-48h",
-        "express": "same-day",
-        "weekend": false
-      },
-      "paymentTerms": "30 dni",
-      "minOrderValue": 200,
-      "discountTiers": {
-        "bronze": {
-          "threshold": 1000,
-          "discount": 5
-        },
-        "silver": {
-          "threshold": 5000,
-          "discount": 10
-        },
-        "gold": {
-          "threshold": 15000,
-          "discount": 15
-        }
-      }
-    },
-    "UPL-002": {
-      "name": "Universal Parts Ltd",
-      "contact": {
-        "phone": "+48 22 987 65 43",
-        "email": "orders@universalparts.pl"
-      },
-      "deliveryOptions": {
-        "standard": "48h",
-        "express": "24h"
-      },
-      "specialties": [
-        "pompy",
-        "filtry",
-        "elementy uniwersalne"
-      ]
-    }
-  },
-  "stockAlerts": {
-    "lowStock": [
-      {
-        "partId": "PART012",
-        "partName": "Sprężarka lodówki R600a",
-        "currentStock": 3,
-        "minStock": 2,
-        "recommendedOrder": 5,
-        "urgency": "high"
-      },
-      {
-        "partId": "PART020",
-        "partName": "Moduł elektroniczny pralki",
-        "currentStock": 2,
-        "minStock": 1,
-        "recommendedOrder": 3,
-        "urgency": "high"
-      },
-      {
-        "partId": "PART015",
-        "partName": "Programator zmywarki elektroniczny",
-        "currentStock": 4,
-        "minStock": 2,
-        "recommendedOrder": 4,
-        "urgency": "medium"
-      },
-      {
-        "partId": "PART018",
-        "partName": "Kosz górny kompletny",
-        "currentStock": 5,
-        "minStock": 2,
-        "recommendedOrder": 5,
-        "urgency": "low"
-      }
-    ],
-    "outOfStock": [],
-    "overStock": [
-      {
-        "partId": "PART008",
-        "partName": "Filtr pompy zmywarki",
-        "currentStock": 20,
-        "maxStock": 15,
-        "recommendation": "stop ordering"
-      }
-    ]
-  },
-  "statistics": {
-    "totalParts": 20,
-    "totalValue": 3350,
-    "topSellingParts": [
-      {
-        "partId": "PART001",
-        "sales": 25
-      },
-      {
-        "partId": "PART003",
-        "sales": 18
-      },
-      {
-        "partId": "PART002",
-        "sales": 15
-      },
-      {
-        "partId": "PART012",
-        "sales": 12
-      },
-      {
-        "partId": "PART017",
-        "sales": 10
-      }
-    ],
-    "averageDeliveryTime": "32h",
-    "stockTurnover": 4.5,
-    "byCategory": {
-      "Pralka": 7,
-      "Zmywarka": 7,
-      "Lodówka": 5,
-      "Piekarnik": 1
-    }
-  },
-  "metadata": {
-    "version": "1.0",
-    "lastUpdated": "2025-09-30T12:30:00Z",
-    "createdBy": "parts-inventory-script-v1",
-    "nextStockCheck": "2025-10-01T09:00:00Z",
-    "autoReorderEnabled": true
-  }
+  ]
 }

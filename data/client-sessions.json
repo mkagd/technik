@@ -71,5 +71,21 @@
     "rememberMe": false,
     "ip": "127.0.0.1",
     "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36"
+  },
+  {
+    "token": "0220fe64-7ba8-4771-ae53-9745a7f78de4",
+    "clientId": "CLI2025000NaN",
+    "loginMethod": "email",
+    "createdAt": "2025-10-05T19:15:52.600Z",
+    "lastActivity": "2025-10-05T19:15:52.600Z",
+    "isValid": true
+  },
+  {
+    "token": "7cfaf470-c8d0-423a-aa71-fac713ffb2f3",
+    "clientId": "CLI2025000NaN",
+    "loginMethod": "email",
+    "createdAt": "2025-10-06T05:56:43.736Z",
+    "lastActivity": "2025-10-06T05:56:43.736Z",
+    "isValid": true
   }
 ]

@@ -499,11 +499,12 @@ export default function ModelAIScanner({ isOpen, onClose, onModelDetected }) {
         console.log(`🔍 Searching for "TYPE/TYP:" in Amica text: "${allText}"`);
         
         // Szukaj różnych wariantów TYPE/TYP - uwzględnij również bez dwukropka
-        let typMatch = allText.match(/(?:TYPE\s*\/\s*TYP|Typ|Type|TYP):\s*([A-Z0-9+\-\/\(\)\.\s]+)/i);
+        // CRITICAL FIX: Regex nie łapie znaków nowej linii - dopasowanie tylko do końca linii
+        let typMatch = allText.match(/(?:TYPE\s*\/\s*TYP|Typ|Type|TYP):\s*([A-Z0-9+\-\/\(\)\.]+(?:\s+[A-Z0-9+\-\/\(\)\.]+)*?)(?:\r|\n|$)/i);
         
         // Jeśli nie znaleziono z dwukropkiem, spróbuj bez dwukropka (czasem OpenAI może pominąć)
         if (!typMatch) {
-          typMatch = allText.match(/(?:TYPE\s*\/\s*TYP|TYPE|TYP)\s+([A-Z0-9+\-\/\(\)\.\s]{8,})/i);
+          typMatch = allText.match(/(?:TYPE\s*\/\s*TYP|TYPE|TYP)\s+([A-Z0-9+\-\/\(\)\.]{8,})(?:\r|\n|\s|$)/i);
         }
         
         // Jeśli nie znaleziono w allText, sprawdź każde pole osobno
@@ -511,9 +512,9 @@ export default function ModelAIScanner({ isOpen, onClose, onModelDetected }) {
           for (const field of ['model', 'type', 'additionalInfo', 'serialNumber', 'capacity']) {
             const fieldValue = parsed[field];
             if (fieldValue && typeof fieldValue === 'string') {
-              typMatch = fieldValue.match(/(?:TYPE\s*\/\s*TYP|Typ|Type|TYP):\s*([A-Z0-9+\-\/\(\)\.\s]+)/i);
+              typMatch = fieldValue.match(/(?:TYPE\s*\/\s*TYP|Typ|Type|TYP):\s*([A-Z0-9+\-\/\(\)\.]+(?:\s+[A-Z0-9+\-\/\(\)\.]+)*?)(?:\r|\n|$)/i);
               if (!typMatch) {
-                typMatch = fieldValue.match(/(?:TYPE\s*\/\s*TYP|TYPE|TYP)\s+([A-Z0-9+\-\/\(\)\.\s]{8,})/i);
+                typMatch = fieldValue.match(/(?:TYPE\s*\/\s*TYP|TYPE|TYP)\s+([A-Z0-9+\-\/\(\)\.]{8,})(?:\r|\n|\s|$)/i);
               }
               if (typMatch) {
                 console.log(`🔧 Found "TYPE/TYP:" in field "${field}": "${fieldValue}"`);
@@ -524,16 +525,23 @@ export default function ModelAIScanner({ isOpen, onClose, onModelDetected }) {
         }
         
         if (typMatch) {
-          extractedAmicaModel = typMatch[1].trim(); // Usuń białe znaki
+          // CRITICAL FIX: Usuń znaki nowej linii i nadmiarowe białe znaki
+          extractedAmicaModel = typMatch[1]
+            .split(/[\r\n]+/)[0]  // Weź tylko pierwszą linię
+            .replace(/\s+/g, ' ')  // Zamień wielokrotne spacje na pojedyncze
+            .trim();
           isAmicaWithTypeAsModel = true;
-          console.log(`🔧 Found Amica "TYPE/TYP:" pattern: "${extractedAmicaModel}"`);
+          console.log(`🔧 Found Amica "TYPE/TYP:" pattern (cleaned): "${extractedAmicaModel}"`);
         } else {
           console.log(`❌ No "TYPE/TYP:" pattern found for Amica. Trying direct type field...`);
           // Fallback - dla Amica często TYPE to właściwy model, nawet bez etykiety
           if (parsed.type && parsed.type.length >= 8 && parsed.type.match(/[0-9]/)) {
-            extractedAmicaModel = parsed.type;
+            extractedAmicaModel = parsed.type
+              .split(/[\r\n]+/)[0]  // Weź tylko pierwszą linię
+              .replace(/\s+/g, ' ')
+              .trim();
             isAmicaWithTypeAsModel = true;
-            console.log(`🔧 Using Amica type field as model: "${parsed.type}"`);
+            console.log(`🔧 Using Amica type field as model (cleaned): "${extractedAmicaModel}"`);
           }
         }
       }
@@ -582,7 +590,12 @@ export default function ModelAIScanner({ isOpen, onClose, onModelDetected }) {
       }
     }
     
-    console.log('✅ Smart parsing result:', { finalModel, finalType, finalName });
+    // CRITICAL FIX: Usuń znaki nowej linii i nadmiarowe białe znaki z modelu
+    finalModel = finalModel.replace(/[\r\n]+/g, ' ').replace(/\s+/g, ' ').trim();
+    finalType = finalType.replace(/[\r\n]+/g, ' ').replace(/\s+/g, ' ').trim();
+    finalName = finalName.replace(/[\r\n]+/g, ' ').replace(/\s+/g, ' ').trim();
+    
+    console.log('✅ Smart parsing result (cleaned):', { finalModel, finalType, finalName });
     return { finalModel, finalType, finalName };
   };
 

@@ -100,11 +100,17 @@ export default function AdminMagazynZamowienia() {
     if (!confirm('Zatwierdzić to zamówienie?')) return;
 
     try {
+      // Użyj ID logistyka (admin działa jako logistyk)
+      const logisticEmployee = employees.find(e => e.role === 'logistics');
+      const approvedById = logisticEmployee ? logisticEmployee.id : 'EMP25189001';
+      
+      console.log('🔍 Zatwierdzam jako:', approvedById);
+      
       const res = await fetch(`/api/part-requests/approve?requestId=${requestId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
-          approvedBy: 'ADMIN001',
+          approvedBy: approvedById,
           finalDelivery: 'paczkomat',
           logisticianNotes: 'Zatwierdzone przez administratora'
         })
@@ -128,11 +134,15 @@ export default function AdminMagazynZamowienia() {
     if (!reason) return;
 
     try {
+      // Użyj ID logistyka (admin działa jako logistyk)
+      const logisticEmployee = employees.find(e => e.role === 'logistics');
+      const rejectedById = logisticEmployee ? logisticEmployee.id : 'EMP25189001';
+      
       const res = await fetch(`/api/part-requests/reject?requestId=${requestId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
-          rejectedBy: 'ADMIN001',
+          rejectedBy: rejectedById,
           rejectionReason: reason
         })
       });
@@ -436,8 +446,8 @@ export default function AdminMagazynZamowienia() {
                 <div key={request.requestId} className="bg-white dark:bg-gray-800 rounded-lg shadow hover:shadow-lg transition-shadow p-6">
                   {/* Header */}
                   <div className="flex items-start justify-between mb-4">
-                    <div>
-                      <div className="flex items-center space-x-3">
+                    <div className="flex-1">
+                      <div className="flex items-center space-x-3 mb-2">
                         <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
                           {request.requestId}
                         </h3>
@@ -448,10 +458,85 @@ export default function AdminMagazynZamowienia() {
                           {getUrgencyLabel(request.urgency)}
                         </span>
                       </div>
-                      <div className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                        {getEmployeeName(request.requestedBy)} • {request.requestDate ? new Date(request.requestDate).toLocaleDateString('pl-PL', { year: 'numeric', month: 'long', day: 'numeric' }) : 'Brak daty'}
+                      
+                      {/* Informacje o pracowniku i datach */}
+                      <div className="space-y-1">
+                        <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
+                          <svg className="w-4 h-4 mr-1.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                          </svg>
+                          <span className="font-medium">{getEmployeeName(request.requestedBy)}</span>
+                        </div>
+                        
+                        <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
+                          <svg className="w-4 h-4 mr-1.5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                          </svg>
+                          <span>
+                            Utworzono: <strong>
+                              {request.createdAt 
+                                ? new Date(request.createdAt).toLocaleString('pl-PL', { 
+                                    year: 'numeric', 
+                                    month: '2-digit', 
+                                    day: '2-digit',
+                                    hour: '2-digit',
+                                    minute: '2-digit'
+                                  })
+                                : 'Brak daty'}
+                            </strong>
+                          </span>
+                        </div>
+                        
+                        {request.approvedAt && (
+                          <div className="flex items-center text-sm text-green-600 dark:text-green-400">
+                            <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <span>
+                              Zatwierdzone: {new Date(request.approvedAt).toLocaleString('pl-PL', { 
+                                month: '2-digit', 
+                                day: '2-digit',
+                                hour: '2-digit',
+                                minute: '2-digit'
+                              })}
+                            </span>
+                          </div>
+                        )}
+                        
+                        {request.orderedAt && (
+                          <div className="flex items-center text-sm text-purple-600 dark:text-purple-400">
+                            <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                            </svg>
+                            <span>
+                              Zamówione: {new Date(request.orderedAt).toLocaleString('pl-PL', { 
+                                month: '2-digit', 
+                                day: '2-digit',
+                                hour: '2-digit',
+                                minute: '2-digit'
+                              })}
+                            </span>
+                          </div>
+                        )}
+                        
+                        {request.deliveredAt && (
+                          <div className="flex items-center text-sm text-green-700 dark:text-green-300">
+                            <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                            </svg>
+                            <span>
+                              Dostarczone: {new Date(request.deliveredAt).toLocaleString('pl-PL', { 
+                                month: '2-digit', 
+                                day: '2-digit',
+                                hour: '2-digit',
+                                minute: '2-digit'
+                              })}
+                            </span>
+                          </div>
+                        )}
                       </div>
                     </div>
+                    
                     <div className="text-right">
                       <div className="text-lg font-bold text-gray-900 dark:text-white">
                         {(request.parts?.reduce((sum, p) => sum + (p.unitPrice * p.quantity), 0) || 0).toFixed(2)} zł
@@ -483,6 +568,40 @@ export default function AdminMagazynZamowienia() {
                       })}
                     </div>
                   </div>
+
+                  {/* Attached Photos */}
+                  {request.attachedPhotos && request.attachedPhotos.length > 0 && (
+                    <div className="mb-4">
+                      <div className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        📸 Załączone zdjęcia ({request.attachedPhotos.length}):
+                      </div>
+                      <div className="flex flex-wrap gap-2">
+                        {request.attachedPhotos.map((photo, idx) => (
+                          <a
+                            key={idx}
+                            href={photo.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="relative group"
+                          >
+                            <img
+                              src={photo.url}
+                              alt={`Zdjęcie ${idx + 1}`}
+                              className="w-24 h-24 object-cover rounded-lg border-2 border-gray-200 dark:border-gray-600 hover:border-blue-500 dark:hover:border-blue-400 transition-all cursor-pointer"
+                              onError={(e) => {
+                                e.target.style.display = 'none';
+                              }}
+                            />
+                            <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 rounded-lg transition-all flex items-center justify-center">
+                              <svg className="w-6 h-6 text-white opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
+                              </svg>
+                            </div>
+                          </a>
+                        ))}
+                      </div>
+                    </div>
+                  )}
 
                   {/* Actions */}
                   <div className="flex flex-wrap gap-2">

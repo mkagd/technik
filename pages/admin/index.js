@@ -162,6 +162,13 @@ export default function AdminDashboard() {
       icon: FiAlertCircle,
       href: '/admin/alerty',
       color: 'orange'
+    },
+    {
+      title: '📦 Panel Logistyki',
+      description: 'Magazyn, zamówienia i dostawcy',
+      icon: FiShoppingBag,
+      href: '/logistyka',
+      color: 'indigo'
     }
   ];
 

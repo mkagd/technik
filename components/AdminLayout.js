@@ -11,7 +11,14 @@ import {
 export default function AdminLayout({ children, title, breadcrumbs = [] }) {
   const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(false); // Domyślnie zamknięty na mobile
-  const [notificationCount, setNotificationCount] = useState(0);
+  const [notificationCount, setNotificationCount] = useState(0); // Dzwonek - WSZYSTKIE
+  
+  // Badge counts z priorytetem (error > info > success)
+  const [reservationsBadge, setReservationsBadge] = useState({ count: 0, type: 'info' });
+  const [ordersBadge, setOrdersBadge] = useState({ count: 0, type: 'info' });
+  const [magazynBadge, setMagazynBadge] = useState({ count: 0, type: 'info' });
+  const [logistykaBadge, setLogistykaBadge] = useState({ count: 0, type: 'info' });
+  
   const [showNotifications, setShowNotifications] = useState(false);
   const [notifications, setNotifications] = useState([]);
 
@@ -37,18 +44,32 @@ export default function AdminLayout({ children, title, breadcrumbs = [] }) {
   useEffect(() => {
     const checkNotifications = async () => {
       try {
-        // Get unread count
-        const countRes = await fetch('/api/notifications?count=unread');
-        if (countRes.ok) {
-          const data = await countRes.json();
-          setNotificationCount(data.unreadCount || 0);
-        }
-
         // Get all unread notifications for dropdown
         const notifRes = await fetch('/api/notifications?read=false');
         if (notifRes.ok) {
           const data = await notifRes.json();
           setNotifications(data);
+          
+          // Helper: Get priority type for a category (error > info > success)
+          const getPriorityType = (notifs) => {
+            if (notifs.some(n => n.type === 'error')) return 'error';
+            if (notifs.some(n => n.type === 'info')) return 'info';
+            if (notifs.some(n => n.type === 'success')) return 'success';
+            return 'info';
+          };
+          
+          // Categorize notifications by link
+          const total = data.length;
+          const reservationsNotifs = data.filter(n => n.link && n.link.startsWith('/admin/rezerwacje'));
+          const ordersNotifs = data.filter(n => n.link && n.link.startsWith('/admin/zamowienia'));
+          const magazynNotifs = data.filter(n => n.link && n.link.startsWith('/admin/magazyn'));
+          const logistykaNotifs = data.filter(n => n.link && n.link.startsWith('/admin/logistyk'));
+          
+          setNotificationCount(total);
+          setReservationsBadge({ count: reservationsNotifs.length, type: getPriorityType(reservationsNotifs) });
+          setOrdersBadge({ count: ordersNotifs.length, type: getPriorityType(ordersNotifs) });
+          setMagazynBadge({ count: magazynNotifs.length, type: getPriorityType(magazynNotifs) });
+          setLogistykaBadge({ count: logistykaNotifs.length, type: getPriorityType(logistykaNotifs) });
         }
       } catch (error) {
         console.error('Error checking notifications:', error);
@@ -93,6 +114,20 @@ export default function AdminLayout({ children, title, breadcrumbs = [] }) {
   const handleLogout = () => {
     localStorage.removeItem('adminAuth');
     router.push('/');
+  };
+
+  // Helper: Get badge color based on notification type
+  const getBadgeColor = (type) => {
+    switch (type) {
+      case 'error':
+        return 'bg-red-500'; // Czerwony - PILNE/BŁĄD
+      case 'info':
+        return 'bg-yellow-500'; // Żółty - INFORMACJA/DO ZROBIENIA
+      case 'success':
+        return 'bg-green-500'; // Zielony - SUKCES/UKOŃCZONE
+      default:
+        return 'bg-blue-500'; // Niebieski - DEFAULT
+    }
   };
 
   const markAsRead = async (id) => {
@@ -150,13 +185,14 @@ export default function AdminLayout({ children, title, breadcrumbs = [] }) {
       icon: FiFileText, 
       label: 'Zgłoszenia', 
       path: '/admin/rezerwacje',
-      badge: notificationCount,
+      badge: reservationsBadge,
       active: router.pathname.startsWith('/admin/rezerwacje')
     },
     { 
       icon: FiTool, 
       label: 'Zlecenia', 
       path: '/admin/zamowienia',
+      badge: ordersBadge,
       active: router.pathname.startsWith('/admin/zamowienia')
     },
     { 
@@ -181,7 +217,15 @@ export default function AdminLayout({ children, title, breadcrumbs = [] }) {
       icon: FiPackage, 
       label: 'Magazyn', 
       path: '/admin/magazyn',
+      badge: magazynBadge,
       active: router.pathname.startsWith('/admin/magazyn') && !router.pathname.startsWith('/admin/allegro')
+    },
+    { 
+      icon: FiTool, 
+      label: 'Logistyka', 
+      path: '/admin/logistyk/zamowienia',
+      badge: logistykaBadge,
+      active: router.pathname.startsWith('/admin/logistyk')
     },
     { 
       icon: FiShoppingBag, 
@@ -277,15 +321,15 @@ export default function AdminLayout({ children, title, breadcrumbs = [] }) {
               {sidebarOpen && (
                 <>
                   <span className={`flex-1 text-left font-medium ${item.color || ''}`}>{item.label}</span>
-                  {item.badge > 0 && (
-                    <span className="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full min-w-[1.5rem] text-center">
-                      {item.badge > 99 ? '99+' : item.badge}
+                  {item.badge && item.badge.count > 0 && (
+                    <span className={`${getBadgeColor(item.badge.type)} text-white text-xs font-bold px-2 py-1 rounded-full min-w-[1.5rem] text-center`}>
+                      {item.badge.count > 99 ? '99+' : item.badge.count}
                     </span>
                   )}
                 </>
               )}
-              {!sidebarOpen && item.badge > 0 && (
-                <span className="absolute right-2 w-2 h-2 bg-red-500 rounded-full"></span>
+              {!sidebarOpen && item.badge && item.badge.count > 0 && (
+                <span className={`absolute right-2 w-2 h-2 ${getBadgeColor(item.badge.type)} rounded-full`}></span>
               )}
             </button>
           ))}

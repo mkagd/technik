@@ -359,8 +359,14 @@ const deleteWorkSlot = (employeeId, slotId, weekStart) => {
   const schedule = schedules.find(s => s.employeeId === employeeId && s.weekStart === weekStart);
   
   if (!schedule) {
+    console.log(`❌ Schedule NOT FOUND: employeeId=${employeeId}, weekStart=${weekStart}`);
+    console.log(`   Available schedules:`, schedules.map(s => ({ id: s.employeeId, week: s.weekStart })));
     return { success: false, error: 'NOT_FOUND', message: 'Schedule not found' };
   }
+  
+  console.log(`🔍 Searching for slot ${slotId} in schedule ${schedule.id}`);
+  console.log(`   Available workSlots:`, schedule.workSlots.map(s => s.id));
+  console.log(`   Available breaks:`, schedule.breaks.map(s => s.id));
   
   // Szukaj w workSlots
   let slotIndex = schedule.workSlots.findIndex(s => s.id === slotId);
@@ -373,8 +379,11 @@ const deleteWorkSlot = (employeeId, slotId, weekStart) => {
   }
   
   if (slotIndex === -1) {
+    console.log(`❌ Slot ${slotId} NOT FOUND in workSlots or breaks`);
     return { success: false, error: 'SLOT_NOT_FOUND', message: 'Slot not found' };
   }
+  
+  console.log(`✅ Found slot ${slotId} in ${slotType} array at index ${slotIndex}`);
   
   // Usuń slot
   if (slotType === 'break') {

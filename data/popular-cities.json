@@ -1,0 +1,16 @@
+{
+  "cities": [
+    {
+      "name": "Dębica",
+      "postalCode": "39-200"
+    },
+    {
+      "name": "Mielec",
+      "postalCode": "39-300"
+    },
+    {
+      "name": "Tarnów",
+      "postalCode": "33-100"
+    }
+  ]
+}

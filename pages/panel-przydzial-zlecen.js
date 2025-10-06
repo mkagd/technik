@@ -52,8 +52,10 @@ import {
   FiChevronRight,
   FiSort,
   FiMoreVertical,
-  FiLayers
+  FiLayers,
+  FiStar
 } from 'react-icons/fi';
+import { getDeviceCode, getDeviceBadgeProps } from '../utils/deviceCodes';
 
 export default function PanelPrzydzialZlecen() {
   const router = useRouter();
@@ -98,6 +100,8 @@ export default function PanelPrzydzialZlecen() {
   // Automatyczne odświeżanie
   const [lastRefresh, setLastRefresh] = useState(new Date());
   const [autoRefreshInterval, setAutoRefreshInterval] = useState(30); // sekundy
+  const [lastScheduleRefresh, setLastScheduleRefresh] = useState(new Date()); // ← NOWE: Ostatnie odświeżenie harmonogramów
+  const [employeeSchedules, setEmployeeSchedules] = useState({}); // ← NOWE: Cache harmonogramów pracowników
   
   // 🆕 NOWE FUNKCJE WYŚWIETLANIA
   const [expandedOrder, setExpandedOrder] = useState(null); // Pełnoekranowy modal zlecenia
@@ -170,7 +174,12 @@ export default function PanelPrzydzialZlecen() {
         
         // Przelicz real-time schedule na podstawie 15-minutowych slotów
         const realTimeSchedule = [];
-        if (schedule?.timeSlots) {
+        
+        // ✅ SPRAWDŹ CZY DZIEŃ WOLNY
+        if (schedule?.isDayOff) {
+          console.log(`⚠️ ${emp.name}: Dzień wolny - nie renderuję slotów`);
+          // realTimeSchedule pozostaje pusty []
+        } else if (schedule?.timeSlots && schedule.timeSlots.length > 0) {
           // Grupuj sloty co godzinę dla lepszego wyświetlenia
           const hourlySlots = {};
           
@@ -341,6 +350,177 @@ export default function PanelPrzydzialZlecen() {
 
     return () => clearInterval(interval);
   }, [auth, autoRefreshInterval]);
+
+  // 🔄 AUTO-REFRESH ZLECEŃ (co 15 sekund)
+  // Wykrywa usunięcia/dodania zleceń w czasie rzeczywistym
+  useEffect(() => {
+    if (!auth) return;
+    
+    const refreshOrders = async () => {
+      try {
+        console.log('🔄 Auto-refresh zleceń...');
+        
+        const response = await fetch('/api/order-assignment');
+        const data = await response.json();
+        
+        if (data.success && data.orders) {
+          // Sprawdź czy są różnice
+          const currentOrderIds = incomingOrders.map(o => o.orderNumber).sort().join(',');
+          const newOrderIds = data.orders.map(o => o.orderNumber).sort().join(',');
+          
+          if (currentOrderIds !== newOrderIds) {
+            setIncomingOrders(data.orders);
+            setLastRefresh(new Date()); // ✅ Zaktualizuj timestamp
+            console.log(`✅ Zlecenia zaktualizowane: ${data.orders.length} (było: ${incomingOrders.length})`);
+            
+            // Wykryj nowe zlecenia
+            if (data.orders.length > incomingOrders.length && soundEnabled) {
+              const diff = data.orders.length - incomingOrders.length;
+              addNotification(`📞 ${diff} ${diff === 1 ? 'nowe zlecenie' : 'nowych zleceń'}!`, 'info');
+            }
+            
+            // Wykryj usunięte zlecenia
+            if (data.orders.length < incomingOrders.length) {
+              const diff = incomingOrders.length - data.orders.length;
+              console.log(`🗑️ Usunięto ${diff} ${diff === 1 ? 'zlecenie' : 'zleceń'}`);
+            }
+            
+            // Zaktualizuj statystyki
+            setTimeout(() => calculateStats(), 100);
+          } else {
+            console.log('⚪ Zlecenia bez zmian');
+          }
+        }
+      } catch (error) {
+        console.error('❌ Auto-refresh zleceń błąd:', error);
+      }
+    };
+    
+    // Wywołaj natychmiast
+    refreshOrders();
+    
+    // Następnie co 15 sekund
+    const interval = setInterval(refreshOrders, 15000);
+    
+    return () => clearInterval(interval);
+  }, [auth, incomingOrders, soundEnabled]);
+
+  // 🔄 AUTO-REFRESH HARMONOGRAMÓW PRACOWNIKÓW (co 30 sekund)
+  // Rozwiązanie problemu: Technik zmienia harmonogram → Panel automatycznie widzi zmiany
+  useEffect(() => {
+    if (!auth) return;
+    
+    const refreshEmployeeSchedules = async () => {
+      const today = new Date().toISOString().split('T')[0];
+      
+      try {
+        console.log('🔄 Auto-refresh harmonogramów pracowników...');
+        
+        const response = await fetch(
+          `/api/employee-calendar?action=get-all-schedules&date=${today}`
+        );
+        
+        const data = await response.json();
+        
+        if (data.success && data.schedules) {
+          // Sprawdź czy są różnice przed aktualizacją (unikaj zbędnych re-renderów)
+          const currentSchedulesJson = JSON.stringify(employeeSchedules);
+          const newSchedulesJson = JSON.stringify(data.schedules);
+          
+          if (currentSchedulesJson !== newSchedulesJson) {
+            setEmployeeSchedules(data.schedules);
+            setLastScheduleRefresh(new Date());
+            console.log(`✅ Harmonogramy zaktualizowane (${Object.keys(data.schedules).length} pracowników)`);
+            
+            // ✅ AKTUALIZUJ LISTĘ PRACOWNIKÓW Z NOWYMI HARMONOGRAMAMI
+            setEmployees(prevEmployees => prevEmployees.map(emp => {
+              const newSchedule = data.schedules[emp.id];
+              if (!newSchedule) return emp; // Brak zmian dla tego pracownika
+              
+              // Przelicz real-time schedule na podstawie 15-minutowych slotów
+              const realTimeSchedule = [];
+              
+              // Sprawdź czy dzień wolny
+              if (newSchedule.isDayOff) {
+                console.log(`⚠️ ${emp.name}: Dzień wolny - czyść sloty`);
+                // realTimeSchedule pozostaje pusty []
+              } else if (newSchedule.timeSlots && newSchedule.timeSlots.length > 0) {
+                // Grupuj sloty co godzinę dla lepszego wyświetlenia
+                const hourlySlots = {};
+                
+                newSchedule.timeSlots.forEach(slot => {
+                  const hour = slot.time.split(':')[0] + ':00';
+                  if (!hourlySlots[hour]) {
+                    hourlySlots[hour] = [];
+                  }
+                  hourlySlots[hour].push(slot);
+                });
+                
+                Object.keys(hourlySlots).forEach(hour => {
+                  const slots = hourlySlots[hour];
+                  const mainStatus = slots[0].status;
+                  const activity = slots.find(s => s.activity)?.activity || 
+                                 (mainStatus === 'available' ? 'FREE' : 'BUSY');
+                  
+                  realTimeSchedule.push({
+                    time: hour,
+                    client: activity,
+                    type: mainStatus,
+                    slotsCount: slots.length
+                  });
+                });
+              }
+              
+              // Zwróć zaktualizowanego pracownika
+              return {
+                ...emp,
+                todaySchedule: realTimeSchedule,
+                scheduleLastUpdate: newSchedule.lastSyncWithEmployee,
+                currentScheduleVersion: newSchedule.version || 0
+              };
+            }));
+            
+            // Opcjonalnie: Wyświetl notyfikację tylko jeśli są istotne zmiany
+            const changedEmployees = Object.keys(data.schedules).filter(empId => {
+              const oldSchedule = employeeSchedules[empId];
+              const newSchedule = data.schedules[empId];
+              
+              // Sprawdź czy liczba dostępnych slotów się zmieniła
+              if (!oldSchedule || !newSchedule) return false;
+              
+              // ✅ Uwzględnij zmianę z/do dnia wolnego
+              if (oldSchedule.isDayOff !== newSchedule.isDayOff) return true;
+              
+              const oldAvailable = oldSchedule.timeSlots?.filter(s => s.status === 'available').length || 0;
+              const newAvailable = newSchedule.timeSlots?.filter(s => s.status === 'available').length || 0;
+              
+              return oldAvailable !== newAvailable;
+            });
+            
+            if (changedEmployees.length > 0) {
+              addNotification(
+                `🔄 Harmonogramy zaktualizowane (${changedEmployees.length} zmian)`, 
+                'info'
+              );
+            }
+          } else {
+            console.log('⚪ Harmonogramy bez zmian');
+          }
+        }
+      } catch (error) {
+        console.error('❌ Auto-refresh harmonogramów błąd:', error);
+        // Nie pokazuj błędu użytkownikowi - to proces działający w tle
+      }
+    };
+    
+    // Wywołaj natychmiast przy montowaniu
+    refreshEmployeeSchedules();
+    
+    // Następnie co 30 sekund
+    const interval = setInterval(refreshEmployeeSchedules, 30000);
+    
+    return () => clearInterval(interval);
+  }, [auth, employeeSchedules]); // Zależność od employeeSchedules aby porównać zmiany
 
   // Funkcja odświeżania danych
   const refreshData = useCallback(async () => {
@@ -1120,7 +1300,11 @@ export default function PanelPrzydzialZlecen() {
                   <span className="text-xs text-green-600 font-medium">ONLINE</span>
                 </div>
                 <div className="text-xs text-gray-500">
-                  Ostatnie odświeżenie: {lastRefresh.toLocaleTimeString('pl-PL')}
+                  Zlecenia: {lastRefresh.toLocaleTimeString('pl-PL')}
+                </div>
+                <div className="text-xs text-blue-600 flex items-center space-x-1">
+                  <FiCalendar className="w-3 h-3" />
+                  <span>Harmonogramy: {lastScheduleRefresh.toLocaleTimeString('pl-PL')}</span>
                 </div>
               </div>
             </div>
@@ -1501,34 +1685,55 @@ export default function PanelPrzydzialZlecen() {
                             </button>
                           </div>
 
-                          {/* Priorytet i status */}
-                          <div className="flex items-center space-x-2 mb-3">
-                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                              order.priority === 'urgent' ? 'bg-red-100 text-red-800' :
-                              order.priority === 'high' ? 'bg-orange-100 text-orange-800' :
-                              order.priority === 'medium' ? 'bg-yellow-100 text-yellow-800' :
-                              'bg-green-100 text-green-800'
-                            }`}>
-                              {order.priority === 'urgent' ? 'PILNE' :
-                               order.priority === 'high' ? 'WYSOKIE' :
-                               order.priority === 'medium' ? 'ŚREDNIE' : 'NISKIE'}
-                            </span>
-                            {order.needsVisit && (
-                              <span className="px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xs font-medium">
-                                WIZYTA
+                          {/* KOD URZĄDZENIA + PRIORYTET */}
+                          <div className="flex items-center justify-between mb-3">
+                            {(() => {
+                              const deviceBadge = getDeviceBadgeProps(order.deviceType || order.category);
+                              return (
+                                <span className={`inline-flex items-center px-3 py-1 text-sm font-bold rounded-lg border-2 ${deviceBadge.className}`}>
+                                  [{deviceBadge.code}]
+                                </span>
+                              );
+                            })()}
+                            <div className="flex items-center space-x-2">
+                              <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                                order.priority === 'urgent' ? 'bg-red-100 text-red-800' :
+                                order.priority === 'high' ? 'bg-orange-100 text-orange-800' :
+                                order.priority === 'medium' ? 'bg-yellow-100 text-yellow-800' :
+                                'bg-green-100 text-green-800'
+                              }`}>
+                                {order.priority === 'urgent' ? 'PILNE' :
+                                 order.priority === 'high' ? 'WYSOKIE' :
+                                 order.priority === 'medium' ? 'ŚREDNIE' : 'NISKIE'}
                               </span>
-                            )}
+                              {order.needsVisit && (
+                                <span className="px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xs font-medium">
+                                  WIZYTA
+                                </span>
+                              )}
+                            </div>
                           </div>
 
-                          {/* Informacje podstawowe */}
-                          <div className="space-y-2 text-sm text-gray-600 mb-4">
+                          {/* ADRES GŁÓWNY (największa czcionka) */}
+                          <div className="mb-3">
+                            <div className="flex items-start space-x-2">
+                              <FiMapPin className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
+                              <div className="flex-1">
+                                <div className="text-base font-bold text-gray-900 leading-tight">
+                                  {order.address?.split(',')[0] || 'Brak adresu'}
+                                </div>
+                                <div className="text-sm font-semibold text-gray-700">
+                                  {extractCityFromAddress(order.address)}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Informacje drugorzędne */}
+                          <div className="space-y-1 text-xs text-gray-600 mb-3">
                             <div className="flex items-center">
                               <FiTool className="h-3 w-3 mr-2 flex-shrink-0" />
-                              <span className="truncate">{order.deviceType} {order.brand}</span>
-                            </div>
-                            <div className="flex items-center">
-                              <FiMapPin className="h-3 w-3 mr-2 flex-shrink-0" />
-                              <span className="truncate">{extractCityFromAddress(order.address)}</span>
+                              <span className="truncate">{order.brand || 'Nieznana marka'} {order.deviceType}</span>
                             </div>
                             <div className="flex items-center">
                               <FiDollarSign className="h-3 w-3 mr-2 flex-shrink-0" />
@@ -1565,29 +1770,54 @@ export default function PanelPrzydzialZlecen() {
                         <div key={order.id} className={`p-6 hover:bg-gray-50 ${order.needsVisit ? 'bg-yellow-50 border-l-4 border-l-yellow-400' : ''}`}>
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
-                        <div className="flex items-center space-x-3 mb-2">
-                          <span className="font-semibold text-gray-900">{order.clientName}</span>
-                          <span className="text-sm text-gray-600">#{order.orderNumber}</span>
-                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                            order.priority === 'urgent' ? 'bg-red-100 text-red-800' :
-                            order.priority === 'high' ? 'bg-orange-100 text-orange-800' :
-                            order.priority === 'medium' ? 'bg-yellow-100 text-yellow-800' :
-                            'bg-green-100 text-green-800'
-                          }`}>
-                            {order.priority === 'urgent' ? 'PILNE' :
-                             order.priority === 'high' ? 'WYSOKIE' :
-                             order.priority === 'medium' ? 'ŚREDNIE' : 'NISKIE'}
-                          </span>
-                          {order.needsVisit && (
-                            <span className="px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xs font-medium">
-                              POTRZEBUJE WIZYTY
+                        <div className="flex items-center justify-between mb-3">
+                          <div className="flex items-center space-x-3">
+                            {/* KOD URZĄDZENIA */}
+                            {(() => {
+                              const deviceBadge = getDeviceBadgeProps(order.deviceType || order.category);
+                              return (
+                                <span className={`inline-flex items-center px-3 py-1.5 text-sm font-bold rounded-lg border-2 ${deviceBadge.className}`}>
+                                  [{deviceBadge.code}]
+                                </span>
+                              );
+                            })()}
+                            <span className="text-sm text-gray-600">#{order.orderNumber}</span>
+                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                              order.priority === 'urgent' ? 'bg-red-100 text-red-800' :
+                              order.priority === 'high' ? 'bg-orange-100 text-orange-800' :
+                              order.priority === 'medium' ? 'bg-yellow-100 text-yellow-800' :
+                              'bg-green-100 text-green-800'
+                            }`}>
+                              {order.priority === 'urgent' ? 'PILNE' :
+                               order.priority === 'high' ? 'WYSOKIE' :
+                               order.priority === 'medium' ? 'ŚREDNIE' : 'NISKIE'}
                             </span>
-                          )}
-                          {order.pendingVisitsCount > 0 && (
-                            <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">
-                              {order.pendingVisitsCount} WIZYT OCZEKUJE
-                            </span>
-                          )}
+                            {order.needsVisit && (
+                              <span className="px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xs font-medium">
+                                POTRZEBUJE WIZYTY
+                              </span>
+                            )}
+                            {order.pendingVisitsCount > 0 && (
+                              <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">
+                                {order.pendingVisitsCount} WIZYT OCZEKUJE
+                              </span>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* ADRES jako główna informacja */}
+                        <div className="mb-3">
+                          <div className="flex items-center space-x-2">
+                            <FiMapPin className="h-5 w-5 text-blue-600" />
+                            <div>
+                              <div className="text-lg font-bold text-gray-900">
+                                {order.address?.split(',')[0] || 'Brak adresu'}
+                              </div>
+                              <div className="text-sm font-semibold text-gray-700">
+                                {order.address?.split(',').pop()?.trim() || ''}
+                              </div>
+                            </div>
+                          </div>
                         </div>
 
                         <div className="grid grid-cols-2 gap-4 text-sm text-gray-600 mb-3">
@@ -1596,8 +1826,7 @@ export default function PanelPrzydzialZlecen() {
                             {order.clientPhone || 'Brak telefonu'}
                           </div>
                           <div className="flex items-center">
-                            <FiMapPin className="h-4 w-4 mr-2" />
-                            {order.address?.split(',').pop()?.trim() || 'Brak adresu'}
+                            <span className="font-medium text-gray-700">{order.clientName}</span>
                           </div>
                           <div className="flex items-center">
                             <FiTool className="h-4 w-4 mr-2" />
@@ -1898,7 +2127,14 @@ export default function PanelPrzydzialZlecen() {
                       </div>
                     </div>
                     <div className="space-y-1">
-                      {(employee.todaySchedule || []).slice(0, timeSlotDetail === 'detailed' ? 12 : 6).map((slot, idx) => (
+                      {/* ✅ Obsłuż dzień wolny */}
+                      {(!employee.todaySchedule || employee.todaySchedule.length === 0) ? (
+                        <div className="text-xs p-3 rounded bg-gray-100 text-gray-600 text-center border border-gray-300">
+                          <span className="font-medium">🏖️ Dzień wolny</span>
+                          <div className="text-xs text-gray-500 mt-1">Serwisant nie ustawił godzin pracy</div>
+                        </div>
+                      ) : (
+                        (employee.todaySchedule || []).slice(0, timeSlotDetail === 'detailed' ? 12 : 6).map((slot, idx) => (
                         <div key={idx} className={`text-xs p-2 rounded cursor-pointer transition-all ${
                           slot.type === 'available' ? 'bg-green-50 text-green-700 border-l-2 border-green-400 hover:bg-green-100' :
                           slot.type === 'busy' ? 'bg-red-50 text-red-700 border-l-2 border-red-400 hover:bg-red-100' :
@@ -1967,13 +2203,14 @@ export default function PanelPrzydzialZlecen() {
                             </div>
                           )}
                         </div>
-                      ))}
-                      {(employee.todaySchedule || []).length > (timeSlotDetail === 'detailed' ? 12 : 6) && (
+                      ))
+                      )}
+                      {employee.todaySchedule && employee.todaySchedule.length > (timeSlotDetail === 'detailed' ? 12 : 6) && (
                         <div 
                           className="text-xs text-blue-600 text-center py-2 hover:bg-blue-50 rounded cursor-pointer transition-colors"
                           onClick={() => setSelectedEmployee(employee)}
                         >
-                          ... i {(employee.todaySchedule || []).length - (timeSlotDetail === 'detailed' ? 12 : 6)} więcej slotów
+                          ... i {employee.todaySchedule.length - (timeSlotDetail === 'detailed' ? 12 : 6)} więcej slotów
                           <br />
                           <span className="text-blue-500">👁️ Kliknij aby zobaczyć pełny harmonogram</span>
                         </div>

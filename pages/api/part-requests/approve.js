@@ -59,8 +59,13 @@ export default function handler(req, res) {
     estimatedDelivery // Opcjonalnie: data dostawy
   } = req.body;
   
+  console.log('🔍 API DEBUG: requestId =', requestId);
+  console.log('🔍 API DEBUG: approvedBy =', approvedBy);
+  console.log('🔍 API DEBUG: body =', req.body);
+  
   // Walidacja
   if (!requestId || !approvedBy) {
+    console.log('❌ API: Brak requestId lub approvedBy');
     return res.status(400).json({ 
       success: false, 
       error: 'Brak requestId lub approvedBy' 
@@ -69,7 +74,10 @@ export default function handler(req, res) {
   
   // Sprawdź logistyka
   const logistician = findEmployee(approvedBy);
+  console.log('🔍 API DEBUG: znaleziony logistyk =', logistician ? logistician.id : 'NIE ZNALEZIONY');
+  
   if (!logistician) {
+    console.log('❌ API: Logistyk nie znaleziony, szukano ID:', approvedBy);
     return res.status(400).json({ 
       success: false, 
       error: 'Logistyk nie znaleziony' 

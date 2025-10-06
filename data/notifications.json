@@ -578,8 +578,9 @@
     "type": "info",
     "link": "/admin/klienci",
     "userId": null,
-    "read": false,
-    "createdAt": "2025-10-05T09:13:58.082Z"
+    "read": true,
+    "createdAt": "2025-10-05T09:13:58.082Z",
+    "readAt": "2025-10-05T20:57:01.074Z"
   },
   {
     "id": 1759655638662,
@@ -588,8 +589,9 @@
     "type": "success",
     "link": "/admin/zamowienia",
     "userId": null,
-    "read": false,
-    "createdAt": "2025-10-05T09:13:58.093Z"
+    "read": true,
+    "createdAt": "2025-10-05T09:13:58.093Z",
+    "readAt": "2025-10-05T20:57:01.074Z"
   },
   {
     "id": 1759655638597,
@@ -598,8 +600,9 @@
     "type": "info",
     "link": "/admin/rezerwacje",
     "userId": null,
-    "read": false,
-    "createdAt": "2025-10-05T09:13:58.095Z"
+    "read": true,
+    "createdAt": "2025-10-05T09:13:58.095Z",
+    "readAt": "2025-10-05T20:57:01.074Z"
   },
   {
     "id": 1759655674159,
@@ -608,8 +611,9 @@
     "type": "info",
     "link": "/admin/klienci",
     "userId": null,
-    "read": false,
-    "createdAt": "2025-10-05T09:14:33.420Z"
+    "read": true,
+    "createdAt": "2025-10-05T09:14:33.420Z",
+    "readAt": "2025-10-05T20:57:01.074Z"
   },
   {
     "id": 1759655674292,
@@ -618,8 +622,9 @@
     "type": "success",
     "link": "/admin/zamowienia",
     "userId": null,
-    "read": false,
-    "createdAt": "2025-10-05T09:14:33.433Z"
+    "read": true,
+    "createdAt": "2025-10-05T09:14:33.433Z",
+    "readAt": "2025-10-05T20:57:01.074Z"
   },
   {
     "id": 1759655673487,
@@ -628,8 +633,9 @@
     "type": "info",
     "link": "/admin/rezerwacje",
     "userId": null,
-    "read": false,
-    "createdAt": "2025-10-05T09:14:33.434Z"
+    "read": true,
+    "createdAt": "2025-10-05T09:14:33.434Z",
+    "readAt": "2025-10-05T20:57:01.074Z"
   },
   {
     "id": 1759663149206,
@@ -638,8 +644,9 @@
     "type": "info",
     "link": "/admin/klienci",
     "userId": null,
-    "read": false,
-    "createdAt": "2025-10-05T11:19:08.854Z"
+    "read": true,
+    "createdAt": "2025-10-05T11:19:08.854Z",
+    "readAt": "2025-10-05T20:57:01.074Z"
   },
   {
     "id": 1759663149754,
@@ -648,8 +655,9 @@
     "type": "success",
     "link": "/admin/zamowienia",
     "userId": null,
-    "read": false,
-    "createdAt": "2025-10-05T11:19:08.870Z"
+    "read": true,
+    "createdAt": "2025-10-05T11:19:08.870Z",
+    "readAt": "2025-10-05T20:57:01.074Z"
   },
   {
     "id": 1759663149679,
@@ -658,8 +666,9 @@
     "type": "info",
     "link": "/admin/rezerwacje",
     "userId": null,
-    "read": false,
-    "createdAt": "2025-10-05T11:19:08.873Z"
+    "read": true,
+    "createdAt": "2025-10-05T11:19:08.873Z",
+    "readAt": "2025-10-05T20:57:01.074Z"
   },
   {
     "id": 1759664340477,
@@ -668,8 +677,9 @@
     "type": "error",
     "link": "/admin/logistyk/zamowienia?id=PR-2025-10-05-7403",
     "userId": null,
-    "read": false,
-    "createdAt": "2025-10-05T11:39:00.477Z"
+    "read": true,
+    "createdAt": "2025-10-05T11:39:00.477Z",
+    "readAt": "2025-10-05T20:57:01.074Z"
   },
   {
     "id": 1759664379823,
@@ -678,8 +688,9 @@
     "type": "error",
     "link": "/admin/logistyk/zamowienia?id=PR-2025-10-05-8637",
     "userId": null,
-    "read": false,
-    "createdAt": "2025-10-05T11:39:39.823Z"
+    "read": true,
+    "createdAt": "2025-10-05T11:39:39.823Z",
+    "readAt": "2025-10-05T20:57:01.074Z"
   },
   {
     "id": 1759664696219,
@@ -688,8 +699,9 @@
     "type": "error",
     "link": "/admin/logistyk/zamowienia?id=PR-2025-10-05-7358",
     "userId": null,
-    "read": false,
-    "createdAt": "2025-10-05T11:44:56.219Z"
+    "read": true,
+    "createdAt": "2025-10-05T11:44:56.219Z",
+    "readAt": "2025-10-05T20:57:01.074Z"
   },
   {
     "id": 1759664878487,
@@ -698,7 +710,578 @@
     "type": "error",
     "link": "/admin/logistyk/zamowienia?id=PR-2025-10-05-2142",
     "userId": null,
+    "read": true,
+    "createdAt": "2025-10-05T11:47:58.487Z",
+    "readAt": "2025-10-05T20:57:01.074Z"
+  },
+  {
+    "id": 1759666337049,
+    "title": " Nowe zamówienie części",
+    "message": "Mariusz Bielaszka zamówił 1 części",
+    "type": "info",
+    "link": "/admin/logistyk/zamowienia?id=ZC-2510051412-001",
+    "userId": null,
+    "read": true,
+    "createdAt": "2025-10-05T12:12:17.049Z",
+    "readAt": "2025-10-05T20:57:01.074Z"
+  },
+  {
+    "id": 1759670279205,
+    "title": "Nowy klient",
+    "message": "Zarejestrowano nowego klienta: Krzysztof Bielaszka",
+    "type": "info",
+    "link": "/admin/klienci",
+    "userId": null,
+    "read": true,
+    "createdAt": "2025-10-05T13:17:58.552Z",
+    "readAt": "2025-10-05T20:57:01.074Z"
+  },
+  {
+    "id": 1759670279147,
+    "title": "Nowe zamówienie",
+    "message": "Utworzono zamówienie ORDS252780015 - Zmywarka",
+    "type": "success",
+    "link": "/admin/zamowienia",
+    "userId": null,
+    "read": true,
+    "createdAt": "2025-10-05T13:17:58.561Z",
+    "readAt": "2025-10-05T20:57:01.074Z"
+  },
+  {
+    "id": 1759670279327,
+    "title": "Nowa rezerwacja",
+    "message": "Krzysztof Bielaszka zgłosił rezerwację: Zmywarka",
+    "type": "info",
+    "link": "/admin/rezerwacje",
+    "userId": null,
+    "read": true,
+    "createdAt": "2025-10-05T13:17:58.562Z",
+    "readAt": "2025-10-05T20:57:01.074Z"
+  },
+  {
+    "id": 1759678044144,
+    "title": "✅ Zamówienie zatwierdzone",
+    "message": "Oliwia Kowalczyk zatwierdził Twoje zamówienie ZC-2510051412-001. Dostawa: paczkomat KRA01M",
+    "type": "success",
+    "link": "/serwisant/zamowienia?id=ZC-2510051412-001",
+    "userId": "EMPA252780002",
+    "read": true,
+    "createdAt": "2025-10-05T15:27:24.144Z",
+    "readAt": "2025-10-05T20:57:01.075Z"
+  },
+  {
+    "id": 1759678955616,
+    "title": "📦 Części zamówione",
+    "message": "Zamówienie ZC-2510051412-001 zostało złożone u dostawcy. Oczekuj na dostawę.",
+    "type": "success",
+    "link": "/serwisant/zamowienia?id=ZC-2510051412-001",
+    "userId": "EMPA252780002",
+    "read": true,
+    "createdAt": "2025-10-05T15:42:35.616Z",
+    "readAt": "2025-10-05T20:57:01.075Z"
+  },
+  {
+    "id": 1759678955617,
+    "title": "✅ Zamówienie złożone",
+    "message": "Zamówienie ZC-2510051412-001 dla Mariusz Bielaszka zostało złożone u dostawcy",
+    "type": "info",
+    "link": "/admin/magazyn/zamowienia?id=ZC-2510051412-001",
+    "userId": null,
+    "read": true,
+    "createdAt": "2025-10-05T15:42:35.617Z",
+    "readAt": "2025-10-05T20:57:01.075Z"
+  },
+  {
+    "id": 1759694155658,
+    "title": "✅ Części dostarczone",
+    "message": "Zamówienie ZC-2510051412-001 (1 części) dostarczone do: paczkomat KRA01M. Możesz odebrać części.",
+    "type": "success",
+    "link": "/serwisant/magazyn",
+    "userId": "EMPA252780002",
+    "read": true,
+    "createdAt": "2025-10-05T19:55:55.659Z",
+    "readAt": "2025-10-05T20:57:01.075Z"
+  },
+  {
+    "id": 1759694155660,
+    "title": "📦 Dostawa potwierdzona",
+    "message": "Zamówienie ZC-2510051412-001 dla Mariusz Bielaszka zostało dostarczone",
+    "type": "info",
+    "link": "/admin/magazyn/zamowienia?id=ZC-2510051412-001",
+    "userId": null,
+    "read": true,
+    "createdAt": "2025-10-05T19:55:55.660Z",
+    "readAt": "2025-10-05T20:57:01.075Z"
+  },
+  {
+    "id": 1759694679879,
+    "title": " Nowe zamówienie części",
+    "message": "Mariusz Bielaszka zamówił 1 części",
+    "type": "info",
+    "link": "/admin/logistyk/zamowienia?id=ZC-2510052204-002",
+    "userId": null,
+    "read": true,
+    "createdAt": "2025-10-05T20:04:39.879Z",
+    "readAt": "2025-10-05T20:57:01.075Z"
+  },
+  {
+    "id": 1759695210415,
+    "title": " Nowe zamówienie części",
+    "message": "Mariusz Bielaszka zamówił 1 części",
+    "type": "info",
+    "link": "/admin/logistyk/zamowienia?id=ZC-2510052213-003",
+    "userId": null,
+    "read": true,
+    "createdAt": "2025-10-05T20:13:30.415Z",
+    "readAt": "2025-10-05T20:57:01.075Z"
+  },
+  {
+    "id": 1759695419016,
+    "title": " Nowe zamówienie części",
+    "message": "Mariusz Bielaszka zamówił 1 części",
+    "type": "info",
+    "link": "/admin/logistyk/zamowienia?id=ZC-2510052216-004",
+    "userId": null,
+    "read": true,
+    "createdAt": "2025-10-05T20:16:59.016Z",
+    "readAt": "2025-10-05T20:57:01.075Z"
+  },
+  {
+    "id": 1759695443630,
+    "title": "✅ Zamówienie zatwierdzone",
+    "message": "Oliwia Kowalczyk zatwierdził Twoje zamówienie ZC-2510052216-004. Dostawa: paczkomat KRA01M",
+    "type": "success",
+    "link": "/serwisant/zamowienia?id=ZC-2510052216-004",
+    "userId": "EMPA252780002",
+    "read": true,
+    "createdAt": "2025-10-05T20:17:23.631Z",
+    "readAt": "2025-10-05T20:57:01.075Z"
+  },
+  {
+    "id": 1759695447847,
+    "title": "✅ Zamówienie zatwierdzone",
+    "message": "Oliwia Kowalczyk zatwierdził Twoje zamówienie ZC-2510052213-003. Dostawa: paczkomat KRA01M",
+    "type": "success",
+    "link": "/serwisant/zamowienia?id=ZC-2510052213-003",
+    "userId": "EMPA252780002",
+    "read": true,
+    "createdAt": "2025-10-05T20:17:27.847Z",
+    "readAt": "2025-10-05T20:57:01.075Z"
+  },
+  {
+    "id": 1759695452760,
+    "title": "✅ Zamówienie zatwierdzone",
+    "message": "Oliwia Kowalczyk zatwierdził Twoje zamówienie ZC-2510052204-002. Dostawa: paczkomat KRA01M",
+    "type": "success",
+    "link": "/serwisant/zamowienia?id=ZC-2510052204-002",
+    "userId": "EMPA252780002",
+    "read": true,
+    "createdAt": "2025-10-05T20:17:32.760Z",
+    "readAt": "2025-10-05T20:57:01.075Z"
+  },
+  {
+    "id": 1759695857428,
+    "title": "🔴 PILNE Nowe zamówienie części",
+    "message": "Mariusz Bielaszka zamówił 1 części (+25zł express)",
+    "type": "error",
+    "link": "/admin/logistyk/zamowienia?id=ZC-2510052224-005",
+    "userId": null,
+    "read": true,
+    "createdAt": "2025-10-05T20:24:17.428Z",
+    "readAt": "2025-10-05T20:57:01.075Z"
+  },
+  {
+    "id": 1759695857429,
+    "title": "🚨 Express po deadline!",
+    "message": "Mariusz Bielaszka złożył zamówienie express po 15:00 (+25zł)",
+    "type": "error",
+    "link": "/admin/logistyk/zamowienia?id=ZC-2510052224-005",
+    "userId": null,
+    "read": true,
+    "createdAt": "2025-10-05T20:24:17.429Z",
+    "readAt": "2025-10-05T20:57:01.075Z"
+  },
+  {
+    "id": 1759695869416,
+    "title": "✅ Zamówienie zatwierdzone",
+    "message": "Oliwia Kowalczyk zatwierdził Twoje zamówienie ZC-2510052224-005. Dostawa: paczkomat undefined",
+    "type": "success",
+    "link": "/serwisant/zamowienia?id=ZC-2510052224-005",
+    "userId": "EMPA252780002",
+    "read": true,
+    "createdAt": "2025-10-05T20:24:29.416Z",
+    "readAt": "2025-10-05T20:57:01.075Z"
+  },
+  {
+    "id": 1759695962677,
+    "title": "📦 Części zamówione",
+    "message": "Zamówienie ZC-2510052213-003 zostało złożone u dostawcy. Oczekuj na dostawę.",
+    "type": "success",
+    "link": "/serwisant/zamowienia?id=ZC-2510052213-003",
+    "userId": "EMPA252780002",
+    "read": true,
+    "createdAt": "2025-10-05T20:26:02.677Z",
+    "readAt": "2025-10-05T20:57:01.075Z"
+  },
+  {
+    "id": 1759695962678,
+    "title": "✅ Zamówienie złożone",
+    "message": "Zamówienie ZC-2510052213-003 dla Mariusz Bielaszka zostało złożone u dostawcy",
+    "type": "info",
+    "link": "/admin/magazyn/zamowienia?id=ZC-2510052213-003",
+    "userId": null,
+    "read": true,
+    "createdAt": "2025-10-05T20:26:02.678Z",
+    "readAt": "2025-10-05T20:57:01.075Z"
+  },
+  {
+    "id": 1759696634722,
+    "title": "📦 Części zamówione",
+    "message": "Zamówienie ZC-2510052224-005 zostało złożone u dostawcy. Oczekuj na dostawę.",
+    "type": "success",
+    "link": "/serwisant/zamowienia?id=ZC-2510052224-005",
+    "userId": "EMPA252780002",
+    "read": true,
+    "createdAt": "2025-10-05T20:37:14.722Z",
+    "readAt": "2025-10-05T20:57:01.075Z"
+  },
+  {
+    "id": 1759696634723,
+    "title": "✅ Zamówienie złożone",
+    "message": "Zamówienie ZC-2510052224-005 dla Mariusz Bielaszka zostało złożone u dostawcy",
+    "type": "info",
+    "link": "/admin/magazyn/zamowienia?id=ZC-2510052224-005",
+    "userId": null,
+    "read": true,
+    "createdAt": "2025-10-05T20:37:14.723Z",
+    "readAt": "2025-10-05T20:57:01.075Z"
+  },
+  {
+    "id": 1759696904473,
+    "title": " Nowe zamówienie części",
+    "message": "Mariusz Bielaszka zamówił 1 części",
+    "type": "info",
+    "link": "/admin/logistyk/zamowienia?id=ZC-2510052241-006",
+    "userId": null,
+    "read": true,
+    "createdAt": "2025-10-05T20:41:44.473Z",
+    "readAt": "2025-10-05T20:57:01.075Z"
+  },
+  {
+    "id": 1759696929361,
+    "title": "✅ Zamówienie zatwierdzone",
+    "message": "Oliwia Kowalczyk zatwierdził Twoje zamówienie ZC-2510052241-006. Dostawa: paczkomat undefined",
+    "type": "success",
+    "link": "/serwisant/zamowienia?id=ZC-2510052241-006",
+    "userId": "EMPA252780002",
+    "read": true,
+    "createdAt": "2025-10-05T20:42:09.361Z",
+    "readAt": "2025-10-05T20:57:01.075Z"
+  },
+  {
+    "id": 1759696938666,
+    "title": "📦 Części zamówione",
+    "message": "Zamówienie ZC-2510052241-006 zostało złożone u dostawcy. Oczekuj na dostawę.",
+    "type": "success",
+    "link": "/serwisant/zamowienia?id=ZC-2510052241-006",
+    "userId": "EMPA252780002",
+    "read": true,
+    "createdAt": "2025-10-05T20:42:18.666Z",
+    "readAt": "2025-10-05T20:57:01.075Z"
+  },
+  {
+    "id": 1759696938668,
+    "title": "✅ Zamówienie złożone",
+    "message": "Zamówienie ZC-2510052241-006 dla Mariusz Bielaszka zostało złożone u dostawcy",
+    "type": "info",
+    "link": "/admin/magazyn/zamowienia?id=ZC-2510052241-006",
+    "userId": null,
+    "read": true,
+    "createdAt": "2025-10-05T20:42:18.668Z",
+    "readAt": "2025-10-05T20:57:01.075Z"
+  },
+  {
+    "id": 1759697383680,
+    "title": " Nowe zamówienie części",
+    "message": "Mariusz Bielaszka zamówił 1 części",
+    "type": "info",
+    "link": "/admin/logistyk/zamowienia?id=ZC-2510052249-007",
+    "userId": null,
+    "read": true,
+    "createdAt": "2025-10-05T20:49:43.680Z",
+    "readAt": "2025-10-05T20:57:01.075Z"
+  },
+  {
+    "id": 1759697383682,
+    "title": "🔔 Nowe zamówienie części",
+    "message": "Mariusz Bielaszka zamówił 1 części",
+    "type": "info",
+    "link": "/admin/magazyn/zamowienia",
+    "userId": null,
+    "read": true,
+    "createdAt": "2025-10-05T20:49:43.682Z",
+    "readAt": "2025-10-05T20:57:01.075Z"
+  },
+  {
+    "id": 1759697398469,
+    "title": " Nowe zamówienie części",
+    "message": "Mariusz Bielaszka zamówił 1 części",
+    "type": "info",
+    "link": "/admin/logistyk/zamowienia?id=ZC-2510052249-008",
+    "userId": null,
+    "read": true,
+    "createdAt": "2025-10-05T20:49:58.469Z",
+    "readAt": "2025-10-05T20:57:01.075Z"
+  },
+  {
+    "id": 1759697398471,
+    "title": "🔔 Nowe zamówienie części",
+    "message": "Mariusz Bielaszka zamówił 1 części",
+    "type": "info",
+    "link": "/admin/magazyn/zamowienia",
+    "userId": null,
+    "read": true,
+    "createdAt": "2025-10-05T20:49:58.471Z",
+    "readAt": "2025-10-05T20:57:01.075Z"
+  },
+  {
+    "id": 1759697832294,
+    "title": "✅ Zamówienie zatwierdzone",
+    "message": "Oliwia Kowalczyk zatwierdził Twoje zamówienie ZC-2510052249-008. Dostawa: paczkomat undefined",
+    "type": "success",
+    "link": "/serwisant/zamowienia?id=ZC-2510052249-008",
+    "userId": "EMPA252780002",
+    "read": true,
+    "createdAt": "2025-10-05T20:57:12.294Z",
+    "readAt": "2025-10-05T20:57:32.967Z"
+  },
+  {
+    "id": 1759697836536,
+    "title": "✅ Zamówienie zatwierdzone",
+    "message": "Oliwia Kowalczyk zatwierdził Twoje zamówienie ZC-2510052249-007. Dostawa: paczkomat undefined",
+    "type": "success",
+    "link": "/serwisant/zamowienia?id=ZC-2510052249-007",
+    "userId": "EMPA252780002",
+    "read": true,
+    "createdAt": "2025-10-05T20:57:16.536Z",
+    "readAt": "2025-10-05T20:57:32.967Z"
+  },
+  {
+    "id": 1759697857871,
+    "title": "📦 Części zamówione",
+    "message": "Zamówienie ZC-2510052216-004 zostało złożone u dostawcy. Oczekuj na dostawę.",
+    "type": "success",
+    "link": "/serwisant/zamowienia?id=ZC-2510052216-004",
+    "userId": "EMPA252780002",
+    "read": true,
+    "createdAt": "2025-10-05T20:57:37.871Z",
+    "readAt": "2025-10-05T20:57:50.039Z"
+  },
+  {
+    "id": 1759697857873,
+    "title": "✅ Zamówienie złożone",
+    "message": "Zamówienie ZC-2510052216-004 dla Mariusz Bielaszka zostało złożone u dostawcy",
+    "type": "info",
+    "link": "/admin/magazyn/zamowienia?id=ZC-2510052216-004",
+    "userId": null,
+    "read": true,
+    "createdAt": "2025-10-05T20:57:37.873Z",
+    "readAt": "2025-10-05T21:02:56.486Z"
+  },
+  {
+    "id": 1759698171094,
+    "title": "📦 Części zamówione",
+    "message": "Zamówienie ZC-2510052249-008 zostało złożone u dostawcy. Oczekuj na dostawę.",
+    "type": "success",
+    "link": "/serwisant/zamowienia?id=ZC-2510052249-008",
+    "userId": "EMPA252780002",
+    "read": true,
+    "createdAt": "2025-10-05T21:02:51.094Z",
+    "readAt": "2025-10-05T21:02:56.486Z"
+  },
+  {
+    "id": 1759698171096,
+    "title": "✅ Zamówienie złożone",
+    "message": "Zamówienie ZC-2510052249-008 dla Mariusz Bielaszka zostało złożone u dostawcy",
+    "type": "info",
+    "link": "/admin/magazyn/zamowienia?id=ZC-2510052249-008",
+    "userId": null,
+    "read": true,
+    "createdAt": "2025-10-05T21:02:51.096Z",
+    "readAt": "2025-10-05T21:02:56.486Z"
+  },
+  {
+    "id": 1759698185850,
+    "title": "📦 Części zamówione",
+    "message": "Zamówienie ZC-2510052249-007 zostało złożone u dostawcy. Oczekuj na dostawę.",
+    "type": "success",
+    "link": "/serwisant/zamowienia?id=ZC-2510052249-007",
+    "userId": "EMPA252780002",
+    "read": true,
+    "createdAt": "2025-10-05T21:03:05.850Z",
+    "readAt": "2025-10-05T21:03:30.437Z"
+  },
+  {
+    "id": 1759698185852,
+    "title": "✅ Zamówienie złożone",
+    "message": "Zamówienie ZC-2510052249-007 dla Mariusz Bielaszka zostało złożone u dostawcy",
+    "type": "info",
+    "link": "/admin/magazyn/zamowienia?id=ZC-2510052249-007",
+    "userId": null,
+    "read": true,
+    "createdAt": "2025-10-05T21:03:05.852Z",
+    "readAt": "2025-10-05T21:03:30.437Z"
+  },
+  {
+    "id": 1759698201295,
+    "title": "📦 Części zamówione",
+    "message": "Zamówienie ZC-2510052204-002 zostało złożone u dostawcy. Oczekuj na dostawę.",
+    "type": "success",
+    "link": "/serwisant/zamowienia?id=ZC-2510052204-002",
+    "userId": "EMPA252780002",
+    "read": true,
+    "createdAt": "2025-10-05T21:03:21.295Z",
+    "readAt": "2025-10-05T21:03:30.437Z"
+  },
+  {
+    "id": 1759698201296,
+    "title": "✅ Zamówienie złożone",
+    "message": "Zamówienie ZC-2510052204-002 dla Mariusz Bielaszka zostało złożone u dostawcy",
+    "type": "info",
+    "link": "/admin/magazyn/zamowienia?id=ZC-2510052204-002",
+    "userId": null,
+    "read": true,
+    "createdAt": "2025-10-05T21:03:21.296Z",
+    "readAt": "2025-10-05T21:03:30.437Z"
+  },
+  {
+    "id": 1759729766538,
+    "title": "Nowy klient",
+    "message": "Zarejestrowano nowego klienta: MAriusz Bielaszka",
+    "type": "info",
+    "link": "/admin/klienci",
+    "userId": null,
+    "read": true,
+    "createdAt": "2025-10-06T05:49:26.409Z",
+    "readAt": "2025-10-06T06:01:30.619Z"
+  },
+  {
+    "id": 1759729766780,
+    "title": "Nowe zamówienie",
+    "message": "Utworzono zamówienie ORDS252790001 - Zmywarka",
+    "type": "success",
+    "link": "/admin/zamowienia",
+    "userId": null,
+    "read": true,
+    "createdAt": "2025-10-06T05:49:26.420Z",
+    "readAt": "2025-10-06T06:01:30.619Z"
+  },
+  {
+    "id": 1759729767033,
+    "title": "Nowa rezerwacja",
+    "message": "MAriusz Bielaszka zgłosił rezerwację: Zmywarka",
+    "type": "info",
+    "link": "/admin/rezerwacje",
+    "userId": null,
+    "read": true,
+    "createdAt": "2025-10-06T05:49:26.422Z",
+    "readAt": "2025-10-06T06:01:30.619Z"
+  },
+  {
+    "id": 1759730717659,
+    "title": "Nowy klient",
+    "message": "Zarejestrowano nowego klienta: włądysłąwa",
+    "type": "info",
+    "link": "/admin/klienci",
+    "userId": null,
+    "read": true,
+    "createdAt": "2025-10-06T06:05:16.912Z",
+    "readAt": "2025-10-06T06:06:51.334Z"
+  },
+  {
+    "id": 1759730717611,
+    "title": "Nowe zamówienie",
+    "message": "Utworzono zamówienie ORDS252790002 - Lodówki",
+    "type": "success",
+    "link": "/admin/zamowienia",
+    "userId": null,
+    "read": true,
+    "createdAt": "2025-10-06T06:05:16.921Z",
+    "readAt": "2025-10-06T06:07:51.711Z"
+  },
+  {
+    "id": 1759730717181,
+    "title": "Nowa rezerwacja",
+    "message": "włądysłąwa zgłosił rezerwację: Lodówki",
+    "type": "info",
+    "link": "/admin/rezerwacje",
+    "userId": null,
+    "read": true,
+    "createdAt": "2025-10-06T06:05:16.922Z",
+    "readAt": "2025-10-06T06:07:49.407Z"
+  },
+  {
+    "id": 1759732856376,
+    "title": "Nowy klient",
+    "message": "Zarejestrowano nowego klienta: salsk wbigniew",
+    "type": "info",
+    "link": "/admin/klienci",
+    "userId": null,
+    "read": true,
+    "createdAt": "2025-10-06T06:40:55.676Z",
+    "readAt": "2025-10-06T20:05:40.813Z"
+  },
+  {
+    "id": 1759732856399,
+    "title": "Nowe zamówienie",
+    "message": "Utworzono zamówienie ORDS252790003 - Zmywarki",
+    "type": "success",
+    "link": "/admin/zamowienia",
+    "userId": null,
+    "read": true,
+    "createdAt": "2025-10-06T06:40:55.708Z",
+    "readAt": "2025-10-06T20:05:40.813Z"
+  },
+  {
+    "id": 1759732855983,
+    "title": "Nowa rezerwacja",
+    "message": "salsk wbigniew zgłosił rezerwację: Zmywarki",
+    "type": "info",
+    "link": "/admin/rezerwacje",
+    "userId": null,
+    "read": true,
+    "createdAt": "2025-10-06T06:40:55.712Z",
+    "readAt": "2025-10-06T20:05:40.813Z"
+  },
+  {
+    "id": 1759777737613,
+    "title": "Nowa rezerwacja",
+    "message": "Mariusz Bielaszka zgłosił rezerwację: Pralka",
+    "type": "info",
+    "link": "/admin/rezerwacje",
+    "userId": null,
+    "read": true,
+    "createdAt": "2025-10-06T19:08:57.307Z",
+    "readAt": "2025-10-06T20:05:40.813Z"
+  },
+  {
+    "id": 1759781391252,
+    "title": "Nowa rezerwacja",
+    "message": "Klient #390352 zgłosił rezerwację: Pralki",
+    "type": "info",
+    "link": "/admin/rezerwacje",
+    "userId": null,
     "read": false,
-    "createdAt": "2025-10-05T11:47:58.487Z"
+    "createdAt": "2025-10-06T20:09:50.693Z"
+  },
+  {
+    "id": 1759782145453,
+    "title": "Nowa rezerwacja",
+    "message": "Klient #144415 zgłosił rezerwację: Pralki",
+    "type": "info",
+    "link": "/admin/rezerwacje",
+    "userId": null,
+    "read": false,
+    "createdAt": "2025-10-06T20:22:24.461Z"
   }
 ]

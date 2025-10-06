@@ -28,7 +28,7 @@ export default async function handler(req, res) {
 
     if (req.method === 'GET') {
         try {
-            const { id } = req.query;
+            const { id, clientId } = req.query;
             const orders = await readOrders();
             
             // Jeśli podano ID, zwróć pojedyncze zamówienie
@@ -43,12 +43,28 @@ export default async function handler(req, res) {
                 }
             }
             
+            // ✅ FIXED: Filtruj po clientId (dla dashboardu klienta)
+            if (clientId) {
+                const clientOrders = orders.filter(o => o.clientId === clientId);
+                console.log(`✅ Returning ${clientOrders.length} orders for client: ${clientId}`);
+                return res.status(200).json({ 
+                    success: true,
+                    orders: clientOrders 
+                });
+            }
+            
             // Zwróć wszystkie zamówienia
             console.log(`✅ Returning ${orders.length} orders`);
-            return res.status(200).json({ orders });
+            return res.status(200).json({ 
+                success: true,
+                orders 
+            });
         } catch (error) {
             console.error('❌ Error reading orders:', error);
-            return res.status(500).json({ message: 'Błąd odczytu zamówień' });
+            return res.status(500).json({ 
+                success: false,
+                message: 'Błąd odczytu zamówień' 
+            });
         }
     }
 
