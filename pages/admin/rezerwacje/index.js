@@ -197,6 +197,17 @@ export default function AdminRezerwacje() {
 
       if (response.ok) {
         await loadRezerwacje();
+        
+        // 🔧 Odśwież badge natychmiast po zmianie statusu
+        console.log('🔄 Calling refreshAdminBadges...');
+        if (typeof window !== 'undefined' && window.refreshAdminBadges) {
+          console.log('✅ refreshAdminBadges exists, calling...');
+          await window.refreshAdminBadges();
+          console.log('✅ refreshAdminBadges completed');
+        } else {
+          console.log('❌ refreshAdminBadges NOT found!');
+        }
+        
         toast.success('Status rezerwacji został zaktualizowany');
       } else {
         toast.error('Błąd podczas aktualizacji statusu');
@@ -229,13 +240,12 @@ export default function AdminRezerwacje() {
 
   // Nowa funkcja: Dodaj zlecenie (zmień status na contacted)
   const handleCreateOrder = async (rezerwacjaId) => {
-    if (!confirm('Czy chcesz utworzyć zlecenie z tej rezerwacji?\nStatus zostanie zmieniony na "Skontaktowano się".')) {
-      return;
-    }
-
     try {
       await handleStatusChange(rezerwacjaId, 'contacted');
-      toast.success('✅ Zlecenie utworzone! Status zmieniony na "Skontaktowano się"');
+      
+      // Toast - drugi parametr to duration w ms
+      toast.success('✅ Zlecenie utworzone! Przechodzę do zleceń...', 4000);
+      
       setTimeout(() => {
         router.push('/admin/zamowienia');
       }, 1500);
@@ -247,13 +257,9 @@ export default function AdminRezerwacje() {
 
   // Nowa funkcja: Umów wizytę (zmień status na scheduled)
   const handleScheduleVisit = async (rezerwacjaId) => {
-    if (!confirm('Czy chcesz umówić wizytę?\nStatus zostanie zmieniony na "Umówiona wizyta".')) {
-      return;
-    }
-
     try {
       await handleStatusChange(rezerwacjaId, 'scheduled');
-      toast.success('📅 Wizyta umówiona! Status zmieniony na "Umówiona wizyta"');
+      toast.success('📅 Wizyta umówiona! Status zmieniony na "Umówiona wizyta"', 4000);
     } catch (error) {
       console.error('Błąd:', error);
       toast.error('Błąd podczas umawiania wizyty');
@@ -416,8 +422,8 @@ export default function AdminRezerwacje() {
         </div>
       )}
       
-      {/* Bug Fix Banner - show if there are "contacted" reservations without orderId */}
-      {rezerwacje.filter(r => r.status === 'contacted' && !r.orderId && !r.orderNumber).length > 0 && (
+      {/* Bug Fix Banner - show ONLY on default view (pending only) if there are "contacted" reservations without orderId */}
+      {filters.status === '' && rezerwacje.filter(r => r.status === 'contacted' && !r.orderId && !r.orderNumber).length > 0 && (
         <div className="bg-yellow-50 border-2 border-yellow-400 rounded-lg p-4 mb-6">
           <div className="flex items-start justify-between">
             <div className="flex items-start flex-1">

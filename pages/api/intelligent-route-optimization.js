@@ -94,14 +94,17 @@ async function getServicemanOrders(servicemanId) {
           return;
         }
         
-        // Jeśli servicemanId jest podany i nie jest 'USER_001', sprawdź przypisanie
+        // ✅ FILTROWANIE: Pokaż TYLKO zlecenia przypisane do tego serwisanta
         const orderEmployeeId = order.assignedTo;
-        if (servicemanId && servicemanId !== 'USER_001' && orderEmployeeId && orderEmployeeId !== servicemanId) {
-          return; // Pomijamy zlecenia innych serwisantów
+        
+        if (servicemanId && servicemanId !== 'USER_001') {
+          // Pokaż TYLKO jeśli jest przypisane do tego serwisanta
+          if (orderEmployeeId !== servicemanId) {
+            return; // Pomijamy zlecenia innych serwisantów I bez przypisania
+          }
         }
         
-        // ⚠️ UWAGA: Jeśli servicemanId == 'USER_001', to jest to "wszystkie zlecenia"
-        // więc pobieramy wszystkie niezależnie od przypisania
+        // ⚠️ Jeśli servicemanId == 'USER_001', pokazuj wszystkie zlecenia
         
         // Jeśli nie ma wizyt, utwórz jedną domyślną wizytę z danych zlecenia
         const defaultVisit = {
@@ -152,8 +155,11 @@ async function getServicemanOrders(servicemanId) {
         // Filtruj wizyty dla konkretnego serwisanta
         const visitEmployeeId = visit.technicianId || visit.employeeId || visit.assignedTo || order.assignedTo;
         
-        if (servicemanId && servicemanId !== 'USER_001' && visitEmployeeId !== servicemanId) {
-          return; // Pomijamy wizyty innych serwisantów
+        // ✅ FILTROWANIE: Pokaż TYLKO wizyty przypisane do tego serwisanta
+        if (servicemanId && servicemanId !== 'USER_001') {
+          if (visitEmployeeId !== servicemanId) {
+            return; // Pomijamy wizyty innych serwisantów I bez przypisania
+          }
         }
         
         // Pomijamy wizyty zakończone (completed, cancelled)
@@ -197,6 +203,16 @@ async function getServicemanOrders(servicemanId) {
     });
     
     console.log(`🎯 Wyekstrahowano ${allVisits.length} wizyt (z ${allOrders.length} zleceń) dla serwisanta ${servicemanId || 'wszystkich'}`);
+    
+    // 📊 Loguj breakdown wizyt po przypisaniu
+    if (servicemanId && servicemanId !== 'USER_001') {
+      const assignedVisits = allVisits.filter(v => {
+        const empId = v.technicianId || v.employeeId || v.assignedTo;
+        return empId === servicemanId;
+      });
+      console.log(`   ✅ TYLKO przypisane do ${servicemanId}: ${assignedVisits.length} wizyt`);
+      console.log(`   ❌ Ukryto zlecenia bez przypisania i innych serwisantów`);
+    }
     
     // 🗺️ Przekształć WIZYTY do formatu wymaganego przez algorytm optymalizacji
     const formattedOrders = allVisits.map(visit => {

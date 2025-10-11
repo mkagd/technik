@@ -182,13 +182,27 @@ export default function AdminZamowienia() {
         body: JSON.stringify({
           id: orderId,
           status: newStatus,
+          reservationId: order.reservationId, // Potrzebne do reverse workflow
           updatedAt: new Date().toISOString()
         })
       });
 
       if (response.ok) {
-        await loadOrders();
-        toast.success('Status zamówienia został zaktualizowany');
+        const data = await response.json();
+        
+        // 🔄 Sprawdź czy zlecenie zostało przeniesione z powrotem do rezerwacji
+        if (data.revertedToReservation) {
+          toast.success('🔄 Zlecenie przeniesione do Zgłoszeń! Status: Oczekuje na kontakt', 5000);
+          await loadOrders();
+          
+          // Odśwież badge rezerwacji
+          if (typeof window !== 'undefined' && window.refreshAdminBadges) {
+            await window.refreshAdminBadges();
+          }
+        } else {
+          await loadOrders();
+          toast.success('Status zamówienia został zaktualizowany', 3000);
+        }
       } else {
         toast.error('Błąd podczas aktualizacji statusu');
       }

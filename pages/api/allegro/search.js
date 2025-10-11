@@ -1,5 +1,5 @@
 // API endpoint for searching Allegro listings with OAuth 2.0
-import { getAccessToken, isConfigured } from '../../../lib/allegro-oauth';
+import { getAccessToken, isConfigured, getUserToken, isUserAuthorized } from '../../../lib/allegro-oauth';
 import axios from 'axios';
 import fs from 'fs';
 import path from 'path';
@@ -31,28 +31,31 @@ export default async function handler(req, res) {
       });
     }
 
-    // Get OAuth access token
-    const accessToken = await getAccessToken();
-
-    // Build search parameters for Allegro API
-    const searchParams = {
-      phrase: query,
-      limit: Math.min(parseInt(limit) || 20, 100),
-      sort: '-price', // Sort by price
-      'searchMode': 'REGULAR', // Regular search (not DESCRIPTIONS_ONLY)
-    };
-
-    // Add category filter if provided
-    if (category) {
-      searchParams['category.id'] = category;
+    // Get user ID from session/auth (TODO: Replace with actual auth)
+    const userId = req.query.userId || 'admin-001';
+    
+    // Check if user has authorized with Allegro
+    if (!isUserAuthorized(userId)) {
+      console.log(`⚠️ User ${userId} not authorized with Allegro`);
+      return res.status(401).json({
+        success: false,
+        error: 'not_authorized',
+        message: 'Musisz połączyć swoje konto z Allegro',
+        authUrl: '/api/allegro/start?userId=' + userId
+      });
     }
-
-    // Add price range filters
-    if (minPrice) {
-      searchParams['price.from'] = parseFloat(minPrice);
-    }
-    if (maxPrice) {
-      searchParams['price.to'] = parseFloat(maxPrice);
+    
+    // Get user's OAuth access token
+    const accessToken = getUserToken(userId);
+    
+    if (!accessToken) {
+      console.log(`⚠️ User ${userId} token expired or invalid`);
+      return res.status(401).json({
+        success: false,
+        error: 'token_expired',
+        message: 'Token wygasł. Połącz ponownie z Allegro',
+        authUrl: '/api/allegro/start?userId=' + userId
+      });
     }
 
     // Check if using Sandbox - read directly from config file
@@ -69,14 +72,34 @@ export default async function handler(req, res) {
       useSandbox = process.env.ALLEGRO_SANDBOX === 'true';
     }
     
-    // FIXED: Use correct production endpoint
+    // Choose endpoint based on sandbox mode
     const baseUrl = useSandbox 
       ? 'https://api.allegro.pl.allegrosandbox.pl'
       : 'https://api.allegro.pl';
     
+    // Use /offers/listing for ALL public offers search
+    // This endpoint requires app verification for production
     const apiUrl = `${baseUrl}/offers/listing`;
+    
+    // Public search parameters (for /offers/listing)
+    const searchParams = {
+      phrase: query,
+      limit: Math.min(parseInt(limit) || 20, 60),
+      offset: 0,
+      sort: '-price',
+    };
+    
+    if (category) {
+      searchParams['category.id'] = category;
+    }
+    if (minPrice) {
+      searchParams['price.from'] = parseFloat(minPrice);
+    }
+    if (maxPrice) {
+      searchParams['price.to'] = parseFloat(maxPrice);
+    }
 
-    console.log(`🔍 Searching Allegro with OAuth (${useSandbox ? 'SANDBOX' : 'PRODUCTION'}):`, { 
+    console.log(`🔍 Searching Allegro (${useSandbox ? 'SANDBOX' : 'PRODUCTION'}):`, { 
       query, 
       minPrice, 
       maxPrice, 
@@ -93,15 +116,16 @@ export default async function handler(req, res) {
       params: searchParams,
     });
 
-    // Extract items from response
-    const items = response.data.items?.promoted || [];
-    const regular = response.data.items?.regular || [];
-    const allItems = [...items, ...regular];
+    // Extract offers from public listing response
+    // /offers/listing returns: { items: { promoted: [...], regular: [...] } }
+    const promotedOffers = response.data.items?.promoted || [];
+    const regularOffers = response.data.items?.regular || [];
+    const allOffers = [...promotedOffers, ...regularOffers];
 
-    console.log(`✅ Found ${allItems.length} results from Allegro`);
+    console.log(`✅ Found ${allOffers.length} offers matching "${query}" (${promotedOffers.length} promoted, ${regularOffers.length} regular)`);
 
     // Transform to simpler format
-    const results = allItems.map(item => ({
+    const results = allOffers.map(item => ({
       id: item.id,
       name: item.name,
       price: {
@@ -116,7 +140,7 @@ export default async function handler(req, res) {
         login: item.seller?.login || 'Unknown',
         superSeller: item.seller?.superSeller || false,
       },
-      stock: item.stock?.available || 0,
+      stock: item.stock?.available || null,
       url: `https://allegro.pl/oferta/${item.id}`,
       thumbnail: item.images?.[0]?.url || null,
       location: item.location?.city || '',

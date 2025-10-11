@@ -13,6 +13,11 @@ export default function AdminLayout({ children, title, breadcrumbs = [] }) {
   const [sidebarOpen, setSidebarOpen] = useState(false); // Domyślnie zamknięty na mobile
   const [notificationCount, setNotificationCount] = useState(0); // Dzwonek - WSZYSTKIE
   
+  // 🔒 AUTHENTICATION CHECK
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [authLoading, setAuthLoading] = useState(true);
+  
   // Badge counts z priorytetem (error > info > success)
   const [reservationsBadge, setReservationsBadge] = useState({ count: 0, type: 'info' });
   const [ordersBadge, setOrdersBadge] = useState({ count: 0, type: 'info' });
@@ -21,6 +26,140 @@ export default function AdminLayout({ children, title, breadcrumbs = [] }) {
   
   const [showNotifications, setShowNotifications] = useState(false);
   const [notifications, setNotifications] = useState([]);
+  
+  // 🔧 Funkcja do natychmiastowego odświeżania badge'y (wywoływana po zmianach)
+  const refreshBadges = async () => {
+    try {
+      console.log('🔄 Refreshing badges...');
+      
+      // Odśwież badge rezerwacji
+      const rezRes = await fetch('/api/rezerwacje');
+      if (rezRes.ok) {
+        const data = await rezRes.json();
+        // API może zwrócić tablicę lub obiekt { rezerwacje: [...] }
+        const rezerwacje = Array.isArray(data) ? data : (data.rezerwacje || []);
+        console.log('📊 Total reservations:', rezerwacje.length);
+        const pendingCount = rezerwacje.filter(r => 
+          r.status === 'pending' && !r.orderId && !r.convertedToOrder
+        ).length;
+        console.log('✅ Pending reservations (no orderId):', pendingCount);
+        setReservationsBadge({ 
+          count: pendingCount, 
+          type: pendingCount > 0 ? 'info' : 'success'
+        });
+        console.log('✅ Reservations badge updated to:', pendingCount);
+      }
+      
+      // Odśwież badge zleceń
+      const ordersRes = await fetch('/api/orders');
+      if (ordersRes.ok) {
+        const ordersData = await ordersRes.json();
+        // API może zwrócić tablicę lub obiekt { orders: [...] }
+        const orders = Array.isArray(ordersData) ? ordersData : (ordersData.orders || []);
+        console.log('📊 Total orders:', orders.length);
+        const activeOrdersCount = orders.filter(o => 
+          !o.reservationId && o.status !== 'completed' && o.status !== 'cancelled'
+        ).length;
+        console.log('✅ Active orders (no reservationId):', activeOrdersCount);
+        setOrdersBadge({ 
+          count: activeOrdersCount, 
+          type: activeOrdersCount > 0 ? 'info' : 'success'
+        });
+        console.log('✅ Orders badge updated to:', activeOrdersCount);
+      }
+      
+      // Odśwież badge magazynu (zamówienia części pending)
+      const partRequestsRes = await fetch('/api/part-requests?status=pending');
+      if (partRequestsRes.ok) {
+        const partRequestsData = await partRequestsRes.json();
+        const partRequests = partRequestsData.requests || [];
+        const pendingRequestsCount = partRequests.length;
+        console.log('📊 Part requests pending:', pendingRequestsCount);
+        setMagazynBadge({ 
+          count: pendingRequestsCount, 
+          type: pendingRequestsCount > 0 ? 'error' : 'success' // error = pilne/czerwony
+        });
+        console.log('✅ Magazyn badge updated to:', pendingRequestsCount);
+      }
+    } catch (error) {
+      console.error('❌ Error refreshing badges:', error);
+    }
+  };
+  
+  // 🔧 Expose refreshBadges globally so it can be called from other components
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      window.refreshAdminBadges = refreshBadges;
+      console.log('✅ window.refreshAdminBadges registered');
+    }
+    return () => {
+      if (typeof window !== 'undefined') {
+        delete window.refreshAdminBadges;
+      }
+    };
+  }, [refreshBadges]);
+
+  // 🔒 CHECK AUTHENTICATION - Sprawdź czy użytkownik jest zalogowany
+  useEffect(() => {
+    const checkAuth = () => {
+      try {
+        const token = localStorage.getItem('authToken');
+        const userData = localStorage.getItem('userData');
+        
+        if (!token || !userData) {
+          console.warn('🔒 No auth token found, redirecting to login...');
+          router.push('/admin/login');
+          return;
+        }
+        
+        const user = JSON.parse(userData);
+        
+        // Sprawdź czy token nie wygasł (prosty check - w produkcji użyj JWT decode)
+        const tokenData = parseJWT(token);
+        if (tokenData && tokenData.exp) {
+          const expirationDate = new Date(tokenData.exp * 1000);
+          if (expirationDate < new Date()) {
+            console.warn('🔒 Token expired, redirecting to login...');
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('userData');
+            router.push('/admin/login');
+            return;
+          }
+        }
+        
+        // Sprawdź czy użytkownik ma odpowiednie uprawnienia
+        const allowedRoles = ['admin', 'manager', 'employee', 'logistyk'];
+        if (!allowedRoles.includes(user.role)) {
+          console.error('🔒 Unauthorized role:', user.role);
+          router.push('/admin/login');
+          return;
+        }
+        
+        setCurrentUser(user);
+        setIsAuthenticated(true);
+        setAuthLoading(false);
+      } catch (error) {
+        console.error('🔒 Auth check error:', error);
+        router.push('/admin/login');
+      }
+    };
+    
+    checkAuth();
+  }, [router]);
+  
+  // Helper function to parse JWT token
+  const parseJWT = (token) => {
+    try {
+      const base64Url = token.split('.')[1];
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+      }).join(''));
+      return JSON.parse(jsonPayload);
+    } catch (e) {
+      return null;
+    }
+  };
 
   // Set initial sidebar state based on screen size
   useEffect(() => {
@@ -65,10 +204,79 @@ export default function AdminLayout({ children, title, breadcrumbs = [] }) {
           const magazynNotifs = data.filter(n => n.link && n.link.startsWith('/admin/magazyn'));
           const logistykaNotifs = data.filter(n => n.link && n.link.startsWith('/admin/logistyk'));
           
+          // 🔧 Badge dla rezerwacji pokazuje tylko rezerwacje pending (nieprzetworzone)
+          // Pobierz aktualną liczbę rezerwacji pending zamiast liczyć notyfikacje
+          try {
+            const rezRes = await fetch('/api/rezerwacje');
+            if (rezRes.ok) {
+              const rezData = await rezRes.json();
+              // API może zwrócić tablicę lub obiekt { rezerwacje: [...] }
+              const rezerwacje = Array.isArray(rezData) ? rezData : (rezData.rezerwacje || []);
+              const pendingCount = rezerwacje.filter(r => 
+                r.status === 'pending' && !r.orderId && !r.convertedToOrder
+              ).length;
+              setReservationsBadge({ 
+                count: pendingCount, 
+                type: pendingCount > 0 ? 'info' : 'success'
+              });
+            } else {
+              // Fallback: użyj liczby notyfikacji jeśli API nie działa
+              setReservationsBadge({ count: reservationsNotifs.length, type: getPriorityType(reservationsNotifs) });
+            }
+          } catch (error) {
+            console.error('Error fetching reservations:', error);
+            // Fallback: użyj liczby notyfikacji
+            setReservationsBadge({ count: reservationsNotifs.length, type: getPriorityType(reservationsNotifs) });
+          }
+          
+          // 🔧 Badge dla zleceń pokazuje tylko zlecenia bez reservationId (nie przekonwertowane z rezerwacji)
+          try {
+            const ordersRes = await fetch('/api/orders');
+            if (ordersRes.ok) {
+              const ordersData = await ordersRes.json();
+              // API może zwrócić tablicę lub obiekt { orders: [...] }
+              const orders = Array.isArray(ordersData) ? ordersData : (ordersData.orders || []);
+              const activeOrdersCount = orders.filter(o => 
+                !o.reservationId && o.status !== 'completed' && o.status !== 'cancelled'
+              ).length;
+              console.log('📊 Total orders:', orders.length);
+              console.log('✅ Active orders (no reservationId):', activeOrdersCount);
+              setOrdersBadge({ 
+                count: activeOrdersCount, 
+                type: activeOrdersCount > 0 ? 'info' : 'success'
+              });
+            } else {
+              // Fallback: użyj liczby notyfikacji jeśli API nie działa
+              setOrdersBadge({ count: ordersNotifs.length, type: getPriorityType(ordersNotifs) });
+            }
+          } catch (error) {
+            console.error('Error fetching orders:', error);
+            // Fallback: użyj liczby notyfikacji
+            setOrdersBadge({ count: ordersNotifs.length, type: getPriorityType(ordersNotifs) });
+          }
+          
+          // 🔧 Badge dla magazynu pokazuje zamówienia części pending (do zaakceptowania)
+          try {
+            const partRequestsRes = await fetch('/api/part-requests?status=pending');
+            if (partRequestsRes.ok) {
+              const partRequestsData = await partRequestsRes.json();
+              const partRequests = partRequestsData.requests || [];
+              const pendingRequestsCount = partRequests.length;
+              setMagazynBadge({ 
+                count: pendingRequestsCount, 
+                type: pendingRequestsCount > 0 ? 'error' : 'success' // error = pilne/czerwony
+              });
+            } else {
+              // Fallback: użyj liczby notyfikacji jeśli API nie działa
+              setMagazynBadge({ count: magazynNotifs.length, type: getPriorityType(magazynNotifs) });
+            }
+          } catch (error) {
+            console.error('Error fetching part requests:', error);
+            // Fallback: użyj liczby notyfikacji
+            setMagazynBadge({ count: magazynNotifs.length, type: getPriorityType(magazynNotifs) });
+          }
+          
           setNotificationCount(total);
-          setReservationsBadge({ count: reservationsNotifs.length, type: getPriorityType(reservationsNotifs) });
-          setOrdersBadge({ count: ordersNotifs.length, type: getPriorityType(ordersNotifs) });
-          setMagazynBadge({ count: magazynNotifs.length, type: getPriorityType(magazynNotifs) });
           setLogistykaBadge({ count: logistykaNotifs.length, type: getPriorityType(logistykaNotifs) });
         }
       } catch (error) {
@@ -112,8 +320,15 @@ export default function AdminLayout({ children, title, breadcrumbs = [] }) {
   }, [router]);
 
   const handleLogout = () => {
-    localStorage.removeItem('adminAuth');
-    router.push('/');
+    // Wyczyść dane uwierzytelniania
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('userData');
+    localStorage.removeItem('adminAuth'); // legacy
+    
+    console.log('👋 User logged out');
+    
+    // Przekieruj do strony logowania
+    router.push('/admin/login');
   };
 
   // Helper: Get badge color based on notification type
@@ -164,6 +379,23 @@ export default function AdminLayout({ children, title, breadcrumbs = [] }) {
       console.error('Error marking all as read:', error);
     }
   };
+
+  // 🔒 Loading screen during authentication check
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+        <div className="text-center">
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-blue-500 border-t-transparent"></div>
+          <p className="mt-4 text-gray-600 dark:text-gray-400">Sprawdzanie uprawnień...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // 🔒 If not authenticated, don't render anything (redirect happens in useEffect)
+  if (!isAuthenticated) {
+    return null;
+  }
 
   // Navigation items with badges
   const navItems = [
@@ -336,7 +568,22 @@ export default function AdminLayout({ children, title, breadcrumbs = [] }) {
         </nav>
 
         {/* User section */}
-        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200">
+        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200 bg-white">
+          {/* User info */}
+          {currentUser && sidebarOpen && (
+            <div className="mb-3 px-4 py-2 bg-blue-50 rounded-lg">
+              <p className="text-sm font-semibold text-gray-900 truncate">{currentUser.name}</p>
+              <p className="text-xs text-gray-600 truncate">{currentUser.email}</p>
+              <p className="text-xs text-blue-600 font-medium mt-1">
+                {currentUser.role === 'admin' && '👑 Administrator'}
+                {currentUser.role === 'manager' && '📊 Kierownik'}
+                {currentUser.role === 'logistyk' && '📦 Logistyk'}
+                {currentUser.role === 'employee' && '👤 Pracownik'}
+              </p>
+            </div>
+          )}
+          
+          {/* Logout button */}
           <button
             onClick={handleLogout}
             className="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-red-600 hover:bg-red-50 transition-colors"

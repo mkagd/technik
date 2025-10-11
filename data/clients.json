@@ -1,62 +1,35 @@
 [
   {
-    "name": "MAriusz Bielaszka",
+    "name": "Mariusz Bielaszka",
     "phone": "987987987",
-    "email": "bielaszkam2@gmail.com",
-    "address": "zsc, 28-133 SÄąâ€šupia",
-    "city": "SÄąâ€šupia",
-    "street": "zsc",
-    "dateAdded": "2025-10-06T05:49:26.403Z",
+    "email": "Bielaszkam2@gmail.com",
+    "address": "Słupia 114, 28-133 Pacanow",
+    "city": "Pacanow",
+    "street": "Słupia 114",
+    "dateAdded": "2025-10-11T06:16:29.883Z",
     "history": [],
     "phones": [],
     "addresses": [],
-    "physicalAvailability": {
-      "timeWindows": [
-        {
-          "days": [
-            "monday",
-            "tuesday",
-            "wednesday",
-            "thursday",
-            "friday"
-          ],
-          "timeFrom": "08:00",
-          "timeTo": "20:00",
-          "label": "Dni robocze"
-        },
-        {
-          "days": [
-            "saturday"
-          ],
-          "timeFrom": "09:00",
-          "timeTo": "18:00",
-          "label": "Sobota"
-        }
-      ],
-      "preferences": {
-        "flexibleSchedule": true,
-        "requiresAdvanceNotice": true,
-        "advanceNoticeHours": 24
-      },
-      "presenceHistory": [],
-      "stats": {},
-      "score": 85,
-      "category": "weekdays",
-      "notes": [],
-      "lastUpdated": "2025-10-06T05:49:26.403Z"
-    },
+    "physicalAvailability": null,
     "id": "CLIS252790001",
     "clientId": "CLIS252790001",
     "source": "system-auto",
     "sourceDetails": null,
     "createdBy": "system",
     "createdByName": "System",
-    "userId": null,
-    "isAuthenticated": false,
+    "userId": "ADMIN-1759888967133",
+    "isAuthenticated": true,
     "createdFromIP": null,
     "createdAt": "2025-10-06T05:49:26.403Z",
-    "updatedAt": "2025-10-06T05:49:26.403Z",
-    "updatedBy": null
+    "updatedAt": "2025-10-11T06:16:29.886Z",
+    "updatedBy": null,
+    "coordinates": null,
+    "geocodingMeta": {
+      "status": "pending",
+      "provider": null,
+      "lastAttempt": null,
+      "error": null
+    }
   },
   {
     "name": "Krzysztof Bielaszka",
@@ -114,126 +87,86 @@
     "isAuthenticated": false,
     "createdFromIP": null,
     "createdAt": "2025-10-05T13:17:58.546Z",
-    "updatedAt": "2025-10-05T13:17:58.546Z",
-    "updatedBy": null
+    "updatedAt": "2025-10-07T21:00:33.876Z",
+    "updatedBy": null,
+    "resetToken": null,
+    "resetTokenExpiry": null,
+    "passwordHash": "$2b$10$g4jQA3gFsEWj60JocoafvuRl14EXCcxYYxei7k3IITUg14qAyO6.a",
+    "failedLoginAttempts": 0,
+    "lastLogin": "2025-10-07T21:00:41.497Z",
+    "lastLoginMethod": "email",
+    "lastLoginAttempt": "2025-10-07T20:59:57.181Z",
+    "coordinates": null,
+    "geocodingMeta": {
+      "status": "pending",
+      "provider": null,
+      "lastAttempt": null,
+      "error": null
+    }
   },
   {
     "name": "Technik B",
     "phone": "572772540",
-    "email": "",
-    "address": "SÄąâ€šupia 114, 28-133 Pacanow",
+    "email": "Bielaszkam2@gmail.com",
+    "address": "Słupia, 28-133 Pacanow",
     "city": "Pacanow",
-    "street": "SÄąâ€šupia 114",
-    "dateAdded": "2025-10-05T11:19:08.844Z",
+    "street": "Słupia",
+    "dateAdded": "2025-10-10T21:33:53.134Z",
     "history": [],
     "phones": [],
     "addresses": [],
-    "physicalAvailability": {
-      "timeWindows": [
-        {
-          "days": [
-            "monday",
-            "tuesday",
-            "wednesday",
-            "thursday",
-            "friday"
-          ],
-          "timeFrom": "08:00",
-          "timeTo": "20:00",
-          "label": "Dni robocze"
-        },
-        {
-          "days": [
-            "saturday"
-          ],
-          "timeFrom": "09:00",
-          "timeTo": "18:00",
-          "label": "Sobota"
-        }
-      ],
-      "preferences": {
-        "flexibleSchedule": true,
-        "requiresAdvanceNotice": true,
-        "advanceNoticeHours": 24
-      },
-      "presenceHistory": [],
-      "stats": {},
-      "score": 85,
-      "category": "weekdays",
-      "notes": [],
-      "lastUpdated": "2025-10-05T20:21:29.701Z"
-    },
+    "physicalAvailability": null,
     "id": "CLIS252780015",
     "clientId": "CLIS252780015",
     "source": "system-auto",
     "sourceDetails": null,
     "createdBy": "system",
     "createdByName": "System",
-    "userId": null,
-    "isAuthenticated": false,
+    "userId": "ADMIN-1759889380856",
+    "isAuthenticated": true,
     "createdFromIP": null,
     "createdAt": "2025-10-05T11:19:08.844Z",
-    "updatedAt": "2025-10-05T11:19:08.844Z",
-    "updatedBy": null
+    "updatedAt": "2025-10-10T21:33:53.140Z",
+    "updatedBy": null,
+    "coordinates": null,
+    "geocodingMeta": {
+      "status": "pending",
+      "provider": null,
+      "lastAttempt": null,
+      "error": null
+    }
   },
   {
-    "name": "Konkonting",
+    "name": "aqwdq",
     "phone": "123123123",
-    "email": "bielaszkam2@gmail.com",
-    "address": "asf, 28-133 SÄąâ€šupia",
-    "city": "SÄąâ€šupia",
-    "street": "asf",
-    "dateAdded": "2025-10-05T09:14:33.410Z",
+    "email": "",
+    "address": "Słupia 114, 28-133 Pacanow",
+    "city": "Pacanow",
+    "street": "Słupia 114",
+    "dateAdded": "2025-10-10T21:33:52.775Z",
     "history": [],
     "phones": [],
     "addresses": [],
-    "physicalAvailability": {
-      "timeWindows": [
-        {
-          "days": [
-            "monday",
-            "tuesday",
-            "wednesday",
-            "thursday",
-            "friday"
-          ],
-          "timeFrom": "08:00",
-          "timeTo": "20:00",
-          "label": "Dni robocze"
-        },
-        {
-          "days": [
-            "saturday"
-          ],
-          "timeFrom": "09:00",
-          "timeTo": "18:00",
-          "label": "Sobota"
-        }
-      ],
-      "preferences": {
-        "flexibleSchedule": true,
-        "requiresAdvanceNotice": true,
-        "advanceNoticeHours": 24
-      },
-      "presenceHistory": [],
-      "stats": {},
-      "score": 85,
-      "category": "weekdays",
-      "notes": [],
-      "lastUpdated": "2025-10-05T20:21:29.701Z"
-    },
+    "physicalAvailability": null,
     "id": "CLIS252780014",
     "clientId": "CLIS252780014",
     "source": "system-auto",
     "sourceDetails": null,
     "createdBy": "system",
     "createdByName": "System",
-    "userId": null,
-    "isAuthenticated": false,
+    "userId": "ADMIN-1759890008071",
+    "isAuthenticated": true,
     "createdFromIP": null,
     "createdAt": "2025-10-05T09:14:33.410Z",
-    "updatedAt": "2025-10-05T09:14:33.410Z",
-    "updatedBy": null
+    "updatedAt": "2025-10-10T21:33:52.780Z",
+    "updatedBy": null,
+    "coordinates": null,
+    "geocodingMeta": {
+      "status": "pending",
+      "provider": null,
+      "lastAttempt": null,
+      "error": null
+    }
   },
   {
     "name": "Konkonting",
@@ -292,7 +225,14 @@
     "createdFromIP": null,
     "createdAt": "2025-10-05T09:13:58.074Z",
     "updatedAt": "2025-10-05T09:13:58.074Z",
-    "updatedBy": null
+    "updatedBy": null,
+    "coordinates": null,
+    "geocodingMeta": {
+      "status": "pending",
+      "provider": null,
+      "lastAttempt": null,
+      "error": null
+    }
   },
   {
     "id": "CLIS252780012",
@@ -345,7 +285,14 @@
     "createdFromIP": null,
     "createdAt": "2025-10-05T06:13:16.868Z",
     "updatedAt": "2025-10-05T20:08:28.412Z",
-    "updatedBy": null
+    "updatedBy": null,
+    "coordinates": null,
+    "geocodingMeta": {
+      "status": "pending",
+      "provider": null,
+      "lastAttempt": null,
+      "error": null
+    }
   },
   {
     "name": "Technik B",
@@ -404,7 +351,14 @@
     "createdFromIP": null,
     "createdAt": "2025-10-05T05:28:22.026Z",
     "updatedAt": "2025-10-05T05:28:22.026Z",
-    "updatedBy": null
+    "updatedBy": null,
+    "coordinates": null,
+    "geocodingMeta": {
+      "status": "pending",
+      "provider": null,
+      "lastAttempt": null,
+      "error": null
+    }
   },
   {
     "name": "Mariusz Bielaszka",
@@ -463,7 +417,14 @@
     "createdFromIP": null,
     "createdAt": "2025-10-05T05:27:56.759Z",
     "updatedAt": "2025-10-05T05:27:56.759Z",
-    "updatedBy": null
+    "updatedBy": null,
+    "coordinates": null,
+    "geocodingMeta": {
+      "status": "pending",
+      "provider": null,
+      "lastAttempt": null,
+      "error": null
+    }
   },
   {
     "name": "Konting",
@@ -541,7 +502,14 @@
     "createdFromIP": null,
     "createdAt": "2025-10-05T05:18:52.428Z",
     "updatedAt": "2025-10-05T05:18:52.428Z",
-    "updatedBy": null
+    "updatedBy": null,
+    "coordinates": null,
+    "geocodingMeta": {
+      "status": "pending",
+      "provider": null,
+      "lastAttempt": null,
+      "error": null
+    }
   },
   {
     "name": "Oliwia Bielaszka",
@@ -614,7 +582,14 @@
     "createdFromIP": null,
     "createdAt": "2025-10-05T05:18:52.421Z",
     "updatedAt": "2025-10-05T05:18:52.421Z",
-    "updatedBy": null
+    "updatedBy": null,
+    "coordinates": null,
+    "geocodingMeta": {
+      "status": "pending",
+      "provider": null,
+      "lastAttempt": null,
+      "error": null
+    }
   },
   {
     "name": "qweqwe",
@@ -694,80 +669,46 @@
     "createdFromIP": null,
     "createdAt": "2025-10-05T05:18:52.415Z",
     "updatedAt": "2025-10-05T05:18:52.415Z",
-    "updatedBy": null
+    "updatedBy": null,
+    "coordinates": null,
+    "geocodingMeta": {
+      "status": "pending",
+      "provider": null,
+      "lastAttempt": null,
+      "error": null
+    }
   },
   {
-    "name": "Mariusz Bielaszka",
+    "name": "Oliwia Klich",
     "phone": "792392870",
-    "email": "Bielaszkam2@gmail.com",
-    "address": "Gliniana 17/30, 30-732 KrakÄ‚Ĺ‚w",
-    "city": "KrakÄ‚Ĺ‚w",
-    "street": "Gliniana 17/30",
-    "dateAdded": "2025-10-05T05:18:52.408Z",
+    "email": "oliwiabielaszka2@gmail.com",
+    "address": "sikorskiego 11, 39-200 Dębica",
+    "city": "Dębica",
+    "street": "sikorskiego 11",
+    "dateAdded": "2025-10-10T21:33:49.019Z",
     "history": [],
-    "phones": [
-      {
-        "number": "792392870",
-        "label": "GÄąâ€šÄ‚Ĺ‚wny",
-        "isPrimary": true
-      }
-    ],
-    "addresses": [
-      {
-        "street": "Gliniana 17/30",
-        "city": "KrakÄ‚Ĺ‚w",
-        "postalCode": "30-732",
-        "label": "GÄąâ€šÄ‚Ĺ‚wny",
-        "isPrimary": true
-      }
-    ],
-    "physicalAvailability": {
-      "timeWindows": [
-        {
-          "days": [
-            "monday",
-            "tuesday",
-            "wednesday",
-            "thursday",
-            "friday"
-          ],
-          "timeFrom": "08:00",
-          "timeTo": "20:00",
-          "label": "Dni robocze"
-        },
-        {
-          "days": [
-            "saturday"
-          ],
-          "timeFrom": "09:00",
-          "timeTo": "18:00",
-          "label": "Sobota"
-        }
-      ],
-      "preferences": {
-        "flexibleSchedule": true,
-        "requiresAdvanceNotice": true,
-        "advanceNoticeHours": 24
-      },
-      "presenceHistory": [],
-      "stats": {},
-      "score": 85,
-      "category": "weekdays",
-      "notes": [],
-      "lastUpdated": "2025-10-05T20:21:29.701Z"
-    },
+    "phones": [],
+    "addresses": [],
+    "physicalAvailability": null,
     "id": "CLIS252780002",
     "clientId": "CLIS252780002",
     "source": "system-auto",
     "sourceDetails": null,
     "createdBy": "system",
     "createdByName": "System",
-    "userId": null,
-    "isAuthenticated": false,
+    "userId": "ADMIN-1760039645868",
+    "isAuthenticated": true,
     "createdFromIP": null,
     "createdAt": "2025-10-05T05:18:52.408Z",
-    "updatedAt": "2025-10-05T05:18:52.408Z",
-    "updatedBy": null
+    "updatedAt": "2025-10-10T21:33:49.024Z",
+    "updatedBy": null,
+    "coordinates": null,
+    "geocodingMeta": {
+      "status": "pending",
+      "provider": null,
+      "lastAttempt": null,
+      "error": null
+    }
   },
   {
     "name": "Mariusz Bielaszka",
@@ -826,7 +767,14 @@
     "createdFromIP": null,
     "createdAt": "2025-10-05T05:18:52.400Z",
     "updatedAt": "2025-10-05T05:18:52.400Z",
-    "updatedBy": null
+    "updatedBy": null,
+    "coordinates": null,
+    "geocodingMeta": {
+      "status": "pending",
+      "provider": null,
+      "lastAttempt": null,
+      "error": null
+    }
   },
   {
     "name": "Konting",
@@ -904,7 +852,14 @@
     "createdFromIP": null,
     "createdAt": "2025-10-04T20:33:41.877Z",
     "updatedAt": "2025-10-04T20:33:41.877Z",
-    "updatedBy": null
+    "updatedBy": null,
+    "coordinates": null,
+    "geocodingMeta": {
+      "status": "pending",
+      "provider": null,
+      "lastAttempt": null,
+      "error": null
+    }
   },
   {
     "name": "Oliwia Bielaszka",
@@ -977,6 +932,13 @@
       "category": "weekdays",
       "notes": [],
       "lastUpdated": "2025-10-05T20:21:29.701Z"
+    },
+    "coordinates": null,
+    "geocodingMeta": {
+      "status": "pending",
+      "provider": null,
+      "lastAttempt": null,
+      "error": null
     }
   },
   {
@@ -1057,6 +1019,13 @@
       "category": "weekdays",
       "notes": [],
       "lastUpdated": "2025-10-05T20:21:29.701Z"
+    },
+    "coordinates": null,
+    "geocodingMeta": {
+      "status": "pending",
+      "provider": null,
+      "lastAttempt": null,
+      "error": null
     }
   },
   {
@@ -1114,6 +1083,13 @@
       "category": "weekdays",
       "notes": [],
       "lastUpdated": "2025-10-05T20:21:29.701Z"
+    },
+    "coordinates": null,
+    "geocodingMeta": {
+      "status": "pending",
+      "provider": null,
+      "lastAttempt": null,
+      "error": null
     }
   },
   {
@@ -1171,6 +1147,13 @@
       "category": "weekdays",
       "notes": [],
       "lastUpdated": "2025-10-05T20:21:29.701Z"
+    },
+    "coordinates": null,
+    "geocodingMeta": {
+      "status": "pending",
+      "provider": null,
+      "lastAttempt": null,
+      "error": null
     }
   },
   {
@@ -1244,7 +1227,14 @@
     "createdFromIP": null,
     "createdAt": "2025-10-06T06:05:16.907Z",
     "updatedAt": "2025-10-06T06:08:08.306Z",
-    "updatedBy": null
+    "updatedBy": null,
+    "coordinates": null,
+    "geocodingMeta": {
+      "status": "pending",
+      "provider": null,
+      "lastAttempt": null,
+      "error": null
+    }
   },
   {
     "name": "salsk wbigniew",
@@ -1317,6 +1307,1804 @@
     "createdFromIP": null,
     "createdAt": "2025-10-06T06:40:55.648Z",
     "updatedAt": "2025-10-06T06:40:55.648Z",
+    "updatedBy": null,
+    "coordinates": null,
+    "geocodingMeta": {
+      "status": "pending",
+      "provider": null,
+      "lastAttempt": null,
+      "error": null
+    }
+  },
+  {
+    "name": "Technik B",
+    "phone": "123123123",
+    "email": "",
+    "address": "Słupia 114, 28-133 Pacanow",
+    "city": "Pacanow",
+    "street": "Słupia 114",
+    "dateAdded": "2025-10-06T21:16:42.188Z",
+    "history": [],
+    "phones": [
+      {
+        "number": "123123123",
+        "label": "Główny",
+        "isPrimary": true
+      }
+    ],
+    "addresses": [
+      {
+        "street": "Słupia 114",
+        "city": "Pacanow",
+        "postalCode": "28-133",
+        "label": "Główny",
+        "isPrimary": true
+      }
+    ],
+    "physicalAvailability": {
+      "timeWindows": [
+        {
+          "days": [
+            "monday",
+            "tuesday",
+            "wednesday",
+            "thursday",
+            "friday"
+          ],
+          "timeFrom": "08:00",
+          "timeTo": "20:00",
+          "label": "Dni robocze"
+        },
+        {
+          "days": [
+            "saturday"
+          ],
+          "timeFrom": "09:00",
+          "timeTo": "18:00",
+          "label": "Sobota"
+        }
+      ],
+      "preferences": {
+        "flexibleSchedule": true,
+        "requiresAdvanceNotice": true,
+        "advanceNoticeHours": 24
+      },
+      "presenceHistory": [],
+      "stats": {},
+      "score": 85,
+      "category": "weekdays",
+      "notes": [],
+      "lastUpdated": "2025-10-06T21:16:42.188Z"
+    },
+    "userId": null,
+    "isAuthenticated": false,
+    "id": "CLIS252790004",
+    "clientId": "CLIS252790004",
+    "source": "system-auto",
+    "sourceDetails": null,
+    "createdBy": "system",
+    "createdByName": "System",
+    "createdFromIP": null,
+    "createdAt": "2025-10-06T21:16:42.188Z",
+    "updatedAt": "2025-10-06T21:16:42.188Z",
+    "updatedBy": null,
+    "coordinates": null,
+    "geocodingMeta": {
+      "status": "pending",
+      "provider": null,
+      "lastAttempt": null,
+      "error": null
+    }
+  },
+  {
+    "name": "Technik B",
+    "phone": "987987987",
+    "email": "",
+    "address": "Słupia 114, 28-133 Pacanow",
+    "city": "Pacanow",
+    "street": "Słupia 114",
+    "dateAdded": "2025-10-06T21:51:59.500Z",
+    "history": [],
+    "phones": [
+      {
+        "number": "987987987",
+        "label": "Główny",
+        "isPrimary": true
+      }
+    ],
+    "addresses": [
+      {
+        "street": "Słupia 114",
+        "city": "Pacanow",
+        "postalCode": "28-133",
+        "label": "Główny",
+        "isPrimary": true
+      }
+    ],
+    "physicalAvailability": {
+      "timeWindows": [
+        {
+          "days": [
+            "monday",
+            "tuesday",
+            "wednesday",
+            "thursday",
+            "friday"
+          ],
+          "timeFrom": "08:00",
+          "timeTo": "20:00",
+          "label": "Dni robocze"
+        },
+        {
+          "days": [
+            "saturday"
+          ],
+          "timeFrom": "09:00",
+          "timeTo": "18:00",
+          "label": "Sobota"
+        }
+      ],
+      "preferences": {
+        "flexibleSchedule": true,
+        "requiresAdvanceNotice": true,
+        "advanceNoticeHours": 24
+      },
+      "presenceHistory": [],
+      "stats": {},
+      "score": 85,
+      "category": "weekdays",
+      "notes": [],
+      "lastUpdated": "2025-10-06T21:51:59.500Z"
+    },
+    "userId": null,
+    "isAuthenticated": false,
+    "id": "CLIS252790005",
+    "clientId": "CLIS252790005",
+    "source": "system-auto",
+    "sourceDetails": null,
+    "createdBy": "system",
+    "createdByName": "System",
+    "createdFromIP": null,
+    "createdAt": "2025-10-06T21:51:59.500Z",
+    "updatedAt": "2025-10-06T21:51:59.500Z",
+    "updatedBy": null,
+    "coordinates": null,
+    "geocodingMeta": {
+      "status": "pending",
+      "provider": null,
+      "lastAttempt": null,
+      "error": null
+    }
+  },
+  {
+    "name": "Mariusz Bielaszka",
+    "phone": "792392870",
+    "email": "Bielaszkam2@gmail.com",
+    "address": "Gliniana 17/30, 30-732 Kraków, 30-732 Kraków",
+    "city": "Kraków",
+    "street": "Gliniana 17/30, 30-732 Kraków",
+    "dateAdded": "2025-10-06T22:02:07.191Z",
+    "history": [],
+    "phones": [
+      {
+        "number": "792392870",
+        "label": "Główny",
+        "isPrimary": true
+      }
+    ],
+    "addresses": [
+      {
+        "street": "Gliniana 17/30, 30-732 Kraków",
+        "city": "Kraków",
+        "postalCode": "30-732",
+        "label": "Główny",
+        "isPrimary": true
+      }
+    ],
+    "physicalAvailability": {
+      "timeWindows": [
+        {
+          "days": [
+            "monday",
+            "tuesday",
+            "wednesday",
+            "thursday",
+            "friday"
+          ],
+          "timeFrom": "08:00",
+          "timeTo": "20:00",
+          "label": "Dni robocze"
+        },
+        {
+          "days": [
+            "saturday"
+          ],
+          "timeFrom": "09:00",
+          "timeTo": "18:00",
+          "label": "Sobota"
+        }
+      ],
+      "preferences": {
+        "flexibleSchedule": true,
+        "requiresAdvanceNotice": true,
+        "advanceNoticeHours": 24
+      },
+      "presenceHistory": [],
+      "stats": {},
+      "score": 85,
+      "category": "weekdays",
+      "notes": [],
+      "lastUpdated": "2025-10-06T22:02:07.191Z"
+    },
+    "userId": null,
+    "isAuthenticated": false,
+    "id": "CLIS252790006",
+    "clientId": "CLIS252790006",
+    "source": "system-auto",
+    "sourceDetails": null,
+    "createdBy": "system",
+    "createdByName": "System",
+    "createdFromIP": null,
+    "createdAt": "2025-10-06T22:02:07.191Z",
+    "updatedAt": "2025-10-06T22:02:07.191Z",
+    "updatedBy": null,
+    "coordinates": null,
+    "geocodingMeta": {
+      "status": "pending",
+      "provider": null,
+      "lastAttempt": null,
+      "error": null
+    }
+  },
+  {
+    "name": "Klient #834821",
+    "phone": "345345345",
+    "email": "",
+    "address": "sienkiewicza 12, 39-300 Mielec",
+    "city": "Mielec",
+    "street": "sienkiewicza 12",
+    "dateAdded": "2025-10-06T22:30:46.202Z",
+    "history": [],
+    "phones": [
+      {
+        "number": "345345345",
+        "label": "Główny",
+        "isPrimary": true
+      }
+    ],
+    "addresses": [
+      {
+        "street": "sienkiewicza 12",
+        "city": "Mielec",
+        "postalCode": "39-300",
+        "label": "Główny",
+        "isPrimary": true
+      }
+    ],
+    "physicalAvailability": null,
+    "userId": null,
+    "isAuthenticated": false,
+    "id": "CLIS252790007",
+    "clientId": "CLIS252790007",
+    "source": "system-auto",
+    "sourceDetails": null,
+    "createdBy": "system",
+    "createdByName": "System",
+    "createdFromIP": null,
+    "createdAt": "2025-10-06T22:30:35.219Z",
+    "updatedAt": "2025-10-06T22:30:46.207Z",
+    "updatedBy": null,
+    "coordinates": null,
+    "geocodingMeta": {
+      "status": "pending",
+      "provider": null,
+      "lastAttempt": null,
+      "error": null
+    }
+  },
+  {
+    "name": "Klient #283666",
+    "phone": "123123123",
+    "email": "",
+    "address": "sienkiewicza 12, 39-200 Mielec",
+    "city": "Mielec",
+    "street": "sienkiewicza 12",
+    "dateAdded": "2025-10-06T22:54:44.051Z",
+    "history": [],
+    "phones": [
+      {
+        "number": "123123123",
+        "label": "Główny",
+        "isPrimary": true
+      }
+    ],
+    "addresses": [
+      {
+        "street": "sienkiewicza 12",
+        "city": "Mielec",
+        "postalCode": "39-200",
+        "label": "Główny",
+        "isPrimary": true
+      }
+    ],
+    "physicalAvailability": {
+      "timeWindows": [
+        {
+          "days": [
+            "monday",
+            "tuesday",
+            "wednesday",
+            "thursday",
+            "friday"
+          ],
+          "timeFrom": "08:00",
+          "timeTo": "20:00",
+          "label": "Dni robocze"
+        },
+        {
+          "days": [
+            "saturday"
+          ],
+          "timeFrom": "09:00",
+          "timeTo": "18:00",
+          "label": "Sobota"
+        }
+      ],
+      "preferences": {
+        "flexibleSchedule": true,
+        "requiresAdvanceNotice": true,
+        "advanceNoticeHours": 24
+      },
+      "presenceHistory": [],
+      "stats": {},
+      "score": 85,
+      "category": "weekdays",
+      "notes": [],
+      "lastUpdated": "2025-10-06T22:54:44.051Z"
+    },
+    "userId": null,
+    "isAuthenticated": false,
+    "id": "CLIS252790008",
+    "clientId": "CLIS252790008",
+    "source": "system-auto",
+    "sourceDetails": null,
+    "createdBy": "system",
+    "createdByName": "System",
+    "createdFromIP": null,
+    "createdAt": "2025-10-06T22:54:44.051Z",
+    "updatedAt": "2025-10-06T22:54:44.051Z",
+    "updatedBy": null,
+    "coordinates": null,
+    "geocodingMeta": {
+      "status": "pending",
+      "provider": null,
+      "lastAttempt": null,
+      "error": null
+    }
+  },
+  {
+    "name": "Klient #628653",
+    "phone": "123123123",
+    "email": "",
+    "address": "sienkiewicza 12, 39-300 Mielec",
+    "city": "Mielec",
+    "street": "sienkiewicza 12",
+    "dateAdded": "2025-10-06T23:00:28.676Z",
+    "history": [],
+    "phones": [
+      {
+        "number": "123123123",
+        "label": "Główny",
+        "isPrimary": true
+      }
+    ],
+    "addresses": [
+      {
+        "street": "sienkiewicza 12",
+        "city": "Mielec",
+        "postalCode": "39-300",
+        "label": "Główny",
+        "isPrimary": true
+      }
+    ],
+    "physicalAvailability": {
+      "timeWindows": [
+        {
+          "days": [
+            "monday",
+            "tuesday",
+            "wednesday",
+            "thursday",
+            "friday"
+          ],
+          "timeFrom": "08:00",
+          "timeTo": "20:00",
+          "label": "Dni robocze"
+        },
+        {
+          "days": [
+            "saturday"
+          ],
+          "timeFrom": "09:00",
+          "timeTo": "18:00",
+          "label": "Sobota"
+        }
+      ],
+      "preferences": {
+        "flexibleSchedule": true,
+        "requiresAdvanceNotice": true,
+        "advanceNoticeHours": 24
+      },
+      "presenceHistory": [],
+      "stats": {},
+      "score": 85,
+      "category": "weekdays",
+      "notes": [],
+      "lastUpdated": "2025-10-06T23:00:28.676Z"
+    },
+    "userId": null,
+    "isAuthenticated": false,
+    "id": "CLIS252800001",
+    "clientId": "CLIS252800001",
+    "source": "system-auto",
+    "sourceDetails": null,
+    "createdBy": "system",
+    "createdByName": "System",
+    "createdFromIP": null,
+    "createdAt": "2025-10-06T23:00:28.676Z",
+    "updatedAt": "2025-10-06T23:00:28.676Z",
+    "updatedBy": null,
+    "coordinates": null,
+    "geocodingMeta": {
+      "status": "pending",
+      "provider": null,
+      "lastAttempt": null,
+      "error": null
+    }
+  },
+  {
+    "name": "Klient #694398",
+    "phone": "123123123",
+    "email": "",
+    "address": "sienkiewicza 12, 39-300 Mielec",
+    "city": "Mielec",
+    "street": "sienkiewicza 12",
+    "dateAdded": "2025-10-06T23:01:34.772Z",
+    "history": [],
+    "phones": [
+      {
+        "number": "123123123",
+        "label": "Główny",
+        "isPrimary": true
+      }
+    ],
+    "addresses": [
+      {
+        "street": "sienkiewicza 12",
+        "city": "Mielec",
+        "postalCode": "39-300",
+        "label": "Główny",
+        "isPrimary": true
+      }
+    ],
+    "physicalAvailability": {
+      "timeWindows": [
+        {
+          "days": [
+            "monday",
+            "tuesday",
+            "wednesday",
+            "thursday",
+            "friday"
+          ],
+          "timeFrom": "08:00",
+          "timeTo": "20:00",
+          "label": "Dni robocze"
+        },
+        {
+          "days": [
+            "saturday"
+          ],
+          "timeFrom": "09:00",
+          "timeTo": "18:00",
+          "label": "Sobota"
+        }
+      ],
+      "preferences": {
+        "flexibleSchedule": true,
+        "requiresAdvanceNotice": true,
+        "advanceNoticeHours": 24
+      },
+      "presenceHistory": [],
+      "stats": {},
+      "score": 85,
+      "category": "weekdays",
+      "notes": [],
+      "lastUpdated": "2025-10-06T23:01:34.772Z"
+    },
+    "userId": null,
+    "isAuthenticated": false,
+    "id": "CLIS252800002",
+    "clientId": "CLIS252800002",
+    "source": "system-auto",
+    "sourceDetails": null,
+    "createdBy": "system",
+    "createdByName": "System",
+    "createdFromIP": null,
+    "createdAt": "2025-10-06T23:01:34.772Z",
+    "updatedAt": "2025-10-06T23:01:34.772Z",
+    "updatedBy": null,
+    "coordinates": null,
+    "geocodingMeta": {
+      "status": "pending",
+      "provider": null,
+      "lastAttempt": null,
+      "error": null
+    }
+  },
+  {
+    "name": "Klient #072313",
+    "phone": "123123123",
+    "email": "",
+    "address": "sienkiewicza 12, 39-300 Mielec",
+    "city": "Mielec",
+    "street": "sienkiewicza 12",
+    "dateAdded": "2025-10-06T23:07:52.680Z",
+    "history": [],
+    "phones": [
+      {
+        "number": "123123123",
+        "label": "Główny",
+        "isPrimary": true
+      }
+    ],
+    "addresses": [
+      {
+        "street": "sienkiewicza 12",
+        "city": "Mielec",
+        "postalCode": "39-300",
+        "label": "Główny",
+        "isPrimary": true
+      }
+    ],
+    "physicalAvailability": {
+      "timeWindows": [
+        {
+          "days": [
+            "monday",
+            "tuesday",
+            "wednesday",
+            "thursday",
+            "friday"
+          ],
+          "timeFrom": "08:00",
+          "timeTo": "20:00",
+          "label": "Dni robocze"
+        },
+        {
+          "days": [
+            "saturday"
+          ],
+          "timeFrom": "09:00",
+          "timeTo": "18:00",
+          "label": "Sobota"
+        }
+      ],
+      "preferences": {
+        "flexibleSchedule": true,
+        "requiresAdvanceNotice": true,
+        "advanceNoticeHours": 24
+      },
+      "presenceHistory": [],
+      "stats": {},
+      "score": 85,
+      "category": "weekdays",
+      "notes": [],
+      "lastUpdated": "2025-10-06T23:07:52.680Z"
+    },
+    "userId": null,
+    "isAuthenticated": false,
+    "id": "CLIS252800003",
+    "clientId": "CLIS252800003",
+    "source": "system-auto",
+    "sourceDetails": null,
+    "createdBy": "system",
+    "createdByName": "System",
+    "createdFromIP": null,
+    "createdAt": "2025-10-06T23:07:52.680Z",
+    "updatedAt": "2025-10-06T23:07:52.680Z",
+    "updatedBy": null,
+    "coordinates": null,
+    "geocodingMeta": {
+      "status": "pending",
+      "provider": null,
+      "lastAttempt": null,
+      "error": null
+    }
+  },
+  {
+    "name": "Klient #302911",
+    "phone": "123123123",
+    "email": "",
+    "address": "sienkiewicza 12, 39-300 Mielec",
+    "city": "Mielec",
+    "street": "sienkiewicza 12",
+    "dateAdded": "2025-10-06T23:11:43.278Z",
+    "history": [],
+    "phones": [
+      {
+        "number": "123123123",
+        "label": "Główny",
+        "isPrimary": true
+      }
+    ],
+    "addresses": [
+      {
+        "street": "sienkiewicza 12",
+        "city": "Mielec",
+        "postalCode": "39-300",
+        "label": "Główny",
+        "isPrimary": true
+      }
+    ],
+    "physicalAvailability": {
+      "timeWindows": [
+        {
+          "days": [
+            "monday",
+            "tuesday",
+            "wednesday",
+            "thursday",
+            "friday"
+          ],
+          "timeFrom": "08:00",
+          "timeTo": "20:00",
+          "label": "Dni robocze"
+        },
+        {
+          "days": [
+            "saturday"
+          ],
+          "timeFrom": "09:00",
+          "timeTo": "18:00",
+          "label": "Sobota"
+        }
+      ],
+      "preferences": {
+        "flexibleSchedule": true,
+        "requiresAdvanceNotice": true,
+        "advanceNoticeHours": 24
+      },
+      "presenceHistory": [],
+      "stats": {},
+      "score": 85,
+      "category": "weekdays",
+      "notes": [],
+      "lastUpdated": "2025-10-06T23:11:43.278Z"
+    },
+    "userId": null,
+    "isAuthenticated": false,
+    "id": "CLIS252800004",
+    "clientId": "CLIS252800004",
+    "source": "system-auto",
+    "sourceDetails": null,
+    "createdBy": "system",
+    "createdByName": "System",
+    "createdFromIP": null,
+    "createdAt": "2025-10-06T23:11:43.278Z",
+    "updatedAt": "2025-10-06T23:11:43.278Z",
+    "updatedBy": null,
+    "coordinates": null,
+    "geocodingMeta": {
+      "status": "pending",
+      "provider": null,
+      "lastAttempt": null,
+      "error": null
+    }
+  },
+  {
+    "name": "Klient #623195",
+    "phone": "123123123",
+    "email": "",
+    "address": "sienkiewicza 12, 39-300 Mielec",
+    "city": "Mielec",
+    "street": "sienkiewicza 12",
+    "dateAdded": "2025-10-06T23:17:03.251Z",
+    "history": [],
+    "phones": [
+      {
+        "number": "123123123",
+        "label": "Główny",
+        "isPrimary": true
+      }
+    ],
+    "addresses": [
+      {
+        "street": "sienkiewicza 12",
+        "city": "Mielec",
+        "postalCode": "39-300",
+        "label": "Główny",
+        "isPrimary": true
+      }
+    ],
+    "physicalAvailability": {
+      "timeWindows": [
+        {
+          "days": [
+            "monday",
+            "tuesday",
+            "wednesday",
+            "thursday",
+            "friday"
+          ],
+          "timeFrom": "08:00",
+          "timeTo": "20:00",
+          "label": "Dni robocze"
+        },
+        {
+          "days": [
+            "saturday"
+          ],
+          "timeFrom": "09:00",
+          "timeTo": "18:00",
+          "label": "Sobota"
+        }
+      ],
+      "preferences": {
+        "flexibleSchedule": true,
+        "requiresAdvanceNotice": true,
+        "advanceNoticeHours": 24
+      },
+      "presenceHistory": [],
+      "stats": {},
+      "score": 85,
+      "category": "weekdays",
+      "notes": [],
+      "lastUpdated": "2025-10-06T23:17:03.251Z"
+    },
+    "userId": null,
+    "isAuthenticated": false,
+    "id": "CLIS252800005",
+    "clientId": "CLIS252800005",
+    "source": "system-auto",
+    "sourceDetails": null,
+    "createdBy": "system",
+    "createdByName": "System",
+    "createdFromIP": null,
+    "createdAt": "2025-10-06T23:17:03.251Z",
+    "updatedAt": "2025-10-06T23:17:03.251Z",
+    "updatedBy": null,
+    "coordinates": null,
+    "geocodingMeta": {
+      "status": "pending",
+      "provider": null,
+      "lastAttempt": null,
+      "error": null
+    }
+  },
+  {
+    "name": "Mariusz Bielaszka",
+    "phone": "654654654",
+    "email": "Bielaszkam2@gmail.com",
+    "address": "Gliniana 17/30, 30-732 Kraków, 30-732 Kraków",
+    "city": "Kraków",
+    "street": "Gliniana 17/30, 30-732 Kraków",
+    "dateAdded": "2025-10-07T20:39:44.389Z",
+    "history": [],
+    "phones": [
+      {
+        "number": "654654654",
+        "label": "Główny",
+        "isPrimary": true
+      }
+    ],
+    "addresses": [
+      {
+        "street": "Gliniana 17/30, 30-732 Kraków",
+        "city": "Kraków",
+        "postalCode": "30-732",
+        "label": "Główny",
+        "isPrimary": true
+      }
+    ],
+    "physicalAvailability": null,
+    "userId": null,
+    "isAuthenticated": false,
+    "id": "CLIS252800006",
+    "clientId": "CLIS252800006",
+    "source": "system-auto",
+    "sourceDetails": null,
+    "createdBy": "system",
+    "createdByName": "System",
+    "createdFromIP": null,
+    "createdAt": "2025-10-07T20:39:32.816Z",
+    "updatedAt": "2025-10-07T20:39:44.395Z",
+    "updatedBy": null,
+    "coordinates": null,
+    "geocodingMeta": {
+      "status": "pending",
+      "provider": null,
+      "lastAttempt": null,
+      "error": null
+    }
+  },
+  {
+    "name": "Technik B",
+    "phone": "572772540",
+    "email": "mkagdserwis@gmail.com",
+    "address": "Słupia 114, 28-133 Pacanow",
+    "city": "Pacanow",
+    "street": "Słupia 114",
+    "dateAdded": "2025-10-07T21:06:04.379Z",
+    "history": [],
+    "phones": [],
+    "addresses": [],
+    "physicalAvailability": {
+      "timeWindows": [
+        {
+          "days": [
+            "monday",
+            "tuesday",
+            "wednesday",
+            "thursday",
+            "friday"
+          ],
+          "timeFrom": "08:00",
+          "timeTo": "20:00",
+          "label": "Dni robocze"
+        },
+        {
+          "days": [
+            "saturday"
+          ],
+          "timeFrom": "09:00",
+          "timeTo": "18:00",
+          "label": "Sobota"
+        }
+      ],
+      "preferences": {
+        "flexibleSchedule": true,
+        "requiresAdvanceNotice": true,
+        "advanceNoticeHours": 24
+      },
+      "presenceHistory": [],
+      "stats": {},
+      "score": 85,
+      "category": "weekdays",
+      "notes": [],
+      "lastUpdated": "2025-10-07T21:06:04.379Z"
+    },
+    "userId": null,
+    "isAuthenticated": false,
+    "id": "CLIS252800007",
+    "clientId": "CLIS252800007",
+    "source": "system-auto",
+    "sourceDetails": null,
+    "createdBy": "system",
+    "createdByName": "System",
+    "createdFromIP": null,
+    "createdAt": "2025-10-07T21:06:04.379Z",
+    "updatedAt": "2025-10-07T21:06:04.379Z",
+    "updatedBy": null,
+    "coordinates": null,
+    "geocodingMeta": {
+      "status": "pending",
+      "provider": null,
+      "lastAttempt": null,
+      "error": null
+    }
+  },
+  {
+    "name": "Technik B",
+    "phone": "572772540",
+    "email": "mkagdserwis@gmail.com",
+    "address": "Słupia 114, 28-133 Pacanow",
+    "city": "Pacanow",
+    "street": "Słupia 114",
+    "dateAdded": "2025-10-07T21:06:43.930Z",
+    "history": [],
+    "phones": [],
+    "addresses": [],
+    "physicalAvailability": {
+      "timeWindows": [
+        {
+          "days": [
+            "monday",
+            "tuesday",
+            "wednesday",
+            "thursday",
+            "friday"
+          ],
+          "timeFrom": "08:00",
+          "timeTo": "20:00",
+          "label": "Dni robocze"
+        },
+        {
+          "days": [
+            "saturday"
+          ],
+          "timeFrom": "09:00",
+          "timeTo": "18:00",
+          "label": "Sobota"
+        }
+      ],
+      "preferences": {
+        "flexibleSchedule": true,
+        "requiresAdvanceNotice": true,
+        "advanceNoticeHours": 24
+      },
+      "presenceHistory": [],
+      "stats": {},
+      "score": 85,
+      "category": "weekdays",
+      "notes": [],
+      "lastUpdated": "2025-10-07T21:06:43.930Z"
+    },
+    "userId": null,
+    "isAuthenticated": false,
+    "id": "CLIS252800008",
+    "clientId": "CLIS252800008",
+    "source": "system-auto",
+    "sourceDetails": null,
+    "createdBy": "system",
+    "createdByName": "System",
+    "createdFromIP": null,
+    "createdAt": "2025-10-07T21:06:43.930Z",
+    "updatedAt": "2025-10-07T21:06:43.930Z",
+    "updatedBy": null,
+    "coordinates": null,
+    "geocodingMeta": {
+      "status": "pending",
+      "provider": null,
+      "lastAttempt": null,
+      "error": null
+    }
+  },
+  {
+    "name": "Technik B",
+    "phone": "572772540",
+    "email": "mkagdserwis@gmail.com",
+    "address": "Słupia 114, 28-133 Pacanow",
+    "city": "Pacanow",
+    "street": "Słupia 114",
+    "dateAdded": "2025-10-07T21:07:21.688Z",
+    "history": [],
+    "phones": [],
+    "addresses": [],
+    "physicalAvailability": {
+      "timeWindows": [
+        {
+          "days": [
+            "monday",
+            "tuesday",
+            "wednesday",
+            "thursday",
+            "friday"
+          ],
+          "timeFrom": "08:00",
+          "timeTo": "20:00",
+          "label": "Dni robocze"
+        },
+        {
+          "days": [
+            "saturday"
+          ],
+          "timeFrom": "09:00",
+          "timeTo": "18:00",
+          "label": "Sobota"
+        }
+      ],
+      "preferences": {
+        "flexibleSchedule": true,
+        "requiresAdvanceNotice": true,
+        "advanceNoticeHours": 24
+      },
+      "presenceHistory": [],
+      "stats": {},
+      "score": 85,
+      "category": "weekdays",
+      "notes": [],
+      "lastUpdated": "2025-10-07T21:07:21.688Z"
+    },
+    "userId": null,
+    "isAuthenticated": false,
+    "id": "CLIS252800009",
+    "clientId": "CLIS252800009",
+    "source": "system-auto",
+    "sourceDetails": null,
+    "createdBy": "system",
+    "createdByName": "System",
+    "createdFromIP": null,
+    "createdAt": "2025-10-07T21:07:21.688Z",
+    "updatedAt": "2025-10-07T21:07:21.688Z",
+    "updatedBy": null,
+    "coordinates": null,
+    "geocodingMeta": {
+      "status": "pending",
+      "provider": null,
+      "lastAttempt": null,
+      "error": null
+    }
+  },
+  {
+    "name": "Technik B",
+    "phone": "572772540",
+    "email": "bielaszkam2@gmail.com",
+    "address": "Słupia 114, 28-133 Pacanow",
+    "city": "Pacanow",
+    "street": "Słupia 114",
+    "dateAdded": "2025-10-07T21:27:53.171Z",
+    "history": [],
+    "phones": [],
+    "addresses": [],
+    "physicalAvailability": {
+      "timeWindows": [
+        {
+          "days": [
+            "monday",
+            "tuesday",
+            "wednesday",
+            "thursday",
+            "friday"
+          ],
+          "timeFrom": "08:00",
+          "timeTo": "20:00",
+          "label": "Dni robocze"
+        },
+        {
+          "days": [
+            "saturday"
+          ],
+          "timeFrom": "09:00",
+          "timeTo": "18:00",
+          "label": "Sobota"
+        }
+      ],
+      "preferences": {
+        "flexibleSchedule": true,
+        "requiresAdvanceNotice": true,
+        "advanceNoticeHours": 24
+      },
+      "presenceHistory": [],
+      "stats": {},
+      "score": 85,
+      "category": "weekdays",
+      "notes": [],
+      "lastUpdated": "2025-10-07T21:27:53.171Z"
+    },
+    "userId": null,
+    "isAuthenticated": false,
+    "id": "CLIS252800010",
+    "clientId": "CLIS252800010",
+    "source": "system-auto",
+    "sourceDetails": null,
+    "createdBy": "system",
+    "createdByName": "System",
+    "createdFromIP": null,
+    "createdAt": "2025-10-07T21:27:53.171Z",
+    "updatedAt": "2025-10-07T21:27:53.171Z",
+    "updatedBy": null,
+    "coordinates": null,
+    "geocodingMeta": {
+      "status": "pending",
+      "provider": null,
+      "lastAttempt": null,
+      "error": null
+    }
+  },
+  {
+    "name": "Technik B",
+    "phone": "572772540",
+    "email": "bielaszkam2@gmail.com",
+    "address": "Słupia 114, 28-133 Pacanow",
+    "city": "Pacanow",
+    "street": "Słupia 114",
+    "dateAdded": "2025-10-07T21:28:09.426Z",
+    "history": [],
+    "phones": [],
+    "addresses": [],
+    "physicalAvailability": {
+      "timeWindows": [
+        {
+          "days": [
+            "monday",
+            "tuesday",
+            "wednesday",
+            "thursday",
+            "friday"
+          ],
+          "timeFrom": "08:00",
+          "timeTo": "20:00",
+          "label": "Dni robocze"
+        },
+        {
+          "days": [
+            "saturday"
+          ],
+          "timeFrom": "09:00",
+          "timeTo": "18:00",
+          "label": "Sobota"
+        }
+      ],
+      "preferences": {
+        "flexibleSchedule": true,
+        "requiresAdvanceNotice": true,
+        "advanceNoticeHours": 24
+      },
+      "presenceHistory": [],
+      "stats": {},
+      "score": 85,
+      "category": "weekdays",
+      "notes": [],
+      "lastUpdated": "2025-10-07T21:28:09.426Z"
+    },
+    "userId": null,
+    "isAuthenticated": false,
+    "id": "CLIS252800011",
+    "clientId": "CLIS252800011",
+    "source": "system-auto",
+    "sourceDetails": null,
+    "createdBy": "system",
+    "createdByName": "System",
+    "createdFromIP": null,
+    "createdAt": "2025-10-07T21:28:09.426Z",
+    "updatedAt": "2025-10-07T21:28:09.426Z",
+    "updatedBy": null,
+    "coordinates": null,
+    "geocodingMeta": {
+      "status": "pending",
+      "provider": null,
+      "lastAttempt": null,
+      "error": null
+    }
+  },
+  {
+    "name": "Mariusz B",
+    "phone": "123123123",
+    "email": "",
+    "address": "Słupia, 28-133 Pacanow",
+    "city": "Pacanow",
+    "street": "Słupia",
+    "dateAdded": "2025-10-07T21:47:34.805Z",
+    "history": [],
+    "phones": [
+      {
+        "number": "123123123",
+        "label": "Główny",
+        "isPrimary": true
+      }
+    ],
+    "addresses": [
+      {
+        "street": "Słupia",
+        "city": "Pacanow",
+        "postalCode": "28-133",
+        "label": "Główny",
+        "isPrimary": true
+      }
+    ],
+    "physicalAvailability": {
+      "timeWindows": [
+        {
+          "days": [
+            "monday",
+            "tuesday",
+            "wednesday",
+            "thursday",
+            "friday"
+          ],
+          "timeFrom": "08:00",
+          "timeTo": "20:00",
+          "label": "Dni robocze"
+        },
+        {
+          "days": [
+            "saturday"
+          ],
+          "timeFrom": "09:00",
+          "timeTo": "18:00",
+          "label": "Sobota"
+        }
+      ],
+      "preferences": {
+        "flexibleSchedule": true,
+        "requiresAdvanceNotice": true,
+        "advanceNoticeHours": 24
+      },
+      "presenceHistory": [],
+      "stats": {},
+      "score": 85,
+      "category": "weekdays",
+      "notes": [],
+      "lastUpdated": "2025-10-07T21:47:34.805Z"
+    },
+    "userId": null,
+    "isAuthenticated": false,
+    "id": "CLIS252800012",
+    "clientId": "CLIS252800012",
+    "source": "system-auto",
+    "sourceDetails": null,
+    "createdBy": "system",
+    "createdByName": "System",
+    "createdFromIP": null,
+    "createdAt": "2025-10-07T21:47:34.805Z",
+    "updatedAt": "2025-10-07T21:47:34.805Z",
+    "updatedBy": null,
+    "coordinates": null,
+    "geocodingMeta": {
+      "status": "pending",
+      "provider": null,
+      "lastAttempt": null,
+      "error": null
+    }
+  },
+  {
+    "name": "qweqwe",
+    "phone": "987987987",
+    "email": "Bielaszkam2@gmail.com",
+    "address": "qwe, qwe qwe, 30-732 Kraków",
+    "city": "Kraków",
+    "street": "qwe, qwe qwe",
+    "dateAdded": "2025-10-07T21:50:18.533Z",
+    "history": [],
+    "phones": [
+      {
+        "number": "987987987",
+        "label": "Główny",
+        "isPrimary": true
+      }
+    ],
+    "addresses": [
+      {
+        "street": "qwe, qwe qwe",
+        "city": "Kraków",
+        "postalCode": "30-732",
+        "label": "Główny",
+        "isPrimary": true
+      }
+    ],
+    "physicalAvailability": {
+      "timeWindows": [
+        {
+          "days": [
+            "monday",
+            "tuesday",
+            "wednesday",
+            "thursday",
+            "friday"
+          ],
+          "timeFrom": "08:00",
+          "timeTo": "20:00",
+          "label": "Dni robocze"
+        },
+        {
+          "days": [
+            "saturday"
+          ],
+          "timeFrom": "09:00",
+          "timeTo": "18:00",
+          "label": "Sobota"
+        }
+      ],
+      "preferences": {
+        "flexibleSchedule": true,
+        "requiresAdvanceNotice": true,
+        "advanceNoticeHours": 24
+      },
+      "presenceHistory": [],
+      "stats": {},
+      "score": 85,
+      "category": "weekdays",
+      "notes": [],
+      "lastUpdated": "2025-10-07T21:50:18.533Z"
+    },
+    "userId": null,
+    "isAuthenticated": false,
+    "id": "CLIS252800013",
+    "clientId": "CLIS252800013",
+    "source": "system-auto",
+    "sourceDetails": null,
+    "createdBy": "system",
+    "createdByName": "System",
+    "createdFromIP": null,
+    "createdAt": "2025-10-07T21:50:18.533Z",
+    "updatedAt": "2025-10-07T21:50:18.533Z",
+    "updatedBy": null,
+    "coordinates": null,
+    "geocodingMeta": {
+      "status": "pending",
+      "provider": null,
+      "lastAttempt": null,
+      "error": null
+    }
+  },
+  {
+    "name": "Mariusz Bielaszka",
+    "phone": "987987987",
+    "email": "Bielaszkam2@gmail.com",
+    "address": "Słupia 114, 28-133 Pacanow",
+    "city": "Pacanow",
+    "street": "Słupia 114",
+    "dateAdded": "2025-10-08T02:03:11.126Z",
+    "history": [],
+    "phones": [],
+    "addresses": [],
+    "physicalAvailability": {
+      "timeWindows": [
+        {
+          "days": [
+            "monday",
+            "tuesday",
+            "wednesday",
+            "thursday",
+            "friday"
+          ],
+          "timeFrom": "08:00",
+          "timeTo": "20:00",
+          "label": "Dni robocze"
+        },
+        {
+          "days": [
+            "saturday"
+          ],
+          "timeFrom": "09:00",
+          "timeTo": "18:00",
+          "label": "Sobota"
+        }
+      ],
+      "preferences": {
+        "flexibleSchedule": true,
+        "requiresAdvanceNotice": true,
+        "advanceNoticeHours": 24
+      },
+      "presenceHistory": [],
+      "stats": {},
+      "score": 85,
+      "category": "weekdays",
+      "notes": [],
+      "lastUpdated": "2025-10-08T02:03:11.126Z"
+    },
+    "userId": null,
+    "isAuthenticated": false,
+    "id": "CLIS252810001",
+    "clientId": "CLIS252810001",
+    "source": "system-auto",
+    "sourceDetails": null,
+    "createdBy": "system",
+    "createdByName": "System",
+    "createdFromIP": null,
+    "createdAt": "2025-10-08T02:03:11.126Z",
+    "updatedAt": "2025-10-08T02:03:11.126Z",
+    "updatedBy": null,
+    "coordinates": null,
+    "geocodingMeta": {
+      "status": "pending",
+      "provider": null,
+      "lastAttempt": null,
+      "error": null
+    }
+  },
+  {
+    "name": "Mariusz Bielaszka",
+    "phone": "987987987",
+    "email": "Bielaszkam2@gmail.com",
+    "address": "Słupia 114, 28-133 Pacanow",
+    "city": "Pacanow",
+    "street": "Słupia 114",
+    "dateAdded": "2025-10-08T02:03:25.704Z",
+    "history": [],
+    "phones": [],
+    "addresses": [],
+    "physicalAvailability": {
+      "timeWindows": [
+        {
+          "days": [
+            "monday",
+            "tuesday",
+            "wednesday",
+            "thursday",
+            "friday"
+          ],
+          "timeFrom": "08:00",
+          "timeTo": "20:00",
+          "label": "Dni robocze"
+        },
+        {
+          "days": [
+            "saturday"
+          ],
+          "timeFrom": "09:00",
+          "timeTo": "18:00",
+          "label": "Sobota"
+        }
+      ],
+      "preferences": {
+        "flexibleSchedule": true,
+        "requiresAdvanceNotice": true,
+        "advanceNoticeHours": 24
+      },
+      "presenceHistory": [],
+      "stats": {},
+      "score": 85,
+      "category": "weekdays",
+      "notes": [],
+      "lastUpdated": "2025-10-08T02:03:25.704Z"
+    },
+    "userId": null,
+    "isAuthenticated": false,
+    "id": "CLIS252810002",
+    "clientId": "CLIS252810002",
+    "source": "system-auto",
+    "sourceDetails": null,
+    "createdBy": "system",
+    "createdByName": "System",
+    "createdFromIP": null,
+    "createdAt": "2025-10-08T02:03:25.704Z",
+    "updatedAt": "2025-10-08T02:03:25.704Z",
+    "updatedBy": null,
+    "coordinates": null,
+    "geocodingMeta": {
+      "status": "pending",
+      "provider": null,
+      "lastAttempt": null,
+      "error": null
+    }
+  },
+  {
+    "name": "Technik B",
+    "phone": "572772540",
+    "email": "Bielaszkam2@gmail.com",
+    "address": "Słupia, 28-133 Pacanow",
+    "city": "Pacanow",
+    "street": "Słupia",
+    "dateAdded": "2025-10-08T02:10:09.369Z",
+    "history": [],
+    "phones": [],
+    "addresses": [],
+    "physicalAvailability": {
+      "timeWindows": [
+        {
+          "days": [
+            "monday",
+            "tuesday",
+            "wednesday",
+            "thursday",
+            "friday"
+          ],
+          "timeFrom": "08:00",
+          "timeTo": "20:00",
+          "label": "Dni robocze"
+        },
+        {
+          "days": [
+            "saturday"
+          ],
+          "timeFrom": "09:00",
+          "timeTo": "18:00",
+          "label": "Sobota"
+        }
+      ],
+      "preferences": {
+        "flexibleSchedule": true,
+        "requiresAdvanceNotice": true,
+        "advanceNoticeHours": 24
+      },
+      "presenceHistory": [],
+      "stats": {},
+      "score": 85,
+      "category": "weekdays",
+      "notes": [],
+      "lastUpdated": "2025-10-08T02:10:09.369Z"
+    },
+    "userId": null,
+    "isAuthenticated": false,
+    "id": "CLIS252810003",
+    "clientId": "CLIS252810003",
+    "source": "system-auto",
+    "sourceDetails": null,
+    "createdBy": "system",
+    "createdByName": "System",
+    "createdFromIP": null,
+    "createdAt": "2025-10-08T02:10:09.369Z",
+    "updatedAt": "2025-10-08T02:10:09.369Z",
+    "updatedBy": null,
+    "coordinates": null,
+    "geocodingMeta": {
+      "status": "pending",
+      "provider": null,
+      "lastAttempt": null,
+      "error": null
+    }
+  },
+  {
+    "name": "aqwdq",
+    "phone": "123123123",
+    "email": "",
+    "address": "Słupia 114, 28-133 Pacanow",
+    "city": "Pacanow",
+    "street": "Słupia 114",
+    "dateAdded": "2025-10-08T02:20:40.906Z",
+    "history": [],
+    "phones": [],
+    "addresses": [],
+    "physicalAvailability": {
+      "timeWindows": [
+        {
+          "days": [
+            "monday",
+            "tuesday",
+            "wednesday",
+            "thursday",
+            "friday"
+          ],
+          "timeFrom": "08:00",
+          "timeTo": "20:00",
+          "label": "Dni robocze"
+        },
+        {
+          "days": [
+            "saturday"
+          ],
+          "timeFrom": "09:00",
+          "timeTo": "18:00",
+          "label": "Sobota"
+        }
+      ],
+      "preferences": {
+        "flexibleSchedule": true,
+        "requiresAdvanceNotice": true,
+        "advanceNoticeHours": 24
+      },
+      "presenceHistory": [],
+      "stats": {},
+      "score": 85,
+      "category": "weekdays",
+      "notes": [],
+      "lastUpdated": "2025-10-08T02:20:40.906Z"
+    },
+    "userId": null,
+    "isAuthenticated": false,
+    "id": "CLIS252810004",
+    "clientId": "CLIS252810004",
+    "source": "system-auto",
+    "sourceDetails": null,
+    "createdBy": "system",
+    "createdByName": "System",
+    "createdFromIP": null,
+    "createdAt": "2025-10-08T02:20:40.906Z",
+    "updatedAt": "2025-10-08T02:20:40.906Z",
+    "updatedBy": null,
+    "coordinates": null,
+    "geocodingMeta": {
+      "status": "pending",
+      "provider": null,
+      "lastAttempt": null,
+      "error": null
+    }
+  },
+  {
+    "name": "Technik B",
+    "phone": "572772540",
+    "email": "bielaszkam2@gmail.com",
+    "address": "Słupia 114, 28-133 Pacanow",
+    "city": "Pacanow",
+    "street": "Słupia 114",
+    "dateAdded": "2025-10-08T03:27:59.600Z",
+    "history": [],
+    "phones": [],
+    "addresses": [],
+    "physicalAvailability": {
+      "timeWindows": [
+        {
+          "days": [
+            "monday",
+            "tuesday",
+            "wednesday",
+            "thursday",
+            "friday"
+          ],
+          "timeFrom": "08:00",
+          "timeTo": "20:00",
+          "label": "Dni robocze"
+        },
+        {
+          "days": [
+            "saturday"
+          ],
+          "timeFrom": "09:00",
+          "timeTo": "18:00",
+          "label": "Sobota"
+        }
+      ],
+      "preferences": {
+        "flexibleSchedule": true,
+        "requiresAdvanceNotice": true,
+        "advanceNoticeHours": 24
+      },
+      "presenceHistory": [],
+      "stats": {},
+      "score": 85,
+      "category": "weekdays",
+      "notes": [],
+      "lastUpdated": "2025-10-08T03:27:59.600Z"
+    },
+    "userId": null,
+    "isAuthenticated": false,
+    "id": "CLIS252810005",
+    "clientId": "CLIS252810005",
+    "source": "system-auto",
+    "sourceDetails": null,
+    "createdBy": "system",
+    "createdByName": "System",
+    "createdFromIP": null,
+    "createdAt": "2025-10-08T03:27:59.600Z",
+    "updatedAt": "2025-10-08T03:27:59.600Z",
+    "updatedBy": null,
+    "coordinates": null,
+    "geocodingMeta": {
+      "status": "pending",
+      "provider": null,
+      "lastAttempt": null,
+      "error": null
+    }
+  },
+  {
+    "name": "Klient #688351",
+    "phone": "601240554",
+    "email": "",
+    "address": "228J, 39-200 Nagawczyna ",
+    "city": "Nagawczyna ",
+    "street": "228J",
+    "dateAdded": "2025-10-08T10:53:33.356Z",
+    "history": [],
+    "phones": [],
+    "addresses": [],
+    "physicalAvailability": null,
+    "userId": "ADMIN-1759920630824",
+    "isAuthenticated": true,
+    "id": "CLIS252810006",
+    "clientId": "CLIS252810006",
+    "source": "system-auto",
+    "sourceDetails": null,
+    "createdBy": "system",
+    "createdByName": "System",
+    "createdFromIP": null,
+    "createdAt": "2025-10-08T10:51:28.428Z",
+    "updatedAt": "2025-10-08T10:53:33.364Z",
+    "updatedBy": null
+  },
+  {
+    "name": "Oliwia Klich",
+    "phone": "792392870",
+    "email": "oliwiabielaszka2@gmail.com",
+    "address": "sikorskiego 11, 39-200 Dębica",
+    "city": "Dębica",
+    "street": "sikorskiego 11",
+    "dateAdded": "2025-10-09T19:56:06.717Z",
+    "history": [],
+    "phones": [],
+    "addresses": [],
+    "physicalAvailability": {
+      "timeWindows": [
+        {
+          "days": [
+            "monday",
+            "tuesday",
+            "wednesday",
+            "thursday",
+            "friday"
+          ],
+          "timeFrom": "08:00",
+          "timeTo": "20:00",
+          "label": "Dni robocze"
+        },
+        {
+          "days": [
+            "saturday"
+          ],
+          "timeFrom": "09:00",
+          "timeTo": "18:00",
+          "label": "Sobota"
+        }
+      ],
+      "preferences": {
+        "flexibleSchedule": true,
+        "requiresAdvanceNotice": true,
+        "advanceNoticeHours": 24
+      },
+      "presenceHistory": [],
+      "stats": {},
+      "score": 85,
+      "category": "weekdays",
+      "notes": [],
+      "lastUpdated": "2025-10-09T19:56:06.717Z"
+    },
+    "userId": null,
+    "isAuthenticated": false,
+    "id": "CLIS252820001",
+    "clientId": "CLIS252820001",
+    "source": "system-auto",
+    "sourceDetails": null,
+    "createdBy": "system",
+    "createdByName": "System",
+    "createdFromIP": null,
+    "createdAt": "2025-10-09T19:56:06.717Z",
+    "updatedAt": "2025-10-09T19:56:06.717Z",
+    "updatedBy": null,
+    "resetToken": "b27d7f7340cba506213e2615f13dbfad7b9501bcfc57938aea6316f18c5b16d1",
+    "resetTokenExpiry": 1760043475736
+  },
+  {
+    "name": "Klient #440469",
+    "phone": "987987987",
+    "email": "",
+    "address": "sienkiewicza 12, 39-300 Mielec",
+    "city": "Mielec",
+    "street": "sienkiewicza 12",
+    "dateAdded": "2025-10-11T06:17:20.524Z",
+    "history": [],
+    "phones": [
+      {
+        "number": "987987987",
+        "label": "Główny",
+        "isPrimary": true
+      }
+    ],
+    "addresses": [
+      {
+        "street": "sienkiewicza 12",
+        "city": "Mielec",
+        "postalCode": "39-300",
+        "label": "Główny",
+        "isPrimary": true
+      }
+    ],
+    "physicalAvailability": {
+      "timeWindows": [
+        {
+          "days": [
+            "monday",
+            "tuesday",
+            "wednesday",
+            "thursday",
+            "friday"
+          ],
+          "timeFrom": "08:00",
+          "timeTo": "20:00",
+          "label": "Dni robocze"
+        },
+        {
+          "days": [
+            "saturday"
+          ],
+          "timeFrom": "09:00",
+          "timeTo": "18:00",
+          "label": "Sobota"
+        }
+      ],
+      "preferences": {
+        "flexibleSchedule": true,
+        "requiresAdvanceNotice": true,
+        "advanceNoticeHours": 24
+      },
+      "presenceHistory": [],
+      "stats": {},
+      "score": 85,
+      "category": "weekdays",
+      "notes": [],
+      "lastUpdated": "2025-10-11T06:17:20.524Z"
+    },
+    "userId": null,
+    "isAuthenticated": false,
+    "id": "CLIS252840001",
+    "clientId": "CLIS252840001",
+    "source": "system-auto",
+    "sourceDetails": null,
+    "createdBy": "system",
+    "createdByName": "System",
+    "createdFromIP": null,
+    "createdAt": "2025-10-11T06:17:20.524Z",
+    "updatedAt": "2025-10-11T06:17:20.524Z",
     "updatedBy": null
   }
 ]

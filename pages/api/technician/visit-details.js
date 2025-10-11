@@ -222,14 +222,15 @@ const buildVisitDetails = (visitData) => {
         recommendations: order.recommendations || []
       },
       
-      // Zdjęcia
-      photos: {
-        before: order.beforePhotos || [],
-        during: order.duringPhotos || [],
-        after: order.afterPhotos || [],
-        completion: order.completionPhotos || [],
-        problem: order.problemPhotos || []
-      },
+      // Zdjęcia - wszystkie kategorie
+      photos: order.photos || [], // Główne zdjęcia od klienta
+      beforePhotos: order.beforePhotos || [],
+      duringPhotos: order.duringPhotos || [],
+      afterPhotos: order.afterPhotos || [],
+      completionPhotos: order.completionPhotos || [],
+      problemPhotos: order.problemPhotos || [],
+      partPhotos: order.partPhotos || [],
+      allPhotos: order.allPhotos || [...(order.photos || []), ...(order.beforePhotos || []), ...(order.duringPhotos || []), ...(order.afterPhotos || []), ...(order.completionPhotos || []), ...(order.problemPhotos || []), ...(order.partPhotos || [])],
       
       // Tracking czasu
       timeTracking: {
@@ -370,14 +371,15 @@ const buildVisitDetails = (visitData) => {
       recommendations: visit.recommendations || []
     },
     
-    // Zdjęcia
-    photos: {
-      before: visit.beforePhotos || [],
-      during: visit.duringPhotos || [],
-      after: visit.afterPhotos || [],
-      completion: visit.completionPhotos || [],
-      problem: visit.problemPhotos || []
-    },
+    // Zdjęcia - wszystkie kategorie
+    photos: order.photos || [], // Główne zdjęcia od klienta
+    beforePhotos: visit.beforePhotos || order.beforePhotos || [],
+    duringPhotos: visit.duringPhotos || order.duringPhotos || [],
+    afterPhotos: visit.afterPhotos || order.afterPhotos || [],
+    completionPhotos: visit.completionPhotos || order.completionPhotos || [],
+    problemPhotos: visit.problemPhotos || order.problemPhotos || [],
+    partPhotos: visit.partPhotos || order.partPhotos || [],
+    allPhotos: order.allPhotos || [...(order.photos || []), ...(visit.beforePhotos || order.beforePhotos || []), ...(visit.duringPhotos || order.duringPhotos || []), ...(visit.afterPhotos || order.afterPhotos || []), ...(visit.completionPhotos || order.completionPhotos || []), ...(visit.problemPhotos || order.problemPhotos || []), ...(visit.partPhotos || order.partPhotos || [])],
     
     // Tracking czasu
     timeTracking: {

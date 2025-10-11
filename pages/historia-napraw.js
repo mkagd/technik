@@ -32,7 +32,7 @@ export default function HistoriaNapraw() {
     if (typeof window !== 'undefined') {
       const currentUser = localStorage.getItem('currentUser');
       if (!currentUser) {
-        router.push('/logowanie?returnUrl=/historia-napraw');
+        router.push('/client/login?returnUrl=/historia-napraw');
         return;
       }
 

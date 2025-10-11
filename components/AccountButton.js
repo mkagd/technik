@@ -48,8 +48,8 @@ export default function AccountButton() {
     if (userInfo && userInfo.route) {
       router.push(userInfo.route);
     } else {
-      // Fallback - przekieruj do logowania
-      router.push('/logowanie-wybor');
+      // Fallback - przekieruj do logowania klienta
+      router.push('/client/login');
     }
   };
 
@@ -88,7 +88,7 @@ export default function AccountButton() {
   if (userInfo.role === 'guest') {
     return (
       <button
-        onClick={() => router.push('/logowanie-wybor')}
+        onClick={() => router.push('/client/login')}
         className="px-2 sm:px-6 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors font-medium text-white flex items-center space-x-1 sm:space-x-2 text-sm"
       >
         <FiUser className="h-4 w-4" />

@@ -1,0 +1,885 @@
+[
+  {
+    "clientId": "CLIS252790006",
+    "clientName": "Mariusz Bielaszka",
+    "clientPhone": "792392870",
+    "email": "Bielaszkam2@gmail.com",
+    "address": "Gliniana 17/30, 30-732 Kraków, 30-732 Kraków",
+    "city": "Kraków",
+    "street": "Gliniana 17/30, 30-732 Kraków",
+    "postalCode": "",
+    "phones": [
+      {
+        "number": "792392870",
+        "label": "Główny",
+        "isPrimary": true
+      }
+    ],
+    "addresses": [
+      {
+        "street": "Gliniana 17/30, 30-732 Kraków",
+        "city": "Kraków",
+        "postalCode": "30-732",
+        "label": "Główny",
+        "isPrimary": true
+      }
+    ],
+    "clientLocation": null,
+    "latitude": null,
+    "longitude": null,
+    "deviceType": "Pralki",
+    "brand": "Nie określono",
+    "model": "Pralki",
+    "serialNumber": "",
+    "description": "Brak opisu problemu",
+    "priority": "medium",
+    "status": "pending",
+    "visits": [],
+    "category": "Pralki",
+    "serviceType": "Pralki",
+    "scheduledDate": "",
+    "availability": "Nie określono",
+    "devices": [
+      {
+        "name": "Pralki",
+        "brand": "",
+        "model": "",
+        "serialNumber": "",
+        "description": "Brak opisu",
+        "hasBuiltIn": false,
+        "builtInParams": {
+          "demontaz": false,
+          "montaz": false,
+          "trudna": false,
+          "wolnostojacy": false,
+          "ograniczony": false,
+          "front": false,
+          "czas": false
+        },
+        "builtInParamsNotes": {}
+      }
+    ],
+    "builtInParams": {
+      "demontaz": false,
+      "montaz": false,
+      "trudna": false,
+      "wolnostojacy": false,
+      "ograniczony": false,
+      "front": false,
+      "czas": false
+    },
+    "deviceDetails": {
+      "deviceType": "pralki",
+      "hasBuiltIn": false,
+      "hasDemontaz": false,
+      "hasMontaz": false,
+      "hasTrudnaZabudowa": false,
+      "manualAdditionalTime": 0
+    },
+    "dates": [],
+    "hours": null,
+    "end": null,
+    "id": 1759788127202,
+    "orderNumber": "ORDS252790001",
+    "source": "system-auto",
+    "sourceDetails": null,
+    "createdBy": "system",
+    "createdByName": "System",
+    "userId": null,
+    "isUserCreated": false,
+    "createdFromIP": null,
+    "dateAdded": "2025-10-06T22:02:07.202Z",
+    "createdAt": "2025-10-06T22:02:07.202Z",
+    "updatedAt": "2025-10-06T22:02:07.202Z",
+    "updatedBy": null
+  },
+  {
+    "id": 1759788134202,
+    "status": "pending",
+    "updatedAt": "2025-10-06T23:08:58.965Z"
+  },
+  {
+    "clientId": "CLIS252790007",
+    "clientName": "Klient #834821",
+    "clientPhone": "345345345",
+    "email": "",
+    "address": "sienkiewicza 12, 39-300 Mielec",
+    "city": "Mielec",
+    "street": "sienkiewicza 12",
+    "postalCode": "",
+    "phones": [
+      {
+        "number": "345345345",
+        "label": "Główny",
+        "isPrimary": true
+      }
+    ],
+    "addresses": [
+      {
+        "street": "sienkiewicza 12",
+        "city": "Mielec",
+        "postalCode": "39-300",
+        "label": "Główny",
+        "isPrimary": true
+      }
+    ],
+    "clientLocation": null,
+    "latitude": null,
+    "longitude": null,
+    "deviceType": "Pralki",
+    "brand": "Nie określono",
+    "model": "Pralki",
+    "serialNumber": "",
+    "description": "Brak opisu problemu",
+    "priority": "medium",
+    "status": "pending",
+    "visits": [],
+    "category": "Pralki",
+    "serviceType": "Pralki",
+    "scheduledDate": "",
+    "availability": "Nie określono",
+    "devices": [
+      {
+        "name": "Pralki",
+        "brand": "",
+        "model": "",
+        "serialNumber": "",
+        "description": "Brak opisu",
+        "hasBuiltIn": false,
+        "builtInParams": {
+          "demontaz": false,
+          "montaz": false,
+          "trudna": false,
+          "wolnostojacy": false,
+          "ograniczony": false,
+          "front": false,
+          "czas": false
+        },
+        "builtInParamsNotes": {}
+      }
+    ],
+    "builtInParams": {
+      "demontaz": false,
+      "montaz": false,
+      "trudna": false,
+      "wolnostojacy": false,
+      "ograniczony": false,
+      "front": false,
+      "czas": false
+    },
+    "deviceDetails": {
+      "deviceType": "pralki",
+      "hasBuiltIn": false,
+      "hasDemontaz": false,
+      "hasMontaz": false,
+      "hasTrudnaZabudowa": false,
+      "manualAdditionalTime": 0
+    },
+    "dates": [],
+    "hours": null,
+    "end": null,
+    "id": 1759789835241,
+    "orderNumber": "ORDS252790002",
+    "source": "system-auto",
+    "sourceDetails": null,
+    "createdBy": "system",
+    "createdByName": "System",
+    "userId": null,
+    "isUserCreated": false,
+    "createdFromIP": null,
+    "dateAdded": "2025-10-06T22:30:35.241Z",
+    "createdAt": "2025-10-06T22:30:35.241Z",
+    "updatedAt": "2025-10-06T22:30:35.241Z",
+    "updatedBy": null
+  },
+  {
+    "id": 1759789846224,
+    "status": "pending",
+    "updatedAt": "2025-10-06T23:09:03.472Z"
+  },
+  {
+    "clientId": "CLIS252790008",
+    "clientName": "Klient #283666",
+    "clientPhone": "123123123",
+    "email": "",
+    "address": "sienkiewicza 12, 39-200 Mielec",
+    "city": "Mielec",
+    "street": "sienkiewicza 12",
+    "postalCode": "",
+    "phones": [
+      {
+        "number": "123123123",
+        "label": "Główny",
+        "isPrimary": true
+      }
+    ],
+    "addresses": [
+      {
+        "street": "sienkiewicza 12",
+        "city": "Mielec",
+        "postalCode": "39-200",
+        "label": "Główny",
+        "isPrimary": true
+      }
+    ],
+    "clientLocation": null,
+    "latitude": null,
+    "longitude": null,
+    "deviceType": "Pralki",
+    "brand": "Nie określono",
+    "model": "Pralki",
+    "serialNumber": "",
+    "description": "Brak opisu problemu",
+    "priority": "medium",
+    "status": "pending",
+    "visits": [],
+    "category": "Pralki",
+    "serviceType": "Pralki",
+    "scheduledDate": "",
+    "availability": "Nie określono",
+    "devices": [
+      {
+        "name": "Pralki",
+        "brand": "",
+        "model": "",
+        "serialNumber": "",
+        "description": "Brak opisu",
+        "hasBuiltIn": false,
+        "builtInParams": {
+          "demontaz": false,
+          "montaz": false,
+          "trudna": false,
+          "wolnostojacy": false,
+          "ograniczony": false,
+          "front": false,
+          "czas": false
+        },
+        "builtInParamsNotes": {}
+      }
+    ],
+    "builtInParams": {
+      "demontaz": false,
+      "montaz": false,
+      "trudna": false,
+      "wolnostojacy": false,
+      "ograniczony": false,
+      "front": false,
+      "czas": false
+    },
+    "deviceDetails": {
+      "deviceType": "pralki",
+      "hasBuiltIn": false,
+      "hasDemontaz": false,
+      "hasMontaz": false,
+      "hasTrudnaZabudowa": false,
+      "manualAdditionalTime": 0
+    },
+    "dates": [],
+    "hours": null,
+    "end": null,
+    "id": 1759791284074,
+    "orderNumber": "ORDS252790003",
+    "source": "system-auto",
+    "sourceDetails": null,
+    "createdBy": "system",
+    "createdByName": "System",
+    "userId": null,
+    "isUserCreated": false,
+    "createdFromIP": null,
+    "dateAdded": "2025-10-06T22:54:44.074Z",
+    "createdAt": "2025-10-06T22:54:44.074Z",
+    "updatedAt": "2025-10-06T22:54:44.074Z",
+    "updatedBy": null
+  },
+  {
+    "id": 1759791289229,
+    "status": "pending",
+    "updatedAt": "2025-10-06T23:09:40.664Z"
+  },
+  {
+    "clientId": "CLIS252800001",
+    "clientName": "Klient #628653",
+    "clientPhone": "123123123",
+    "email": "",
+    "address": "sienkiewicza 12, 39-300 Mielec",
+    "city": "Mielec",
+    "street": "sienkiewicza 12",
+    "postalCode": "",
+    "phones": [
+      {
+        "number": "123123123",
+        "label": "Główny",
+        "isPrimary": true
+      }
+    ],
+    "addresses": [
+      {
+        "street": "sienkiewicza 12",
+        "city": "Mielec",
+        "postalCode": "39-300",
+        "label": "Główny",
+        "isPrimary": true
+      }
+    ],
+    "clientLocation": null,
+    "latitude": null,
+    "longitude": null,
+    "deviceType": "Pralki",
+    "brand": "Nie określono",
+    "model": "Pralki",
+    "serialNumber": "",
+    "description": "Brak opisu problemu",
+    "priority": "medium",
+    "status": "pending",
+    "visits": [],
+    "category": "Pralki",
+    "serviceType": "Pralki",
+    "scheduledDate": "2025-10-09",
+    "availability": "Nie określono",
+    "devices": [
+      {
+        "name": "Pralki",
+        "brand": "",
+        "model": "",
+        "serialNumber": "",
+        "description": "Brak opisu",
+        "hasBuiltIn": false,
+        "builtInParams": {
+          "demontaz": false,
+          "montaz": false,
+          "trudna": false,
+          "wolnostojacy": false,
+          "ograniczony": false,
+          "front": false,
+          "czas": false
+        },
+        "builtInParamsNotes": {}
+      }
+    ],
+    "builtInParams": {
+      "demontaz": false,
+      "montaz": false,
+      "trudna": false,
+      "wolnostojacy": false,
+      "ograniczony": false,
+      "front": false,
+      "czas": false
+    },
+    "deviceDetails": {
+      "deviceType": "pralki",
+      "hasBuiltIn": false,
+      "hasDemontaz": false,
+      "hasMontaz": false,
+      "hasTrudnaZabudowa": false,
+      "manualAdditionalTime": 0
+    },
+    "dates": [
+      "2025-10-09"
+    ],
+    "hours": null,
+    "end": null,
+    "id": 1759791628682,
+    "orderNumber": "ORDS252800001",
+    "source": "system-auto",
+    "sourceDetails": null,
+    "createdBy": "system",
+    "createdByName": "System",
+    "userId": null,
+    "isUserCreated": false,
+    "createdFromIP": null,
+    "dateAdded": "2025-10-06T23:00:28.682Z",
+    "createdAt": "2025-10-06T23:00:28.682Z",
+    "updatedAt": "2025-10-06T23:00:28.682Z",
+    "updatedBy": null
+  },
+  {
+    "clientId": "CLIS252800002",
+    "clientName": "Klient #694398",
+    "clientPhone": "123123123",
+    "email": "",
+    "address": "sienkiewicza 12, 39-300 Mielec",
+    "city": "Mielec",
+    "street": "sienkiewicza 12",
+    "postalCode": "",
+    "phones": [
+      {
+        "number": "123123123",
+        "label": "Główny",
+        "isPrimary": true
+      }
+    ],
+    "addresses": [
+      {
+        "street": "sienkiewicza 12",
+        "city": "Mielec",
+        "postalCode": "39-300",
+        "label": "Główny",
+        "isPrimary": true
+      }
+    ],
+    "clientLocation": null,
+    "latitude": null,
+    "longitude": null,
+    "deviceType": "Pralki",
+    "brand": "Nie określono",
+    "model": "Pralki",
+    "serialNumber": "",
+    "description": "Brak opisu problemu",
+    "priority": "medium",
+    "status": "pending",
+    "visits": [],
+    "category": "Pralki",
+    "serviceType": "Pralki",
+    "scheduledDate": "2025-10-09",
+    "availability": "Nie określono",
+    "devices": [
+      {
+        "name": "Pralki",
+        "brand": "",
+        "model": "",
+        "serialNumber": "",
+        "description": "Brak opisu",
+        "hasBuiltIn": false,
+        "builtInParams": {
+          "demontaz": false,
+          "montaz": false,
+          "trudna": false,
+          "wolnostojacy": false,
+          "ograniczony": false,
+          "front": false,
+          "czas": false
+        },
+        "builtInParamsNotes": {}
+      }
+    ],
+    "builtInParams": {
+      "demontaz": false,
+      "montaz": false,
+      "trudna": false,
+      "wolnostojacy": false,
+      "ograniczony": false,
+      "front": false,
+      "czas": false
+    },
+    "deviceDetails": {
+      "deviceType": "pralki",
+      "hasBuiltIn": false,
+      "hasDemontaz": false,
+      "hasMontaz": false,
+      "hasTrudnaZabudowa": false,
+      "manualAdditionalTime": 0
+    },
+    "dates": [
+      "2025-10-09"
+    ],
+    "hours": null,
+    "end": null,
+    "id": 1759791694793,
+    "orderNumber": "ORDS252800002",
+    "source": "system-auto",
+    "sourceDetails": null,
+    "createdBy": "system",
+    "createdByName": "System",
+    "userId": null,
+    "isUserCreated": false,
+    "createdFromIP": null,
+    "dateAdded": "2025-10-06T23:01:34.793Z",
+    "createdAt": "2025-10-06T23:01:34.793Z",
+    "updatedAt": "2025-10-06T23:01:34.793Z",
+    "updatedBy": null
+  },
+  {
+    "clientId": "CLIS252800003",
+    "clientName": "Klient #072313",
+    "clientPhone": "123123123",
+    "email": "",
+    "address": "sienkiewicza 12, 39-300 Mielec",
+    "city": "Mielec",
+    "street": "sienkiewicza 12",
+    "postalCode": "",
+    "phones": [
+      {
+        "number": "123123123",
+        "label": "Główny",
+        "isPrimary": true
+      }
+    ],
+    "addresses": [
+      {
+        "street": "sienkiewicza 12",
+        "city": "Mielec",
+        "postalCode": "39-300",
+        "label": "Główny",
+        "isPrimary": true
+      }
+    ],
+    "clientLocation": null,
+    "latitude": null,
+    "longitude": null,
+    "deviceType": "Pralki",
+    "brand": "Nie określono",
+    "model": "Pralki",
+    "serialNumber": "",
+    "description": "Brak opisu problemu",
+    "priority": "medium",
+    "status": "pending",
+    "visits": [],
+    "category": "Pralki",
+    "serviceType": "Pralki",
+    "scheduledDate": "",
+    "availability": "Nie określono",
+    "devices": [
+      {
+        "name": "Pralki",
+        "brand": "",
+        "model": "",
+        "serialNumber": "",
+        "description": "Brak opisu",
+        "hasBuiltIn": false,
+        "builtInParams": {
+          "demontaz": false,
+          "montaz": false,
+          "trudna": false,
+          "wolnostojacy": false,
+          "ograniczony": false,
+          "front": false,
+          "czas": false
+        },
+        "builtInParamsNotes": {}
+      }
+    ],
+    "builtInParams": {
+      "demontaz": false,
+      "montaz": false,
+      "trudna": false,
+      "wolnostojacy": false,
+      "ograniczony": false,
+      "front": false,
+      "czas": false
+    },
+    "deviceDetails": {
+      "deviceType": "pralki",
+      "hasBuiltIn": false,
+      "hasDemontaz": false,
+      "hasMontaz": false,
+      "hasTrudnaZabudowa": false,
+      "manualAdditionalTime": 0
+    },
+    "dates": [],
+    "hours": null,
+    "end": null,
+    "id": 1759792072695,
+    "orderNumber": "ORDS252800003",
+    "source": "system-auto",
+    "sourceDetails": null,
+    "createdBy": "system",
+    "createdByName": "System",
+    "userId": null,
+    "isUserCreated": false,
+    "createdFromIP": null,
+    "dateAdded": "2025-10-06T23:07:52.695Z",
+    "createdAt": "2025-10-06T23:07:52.695Z",
+    "updatedAt": "2025-10-06T23:07:52.695Z",
+    "updatedBy": null
+  },
+  {
+    "clientId": "CLIS252800004",
+    "clientName": "Klient #302911",
+    "clientPhone": "123123123",
+    "email": "",
+    "address": "sienkiewicza 12, 39-300 Mielec",
+    "city": "Mielec",
+    "street": "sienkiewicza 12",
+    "postalCode": "",
+    "phones": [
+      {
+        "number": "123123123",
+        "label": "Główny",
+        "isPrimary": true
+      }
+    ],
+    "addresses": [
+      {
+        "street": "sienkiewicza 12",
+        "city": "Mielec",
+        "postalCode": "39-300",
+        "label": "Główny",
+        "isPrimary": true
+      }
+    ],
+    "clientLocation": null,
+    "latitude": null,
+    "longitude": null,
+    "deviceType": "Lodówki",
+    "brand": "Nie określono",
+    "model": "Lodówki",
+    "serialNumber": "",
+    "description": "Brak opisu problemu",
+    "priority": "medium",
+    "status": "pending",
+    "visits": [],
+    "category": "Lodówki",
+    "serviceType": "Lodówki",
+    "scheduledDate": "",
+    "availability": "Nie określono",
+    "devices": [
+      {
+        "name": "Lodówki",
+        "brand": "",
+        "model": "",
+        "serialNumber": "",
+        "description": "Brak opisu",
+        "hasBuiltIn": false,
+        "builtInParams": {
+          "demontaz": false,
+          "montaz": false,
+          "trudna": false,
+          "wolnostojacy": false,
+          "ograniczony": false,
+          "front": false,
+          "czas": false
+        },
+        "builtInParamsNotes": {}
+      }
+    ],
+    "builtInParams": {
+      "demontaz": false,
+      "montaz": false,
+      "trudna": false,
+      "wolnostojacy": false,
+      "ograniczony": false,
+      "front": false,
+      "czas": false
+    },
+    "deviceDetails": {
+      "deviceType": "lodówki",
+      "hasBuiltIn": false,
+      "hasDemontaz": false,
+      "hasMontaz": false,
+      "hasTrudnaZabudowa": false,
+      "manualAdditionalTime": 0
+    },
+    "dates": [],
+    "hours": null,
+    "end": null,
+    "id": 1759792303293,
+    "orderNumber": "ORDS252800004",
+    "source": "system-auto",
+    "sourceDetails": null,
+    "createdBy": "system",
+    "createdByName": "System",
+    "userId": null,
+    "isUserCreated": false,
+    "createdFromIP": null,
+    "dateAdded": "2025-10-06T23:11:43.293Z",
+    "createdAt": "2025-10-06T23:11:43.293Z",
+    "updatedAt": "2025-10-06T23:11:43.293Z",
+    "updatedBy": null
+  },
+  {
+    "clientId": "CLIS252800005",
+    "clientName": "Klient #623195",
+    "clientPhone": "123123123",
+    "email": "",
+    "address": "sienkiewicza 12, 39-300 Mielec",
+    "city": "Mielec",
+    "street": "sienkiewicza 12",
+    "postalCode": "",
+    "phones": [
+      {
+        "number": "123123123",
+        "label": "Główny",
+        "isPrimary": true
+      }
+    ],
+    "addresses": [
+      {
+        "street": "sienkiewicza 12",
+        "city": "Mielec",
+        "postalCode": "39-300",
+        "label": "Główny",
+        "isPrimary": true
+      }
+    ],
+    "clientLocation": null,
+    "latitude": null,
+    "longitude": null,
+    "deviceType": "Pralki",
+    "brand": "Nie określono",
+    "model": "Pralki",
+    "serialNumber": "",
+    "description": "Brak opisu problemu",
+    "priority": "medium",
+    "status": "pending",
+    "visits": [],
+    "category": "Pralki",
+    "serviceType": "Pralki",
+    "scheduledDate": "",
+    "availability": "Nie określono",
+    "devices": [
+      {
+        "name": "Pralki",
+        "brand": "",
+        "model": "",
+        "serialNumber": "",
+        "description": "Brak opisu",
+        "hasBuiltIn": false,
+        "builtInParams": {
+          "demontaz": false,
+          "montaz": false,
+          "trudna": false,
+          "wolnostojacy": false,
+          "ograniczony": false,
+          "front": false,
+          "czas": false
+        },
+        "builtInParamsNotes": {}
+      }
+    ],
+    "builtInParams": {
+      "demontaz": false,
+      "montaz": false,
+      "trudna": false,
+      "wolnostojacy": false,
+      "ograniczony": false,
+      "front": false,
+      "czas": false
+    },
+    "deviceDetails": {
+      "deviceType": "pralki",
+      "hasBuiltIn": false,
+      "hasDemontaz": false,
+      "hasMontaz": false,
+      "hasTrudnaZabudowa": false,
+      "manualAdditionalTime": 0
+    },
+    "dates": [],
+    "hours": null,
+    "end": null,
+    "id": 1759792623273,
+    "orderNumber": "ORDS252800005",
+    "source": "system-auto",
+    "sourceDetails": null,
+    "createdBy": "system",
+    "createdByName": "System",
+    "userId": null,
+    "isUserCreated": false,
+    "createdFromIP": null,
+    "dateAdded": "2025-10-06T23:17:03.273Z",
+    "createdAt": "2025-10-06T23:17:03.273Z",
+    "updatedAt": "2025-10-06T23:17:03.273Z",
+    "updatedBy": null
+  },
+  {
+    "clientId": "CLIS252780014",
+    "clientName": "Klient #623195",
+    "clientPhone": "123123123",
+    "email": "",
+    "address": "sienkiewicza 12, 39-300 Mielec",
+    "city": "Mielec",
+    "street": "sienkiewicza 12",
+    "postalCode": "",
+    "phones": [
+      {
+        "number": "123123123",
+        "label": "Główny",
+        "isPrimary": true
+      }
+    ],
+    "addresses": [
+      {
+        "street": "sienkiewicza 12",
+        "city": "Mielec",
+        "postalCode": "39-300",
+        "label": "Główny",
+        "isPrimary": true
+      }
+    ],
+    "clientLocation": null,
+    "latitude": null,
+    "longitude": null,
+    "deviceType": "Pralki",
+    "brand": "Nie określono",
+    "model": "Pralki",
+    "serialNumber": "",
+    "description": "Brak opisu problemu",
+    "priority": "medium",
+    "status": "scheduled",
+    "visits": [
+      {
+        "visitId": "VIS25280001",
+        "visitNumber": 1,
+        "type": "diagnosis",
+        "status": "scheduled",
+        "scheduledDate": "2025-10-07",
+        "scheduledTime": "09:00",
+        "date": "2025-10-07",
+        "time": "09:00",
+        "technicianId": "EMPA252780002",
+        "technicianName": "Mariusz Bielaszka",
+        "notes": "",
+        "createdAt": "2025-10-06T23:19:23.282Z",
+        "createdBy": "admin"
+      }
+    ],
+    "category": "Pralki",
+    "serviceType": "Pralki",
+    "availability": "Nie określono",
+    "devices": [
+      {
+        "name": "Pralki",
+        "brand": "",
+        "model": "",
+        "serialNumber": "",
+        "description": "Brak opisu",
+        "hasBuiltIn": false,
+        "builtInParams": {
+          "demontaz": false,
+          "montaz": false,
+          "trudna": false,
+          "wolnostojacy": false,
+          "ograniczony": false,
+          "front": false,
+          "czas": false
+        },
+        "builtInParamsNotes": {}
+      }
+    ],
+    "builtInParams": {
+      "demontaz": false,
+      "montaz": false,
+      "trudna": false,
+      "wolnostojacy": false,
+      "ograniczony": false,
+      "front": false,
+      "czas": false
+    },
+    "deviceDetails": {
+      "deviceType": "pralki",
+      "hasBuiltIn": false,
+      "hasDemontaz": false,
+      "hasMontaz": false,
+      "hasTrudnaZabudowa": false,
+      "manualAdditionalTime": 0
+    },
+    "dates": [],
+    "hours": null,
+    "end": null,
+    "source": "reservation_conversion",
+    "originalReservationId": 1759792623229,
+    "reservationId": 1759792623229,
+    "createdBy": "admin",
+    "createdFrom": "reservation",
+    "id": 1759792745999,
+    "orderNumber": "ORDS252800001",
+    "sourceDetails": null,
+    "createdByName": "System",
+    "userId": null,
+    "isUserCreated": false,
+    "createdFromIP": null,
+    "dateAdded": "2025-10-06T23:19:05.999Z",
+    "createdAt": "2025-10-06T23:19:05.999Z",
+    "updatedAt": "2025-10-06T23:19:23.282Z",
+    "updatedBy": null
+  }
+]

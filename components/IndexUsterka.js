@@ -118,7 +118,7 @@ export default function IndexUsterka() {
                                         {showLoginDropdown && (
                                             <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
                                                 <Link
-                                                    href="/logowanie"
+                                                    href="/client/login"
                                                     className="block px-4 py-2 text-sm text-gray-700 hover:bg-red-50 hover:text-red-600 transition-colors"
                                                     onClick={() => setShowLoginDropdown(false)}
                                                 >
@@ -226,7 +226,7 @@ export default function IndexUsterka() {
                                     <h3 className="text-lg font-semibold text-gray-900 mb-4">Masz już konto?</h3>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
                                         <Link
-                                            href="/logowanie"
+                                            href="/client/login"
                                             className="bg-red-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-red-700 transition-colors text-center"
                                         >
                                             Zaloguj się
@@ -421,3 +421,4 @@ export default function IndexUsterka() {
         </div>
     );
 }
+

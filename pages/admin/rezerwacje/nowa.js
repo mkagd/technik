@@ -507,17 +507,15 @@ export default function NowaRezerwacja() {
       </div>
 
       <form onSubmit={handleSubmit} className="px-2 sm:px-0">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
+        {/* NOWY LAYOUT: 2 kolumny obok siebie + przycisk na dole */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
           
-          {/* Main form - 2 columns */}
-          <div className="lg:col-span-2 space-y-6">
-            
-            {/* Dane klienta */}
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6">
-              <h2 className="text-base sm:text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                <FiUser className="mr-2 h-5 w-5 text-blue-600" />
-                Dane klienta
-              </h2>
+          {/* LEWA KOLUMNA: Dane klienta */}
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+            <h2 className="text-base font-semibold text-gray-900 mb-3 flex items-center">
+              <FiUser className="mr-2 h-4 w-4 text-blue-600" />
+              Dane klienta
+            </h2>
 
               {/* Wybór: Prywatny / Firma */}
               <div className="mb-6 pb-4 border-b border-gray-200">
@@ -1349,7 +1347,6 @@ export default function NowaRezerwacja() {
                 {saving ? 'Zapisywanie...' : 'Utwórz rezerwację'}
               </button>
             </div>
-          </div>
 
         </div>
       </form>

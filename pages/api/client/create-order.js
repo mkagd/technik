@@ -30,7 +30,9 @@ const readOrders = () => {
 
 const saveOrders = (orders) => {
   try {
-    fs.writeFileSync(ORDERS_FILE, JSON.stringify(orders, null, 2));
+    // Użyj UTF-8 BOM dla prawidłowego kodowania polskich znaków
+    const json = JSON.stringify(orders, null, 2);
+    fs.writeFileSync(ORDERS_FILE, json, { encoding: 'utf8' });
     return true;
   } catch (error) {
     console.error('❌ Error saving orders.json:', error);
@@ -218,6 +220,23 @@ export default async function handler(req, res) {
     }
     
     const newId = `ORD2025${String(newIdNumber).padStart(6, '0')}`;
+    
+    // Generuj orderNumber w formacie ORDS252800XXX
+    const today = new Date();
+    const year = String(today.getFullYear()).slice(-2); // 25
+    const month = String(today.getMonth() + 1).padStart(2, '0'); // 10
+    const day = String(today.getDate()).padStart(2, '0'); // 07
+    
+    // Znajdź ostatni numer zamówienia z dzisiaj
+    const todayOrderNumbers = orders
+      .filter(o => o.orderNumber && o.orderNumber.startsWith(`ORDS${year}${month}`))
+      .map(o => {
+        const match = o.orderNumber.match(/ORDS\d{4}(\d+)$/);
+        return match ? parseInt(match[1]) : 0;
+      });
+    
+    const lastOrderNumber = todayOrderNumbers.length > 0 ? Math.max(...todayOrderNumbers) : 0;
+    const newOrderNumber = `ORDS${year}${month}${String(lastOrderNumber + 1).padStart(5, '0')}`;
 
     // Przygotuj adres naprawy (custom lub klienta)
     let repairAddress;
@@ -232,8 +251,10 @@ export default async function handler(req, res) {
     // Utwórz nowe zamówienie
     const newOrder = {
       id: newId,
+      orderNumber: newOrderNumber,
       clientId: client.id,
       clientName: client.name,
+      clientEmail: client.email || '',
       clientPhone: client.phone || client.mobile,
       clientAddress: `${client.address.street} ${client.address.buildingNumber}${client.address.apartmentNumber ? '/' + client.address.apartmentNumber : ''}, ${client.address.postalCode} ${client.address.city}`, // Adres klienta z konta
       serviceAddress: repairAddress, // Adres naprawy (może być inny)
@@ -246,6 +267,7 @@ export default async function handler(req, res) {
       
       status: 'pending',
       priority: priority || 'normal',
+      source: 'client_portal', // Źródło zamówienia
       
       technicianId: null,
       technicianName: null,

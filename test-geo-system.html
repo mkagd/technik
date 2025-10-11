@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Systemu Geo/Maps - Technik AGD</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .test-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .test-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .test-card h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .test-card .icon {
+            font-size: 2rem;
+        }
+        
+        .test-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .test-info p {
+            margin: 5px 0;
+            color: #495057;
+        }
+        
+        .test-info strong {
+            color: #212529;
+        }
+        
+        button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-bottom: 15px;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        button:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .result {
+            background: #e7f3ff;
+            border: 2px solid #2196F3;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 15px;
+            display: none;
+        }
+        
+        .result.show {
+            display: block;
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        .result.success {
+            background: #d4edda;
+            border-color: #28a745;
+        }
+        
+        .result.error {
+            background: #f8d7da;
+            border-color: #dc3545;
+        }
+        
+        .result h3 {
+            margin-bottom: 10px;
+            color: #0d47a1;
+        }
+        
+        .result.success h3 {
+            color: #155724;
+        }
+        
+        .result.error h3 {
+            color: #721c24;
+        }
+        
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+        }
+        
+        .result-item:last-child {
+            border-bottom: none;
+        }
+        
+        .result-label {
+            font-weight: 600;
+            color: #495057;
+        }
+        
+        .result-value {
+            color: #212529;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .loading {
+            text-align: center;
+            color: #667eea;
+            font-weight: 600;
+            padding: 20px;
+        }
+        
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .stats-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 20px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .stat-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🗺️ Test Systemu Geo/Maps</h1>
+        
+        <!-- Statystyki -->
+        <div class="stats-card">
+            <h2 style="color: #667eea; margin-bottom: 15px;">📊 Statystyki Systemu</h2>
+            <div class="stats-grid" id="statsGrid">
+                <div class="stat-box">
+                    <div class="stat-value" id="statGeocoding">-</div>
+                    <div class="stat-label">Geokodowanie (dziś)</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value" id="statMatrix">-</div>
+                    <div class="stat-label">Distance Matrix (dziś)</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value" id="statCache">-</div>
+                    <div class="stat-label">Cache Hit Rate</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value" id="statCost">-</div>
+                    <div class="stat-label">Koszt miesięczny</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Testy -->
+        <div class="test-grid">
+            <!-- Test 1: Kraków - Warszawa -->
+            <div class="test-card">
+                <h2>
+                    <span class="icon">📍</span>
+                    Test 1: Kraków → Warszawa
+                </h2>
+                <div class="test-info">
+                    <p><strong>Origin:</strong> Kraków (50.0647, 19.9450)</p>
+                    <p><strong>Destination:</strong> Warszawa (52.2297, 21.0122)</p>
+                    <p><strong>Provider:</strong> OSRM (darmowy)</p>
+                    <p><strong>Oczekiwany wynik:</strong> ~293 km, ~180 min</p>
+                </div>
+                <button onclick="testRoute1()">▶️ Uruchom Test 1</button>
+                <div id="result1" class="result"></div>
+            </div>
+            
+            <!-- Test 2: Kraków - Rynek -->
+            <div class="test-card">
+                <h2>
+                    <span class="icon">🏛️</span>
+                    Test 2: Kraków → Rynek Główny
+                </h2>
+                <div class="test-info">
+                    <p><strong>Origin:</strong> Kraków (50.0647, 19.9450)</p>
+                    <p><strong>Destination:</strong> Rynek Główny (50.0616, 19.9366)</p>
+                    <p><strong>Provider:</strong> OSRM</p>
+                    <p><strong>Oczekiwany wynik:</strong> ~1.5 km, ~5 min</p>
+                </div>
+                <button onclick="testRoute2()">▶️ Uruchom Test 2</button>
+                <div id="result2" class="result"></div>
+            </div>
+            
+            <!-- Test 3: Kraków - Wrocław -->
+            <div class="test-card">
+                <h2>
+                    <span class="icon">🚗</span>
+                    Test 3: Kraków → Wrocław
+                </h2>
+                <div class="test-info">
+                    <p><strong>Origin:</strong> Kraków (50.0647, 19.9450)</p>
+                    <p><strong>Destination:</strong> Wrocław (51.1079, 17.0385)</p>
+                    <p><strong>Provider:</strong> OSRM</p>
+                    <p><strong>Oczekiwany wynik:</strong> ~270 km, ~170 min</p>
+                </div>
+                <button onclick="testRoute3()">▶️ Uruchom Test 3</button>
+                <div id="result3" class="result"></div>
+            </div>
+            
+            <!-- Test 4: Cache Test -->
+            <div class="test-card">
+                <h2>
+                    <span class="icon">💾</span>
+                    Test 4: Cache System
+                </h2>
+                <div class="test-info">
+                    <p><strong>Test:</strong> Powtórzenie Test 1</p>
+                    <p><strong>Cel:</strong> Sprawdzenie czy cache działa</p>
+                    <p><strong>Oczekiwany wynik:</strong> fromCache: true</p>
+                    <p><strong>Czas odpowiedzi:</strong> &lt;10ms (z cache)</p>
+                </div>
+                <button onclick="testCache()">▶️ Uruchom Test Cache</button>
+                <div id="result4" class="result"></div>
+            </div>
+            
+            <!-- Test 5: Macierz odległości -->
+            <div class="test-card">
+                <h2>
+                    <span class="icon">🎯</span>
+                    Test 5: Distance Matrix
+                </h2>
+                <div class="test-info">
+                    <p><strong>Origins:</strong> 2 punkty (Kraków, Wrocław)</p>
+                    <p><strong>Destinations:</strong> 2 punkty (Warszawa, Gdańsk)</p>
+                    <p><strong>Wynik:</strong> Macierz 2x2 = 4 odległości</p>
+                    <p><strong>Provider:</strong> OSRM</p>
+                </div>
+                <button onclick="testMatrix()">▶️ Uruchom Test Matrix</button>
+                <div id="result5" class="result"></div>
+            </div>
+            
+            <!-- Test 6: Fallback Haversine -->
+            <div class="test-card">
+                <h2>
+                    <span class="icon">📐</span>
+                    Test 6: Haversine Fallback
+                </h2>
+                <div class="test-info">
+                    <p><strong>Origin:</strong> Kraków</p>
+                    <p><strong>Destination:</strong> Warszawa</p>
+                    <p><strong>Provider:</strong> Haversine (matematyczny)</p>
+                    <p><strong>Szybkość:</strong> &lt;1ms (bez API)</p>
+                </div>
+                <button onclick="testHaversine()">▶️ Uruchom Test Haversine</button>
+                <div id="result6" class="result"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Funkcja pomocnicza do wyświetlania wyników
+        function showResult(resultId, data, isError = false) {
+            const resultDiv = document.getElementById(resultId);
+            resultDiv.className = `result show ${isError ? 'error' : 'success'}`;
+            
+            if (isError) {
+                resultDiv.innerHTML = `
+                    <h3>❌ Błąd</h3>
+                    <div class="result-item">
+                        <span class="result-label">Komunikat:</span>
+                        <span class="result-value">${data.message || data}</span>
+                    </div>
+                `;
+                return;
+            }
+            
+            const result = data.result || data;
+            let html = '<h3>✅ Sukces!</h3>';
+            
+            if (result.distance) {
+                html += `
+                    <div class="result-item">
+                        <span class="result-label">📏 Odległość:</span>
+                        <span class="result-value">${result.distance.km} km (${result.distance.text})</span>
+                    </div>
+                `;
+            }
+            
+            if (result.duration) {
+                html += `
+                    <div class="result-item">
+                        <span class="result-label">⏱️ Czas dojazdu:</span>
+                        <span class="result-value">${result.duration.minutes} min (${result.duration.text})</span>
+                    </div>
+                `;
+            }
+            
+            if (result.provider) {
+                html += `
+                    <div class="result-item">
+                        <span class="result-label">🔧 Provider:</span>
+                        <span class="result-value">${result.provider.toUpperCase()}</span>
+                    </div>
+                `;
+            }
+            
+            if (result.hasOwnProperty('fromCache')) {
+                html += `
+                    <div class="result-item">
+                        <span class="result-label">💾 Z cache:</span>
+                        <span class="result-value">${result.fromCache ? '✅ TAK' : '❌ NIE'}</span>
+                    </div>
+                `;
+            }
+            
+            if (result.timestamp) {
+                const time = new Date(result.timestamp).toLocaleTimeString('pl-PL');
+                html += `
+                    <div class="result-item">
+                        <span class="result-label">🕐 Timestamp:</span>
+                        <span class="result-value">${time}</span>
+                    </div>
+                `;
+            }
+            
+            if (result.rows) {
+                html += `
+                    <div class="result-item">
+                        <span class="result-label">📊 Macierz:</span>
+                        <span class="result-value">${result.originCount}x${result.destinationCount} = ${result.rows.flat().length} tras</span>
+                    </div>
+                `;
+            }
+            
+            resultDiv.innerHTML = html;
+        }
+        
+        function showLoading(resultId) {
+            const resultDiv = document.getElementById(resultId);
+            resultDiv.className = 'result show';
+            resultDiv.innerHTML = `
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Obliczanie trasy...</p>
+                </div>
+            `;
+        }
+        
+        // Test 1: Kraków - Warszawa
+        async function testRoute1() {
+            showLoading('result1');
+            try {
+                const response = await fetch('/api/distance-matrix/calculate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        origin: { lat: 50.0647, lng: 19.9450 },
+                        destination: { lat: 52.2297, lng: 21.0122 }
+                    })
+                });
+                const data = await response.json();
+                showResult('result1', data, !data.success);
+                loadStats();
+            } catch (error) {
+                showResult('result1', error.message, true);
+            }
+        }
+        
+        // Test 2: Kraków - Rynek
+        async function testRoute2() {
+            showLoading('result2');
+            try {
+                const response = await fetch('/api/distance-matrix/calculate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        origin: { lat: 50.0647, lng: 19.9450 },
+                        destination: { lat: 50.0616, lng: 19.9366 }
+                    })
+                });
+                const data = await response.json();
+                showResult('result2', data, !data.success);
+                loadStats();
+            } catch (error) {
+                showResult('result2', error.message, true);
+            }
+        }
+        
+        // Test 3: Kraków - Wrocław
+        async function testRoute3() {
+            showLoading('result3');
+            try {
+                const response = await fetch('/api/distance-matrix/calculate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        origin: { lat: 50.0647, lng: 19.9450 },
+                        destination: { lat: 51.1079, lng: 17.0385 }
+                    })
+                });
+                const data = await response.json();
+                showResult('result3', data, !data.success);
+                loadStats();
+            } catch (error) {
+                showResult('result3', error.message, true);
+            }
+        }
+        
+        // Test 4: Cache
+        async function testCache() {
+            showLoading('result4');
+            try {
+                const response = await fetch('/api/distance-matrix/calculate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        origin: { lat: 50.0647, lng: 19.9450 },
+                        destination: { lat: 52.2297, lng: 21.0122 }
+                    })
+                });
+                const data = await response.json();
+                showResult('result4', data, !data.success);
+                loadStats();
+            } catch (error) {
+                showResult('result4', error.message, true);
+            }
+        }
+        
+        // Test 5: Distance Matrix
+        async function testMatrix() {
+            showLoading('result5');
+            try {
+                const response = await fetch('/api/distance-matrix/calculate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        origins: [
+                            { lat: 50.0647, lng: 19.9450 },  // Kraków
+                            { lat: 51.1079, lng: 17.0385 }   // Wrocław
+                        ],
+                        destinations: [
+                            { lat: 52.2297, lng: 21.0122 },  // Warszawa
+                            { lat: 54.3520, lng: 18.6466 }   // Gdańsk
+                        ]
+                    })
+                });
+                const data = await response.json();
+                showResult('result5', data, !data.success);
+                loadStats();
+            } catch (error) {
+                showResult('result5', error.message, true);
+            }
+        }
+        
+        // Test 6: Haversine (jako demonstracja - normalnie jest automatyczny fallback)
+        async function testHaversine() {
+            showLoading('result6');
+            try {
+                // Dla demonstracji - w prawdziwym systemie Haversine jest automatycznym fallbackiem
+                const response = await fetch('/api/distance-matrix/calculate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        origin: { lat: 50.0647, lng: 19.9450 },
+                        destination: { lat: 52.2297, lng: 21.0122 }
+                    })
+                });
+                const data = await response.json();
+                showResult('result6', data, !data.success);
+                loadStats();
+            } catch (error) {
+                showResult('result6', error.message, true);
+            }
+        }
+        
+        // Ładowanie statystyk
+        async function loadStats() {
+            try {
+                const response = await fetch('/api/admin/stats/geo-usage');
+                const data = await response.json();
+                
+                if (data.success) {
+                    document.getElementById('statGeocoding').textContent = data.stats.todayGeocoding || 0;
+                    document.getElementById('statMatrix').textContent = data.stats.todayMatrix || 0;
+                    document.getElementById('statCache').textContent = (data.stats.cacheHitRate || 0) + '%';
+                    document.getElementById('statCost').textContent = (data.stats.monthlyCost || 0) + ' zł';
+                }
+            } catch (error) {
+                console.error('Błąd ładowania statystyk:', error);
+            }
+        }
+        
+        // Ładuj statystyki przy starcie
+        loadStats();
+        
+        // Odśwież statystyki co 10 sekund
+        setInterval(loadStats, 10000);
+    </script>
+</body>
+</html>

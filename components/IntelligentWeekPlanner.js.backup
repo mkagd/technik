@@ -453,7 +453,9 @@ const IntelligentWeekPlanner = () => {
       tuesday: 'Wtorek', 
       wednesday: 'Środa',
       thursday: 'Czwartek',
-      friday: 'Piątek'
+      friday: 'Piątek',
+      saturday: 'Sobota',
+      sunday: 'Niedziela'
     };
     
     const dayOffsets = {
@@ -461,7 +463,9 @@ const IntelligentWeekPlanner = () => {
       tuesday: 1,
       wednesday: 2,
       thursday: 3,
-      friday: 4
+      friday: 4,
+      saturday: 5,
+      sunday: 6
     };
     
     const dayDate = new Date(weekStart);
@@ -493,7 +497,9 @@ const IntelligentWeekPlanner = () => {
     tuesday: 'Wtorek', 
     wednesday: 'Środa',
     thursday: 'Czwartek',
-    friday: 'Piątek'
+    friday: 'Piątek',
+    saturday: 'Sobota',
+    sunday: 'Niedziela'
   };
 
   const priorityColors = {
@@ -927,17 +933,39 @@ const IntelligentWeekPlanner = () => {
       
       console.log('✅ Preferences wysyłane do API:', preferences.startLocation);
       
-      const response = await makeRateLimitedApiCall('/api/intelligent-route-optimization', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          servicemanId: 'USER_001',
-          timeframe: 'week',
-          preferences: preferences
-        })
+      // 🆕 UPROSZCZONE ŁADOWANIE: Pomijamy API optymalizacji (wymaga przypisanych zleceń)
+      // Zamiast tego używamy już załadowanych danych z realData
+      console.log('📦 Pomijam API optymalizacji - używam już załadowanych danych');
+      
+      // Podziel zlecenia na zaplanowane i niezaplanowane
+      const unscheduledOrders = realData.orders.filter(order => {
+        const hasNoScheduledDate = !order.scheduledDate;
+        const isPending = order.status === 'pending' || order.status === 'new';
+        return hasNoScheduledDate && isPending;
       });
-
-      if (response.ok) {
+      
+      const scheduledOrders = realData.orders.filter(order => {
+        return order.scheduledDate && (order.status === 'pending' || order.status === 'new');
+      });
+      
+      console.log(`📊 Niezaplanowane zlecenia: ${unscheduledOrders.length}`);
+      console.log(`📊 Zaplanowane zlecenia: ${scheduledOrders.length}`);
+      
+      // ✅ Ustaw weeklyPlan z WSZYSTKIMI zleceniami w pamięci
+      setWeeklyPlan({
+        monday: { orders: scheduledOrders, stats: {} },
+        tuesday: { orders: scheduledOrders, stats: {} },
+        wednesday: { orders: scheduledOrders, stats: {} },
+        thursday: { orders: scheduledOrders, stats: {} },
+        friday: { orders: scheduledOrders, stats: {} },
+        saturday: { orders: scheduledOrders, stats: {} },
+        sunday: { orders: scheduledOrders, stats: {} },
+        unscheduledOrders: unscheduledOrders,
+        recommendations: [],
+        costAnalysis: {}
+      });
+      
+      showNotification(`✅ Załadowano ${realData.orders.length} zleceń`, 'success');
         const data = await response.json();
         console.log('🎯 Odpowiedź API:', data);
         console.log('🎯 data.success:', data.success);
@@ -945,18 +973,59 @@ const IntelligentWeekPlanner = () => {
         console.log('🎯 data.data?.weeklyPlan:', data.data?.weeklyPlan);
         
         if (data.success) {
-          console.log('✅ Ustawiam weeklyPlan:', data.data);
-          // Dostosuj strukturę - komponent oczekuje weeklyPlan.weeklyPlan[day]
-          // ale API zwraca data: { weeklyPlan: {...}, costAnalysis: {...} }
-          setWeeklyPlan(data.data);
+          console.log('✅ API zwróciło dane:', data.data);
+          
+          // 🆕 NOWA LOGIKA: Załaduj WSZYSTKIE zlecenia z bazy danych
+          const realDataResponse = await loadRealDataFromAPI();
+          if (realDataResponse.success) {
+            console.log(`📦 Załadowano ${realDataResponse.orders.length} zleceń z bazy`);
+            
+            // Podziel zlecenia na zaplanowane i niezaplanowane
+            const unscheduledOrders = realDataResponse.orders.filter(order => {
+              const hasNoScheduledDate = !order.scheduledDate;
+              const isPending = order.status === 'pending' || order.status === 'new';
+              return hasNoScheduledDate && isPending;
+            });
+            
+            const scheduledOrders = realDataResponse.orders.filter(order => {
+              return order.scheduledDate && (order.status === 'pending' || order.status === 'new');
+            });
+            
+            console.log(`� Niezaplanowane zlecenia: ${unscheduledOrders.length}`);
+            console.log(`📊 Zaplanowane zlecenia: ${scheduledOrders.length}`);
+            
+            // ✅ Ustaw weeklyPlan z PUSTYMI dniami + WSZYSTKIE zlecenia w pamięci
+            // Kalendarz będzie pusty, getOrdersForWeekDay wypełni go na podstawie scheduledDate
+            setWeeklyPlan({
+              // Puste dni - zlecenia będą filtrowane przez getOrdersForWeekDay
+              monday: { orders: scheduledOrders, stats: {} },
+              tuesday: { orders: scheduledOrders, stats: {} },
+              wednesday: { orders: scheduledOrders, stats: {} },
+              thursday: { orders: scheduledOrders, stats: {} },
+              friday: { orders: scheduledOrders, stats: {} },
+              saturday: { orders: scheduledOrders, stats: {} },
+              sunday: { orders: scheduledOrders, stats: {} },
+              // Niezaplanowane zlecenia w puli
+              unscheduledOrders: unscheduledOrders,
+              // Zachowaj dane z API (recommendations, costAnalysis)
+              recommendations: data.data.recommendations || [],
+              costAnalysis: data.data.costAnalysis || {}
+            });
+            
+            showNotification(`✅ Załadowano ${realDataResponse.orders.length} zleceń (${unscheduledOrders.length} niezaplanowanych, ${scheduledOrders.length} zaplanowanych)`, 'success');
+          } else {
+            console.error('❌ Błąd ładowania rzeczywistych danych');
+            showNotification('⚠️ Nie udało się załadować zleceń z bazy danych', 'error');
+          }
         } else {
           console.error('❌ API error:', data.error);
-          alert(`Błąd ładowania planu: ${data.error}`);
+          showNotification(`Błąd ładowania planu: ${data.error}`, 'error');
         }
       } else {
         console.error('❌ Request failed:', response.status);
         alert(`Błąd żądania: ${response.status}`);
       }
+      } // END DELETE - stary kod API
     } catch (error) {
       console.error('Network error:', error);
       alert(`Błąd sieci: ${error.message}`);
@@ -966,7 +1035,7 @@ const IntelligentWeekPlanner = () => {
       loadIntelligentPlanMutexRef.current = false;
       console.log('🔓 Released mutex for loadIntelligentPlan');
     }
-  }, [startLocation, optimizationPreferences]);
+  }, [startLocation, optimizationPreferences, currentServiceman]); // ✅ Dodano currentServiceman!
 
   // Ładowanie pracowników przy montowaniu komponentu
   useEffect(() => {
@@ -1360,7 +1429,9 @@ const IntelligentWeekPlanner = () => {
                slot.day === 'tuesday' ? 'Wt' :
                slot.day === 'wednesday' ? 'Śr' :
                slot.day === 'thursday' ? 'Czw' :
-               slot.day === 'friday' ? 'Pt' : slot.day} 
+               slot.day === 'friday' ? 'Pt' :
+               slot.day === 'saturday' ? 'Sob' :
+               slot.day === 'sunday' ? 'Nd' : slot.day} 
               ({slot.start}-{slot.end})
               {idx < order.preferredTimeSlots.length - 1 ? ', ' : ''}
             </span>
@@ -1384,11 +1455,52 @@ const IntelligentWeekPlanner = () => {
     );
   };
 
+  // 🆕 Pobierz zlecenia dla konkretnego dnia w aktualnym tygodniu
+  const getOrdersForWeekDay = (day) => {
+    // Oblicz datę dla tego dnia
+    const targetDate = getDateForDay(day);
+    if (!targetDate) return [];
+    
+    // Format daty jako YYYY-MM-DD
+    const targetDateStr = targetDate.toISOString().split('T')[0];
+    
+    console.log(`📅 getOrdersForWeekDay(${day}) - szukam zleceń dla daty: ${targetDateStr}`);
+    
+    // Pobierz wszystkie zlecenia z weeklyPlan (które zostały już załadowane z bazy)
+    const allOrders = [];
+    
+    // Przeszukaj wszystkie dni w weeklyPlan aby znaleźć wszystkie załadowane zlecenia
+    Object.keys(weeklyPlan).forEach(dayKey => {
+      if (dayKey !== 'unscheduledOrders' && weeklyPlan[dayKey]?.orders) {
+        allOrders.push(...weeklyPlan[dayKey].orders);
+      }
+    });
+    
+    // Dodaj też zlecenia niezaplanowane do puli wyszukiwania
+    if (weeklyPlan.unscheduledOrders) {
+      allOrders.push(...weeklyPlan.unscheduledOrders);
+    }
+    
+    // Filtruj tylko te z pasującą datą scheduledDate
+    const filteredOrders = allOrders.filter(order => {
+      const hasMatchingDate = order.scheduledDate === targetDateStr;
+      if (hasMatchingDate) {
+        console.log(`  ✅ Znaleziono zlecenie ${order.id} dla ${targetDateStr}`);
+      }
+      return hasMatchingDate;
+    });
+    
+    console.log(`  📊 Znaleziono ${filteredOrders.length} zleceń dla ${day} (${targetDateStr})`);
+    
+    return filteredOrders;
+  };
+
   // Renderowanie harmonogramu dnia z rekomendacjami czasu
   const renderDaySchedule = (day, dayPlan) => {
-    if (!dayPlan || !dayPlan.orders || dayPlan.orders.length === 0) return null;
+    // 🆕 Zamiast używać dayPlan.orders, pobierz rzeczywiste zlecenia z bazy filtrowane po dacie
+    const orders = getOrdersForWeekDay(day);
     
-    const orders = dayPlan.orders;
+    if (!orders || orders.length === 0) return null;
     const scheduleKey = `${currentServiceman}-${day}`;
     const realSchedule = realTimeSchedules[scheduleKey];
     
@@ -1692,8 +1804,8 @@ const IntelligentWeekPlanner = () => {
     }
 
     try {
-      // Wywołaj API dla prawdziwego czasu dojazdu używając Distance Matrix Service (rate limited)
-      const response = await makeRateLimitedApiCall('/api/distance-matrix', {
+      // ✅ NOWY SYSTEM: Użyj zintegrowanego Distance Matrix API (Haversine/OSRM/Google)
+      const response = await makeRateLimitedApiCall('/api/distance-matrix/calculate', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -1710,6 +1822,13 @@ const IntelligentWeekPlanner = () => {
 
       const data = await response.json();
       
+      // ✅ NOWY FORMAT: { success, result: { distance, duration, provider } }
+      if (!data.success || !data.result) {
+        throw new Error(data.message || 'Distance calculation failed');
+      }
+      
+      console.log('🔍 API Response data.result:', data.result);
+      
       // 💰 Log API request do monitora kosztów (PO sukcesie)
       try {
         monitor.logRequest('api');
@@ -1717,11 +1836,15 @@ const IntelligentWeekPlanner = () => {
         // Monitor failure shouldn't break the app
       }
       
+      // ✅ Obsługa różnych formatów duration (minutes lub value w sekundach)
+      const durationMinutes = data.result.duration?.minutes || 
+                             (data.result.duration?.value ? Math.round(data.result.duration.value / 60) : 0);
+      
       const cacheEntry = {
-        duration: data.duration.minutes,
-        distance: data.distance.km,
+        duration: durationMinutes,
+        distance: data.result.distance?.km || 0,
         timestamp: Date.now(),
-        source: data.source
+        source: data.result.provider || 'haversine'
       };
       
       // Zapisz w cache - dostosuj format odpowiedzi z distance-matrix API
@@ -2124,8 +2247,42 @@ const IntelligentWeekPlanner = () => {
     
     setWeeklyPlan(updatedPlan);
     
+    // 🆕 Zapisz scheduledDate do bazy danych
+    try {
+      const targetDate = getDateForDay(targetDay);
+      const scheduledDate = targetDate.toISOString().split('T')[0]; // Format YYYY-MM-DD
+      
+      console.log(`💾 Zapisuję scheduledDate dla zlecenia ${order.id}: ${scheduledDate}`);
+      
+      const saveResponse = await fetch(`/api/orders/${order.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          scheduledDate: scheduledDate,
+          assignedTo: currentServiceman || order.assignedTo
+        })
+      });
+      
+      if (saveResponse.ok) {
+        console.log(`✅ Zapisano scheduledDate dla ${order.id}`);
+        
+        // Jeśli to było z puli niezaplanowanych, usuń z unscheduledOrders
+        if (sourceDay === 'unscheduled') {
+          updatedPlan.unscheduledOrders = (updatedPlan.unscheduledOrders || []).filter(
+            o => o.id !== order.id
+          );
+          setWeeklyPlan(updatedPlan);
+        }
+      } else {
+        console.warn(`⚠️ Nie udało się zapisać scheduledDate:`, await saveResponse.text());
+      }
+    } catch (error) {
+      console.error('❌ Błąd zapisywania scheduledDate:', error);
+    }
+    
     // Pokaż powiadomienie o sukcesie
-    showNotification(`✅ Zlecenie "${order.clientName}" przeniesione z ${getDayName(sourceDay)} na ${getDayName(targetDay)}`);
+    const sourceLabel = sourceDay === 'unscheduled' ? 'puli niezaplanowanych' : getDayName(sourceDay);
+    showNotification(`✅ Zlecenie "${order.clientName}" przeniesione z ${sourceLabel} na ${getDayName(targetDay)}`);
   };
 
   // Walidacja przeniesienia zlecenia
@@ -2499,7 +2656,9 @@ const IntelligentWeekPlanner = () => {
       tuesday: 'Wtorek',
       wednesday: 'Środa',
       thursday: 'Czwartek',
-      friday: 'Piątek'
+      friday: 'Piątek',
+      saturday: 'Sobota',
+      sunday: 'Niedziela'
     };
     
     // Jeśli mamy dostęp do currentWeekStart, pokazuj datę
@@ -2524,7 +2683,7 @@ const IntelligentWeekPlanner = () => {
 
   // Nowe funkcje UI - rozwijanie, sortowanie, filtrowanie
   const [expandedDay, setExpandedDay] = useState(null); // Rozwinięty dzień na pełny ekran
-  const [viewMode, setViewMode] = useState(5); // 1-5 kolumn
+  const [viewMode, setViewMode] = useState(7); // 1-7 kolumn (cały tydzień)
   const [sortBy, setSortBy] = useState('default'); // default, priority, time, revenue, distance
   const [filterBy, setFilterBy] = useState('all'); // all, high, medium, low, completed
   const [ordersPerPage, setOrdersPerPage] = useState(10); // Paginacja
@@ -2906,7 +3065,7 @@ ODPOWIADAJ KONKRETNIE z praktycznymi sugestiami i przyciskami akcji.`
     try {
       if (day === 'all') {
         // Optymalizuj wszystkie dni
-        const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'];
+        const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
         const updatedPlan = { ...weeklyPlan };
         
         for (const singleDay of days) {
@@ -3122,8 +3281,8 @@ ODPOWIADAJ KONKRETNIE z praktycznymi sugestiami i przyciskami akcji.`
   // Obliczanie rzeczywistej odległości drogowej między punktami (w km)
   const calculateDistance = async (from, to) => {
     try {
-      // Użyj backend API Distance Matrix Service dla rzeczywistych odległości drogowych (rate limited)
-      const response = await makeRateLimitedApiCall('/api/distance-matrix', {
+      // ✅ NOWY SYSTEM: Użyj zintegrowanego Distance Matrix API (Haversine/OSRM/Google)
+      const response = await makeRateLimitedApiCall('/api/distance-matrix/calculate', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -3138,12 +3297,23 @@ ODPOWIADAJ KONKRETNIE z praktycznymi sugestiami i przyciskami akcji.`
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      const result = await response.json();
-      console.log('🚗 Real distance calculated:', result.distance.km + 'km', result.duration.text);
-      return result.distance.km;
+      const data = await response.json();
+      
+      // ✅ NOWY FORMAT: { success, result: { distance, duration, provider } }
+      if (data.success && data.result) {
+        console.log(`🚗 Distance calculated via ${data.result.provider}:`, 
+                    data.result.distance.km + 'km', 
+                    data.result.duration.text || data.result.duration.minutes + 'min',
+                    data.result.fromCache ? '(cached)' : '(fresh)');
+        return data.result.distance.km;
+      } else {
+        throw new Error(data.message || 'Distance calculation failed');
+      }
     } catch (error) {
-      console.error('❌ Google Distance Matrix API failed:', error.message);
-      throw error; // Propaguj błąd - nie używamy fallbacku
+      console.error('❌ Distance Matrix API failed:', error.message);
+      // Fallback na synchroniczny Haversine
+      console.log('⚠️ Using Haversine fallback');
+      return calculateDistanceSync(from, to);
     }
   };
 
@@ -3173,8 +3343,8 @@ ODPOWIADAJ KONKRETNIE z praktycznymi sugestiami i przyciskami akcji.`
     try {
       setLoadingTravelTimes(prev => new Set(prev).add(key));
       
-      // Użyj backend API endpoint zamiast bezpośredniego wywołania (rate limited)
-      const response = await makeRateLimitedApiCall('/api/distance-matrix', {
+      // ✅ NOWY SYSTEM: Użyj zintegrowanego Distance Matrix API (Haversine/OSRM/Google)
+      const response = await makeRateLimitedApiCall('/api/distance-matrix/calculate', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -3189,16 +3359,22 @@ ODPOWIADAJ KONKRETNIE z praktycznymi sugestiami i przyciskami akcji.`
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      const result = await response.json();
+      const data = await response.json();
+      
+      // ✅ NOWY FORMAT: { success, result: { distance, duration, provider } }
+      if (!data.success || !data.result) {
+        throw new Error(data.message || 'Distance calculation failed');
+      }
 
       const travelInfo = {
-        duration: result.duration.minutes,
-        durationText: result.duration.text,
-        distance: result.distance.km,
-        distanceText: result.distance.text,
+        duration: data.result.duration.minutes,
+        durationText: data.result.duration.text || `${data.result.duration.minutes} min`,
+        distance: data.result.distance.km,
+        distanceText: data.result.distance.text,
         trafficDelay: 0, // distance-matrix API nie zwraca trafficDelay
         hasTraffic: false, // distance-matrix API nie rozróżnia z/bez ruchu
-        timestamp: Date.now()
+        timestamp: Date.now(),
+        provider: data.result.provider // haversine/osrm/google
       };
 
       setRealTravelTimes(prev => new Map(prev).set(key, travelInfo));
@@ -3716,6 +3892,9 @@ ODPOWIADAJ KONKRETNIE z praktycznymi sugestiami i przyciskami akcji.`
                               ...s,
                               isActive: s.id === serviceman.id
                             })));
+                            // ✅ Przeładuj plan dla nowego serwisanta
+                            console.log('🔄 Zmieniono serwisanta na:', serviceman.id);
+                            setTimeout(() => loadIntelligentPlan(), 100);
                           }}
                           className={`w-full flex items-center gap-3 p-3 rounded-lg text-left hover:bg-gray-50 ${
                             currentServiceman === serviceman.id ? 'bg-blue-50 border border-blue-200' : ''
@@ -4277,7 +4456,7 @@ ODPOWIADAJ KONKRETNIE z praktycznymi sugestiami i przyciskami akcji.`
                   year: 'numeric'
                 })} - {(() => {
                   const weekEnd = new Date(currentWeekStart);
-                  weekEnd.setDate(currentWeekStart.getDate() + 4);
+                  weekEnd.setDate(currentWeekStart.getDate() + 6);
                   return weekEnd.toLocaleDateString('pl-PL', { 
                     day: '2-digit', 
                     month: '2-digit',
@@ -4325,7 +4504,7 @@ ODPOWIADAJ KONKRETNIE z praktycznymi sugestiami i przyciskami akcji.`
               <div className="flex items-center gap-2">
                 <span className="text-sm font-medium text-gray-700">Widok:</span>
                 <div className="flex border rounded-lg overflow-hidden">
-                  {[1, 2, 3, 4, 5].map(cols => (
+                  {[1, 2, 3, 4, 5, 7].map(cols => (
                     <button
                       key={cols}
                       onClick={() => setViewMode(cols)}
@@ -4334,7 +4513,7 @@ ODPOWIADAJ KONKRETNIE z praktycznymi sugestiami i przyciskami akcji.`
                           ? 'bg-blue-600 text-white' 
                           : 'bg-white text-gray-700 hover:bg-gray-50'
                       }`}
-                      title={`${cols} ${cols === 1 ? 'kolumna' : 'kolumny'}`}
+                      title={`${cols} ${cols === 1 ? 'kolumna' : cols < 5 ? 'kolumny' : 'kolumn'}`}
                     >
                       {cols}
                     </button>
@@ -4426,6 +4605,114 @@ ODPOWIADAJ KONKRETNIE z praktycznymi sugestiami i przyciskami akcji.`
           />
         )}
 
+        {/* Pula niezapisanych zleceń */}
+        {(() => {
+          // Znajdź wszystkie zlecenia bez przypisanego dnia (scheduledDate === null)
+          const unscheduledOrders = weeklyPlan.unscheduledOrders || [];
+          
+          if (unscheduledOrders.length === 0) {
+            return null;
+          }
+          
+          return (
+            <div className="mb-6 bg-gradient-to-r from-orange-50 to-yellow-50 rounded-lg shadow-sm p-6 border-2 border-orange-200">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-orange-500 text-white rounded-lg">
+                    <Calendar className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <h2 className="text-lg font-semibold text-orange-900">
+                      📦 Niezaplanowane zlecenia ({unscheduledOrders.length})
+                    </h2>
+                    <p className="text-sm text-orange-700">
+                      Przeciągnij zlecenie na wybrany dzień tygodnia, aby je zaplanować
+                    </p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => {
+                    // Automatycznie zaplanuj wszystkie zlecenia
+                    showNotification('🤖 Automatyczne planowanie...', 'info');
+                    loadIntelligentPlan();
+                  }}
+                  className="flex items-center gap-2 px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors"
+                  title="Automatycznie rozplanuj wszystkie zlecenia"
+                >
+                  <Bot className="h-4 w-4" />
+                  Auto-plan
+                </button>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 max-h-96 overflow-y-auto">
+                {unscheduledOrders.map((order) => (
+                  <div
+                    key={order.id}
+                    className={`p-4 bg-white rounded-lg border-2 shadow-sm hover:shadow-md transition-all cursor-move ${
+                      priorityColors[order.priority] || 'border-gray-300'
+                    }`}
+                    draggable={true}
+                    onDragStart={(e) => handleDragStart(e, order, 'unscheduled')}
+                    onDragEnd={handleDragEnd}
+                    title="Przeciągnij to zlecenie na wybrany dzień"
+                  >
+                    <div className="flex items-start justify-between mb-2">
+                      <div className="flex-1">
+                        <h4 className="font-semibold text-gray-900 text-sm">
+                          {order.clientName || 'Brak nazwy'}
+                        </h4>
+                        <p className="text-xs text-gray-600 mt-1">
+                          {order.deviceType} {order.brand && `- ${order.brand}`}
+                        </p>
+                      </div>
+                      <span className={`text-xs px-2 py-1 rounded-full font-medium ${
+                        order.priority === 'urgent' ? 'bg-red-100 text-red-800' :
+                        order.priority === 'high' ? 'bg-orange-100 text-orange-800' :
+                        order.priority === 'medium' ? 'bg-yellow-100 text-yellow-800' :
+                        'bg-green-100 text-green-800'
+                      }`}>
+                        {order.priority === 'urgent' ? '🔥 Pilne' :
+                         order.priority === 'high' ? '⚡ Wysokie' :
+                         order.priority === 'medium' ? '📌 Średnie' :
+                         '✅ Niskie'}
+                      </span>
+                    </div>
+                    
+                    <div className="text-xs text-gray-600 mb-2 line-clamp-2">
+                      {order.description || order.problemDescription || 'Brak opisu'}
+                    </div>
+                    
+                    <div className="flex items-center justify-between text-xs text-gray-500">
+                      <span className="flex items-center gap-1">
+                        <Clock className="h-3 w-3" />
+                        {order.estimatedDuration || 60} min
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <DollarSign className="h-3 w-3" />
+                        {order.serviceCost || 150} zł
+                      </span>
+                    </div>
+                    
+                    {order.address && (
+                      <div className="mt-2 pt-2 border-t border-gray-200">
+                        <p className="text-xs text-gray-600 truncate" title={order.address}>
+                          📍 {order.address}
+                        </p>
+                      </div>
+                    )}
+                    
+                    {order.preferredDate && (
+                      <div className="mt-2 text-xs text-blue-600 font-medium">
+                        Preferowana: {new Date(order.preferredDate).toLocaleDateString('pl-PL')}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          );
+        })()}
+
         {/* Plan tygodniowy z datami */}
         <div className={`grid gap-6 ${
           expandedDay ? 'grid-cols-1' : 
@@ -4433,7 +4720,8 @@ ODPOWIADAJ KONKRETNIE z praktycznymi sugestiami i przyciskami akcji.`
           viewMode === 2 ? 'grid-cols-1 md:grid-cols-2' :
           viewMode === 3 ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' :
           viewMode === 4 ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-4' :
-          'grid-cols-1 lg:grid-cols-5'
+          viewMode === 5 ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-5' :
+          'grid-cols-1 md:grid-cols-2 lg:grid-cols-7'
         }`}>
           {Object.keys(dayNames).map(day => {
             const dayPlan = weeklyPlan.weeklyPlan[day];

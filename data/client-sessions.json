@@ -87,5 +87,31 @@
     "createdAt": "2025-10-06T05:56:43.736Z",
     "lastActivity": "2025-10-06T05:56:43.736Z",
     "isValid": true
+  },
+  {
+    "token": "0af841a4-389f-484a-b12a-49b1d5ac8c60",
+    "clientId": "CLIS252780016",
+    "email": "Bielaszkam2@gmail.com",
+    "phone": "121212",
+    "loginMethod": "email",
+    "createdAt": "2025-10-07T19:21:34.394Z",
+    "lastActivity": "2025-10-07T19:21:34.394Z",
+    "isValid": true,
+    "rememberMe": false,
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36"
+  },
+  {
+    "token": "daff32ae-04c1-4388-b18a-6d30aa921dca",
+    "clientId": "CLIS252780016",
+    "email": "Bielaszkam2@gmail.com",
+    "phone": "121212",
+    "loginMethod": "email",
+    "createdAt": "2025-10-07T21:00:41.500Z",
+    "lastActivity": "2025-10-07T21:00:41.500Z",
+    "isValid": true,
+    "rememberMe": false,
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36"
   }
 ]

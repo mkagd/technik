@@ -174,7 +174,7 @@ export default function IndexNaprawa() {
                                         {showLoginDropdown && (
                                             <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
                                                 <Link
-                                                    href="/logowanie"
+                                                    href="/client/login"
                                                     className="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
                                                     onClick={() => setShowLoginDropdown(false)}
                                                 >
@@ -355,7 +355,7 @@ export default function IndexNaprawa() {
                                     <h3 className="text-lg font-semibold text-gray-900 mb-4">Masz już konto?</h3>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                                         <Link
-                                            href="/logowanie"
+                                            href="/client/login"
                                             className="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors text-center"
                                         >
                                             Zaloguj się
@@ -516,7 +516,7 @@ export default function IndexNaprawa() {
                             <ul className="space-y-2 text-sm text-gray-400">
                                 {!currentUser ? (
                                     <>
-                                        <li><Link href="/logowanie" className="hover:text-white">Zaloguj się</Link></li>
+                                        <li><Link href="/client/login" className="hover:text-white">Zaloguj się</Link></li>
                                         <li><Link href="/rejestracja" className="hover:text-white">Zarejestruj się</Link></li>
                                         <li><Link href="/admin-new" className="hover:text-white">Panel Admin</Link></li>
                                         <li><Link href="/moje-zamowienie" className="hover:text-white">Moje zamówienie</Link></li>
@@ -557,3 +557,4 @@ export default function IndexNaprawa() {
         </div>
     );
 }
+

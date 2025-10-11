@@ -1,0 +1,309 @@
+[
+  {
+    "id": 1759791289229,
+    "status": "pending",
+    "updatedAt": "2025-10-06T23:09:40.664Z",
+    "coordinates": null,
+    "geocodingMeta": {
+      "status": "pending",
+      "provider": null,
+      "lastAttempt": null,
+      "error": null
+    }
+  },
+  {
+    "id": 1759789846224,
+    "status": "pending",
+    "updatedAt": "2025-10-06T23:09:03.472Z",
+    "coordinates": null,
+    "geocodingMeta": {
+      "status": "pending",
+      "provider": null,
+      "lastAttempt": null,
+      "error": null
+    }
+  },
+  {
+    "id": 1759788134202,
+    "status": "pending",
+    "updatedAt": "2025-10-06T23:08:58.965Z",
+    "coordinates": null,
+    "geocodingMeta": {
+      "status": "pending",
+      "provider": null,
+      "lastAttempt": null,
+      "error": null
+    }
+  },
+  {
+    "clientId": "CLIS252810005",
+    "clientName": "Technik B",
+    "clientPhone": "572772540",
+    "email": "bielaszkam2@gmail.com",
+    "address": "Słupia 114, 28-133 Pacanow",
+    "city": "Pacanow",
+    "street": "Słupia 114",
+    "postalCode": "28-133",
+    "phones": [],
+    "addresses": [],
+    "clientLocation": {
+      "address": "Słupia 114, 28-133 Pacanow (przybliżona lokalizacja, Kraków)",
+      "coordinates": {
+        "lat": 50.0647,
+        "lng": 19.945
+      },
+      "accuracy": "APPROXIMATE",
+      "confidence": 0.3
+    },
+    "latitude": 50.0647,
+    "longitude": 19.945,
+    "deviceType": "Pralka",
+    "brand": "Beko",
+    "model": "Nie określono",
+    "serialNumber": "",
+    "description": "Nie pobiera wody",
+    "priority": "medium",
+    "status": "pending",
+    "visits": [],
+    "category": "Pralka",
+    "serviceType": "",
+    "scheduledDate": "2025-10-08T03:27:59.573Z",
+    "availability": "Nie określono",
+    "devices": [
+      {
+        "name": "Pralka",
+        "brand": "Beko",
+        "model": "",
+        "serialNumber": "",
+        "description": "Nie pobiera wody",
+        "hasBuiltIn": false,
+        "builtInParams": {
+          "demontaz": false,
+          "montaz": false,
+          "trudna": false,
+          "wolnostojacy": false,
+          "ograniczony": false,
+          "front": false,
+          "czas": false
+        },
+        "builtInParamsNotes": {}
+      }
+    ],
+    "builtInParams": {
+      "demontaz": false,
+      "montaz": false,
+      "trudna": false,
+      "wolnostojacy": false,
+      "ograniczony": false,
+      "front": false,
+      "czas": false
+    },
+    "deviceDetails": {
+      "deviceType": "pralka",
+      "hasBuiltIn": false,
+      "hasDemontaz": false,
+      "hasMontaz": false,
+      "hasTrudnaZabudowa": false,
+      "manualAdditionalTime": 0
+    },
+    "dates": [],
+    "hours": null,
+    "end": null,
+    "id": 1759894079630,
+    "orderNumber": "ORDS252810003",
+    "source": "system-auto",
+    "sourceDetails": null,
+    "createdBy": "system",
+    "createdByName": "System",
+    "userId": null,
+    "isUserCreated": false,
+    "createdFromIP": null,
+    "dateAdded": "2025-10-08T03:27:59.630Z",
+    "createdAt": "2025-10-08T03:27:59.630Z",
+    "updatedAt": "2025-10-08T03:27:59.630Z",
+    "updatedBy": null,
+    "coordinates": null,
+    "geocodingMeta": {
+      "status": "pending",
+      "provider": null,
+      "lastAttempt": null,
+      "error": null
+    }
+  },
+  {
+    "clientId": "CLIS252810006",
+    "clientName": "Klient #688351",
+    "clientPhone": "601240554",
+    "email": "",
+    "address": "228J, 39-200 Nagawczyna ",
+    "city": "Nagawczyna ",
+    "street": "228J",
+    "postalCode": "39-200",
+    "phones": [],
+    "addresses": [],
+    "clientLocation": {
+      "address": "228J, 39-200 Nagawczyna  (przybliżona lokalizacja, Kraków)",
+      "coordinates": {
+        "lat": 50.0647,
+        "lng": 19.945
+      },
+      "accuracy": "APPROXIMATE",
+      "confidence": 0.3
+    },
+    "latitude": 50.0647,
+    "longitude": 19.945,
+    "deviceType": "Pralka",
+    "brand": "Samsung",
+    "model": "Nie określono",
+    "serialNumber": "",
+    "description": "Wycieka woda",
+    "priority": "medium",
+    "status": "pending",
+    "visits": [],
+    "category": "Pralka",
+    "serviceType": "",
+    "scheduledDate": "2025-10-08T10:51:28.403Z",
+    "availability": "Nie określono",
+    "devices": [
+      {
+        "name": "Pralka",
+        "brand": "Samsung",
+        "model": "",
+        "serialNumber": "",
+        "description": "Wycieka woda",
+        "hasBuiltIn": false,
+        "builtInParams": {
+          "demontaz": false,
+          "montaz": false,
+          "trudna": false,
+          "wolnostojacy": false,
+          "ograniczony": false,
+          "front": false,
+          "czas": false
+        },
+        "builtInParamsNotes": {}
+      }
+    ],
+    "builtInParams": {
+      "demontaz": false,
+      "montaz": false,
+      "trudna": false,
+      "wolnostojacy": false,
+      "ograniczony": false,
+      "front": false,
+      "czas": false
+    },
+    "deviceDetails": {
+      "deviceType": "pralka",
+      "hasBuiltIn": false,
+      "hasDemontaz": false,
+      "hasMontaz": false,
+      "hasTrudnaZabudowa": false,
+      "manualAdditionalTime": 0
+    },
+    "dates": [],
+    "hours": null,
+    "end": null,
+    "id": 1759920688450,
+    "orderNumber": "ORDS252810004",
+    "source": "system-auto",
+    "sourceDetails": null,
+    "createdBy": "system",
+    "createdByName": "System",
+    "userId": null,
+    "isUserCreated": false,
+    "createdFromIP": null,
+    "dateAdded": "2025-10-08T10:51:28.450Z",
+    "createdAt": "2025-10-08T10:51:28.450Z",
+    "updatedAt": "2025-10-08T10:51:28.450Z",
+    "updatedBy": null
+  },
+  {
+    "clientId": "CLIS252820001",
+    "clientName": "Oliwia Klich",
+    "clientPhone": "792392870",
+    "email": "oliwiabielaszka2@gmail.com",
+    "address": "sikorskiego 11, 39-200 Dębica",
+    "city": "Dębica",
+    "street": "sikorskiego 11",
+    "postalCode": "39-200",
+    "phones": [],
+    "addresses": [],
+    "clientLocation": {
+      "address": "sikorskiego 11, 39-200 Dębica,  Polska",
+      "coordinates": {
+        "lat": 50.052941216759066,
+        "lng": 21.411416351553658
+      },
+      "accuracy": "APPROXIMATE",
+      "confidence": 0.7
+    },
+    "latitude": 50.052941216759066,
+    "longitude": 21.411416351553658,
+    "deviceType": "Pralka",
+    "brand": "Amica",
+    "model": "Nie określono",
+    "serialNumber": "",
+    "description": "Nie pobiera wody",
+    "priority": "medium",
+    "status": "pending",
+    "visits": [],
+    "category": "Pralka",
+    "serviceType": "",
+    "scheduledDate": "2025-10-09T19:56:06.692Z",
+    "availability": "Nie określono",
+    "devices": [
+      {
+        "name": "Pralka",
+        "brand": "Amica",
+        "model": "",
+        "serialNumber": "",
+        "description": "Nie pobiera wody",
+        "hasBuiltIn": false,
+        "builtInParams": {
+          "demontaz": false,
+          "montaz": false,
+          "trudna": false,
+          "wolnostojacy": false,
+          "ograniczony": false,
+          "front": false,
+          "czas": false
+        },
+        "builtInParamsNotes": {}
+      }
+    ],
+    "builtInParams": {
+      "demontaz": false,
+      "montaz": false,
+      "trudna": false,
+      "wolnostojacy": false,
+      "ograniczony": false,
+      "front": false,
+      "czas": false
+    },
+    "deviceDetails": {
+      "deviceType": "pralka",
+      "hasBuiltIn": true,
+      "hasDemontaz": true,
+      "hasMontaz": true,
+      "hasTrudnaZabudowa": false,
+      "manualAdditionalTime": 0
+    },
+    "dates": [],
+    "hours": null,
+    "end": null,
+    "id": 1760039766747,
+    "orderNumber": "ORDS252820001",
+    "source": "system-auto",
+    "sourceDetails": null,
+    "createdBy": "system",
+    "createdByName": "System",
+    "userId": null,
+    "isUserCreated": false,
+    "createdFromIP": null,
+    "dateAdded": "2025-10-09T19:56:06.747Z",
+    "createdAt": "2025-10-09T19:56:06.747Z",
+    "updatedAt": "2025-10-09T19:56:06.747Z",
+    "updatedBy": null
+  }
+]

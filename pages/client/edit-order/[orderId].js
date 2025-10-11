@@ -209,7 +209,45 @@ export default function EditOrder() {
     }));
   };
 
-  // Photo upload
+  // 📸 Upload zdjęcia przez API (zamiast base64)
+  const [uploadProgress, setUploadProgress] = useState({});
+
+  const uploadPhotoToServer = async (file, index) => {
+    const formData = new FormData();
+    formData.append('photo', file);
+    formData.append('orderId', orderId); // Użyj prawdziwego ID zamówienia
+    formData.append('category', 'client-order');
+    formData.append('userId', client?.id || 'GUEST');
+
+    try {
+      setUploadProgress(prev => ({ ...prev, [index]: 0 }));
+
+      const response = await fetch('/api/upload-photo', {
+        method: 'POST',
+        body: formData
+      });
+
+      if (!response.ok) {
+        throw new Error('Upload failed');
+      }
+
+      const data = await response.json();
+      setUploadProgress(prev => ({ ...prev, [index]: 100 }));
+
+      return {
+        url: data.data.url,
+        thumbnailUrl: data.data.thumbnailUrl,
+        filename: data.data.filename,
+        uploadedAt: data.data.uploadedAt,
+        metadata: data.data.metadata
+      };
+    } catch (error) {
+      console.error('Upload error:', error);
+      setUploadProgress(prev => ({ ...prev, [index]: -1 }));
+      throw error;
+    }
+  };
+
   const handlePhotoUpload = async (e) => {
     const files = Array.from(e.target.files);
     if (files.length === 0) return;
@@ -217,14 +255,15 @@ export default function EditOrder() {
     setUploadingPhotos(true);
 
     try {
-      const uploadPromises = files.map(async (file) => {
-        // Compress image
-        const compressed = await compressImage(file);
+      const uploadPromises = files.map(async (file, index) => {
+        // Walidacja rozmiaru (10MB max)
+        if (file.size > 10 * 1024 * 1024) {
+          throw new Error(`${file.name} jest za duży (max 10MB)`);
+        }
 
-        // Convert to base64
-        const base64 = await fileToBase64(compressed);
-
-        return base64;
+        // Upload do serwera
+        const photoData = await uploadPhotoToServer(file, uploadedPhotos.length + index);
+        return photoData;
       });
 
       const newPhotos = await Promise.all(uploadPromises);
@@ -237,9 +276,10 @@ export default function EditOrder() {
       }));
     } catch (err) {
       console.error('Error uploading photos:', err);
-      alert('Błąd podczas przesyłania zdjęć');
+      alert(err.message || 'Błąd podczas przesyłania zdjęć');
     } finally {
       setUploadingPhotos(false);
+      setUploadProgress({});
     }
   };
 
@@ -250,61 +290,6 @@ export default function EditOrder() {
       ...prev,
       photos: newPhotos,
     }));
-  };
-
-  // Image compression
-  const compressImage = (file) => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = (event) => {
-        const img = new Image();
-        img.src = event.target.result;
-        img.onload = () => {
-          const canvas = document.createElement('canvas');
-          const MAX_WIDTH = 1200;
-          const MAX_HEIGHT = 1200;
-          let width = img.width;
-          let height = img.height;
-
-          if (width > height) {
-            if (width > MAX_WIDTH) {
-              height *= MAX_WIDTH / width;
-              width = MAX_WIDTH;
-            }
-          } else {
-            if (height > MAX_HEIGHT) {
-              width *= MAX_HEIGHT / height;
-              height = MAX_HEIGHT;
-            }
-          }
-
-          canvas.width = width;
-          canvas.height = height;
-          const ctx = canvas.getContext('2d');
-          ctx.drawImage(img, 0, 0, width, height);
-
-          canvas.toBlob(
-            (blob) => {
-              resolve(new File([blob], file.name, { type: 'image/jpeg' }));
-            },
-            'image/jpeg',
-            0.8
-          );
-        };
-        img.onerror = reject;
-      };
-      reader.onerror = reject;
-    });
-  };
-
-  const fileToBase64 = (file) => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = reject;
-    });
   };
 
   // Submit form

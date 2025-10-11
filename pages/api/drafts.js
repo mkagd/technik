@@ -140,6 +140,7 @@ export default async function handler(req, res) {
         const { draftId } = req.query;
 
         if (!draftId) {
+            console.log('⚠️ DELETE request without draftId');
             return res.status(400).json({ 
                 success: false, 
                 message: 'Brak ID draftu' 
@@ -157,9 +158,11 @@ export default async function handler(req, res) {
                 message: 'Draft usunięty' 
             });
         } else {
-            return res.status(404).json({ 
-                success: false, 
-                message: 'Draft nie znaleziony' 
+            // Draft nie znaleziony - może był już usunięty, zwróć sukces
+            console.log(`ℹ️ Draft not found (already deleted?): ${draftId}`);
+            return res.status(200).json({ 
+                success: true, 
+                message: 'Draft już nie istnieje (prawdopodobnie był usunięty wcześniej)' 
             });
         }
     }

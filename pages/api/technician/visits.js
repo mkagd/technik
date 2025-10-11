@@ -121,10 +121,15 @@ const extractVisitsFromOrder = (order) => {
         technicianNotes: visit.technicianNotes || '',
         internalNotes: visit.internalNotes || order.internalNotes,
         
-        // Zdjęcia
+        // Zdjęcia - wszystkie kategorie
+        photos: order.photos || [], // Główne zdjęcia od klienta
         beforePhotos: visit.beforePhotos || order.beforePhotos || [],
+        duringPhotos: visit.duringPhotos || order.duringPhotos || [],
         afterPhotos: visit.afterPhotos || order.afterPhotos || [],
-        completionPhotos: visit.completionPhotos || [],
+        completionPhotos: visit.completionPhotos || order.completionPhotos || [],
+        problemPhotos: visit.problemPhotos || order.problemPhotos || [],
+        partPhotos: visit.partPhotos || order.partPhotos || [],
+        allPhotos: order.allPhotos || [], // Wszystkie zdjęcia (agregat)
         
         // Tracking
         startTime: visit.startTime,
@@ -191,8 +196,15 @@ const extractVisitsFromOrder = (order) => {
       technicianNotes: order.technicianNotes || '',
       internalNotes: order.internalNotes,
       
+      // Zdjęcia - wszystkie kategorie
+      photos: order.photos || [],
       beforePhotos: order.beforePhotos || [],
+      duringPhotos: order.duringPhotos || [],
       afterPhotos: order.afterPhotos || [],
+      completionPhotos: order.completionPhotos || [],
+      problemPhotos: order.problemPhotos || [],
+      partPhotos: order.partPhotos || [],
+      allPhotos: order.allPhotos || [],
       
       workSessions: order.workSessions || [],
       
@@ -237,6 +249,7 @@ const getVisitTypeLabel = (type) => {
 // Etykiety statusów wizyt
 const getVisitStatusLabel = (status) => {
   const labels = {
+    'pending': 'Do zaplanowania', // Dodano: pending
     'scheduled': 'Zaplanowana',
     'on_way': 'W drodze',
     'in_progress': 'W trakcie',
@@ -386,6 +399,7 @@ export default function handler(req, res) {
       today: employeeVisits.filter(v => isToday(v.date)).length,
       thisWeek: employeeVisits.filter(v => isThisWeek(v.date)).length,
       byStatus: {
+        pending: employeeVisits.filter(v => v.status === 'pending').length, // Dodano: pending
         scheduled: employeeVisits.filter(v => v.status === 'scheduled').length,
         on_way: employeeVisits.filter(v => v.status === 'on_way').length,
         in_progress: employeeVisits.filter(v => v.status === 'in_progress').length,

@@ -66,6 +66,15 @@ export default function AllegroSearch() {
       const res = await fetch(`/api/allegro/search?${params}`);
       const data = await res.json();
 
+      // Check for verification requirement (shouldn't happen with /sale/offers endpoint)
+      if (res.status === 403 || (data.errors && data.errors[0]?.code === 'VerificationRequired')) {
+        alert('⚠️ Problem z dostępem do API Allegro\n\n' +
+              'Wyszukiwanie używa endpointu dla Twoich własnych ofert,\n' +
+              'który nie wymaga weryfikacji.\n\n' +
+              'Jeśli widzisz ten błąd, skontaktuj się z pomocą techniczną.');
+        return;
+      }
+
       if (data.success) {
         let results = data.results || [];
 

@@ -119,6 +119,11 @@ export default function AdminMagazynZamowienia() {
       if (res.ok) {
         alert('✅ Zamówienie zatwierdzone!');
         loadData();
+        
+        // Odśwież badge magazynu
+        if (typeof window !== 'undefined' && window.refreshAdminBadges) {
+          await window.refreshAdminBadges();
+        }
       } else {
         const error = await res.json();
         alert('❌ Błąd: ' + (error.error || 'Nie można zatwierdzić'));
@@ -150,6 +155,11 @@ export default function AdminMagazynZamowienia() {
       if (res.ok) {
         alert('✅ Zamówienie odrzucone!');
         loadData();
+        
+        // Odśwież badge magazynu
+        if (typeof window !== 'undefined' && window.refreshAdminBadges) {
+          await window.refreshAdminBadges();
+        }
       } else {
         alert('❌ Błąd podczas odrzucania');
       }

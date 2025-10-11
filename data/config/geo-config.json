@@ -1,0 +1,123 @@
+{
+  "version": "1.0.0",
+  "lastUpdated": "2025-10-09T19:52:39.118Z",
+  "geocoding": {
+    "provider": "osm",
+    "mode": "on-demand",
+    "cacheEnabled": true,
+    "cacheTTL": 30,
+    "fallbackProvider": "osm",
+    "googleGeocoding": {
+      "enabled": true,
+      "apiKey": "AIzaSyDuTTA-1AtXyeHd6r-uu8CFWT6UUpxGByo",
+      "requestDelay": 200,
+      "batchSize": 100,
+      "dailyLimit": 1000
+    },
+    "osmGeocoding": {
+      "enabled": true,
+      "endpoint": "https://nominatim.openstreetmap.org",
+      "userAgent": "TechnikAGD/1.0",
+      "requestDelay": 1000
+    }
+  },
+  "distanceMatrix": {
+    "provider": "haversine",
+    "cacheEnabled": true,
+    "cacheTTL": 30,
+    "fallbackProvider": "haversine",
+    "osrm": {
+      "enabled": false,
+      "endpoint": "https://router.project-osrm.org",
+      "profile": "car",
+      "maxRetries": 3,
+      "timeout": 5000
+    },
+    "googleMatrix": {
+      "enabled": false,
+      "apiKey": "",
+      "mode": "driving",
+      "units": "metric",
+      "avoid": [],
+      "requestDelay": 100,
+      "batchSize": 25,
+      "dailyLimit": 500
+    },
+    "haversine": {
+      "enabled": true,
+      "cityMultiplier": 1.3,
+      "intercityMultiplier": 1.5,
+      "avgSpeedCity": 40,
+      "avgSpeedIntercity": 80
+    }
+  },
+  "mapsDisplay": {
+    "provider": "google",
+    "defaultZoom": 13,
+    "googleMaps": {
+      "enabled": true,
+      "apiKey": "AIzaSyDuTTA-1AtXyeHd6r-uu8CFWT6UUpxGByo",
+      "mapType": "roadmap",
+      "features": {
+        "streetView": true,
+        "traffic": true,
+        "transit": false,
+        "bicycling": false
+      }
+    },
+    "osmMaps": {
+      "enabled": true,
+      "tileServer": "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+      "attribution": true
+    }
+  },
+  "performance": {
+    "cacheStrategy": "aggressive",
+    "preloadCommonRoutes": true,
+    "redis": {
+      "enabled": false,
+      "host": "localhost",
+      "port": 6379,
+      "ttl": 86400
+    },
+    "fileCache": {
+      "enabled": true,
+      "directory": "./cache/geo",
+      "maxSize": 100
+    }
+  },
+  "backgroundJobs": {
+    "enabled": false,
+    "geocodingJob": {
+      "enabled": false,
+      "schedule": "nightly",
+      "time": "03:00",
+      "batchSize": 100,
+      "prioritizeNew": true
+    },
+    "cacheRefresh": {
+      "enabled": true,
+      "schedule": "weekly",
+      "dayOfWeek": 0,
+      "time": "03:00"
+    }
+  },
+  "costOptimization": {
+    "monitoring": {
+      "enabled": true,
+      "alertThreshold": 100,
+      "emailAlerts": true
+    },
+    "apiLimits": {
+      "dailyGoogleGeocoding": 100,
+      "dailyGoogleMatrix": 50,
+      "monthlyBudget": 200
+    },
+    "strategies": {
+      "preferFreeProviders": true,
+      "aggressiveCaching": true,
+      "batchRequests": true,
+      "avoidPeakHours": true
+    }
+  }
+}

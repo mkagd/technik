@@ -519,11 +519,9 @@ export default async function handler(req, res) {
         }
       }
 
-      // Zwróć wszystkie rezerwacje
-      if (reservations.length > 0) {
-        console.log('✅ Returning reservations:', reservations.length, 'items');
-        return res.status(200).json({ rezerwacje: reservations });
-      }
+      // Zwróć wszystkie rezerwacje - jako tablicę (nie obiekt)
+      console.log('✅ Returning reservations:', reservations.length, 'items');
+      return res.status(200).json(reservations);
     } catch (error) {
       console.error('❌ Error reading reservations:', error);
     }

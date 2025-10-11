@@ -68,6 +68,7 @@ export default function AdminVisitsList() {
   const [showAssignModal, setShowAssignModal] = useState(false);
   const [showRescheduleModal, setShowRescheduleModal] = useState(false);
   const [showCancelModal, setShowCancelModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false); // 🆕 Modal usuwania
   const [bulkOperationLoading, setBulkOperationLoading] = useState(false);
   const [bulkOperationError, setBulkOperationError] = useState(null);
   const [bulkOperationSuccess, setBulkOperationSuccess] = useState(null);
@@ -361,6 +362,50 @@ export default function AdminVisitsList() {
       setBulkOperationError(err.message);
       toast.error('❌ Błąd anulowania wizyt: ' + err.message);
     } finally {
+      setBulkOperationLoading(false);
+    }
+  };
+
+  // 🆕 Bulk delete visits (permanently remove from orders)
+  const handleBulkDelete = async (reason) => {
+    console.log('🗑️ handleBulkDelete started', { reason, selectedVisits });
+    setBulkOperationLoading(true);
+    setBulkOperationError(null);
+    try {
+      console.log('📤 Sending DELETE request to API...');
+      const response = await fetch('/api/visits/bulk-operations', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          operation: 'delete',
+          visitIds: selectedVisits,
+          data: {
+            reason,
+            deletedBy: 'admin',
+            modifiedBy: 'admin'
+          }
+        })
+      });
+
+      console.log('📥 Response received:', response.status, response.ok);
+      const result = await response.json();
+      console.log('📦 Result:', result);
+      
+      if (!response.ok) throw new Error(result.error || 'Failed to delete visits');
+      
+      setBulkOperationSuccess(`Usunięto ${result.deletedCount} wizyt`);
+      toast.success(`✅ Usunięto ${result.deletedCount} wizyt z bazy danych`);
+      setShowDeleteModal(false);
+      setSelectedVisits([]);
+      await loadVisits();
+      
+      setTimeout(() => setBulkOperationSuccess(null), 5000);
+    } catch (err) {
+      console.error('❌ Bulk delete error:', err);
+      setBulkOperationError(err.message);
+      toast.error('❌ Błąd usuwania wizyt: ' + err.message);
+    } finally {
+      console.log('✅ handleBulkDelete finished');
       setBulkOperationLoading(false);
     }
   };
@@ -1701,9 +1746,15 @@ export default function AdminVisitsList() {
                 </button>
                 <button 
                   onClick={() => setShowCancelModal(true)}
-                  className="px-4 py-2 bg-white border border-red-300 text-red-700 rounded-lg hover:bg-red-50 transition text-sm font-medium"
+                  className="px-4 py-2 bg-white border border-orange-300 text-orange-700 rounded-lg hover:bg-orange-50 transition text-sm font-medium"
                 >
                   Anuluj
+                </button>
+                <button 
+                  onClick={() => setShowDeleteModal(true)}
+                  className="px-4 py-2 bg-white border border-red-300 text-red-700 rounded-lg hover:bg-red-50 transition text-sm font-medium"
+                >
+                  Usuń trwale
                 </button>
               </div>
             </div>
@@ -3079,6 +3130,117 @@ export default function AdminVisitsList() {
                   className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Zamknij
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 🆕 Bulk Delete Modal */}
+      {showDeleteModal && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
+          onClick={() => setShowDeleteModal(false)}
+        >
+          <div
+            className="bg-white rounded-lg max-w-md w-full"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-xl font-bold text-gray-900">
+                  🗑️ Usuń wizyty trwale
+                </h2>
+                <button
+                  onClick={() => setShowDeleteModal(false)}
+                  className="p-2 hover:bg-gray-100 rounded-lg"
+                >
+                  <FiXCircle className="w-6 h-6 text-gray-600" />
+                </button>
+              </div>
+
+              <div className="mb-4 p-4 bg-red-50 border-2 border-red-300 rounded-lg">
+                <p className="text-sm text-red-900 font-semibold mb-2">
+                  ⚠️ OSTRZEŻENIE - Ta operacja jest NIEODWRACALNA!
+                </p>
+                <p className="text-sm text-red-800">
+                  Zamierzasz <strong>całkowicie usunąć</strong> {selectedVisits.length} {selectedVisits.length === 1 ? 'wizytę' : 'wizyt'} z bazy danych. 
+                  Wszystkie powiązane dane (zdjęcia, notatki, historia) zostaną utracone.
+                </p>
+                <p className="text-sm text-red-800 mt-2">
+                  💡 Jeśli chcesz tylko anulować wizyty (zachowując historię), użyj opcji <strong>"Anuluj"</strong> zamiast "Usuń".
+                </p>
+              </div>
+
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Powód usunięcia <span className="text-red-500">*</span>
+                </label>
+                <textarea
+                  id="bulkDeleteReason"
+                  rows="4"
+                  placeholder="Podaj powód trwałego usunięcia wizyt (wymagane)..."
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                />
+              </div>
+
+              <div className="mb-4">
+                <label className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    id="confirmDelete"
+                    className="w-4 h-4 text-red-600 border-gray-300 rounded focus:ring-red-500"
+                  />
+                  <span className="text-sm text-gray-700">
+                    Potwierdzam, że rozumiem konsekwencje trwałego usunięcia
+                  </span>
+                </label>
+              </div>
+
+              {bulkOperationError && (
+                <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+                  <p className="text-sm text-red-600">{bulkOperationError}</p>
+                </div>
+              )}
+
+              {bulkOperationSuccess && (
+                <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg">
+                  <p className="text-sm text-green-600">{bulkOperationSuccess}</p>
+                </div>
+              )}
+
+              <div className="flex gap-2">
+                <button
+                  onClick={() => {
+                    const reason = document.getElementById('bulkDeleteReason').value.trim();
+                    const confirmed = document.getElementById('confirmDelete').checked;
+                    
+                    if (!confirmed) {
+                      setBulkOperationError('Musisz potwierdzić checkbox, aby kontynuować');
+                      setTimeout(() => setBulkOperationError(''), 5000);
+                      return;
+                    }
+                    
+                    if (!reason) {
+                      setBulkOperationError('Powód usunięcia jest wymagany');
+                      setTimeout(() => setBulkOperationError(''), 5000);
+                      return;
+                    }
+                    
+                    handleBulkDelete(reason);
+                  }}
+                  disabled={bulkOperationLoading}
+                  className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed font-semibold"
+                >
+                  {bulkOperationLoading ? 'Usuwanie...' : '🗑️ Usuń trwale'}
+                </button>
+                <button
+                  onClick={() => setShowDeleteModal(false)}
+                  disabled={bulkOperationLoading}
+                  className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Anuluj
                 </button>
               </div>
             </div>

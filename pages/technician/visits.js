@@ -163,6 +163,7 @@ export default function VisitsPage() {
   // Status badge color
   const getStatusColor = (status) => {
     const colors = {
+      pending: 'bg-amber-100 text-amber-800 border border-amber-300', // Dodano: pending
       scheduled: 'bg-blue-100 text-blue-800',
       on_way: 'bg-yellow-100 text-yellow-800',
       in_progress: 'bg-green-100 text-green-800',
@@ -177,6 +178,7 @@ export default function VisitsPage() {
   // Status label (Polish)
   const getStatusLabel = (status) => {
     const labels = {
+      pending: '⏳ Do zaplanowania', // Dodano: pending
       scheduled: 'Zaplanowana',
       on_way: 'W drodze',
       in_progress: 'W trakcie',
@@ -303,6 +305,7 @@ export default function VisitsPage() {
                 className="px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               >
                 <option value="all">Wszystkie statusy</option>
+                <option value="pending">⏳ Do zaplanowania</option>
                 <option value="scheduled">Zaplanowane</option>
                 <option value="on_way">W drodze</option>
                 <option value="in_progress">W trakcie</option>
@@ -365,9 +368,10 @@ export default function VisitsPage() {
             <div className="space-y-3">
               {filteredVisits.map((visit) => {
                 const deviceBadge = getDeviceBadgeProps(visit.deviceType || visit.device);
+                const borderColor = visit.status === 'pending' ? 'border-amber-500' : 'border-blue-500';
                 
                 return (
-                <Link key={visit.visitId} href={`/technician/visit/${visit.visitId}`} className="block bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow border-l-4 border-blue-500">
+                <Link key={visit.visitId} href={`/technician/visit/${visit.visitId}`} className={`block bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow border-l-4 ${borderColor}`}>
                     {/* 🎯 PRIORYTET #1: Adres + Kod urządzenia (największa czcionka) */}
                     <div className="px-4 pt-4 pb-2">
                       <div className="flex items-start justify-between mb-2">
@@ -426,22 +430,35 @@ export default function VisitsPage() {
                           </span>
                         </div>
                         
-                        {/* Data i godzina - kompaktowo */}
+                        {/* Data i godzina - kompaktowo (lub "Do zaplanowania" dla pending) */}
                         <div className="flex items-center space-x-2 text-gray-600">
-                          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                          </svg>
-                          <span className="font-medium">
-                            {formatDate(visit.scheduledDate)}
-                          </span>
-                          {visit.scheduledTime && (
+                          {visit.status === 'pending' ? (
                             <>
-                              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <svg className="w-3.5 h-3.5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                               </svg>
-                              <span className="font-medium">
-                                {formatTime(visit.scheduledTime)}
+                              <span className="font-medium text-amber-700">
+                                Ustal termin wizyty
                               </span>
+                            </>
+                          ) : (
+                            <>
+                              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                              </svg>
+                              <span className="font-medium">
+                                {formatDate(visit.scheduledDate)}
+                              </span>
+                              {visit.scheduledTime && (
+                                <>
+                                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                  </svg>
+                                  <span className="font-medium">
+                                    {formatTime(visit.scheduledTime)}
+                                  </span>
+                                </>
+                              )}
                             </>
                           )}
                         </div>

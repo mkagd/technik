@@ -71,6 +71,10 @@ export default function PanelPrzydzialZlecen() {
   const [notifications, setNotifications] = useState([]);
   const [soundEnabled, setSoundEnabled] = useState(true);
   
+  // 🆕 NOWY: Modal szybkiego przydziału
+  const [showQuickAssignModal, setShowQuickAssignModal] = useState(false);
+  const [quickAssignOrder, setQuickAssignOrder] = useState(null);
+  
   // Stany filtrów i widoków
   const [activeView, setActiveView] = useState('incoming'); // incoming, assigned, calendar, stats
   const [filters, setFilters] = useState({
@@ -211,6 +215,7 @@ export default function PanelPrzydzialZlecen() {
           name: emp.name,
           phone: emp.phone || '+48 000 000 000',
           email: emp.email || 'brak@email.pl',
+          role: emp.role, // ← DODANE: Pole role (Serwisant / logistics)
           specializations: emp.specializations || [],
           currentOrders: 0, // Będzie obliczone na podstawie wizyt
           maxOrders: emp.maxVisitsPerWeek || 15,
@@ -300,7 +305,7 @@ export default function PanelPrzydzialZlecen() {
   // Funkcje pomocnicze
   const addNotification = (message, type = 'info') => {
     const notification = {
-      id: Date.now(),
+      id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`, // Unique ID
       message,
       type,
       timestamp: new Date()
@@ -1746,11 +1751,12 @@ export default function PanelPrzydzialZlecen() {
                             <button
                               onClick={(e) => {
                                 e.stopPropagation();
-                                // Dodaj logikę przydziału
+                                setQuickAssignOrder(order);
+                                setShowQuickAssignModal(true);
                               }}
                               className="text-xs bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-full transition-colors"
                             >
-                              Przydziel
+                              ⚡ Przydziel
                             </button>
                             <span className="text-xs text-gray-500">
                               {new Date(order.createdAt || order.receivedAt || '2025-01-01').toLocaleDateString()}
@@ -2270,6 +2276,225 @@ export default function PanelPrzydzialZlecen() {
             onReassignVisit={reassignVisit}
             employees={employees}
           />
+        )}
+
+        {/* 🆕 MODAL: Szybki wybór pracownika */}
+        {showQuickAssignModal && quickAssignOrder && (
+          <div 
+            className="fixed inset-0 bg-black bg-opacity-50 z-[60] flex items-center justify-center p-4"
+            onClick={() => setShowQuickAssignModal(false)}
+          >
+            <div 
+              className="bg-white rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Header */}
+              <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h2 className="text-2xl font-bold flex items-center space-x-2">
+                      <span>⚡</span>
+                      <span>Szybkie przydzielenie</span>
+                    </h2>
+                    <p className="text-blue-100 mt-1">
+                      Zlecenie #{quickAssignOrder.id}
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => setShowQuickAssignModal(false)}
+                    className="p-2 hover:bg-white/20 rounded-lg transition-colors"
+                  >
+                    <FiX className="h-6 w-6" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Content */}
+              <div className="p-6 overflow-y-auto max-h-[calc(90vh-140px)]">
+                <div className="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                  <p className="text-sm text-gray-700">
+                    <strong>Klient:</strong> {quickAssignOrder.clientData?.name || 'Brak danych'}
+                  </p>
+                  {quickAssignOrder.clientData?.phone && (
+                    <p className="text-sm text-gray-700 mt-1">
+                      <strong>Telefon:</strong> {quickAssignOrder.clientData.phone}
+                    </p>
+                  )}
+                  {quickAssignOrder.visitDetails?.preferredDate && (
+                    <p className="text-sm text-gray-700 mt-1">
+                      <strong>Preferowany termin:</strong> {quickAssignOrder.visitDetails.preferredDate}
+                    </p>
+                  )}
+                </div>
+
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                  Wybierz pracownika (1 klik = przydzielenie)
+                </h3>
+
+                {/* Sugerowany pracownik */}
+                {quickAssignOrder.suggestedEmployee && (
+                  <div className="mb-6">
+                    <div className="flex items-center space-x-2 mb-3">
+                      <span className="text-sm font-medium text-green-600">✨ Rekomendowany</span>
+                    </div>
+                    <button
+                      onClick={async (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        
+                        try {
+                          // Przydziel pracownika do zlecenia (dodaj do kolejki)
+                          const response = await fetch('/api/order-assignment', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                              action: 'assign-employee',
+                              orderId: quickAssignOrder.id,
+                              employeeId: quickAssignOrder.suggestedEmployee.id
+                            })
+                          });
+
+                          const result = await response.json();
+                          
+                          setShowQuickAssignModal(false);
+                          
+                          if (result.success) {
+                            addNotification('success', `✅ Przydzielono do kolejki: ${quickAssignOrder.suggestedEmployee.name}`);
+                            await refreshData();
+                          } else {
+                            addNotification('error', `❌ Błąd: ${result.message}`);
+                          }
+                        } catch (error) {
+                          console.error('❌ Błąd przydziału:', error);
+                          addNotification('error', '❌ Nie udało się przydzielić');
+                          setShowQuickAssignModal(false);
+                        }
+                      }}
+                      className="w-full p-4 bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-300 rounded-xl hover:from-green-100 hover:to-emerald-100 transition-all text-left group"
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-4">
+                          <div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center text-white font-bold text-lg">
+                            {quickAssignOrder.suggestedEmployee.name.charAt(0)}
+                          </div>
+                          <div>
+                            <p className="text-lg font-bold text-gray-900">
+                              {quickAssignOrder.suggestedEmployee.name}
+                            </p>
+                            <p className="text-sm text-gray-600">
+                              {quickAssignOrder.suggestedEmployee.role}
+                            </p>
+                            <p className="text-xs text-green-600 font-medium mt-1">
+                              ⭐ Rekomendowany na podstawie specjalizacji
+                            </p>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-lg font-bold text-green-600 group-hover:scale-110 transition-transform">
+                            ⚡ Przydziel do kolejki
+                          </p>
+                          <p className="text-xs text-gray-500">Wizytę ustalicie później</p>
+                        </div>
+                      </div>
+                    </button>
+                  </div>
+                )}
+
+                {/* Wszyscy serwisanci */}
+                <div>
+                  <h4 className="text-sm font-medium text-gray-700 mb-3">
+                    Wszyscy serwisanci
+                  </h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    {(() => {
+                      // Pobierz wszystkich serwisantów
+                      const allTechnicians = employees.filter(emp => 
+                        emp.role === 'Serwisant' || emp.role === 'technician'
+                      );
+                      
+                      // Sortuj: rekomendowany na górze, potem alfabetycznie
+                      const sortedTechnicians = allTechnicians.sort((a, b) => {
+                        if (a.id === quickAssignOrder.suggestedEmployee?.id) return -1;
+                        if (b.id === quickAssignOrder.suggestedEmployee?.id) return 1;
+                        return a.name.localeCompare(b.name);
+                      });
+                      
+                      return sortedTechnicians;
+                    })().map(emp => (
+                        <button
+                          key={emp.id}
+                          onClick={async (e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            
+                            try {
+                              // Przydziel pracownika do zlecenia (dodaj do kolejki)
+                              const response = await fetch('/api/order-assignment', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                  action: 'assign-employee',
+                                  orderId: quickAssignOrder.id,
+                                  employeeId: emp.id
+                                })
+                              });
+
+                              const result = await response.json();
+                              
+                              setShowQuickAssignModal(false);
+                              
+                              if (result.success) {
+                                addNotification('success', `✅ Przydzielono do kolejki: ${emp.name}`);
+                                await refreshData();
+                              } else {
+                                addNotification('error', `❌ Błąd: ${result.message}`);
+                              }
+                            } catch (error) {
+                              console.error('❌ Błąd przydziału:', error);
+                              addNotification('error', '❌ Nie udało się przydzielić');
+                              setShowQuickAssignModal(false);
+                            }
+                          }}
+                          className={`p-3 border rounded-lg transition-all text-left group relative ${
+                            emp.id === quickAssignOrder.suggestedEmployee?.id
+                              ? 'bg-green-50 hover:bg-green-100 border-green-300 hover:border-green-400'
+                              : 'bg-gray-50 hover:bg-blue-50 border-gray-200 hover:border-blue-300'
+                          }`}
+                        >
+                          {emp.id === quickAssignOrder.suggestedEmployee?.id && (
+                            <div className="absolute top-2 right-2">
+                              <span className="text-xs bg-green-500 text-white px-2 py-1 rounded-full font-medium">
+                                ✨ Rekomendowany
+                              </span>
+                            </div>
+                          )}
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center space-x-3">
+                              <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-bold ${
+                                emp.id === quickAssignOrder.suggestedEmployee?.id ? 'bg-green-500' : 'bg-blue-500'
+                              }`}>
+                                {emp.name.charAt(0)}
+                              </div>
+                              <div>
+                                <p className="font-medium text-gray-900">{emp.name}</p>
+                                <p className="text-xs text-gray-500">{emp.role}</p>
+                              </div>
+                            </div>
+                            <div className={`text-xs font-medium transition-colors ${
+                              emp.id === quickAssignOrder.suggestedEmployee?.id 
+                                ? 'text-green-600 group-hover:text-green-700' 
+                                : 'text-gray-500 group-hover:text-blue-600'
+                            }`}>
+                              Do kolejki →
+                            </div>
+                          </div>
+                        </button>
+                      ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         )}
       </div>
     </div>
@@ -2842,107 +3067,178 @@ function VisitManagementModal({ order, employees, onClose, onAddVisit, onReassig
           )}
 
           {activeTab === 'addVisit' && (
-            <div className="max-w-lg">
-              <h3 className="font-semibold text-gray-900 mb-4">Dodaj nową wizytę</h3>
+            <div className="max-w-2xl">
+              <h3 className="font-semibold text-gray-900 mb-3">⚡ Szybkie dodawanie wizyty</h3>
               
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Typ wizyty
-                  </label>
-                  <select
-                    value={visitForm.type}
-                    onChange={(e) => setVisitForm({...visitForm, type: e.target.value})}
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2"
-                  >
-                    <option value="diagnosis">🔍 Diagnoza</option>
-                    <option value="repair">🔧 Naprawa</option>
-                    <option value="inspection">✅ Kontrola/Przegląd</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Technik
-                  </label>
-                  <select
-                    value={visitForm.employeeId}
-                    onChange={(e) => setVisitForm({...visitForm, employeeId: e.target.value})}
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2"
-                  >
-                    <option value="">Wybierz technika...</option>
-                    {employees.filter(emp => emp.isActive).map(emp => (
-                      <option key={emp.id} value={emp.id}>
-                        {emp.name} - {emp.specializations?.join(', ') || 'Brak specjalizacji'}
-                      </option>
-                    ))}
-                  </select>
-                  
-                  {order.suggestedEmployee && (
+              {/* SZYBKI PRZYCISK - Najczęstszy przypadek */}
+              {order.suggestedEmployee && (
+                <div className="mb-4 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-blue-300 rounded-lg">
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="flex-1">
+                      <div className="flex items-center mb-1">
+                        <span className="text-lg mr-2">⚡</span>
+                        <h4 className="font-semibold text-gray-900">Szybka wizyta diagnozy</h4>
+                      </div>
+                      <p className="text-sm text-gray-600 mb-2">
+                        Najlepszy technik: <span className="font-medium text-blue-700">{order.suggestedEmployee.name}</span>
+                      </p>
+                      <div className="flex gap-2 text-xs text-gray-600">
+                        <span>📅 Jutro</span>
+                        <span>•</span>
+                        <span>🕐 9:00</span>
+                        <span>•</span>
+                        <span className="text-green-600 font-medium">✓ Dostępny</span>
+                      </div>
+                    </div>
                     <button
-                      onClick={() => setVisitForm({...visitForm, employeeId: order.suggestedEmployee.id})}
-                      className="mt-1 text-xs text-blue-600 hover:text-blue-800"
+                      onClick={() => {
+                        const tomorrow = new Date();
+                        tomorrow.setDate(tomorrow.getDate() + 1);
+                        setVisitForm({
+                          ...visitForm,
+                          employeeId: order.suggestedEmployee.id,
+                          scheduledDate: tomorrow.toISOString().split('T')[0],
+                          scheduledTime: '09:00',
+                          type: 'diagnosis'
+                        });
+                        handleAddVisit();
+                      }}
+                      className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg shadow-lg hover:shadow-xl transition-all transform hover:scale-105"
                     >
-                      Użyj sugerowanego: {order.suggestedEmployee.name}
+                      <span className="text-lg">⚡</span> Umów teraz!
                     </button>
-                  )}
+                  </div>
+                  <p className="text-xs text-gray-500">� Najszybsza opcja - wizyta zostanie dodana od razu</p>
                 </div>
+              )}
 
-                <div className="grid grid-cols-2 gap-4">
+              {/* ZAAWANSOWANE OPCJE - Zwinięte domyślnie */}
+              <details className="group">
+                <summary className="cursor-pointer list-none">
+                  <div className="flex items-center justify-between p-3 bg-gray-50 hover:bg-gray-100 rounded-lg border border-gray-200 transition-colors">
+                    <div className="flex items-center gap-2">
+                      <svg className="w-4 h-4 text-gray-600 transform group-open:rotate-90 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                      <span className="text-sm font-medium text-gray-700">⚙️ Zaawansowane opcje (własna data/technik)</span>
+                    </div>
+                    <span className="text-xs text-gray-500">Kliknij aby rozwinąć</span>
+                  </div>
+                </summary>
+                
+                <div className="mt-3 p-4 bg-white border border-gray-200 rounded-lg space-y-3">
+                  {/* Kompaktowy grid 2 kolumny */}
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-xs font-medium text-gray-700 mb-1">🔍 Typ</label>
+                      <select
+                        value={visitForm.type}
+                        onChange={(e) => setVisitForm({...visitForm, type: e.target.value})}
+                        className="w-full border border-gray-300 rounded-lg px-2 py-1.5 text-sm"
+                      >
+                        <option value="diagnosis">🔍 Diagnoza</option>
+                        <option value="repair">🔧 Naprawa</option>
+                        <option value="inspection">✅ Kontrola</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-medium text-gray-700 mb-1">👨‍🔧 Technik</label>
+                      <select
+                        value={visitForm.employeeId}
+                        onChange={(e) => setVisitForm({...visitForm, employeeId: e.target.value})}
+                        className="w-full border border-gray-300 rounded-lg px-2 py-1.5 text-sm"
+                      >
+                        <option value="">Wybierz...</option>
+                        {employees.filter(emp => emp.isActive).map(emp => (
+                          <option key={emp.id} value={emp.id}>
+                            {emp.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-medium text-gray-700 mb-1">📅 Data</label>
+                      <input
+                        type="date"
+                        value={visitForm.scheduledDate}
+                        onChange={(e) => setVisitForm({...visitForm, scheduledDate: e.target.value})}
+                        className="w-full border border-gray-300 rounded-lg px-2 py-1.5 text-sm"
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="block text-xs font-medium text-gray-700 mb-1">🕐 Godzina</label>
+                      <select
+                        value={visitForm.scheduledTime}
+                        onChange={(e) => setVisitForm({...visitForm, scheduledTime: e.target.value})}
+                        className="w-full border border-gray-300 rounded-lg px-2 py-1.5 text-sm"
+                      >
+                        <option value="08:00">08:00</option>
+                        <option value="09:00">09:00</option>
+                        <option value="10:00">10:00</option>
+                        <option value="11:00">11:00</option>
+                        <option value="12:00">12:00</option>
+                        <option value="13:00">13:00</option>
+                        <option value="14:00">14:00</option>
+                        <option value="15:00">15:00</option>
+                        <option value="16:00">16:00</option>
+                        <option value="17:00">17:00</option>
+                      </select>
+                    </div>
+                  </div>
+
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Data
-                    </label>
-                    <input
-                      type="date"
-                      value={visitForm.scheduledDate}
-                      onChange={(e) => setVisitForm({...visitForm, scheduledDate: e.target.value})}
-                      className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                    <label className="block text-xs font-medium text-gray-700 mb-1">📝 Notatki (opcjonalnie)</label>
+                    <textarea
+                      value={visitForm.notes}
+                      onChange={(e) => setVisitForm({...visitForm, notes: e.target.value})}
+                      placeholder="Dodatkowe informacje..."
+                      rows="2"
+                      className="w-full border border-gray-300 rounded-lg px-2 py-1.5 text-sm"
                     />
                   </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Godzina
-                    </label>
-                    <select
-                      value={visitForm.scheduledTime}
-                      onChange={(e) => setVisitForm({...visitForm, scheduledTime: e.target.value})}
-                      className="w-full border border-gray-300 rounded-lg px-3 py-2"
-                    >
-                      <option value="08:00">08:00</option>
-                      <option value="09:00">09:00</option>
-                      <option value="10:00">10:00</option>
-                      <option value="11:00">11:00</option>
-                      <option value="12:00">12:00</option>
-                      <option value="13:00">13:00</option>
-                      <option value="14:00">14:00</option>
-                      <option value="15:00">15:00</option>
-                      <option value="16:00">16:00</option>
-                    </select>
+
+                  <button
+                    onClick={handleAddVisit}
+                    disabled={!visitForm.employeeId || !visitForm.scheduledDate}
+                    className="w-full bg-green-600 hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-medium py-2 px-4 rounded-lg transition-colors text-sm"
+                  >
+                    ✓ Dodaj wizytę z własnymi ustawieniami
+                  </button>
+                </div>
+              </details>
+
+              {/* Szybkie przyciski dla innych techników */}
+              {employees.filter(emp => emp.isActive && emp.id !== order.suggestedEmployee?.id).length > 0 && (
+                <div className="mt-4">
+                  <p className="text-xs font-medium text-gray-700 mb-2">🚀 Szybkie umówienie z innym technikiem:</p>
+                  <div className="grid grid-cols-2 gap-2">
+                    {employees.filter(emp => emp.isActive && emp.id !== order.suggestedEmployee?.id).slice(0, 4).map(emp => (
+                      <button
+                        key={emp.id}
+                        onClick={() => {
+                          const tomorrow = new Date();
+                          tomorrow.setDate(tomorrow.getDate() + 1);
+                          setVisitForm({
+                            ...visitForm,
+                            employeeId: emp.id,
+                            scheduledDate: tomorrow.toISOString().split('T')[0],
+                            scheduledTime: '09:00',
+                            type: 'diagnosis'
+                          });
+                          handleAddVisit();
+                        }}
+                        className="flex items-center justify-between p-2 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-lg text-left transition-colors"
+                      >
+                        <span className="text-sm font-medium text-gray-700">{emp.name}</span>
+                        <span className="text-xs text-gray-500">Jutro 9:00</span>
+                      </button>
+                    ))}
                   </div>
                 </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Notatki
-                  </label>
-                  <textarea
-                    value={visitForm.notes}
-                    onChange={(e) => setVisitForm({...visitForm, notes: e.target.value})}
-                    placeholder="Dodatkowe informacje o wizycie..."
-                    rows="3"
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2"
-                  />
-                </div>
-
-                <button
-                  onClick={handleAddVisit}
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors"
-                >
-                  Dodaj wizytę
-                </button>
-              </div>
+              )}
             </div>
           )}
         </div>

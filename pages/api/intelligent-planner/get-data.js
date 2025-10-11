@@ -164,6 +164,35 @@ export default async function handler(req, res) {
     // Pobierz zlecenia z pliku JSON
     let orders = loadJSONFile('orders.json');
     
+    // ✅ FILTROWANIE PO SERWISANCIE - jeśli podano servicemanId
+    if (servicemanId && servicemanId !== 'all') {
+      const assignedOrders = orders.filter(order => {
+        // Sprawdź czy zlecenie jest przypisane do tego serwisanta
+        return order.assignedTo === servicemanId || 
+               order.employeeId === servicemanId ||
+               order.technicianId === servicemanId ||
+               // Lub sprawdź w wizytach
+               (order.visits && order.visits.some(v => 
+                 v.employeeId === servicemanId || 
+                 v.technicianId === servicemanId ||
+                 v.servicemanId === servicemanId
+               ));
+      });
+      
+      // Dodaj też niezapisane zlecenia (bez przypisania)
+      const unassignedOrders = orders.filter(order => {
+        return !order.assignedTo && 
+               !order.employeeId &&
+               !order.technicianId &&
+               (!order.visits || order.visits.length === 0);
+      });
+      
+      // Połącz: zlecenia przypisane + niezapisane
+      orders = [...assignedOrders, ...unassignedOrders];
+      
+      console.log(`🔍 Filtered for serviceman ${servicemanId}: ${assignedOrders.length} assigned + ${unassignedOrders.length} unassigned = ${orders.length} total`);
+    }
+    
     // Filtruj zlecenia - tylko te bez przydzielonych wizyt lub w trakcie
     orders = orders.filter(order => {
       const status = order.status?.toLowerCase();

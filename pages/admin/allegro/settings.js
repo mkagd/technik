@@ -18,7 +18,27 @@ export default function AllegroSettings() {
 
   useEffect(() => {
     loadCurrentConfig();
-  }, []);
+    
+    // Check for success/error messages from OAuth callback
+    if (router.query.success === 'authorized') {
+      setMessage({ 
+        type: 'success', 
+        text: '✅ Pomyślnie połączono z Allegro! Możesz teraz wyszukiwać oferty.' 
+      });
+      // Clear query params
+      router.replace('/admin/allegro/settings', undefined, { shallow: true });
+    } else if (router.query.error) {
+      const errorMessages = {
+        'denied': '❌ Odmówiłeś autoryzacji aplikacji.',
+        'invalid_callback': '❌ Nieprawidłowy callback (brak kodu lub state).',
+        'token_exchange_failed': '❌ Nie udało się wymienić kodu na token.'
+      };
+      const errorMsg = errorMessages[router.query.error] || '❌ Wystąpił błąd podczas autoryzacji.';
+      setMessage({ type: 'error', text: errorMsg });
+      // Clear query params
+      router.replace('/admin/allegro/settings', undefined, { shallow: true });
+    }
+  }, [router.query]);
 
   const loadCurrentConfig = async () => {
     try {
@@ -241,6 +261,52 @@ export default function AllegroSettings() {
                 >
                   {testing ? '🔄 Testuję...' : '🧪 Testuj połączenie'}
                 </button>
+              </div>
+              
+              {/* Info about public search */}
+              {!sandbox && (
+                <div className="mt-6 p-4 bg-green-50 dark:bg-green-900/20 border-2 border-green-300 dark:border-green-700 rounded-lg">
+                  <div className="flex items-start gap-3">
+                    <span className="text-2xl">✅</span>
+                    <div>
+                      <h4 className="font-semibold text-green-900 dark:text-green-100 mb-2">
+                        Wyszukiwanie wszystkich ofert Allegro
+                      </h4>
+                      <p className="text-sm text-green-800 dark:text-green-200 mb-3">
+                        Używamy endpointu <code className="bg-green-100 dark:bg-green-800 px-2 py-0.5 rounded">/offers/listing</code> 
+                        który pozwala przeszukiwać WSZYSTKIE oferty na Allegro.
+                      </p>
+                      <p className="text-xs text-green-700 dark:text-green-300 mb-2">
+                        💡 Jeśli widzisz błąd "VerificationRequired" - Twoja aplikacja wymaga weryfikacji przez Allegro (1-3 dni).
+                      </p>
+                      <p className="text-xs text-green-700 dark:text-green-300">
+                        📧 Weryfikacja: <a href="https://apps.developer.allegro.pl/" target="_blank" rel="noopener" className="underline">apps.developer.allegro.pl</a>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Authorization Button */}
+              <div className="mt-6 p-6 bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 rounded-lg border-2 border-purple-200 dark:border-purple-800">
+                <h4 className="text-lg font-semibold text-purple-900 dark:text-purple-100 mb-2 flex items-center gap-2">
+                  <span className="text-2xl">🔐</span>
+                  Autoryzacja z Allegro
+                </h4>
+                <p className="text-sm text-purple-700 dark:text-purple-300 mb-4">
+                  Aby wyszukiwać oferty na Allegro, musisz połączyć swoje konto. 
+                  Kliknij przycisk poniżej, aby zalogować się do Allegro i autoryzować aplikację.
+                </p>
+                <a
+                  href="/api/allegro/start?userId=admin-001"
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg hover:from-purple-700 hover:to-blue-700 transition-all font-medium shadow-lg hover:shadow-xl"
+                >
+                  <span className="text-xl">🔗</span>
+                  Połącz z Allegro
+                </a>
+                <p className="text-xs text-purple-600 dark:text-purple-400 mt-3">
+                  💡 Po kliknięciu zostaniesz przekierowany na stronę Allegro do zalogowania.
+                </p>
               </div>
             </div>
           </div>

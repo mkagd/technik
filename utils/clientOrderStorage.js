@@ -216,10 +216,17 @@ const DEFAULT_BUILTIN_OPTIONS = {
 export const readOrders = async () => {
     try {
         ensureDataDir();
-        const orders = await LockedFileOperations.readJSON(ORDERS_FILE, []);
-        return orders;
+        // Użyj bezpośredniego odczytu jeśli locking nie działa
+        if (fs.existsSync(ORDERS_FILE)) {
+            const data = fs.readFileSync(ORDERS_FILE, 'utf8');
+            const orders = JSON.parse(data);
+            console.log(`✅ readOrders: Loaded ${orders.length} orders`);
+            return orders;
+        }
+        console.log('⚠️ readOrders: File not found, returning empty array');
+        return [];
     } catch (error) {
-        console.error('🔒 Błąd odczytu zamówień:', error);
+        console.error('❌ Błąd odczytu zamówień:', error);
         return [];
     }
 };

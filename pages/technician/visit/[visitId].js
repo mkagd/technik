@@ -561,6 +561,69 @@ export default function VisitDetailsPage() {
                     )}
                   </div>
                 )}
+
+                {/* Zdjęcia od klienta/administratora */}
+                {((visit.photos && visit.photos.length > 0) || 
+                  (visit.problemPhotos && visit.problemPhotos.length > 0) || 
+                  (visit.beforePhotos && visit.beforePhotos.length > 0)) && (
+                  <div className="mt-4">
+                    <p className="text-sm font-medium text-gray-700 mb-3 flex items-center">
+                      <svg className="w-4 h-4 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
+                      Zdjęcia zgłoszenia
+                    </p>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                      {/* Główne zdjęcia od klienta */}
+                      {visit.photos && visit.photos.map((photo, idx) => (
+                        <div key={`photo-${idx}`} className="relative group">
+                          <img
+                            src={photo.thumbnailUrl || photo.url || photo}
+                            alt={`Zdjęcie ${idx + 1}`}
+                            className="w-full h-32 object-cover rounded-lg border-2 border-gray-200 hover:border-blue-400 transition-all cursor-pointer"
+                            onClick={() => window.open(photo.url || photo, '_blank')}
+                            loading="lazy"
+                          />
+                          <div className="absolute top-1 right-1 bg-blue-500 text-white text-xs px-2 py-0.5 rounded">
+                            Klient
+                          </div>
+                        </div>
+                      ))}
+                      
+                      {/* Zdjęcia problemu */}
+                      {visit.problemPhotos && visit.problemPhotos.map((photo, idx) => (
+                        <div key={`problem-${idx}`} className="relative group">
+                          <img
+                            src={photo.thumbnailUrl || photo.url || photo}
+                            alt={`Problem ${idx + 1}`}
+                            className="w-full h-32 object-cover rounded-lg border-2 border-orange-200 hover:border-orange-400 transition-all cursor-pointer"
+                            onClick={() => window.open(photo.url || photo, '_blank')}
+                            loading="lazy"
+                          />
+                          <div className="absolute top-1 right-1 bg-orange-500 text-white text-xs px-2 py-0.5 rounded">
+                            Problem
+                          </div>
+                        </div>
+                      ))}
+                      
+                      {/* Zdjęcia "przed" */}
+                      {visit.beforePhotos && visit.beforePhotos.map((photo, idx) => (
+                        <div key={`before-${idx}`} className="relative group">
+                          <img
+                            src={photo.thumbnailUrl || photo.url || photo}
+                            alt={`Przed ${idx + 1}`}
+                            className="w-full h-32 object-cover rounded-lg border-2 border-gray-200 hover:border-gray-400 transition-all cursor-pointer"
+                            onClick={() => window.open(photo.url || photo, '_blank')}
+                            loading="lazy"
+                          />
+                          <div className="absolute top-1 right-1 bg-gray-500 text-white text-xs px-2 py-0.5 rounded">
+                            Przed
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 

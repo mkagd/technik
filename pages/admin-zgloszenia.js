@@ -83,11 +83,38 @@ export default function AdminZgloszenia() {
         }
     };
 
-    const deleteBooking = (id) => {
-        if (confirm('Czy na pewno chcesz usunąć to zgłoszenie?')) {
-            const updatedBookings = bookings.filter(booking => booking.id !== id);
-            setBookings(updatedBookings);
-            localStorage.setItem('simpleBookings', JSON.stringify(updatedBookings));
+    const deleteBooking = async (id) => {
+        if (!confirm('Czy na pewno chcesz usunąć to zgłoszenie?')) {
+            return;
+        }
+
+        try {
+            // ✅ Wywołaj API do usunięcia rezerwacji
+            const response = await fetch(`/api/rezerwacje/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Błąd podczas usuwania');
+            }
+
+            const data = await response.json();
+
+            if (data.success) {
+                // Usuń z lokalnego stanu
+                const updatedBookings = bookings.filter(booking => booking.id !== id);
+                setBookings(updatedBookings);
+                localStorage.setItem('simpleBookings', JSON.stringify(updatedBookings));
+                console.log('✅ Zgłoszenie usunięte:', id);
+            } else {
+                alert('Błąd: ' + (data.message || 'Nie udało się usunąć'));
+            }
+        } catch (error) {
+            console.error('❌ Błąd podczas usuwania zgłoszenia:', error);
+            alert('Wystąpił błąd podczas usuwania zgłoszenia');
         }
     };
 

@@ -24,6 +24,9 @@ export default async function handler(req, res) {
     try {
         if (req.method === 'POST') {
             // Rozróżniaj między przydzielaniem zlecenia a dodawaniem wizyty
+            if (req.body.action === 'assign-employee') {
+                return await assignEmployeeToQueue(req, res);
+            }
             if (req.body.action === 'add-visit') {
                 return await addVisit(req, res);
             }
@@ -182,7 +185,8 @@ async function getOrdersWithVisits(req, res) {
         const activeOrders = orders.filter(order => 
             !order.isDeleted && // Nie pokazuj usuniętych zleceń
             order.status !== 'completed' && 
-            order.status !== 'cancelled'
+            order.status !== 'cancelled' &&
+            order.status !== 'contacted' // Nie pokazuj zleceń "contacted" (czekają na konwersję)
         );
 
         // Sortuj według priorytetu i daty otrzymania
@@ -977,6 +981,104 @@ async function updateVisitStatus(req, res) {
         return res.status(500).json({
             success: false,
             message: 'Błąd podczas aktualizacji statusu'
+        });
+    }
+}
+
+// 🎯 Nowa funkcja: Przydziel pracownika do kolejki (bez od razu tworzenia wizyty)
+async function assignEmployeeToQueue(req, res) {
+    const { orderId, employeeId } = req.body;
+
+    console.log('📥 Dodawanie do kolejki:', { orderId, employeeId });
+
+    if (!orderId || !employeeId) {
+        return res.status(400).json({
+            success: false,
+            message: 'Wymagane: orderId i employeeId'
+        });
+    }
+
+    try {
+        const orders = await readOrders();
+        const employees = await readEmployees();
+
+        const order = orders.find(o => o.id == orderId);
+        const employee = employees.find(e => e.id === employeeId);
+
+        if (!order) {
+            return res.status(404).json({
+                success: false,
+                message: 'Zlecenie nie znalezione'
+            });
+        }
+
+        if (!employee) {
+            return res.status(404).json({
+                success: false,
+                message: 'Pracownik nie znaleziony'
+            });
+        }
+
+        // Stwórz wizytę oczekującą (pending) - bez konkretnego terminu
+        const newVisit = {
+            visitId: `VIS${Date.now()}`,
+            visitNumber: (order.visits || []).length + 1,
+            type: 'diagnosis', // Domyślnie diagnoza
+            scheduledDate: null, // Brak terminu - do ustalenia później
+            scheduledTime: null,
+            actualStartTime: null,
+            actualEndTime: null,
+            status: 'pending', // STATUS: pending = oczekuje na ustalenie terminu
+            technicianId: employeeId,
+            technicianName: employee.name,
+            workDescription: 'Wizyta oczekuje na ustalenie terminu',
+            findings: '',
+            duration: null,
+            photos: [],
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+        };
+
+        // Aktualizuj zlecenie - przypisz pracownika + dodaj wizytę pending
+        const updatedOrder = {
+            ...order,
+            assignedTo: employeeId,
+            assignedToName: employee.name,
+            assignedDate: new Date().toISOString(),
+            status: 'assigned', // Zmień status na "przydzielone"
+            visits: [...(order.visits || []), newVisit], // Dodaj wizytę pending
+            updatedAt: new Date().toISOString()
+        };
+
+        // Zapisz
+        const updatedOrders = orders.map(o => o.id == orderId ? updatedOrder : o);
+        await writeOrders(updatedOrders);
+
+        console.log('✅ Pracownik przydzielony + wizyta pending utworzona:', { 
+            orderId, 
+            employeeName: employee.name,
+            visitId: newVisit.visitId 
+        });
+
+        return res.status(200).json({
+            success: true,
+            message: `Zlecenie przydzielone do: ${employee.name}`,
+            data: {
+                order: updatedOrder,
+                visit: newVisit,
+                employee: {
+                    id: employee.id,
+                    name: employee.name,
+                    role: employee.role
+                }
+            }
+        });
+
+    } catch (error) {
+        console.error('❌ Błąd przydzielania do kolejki:', error);
+        return res.status(500).json({
+            success: false,
+            message: 'Błąd podczas przydzielania pracownika'
         });
     }
 }

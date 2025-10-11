@@ -157,6 +157,44 @@ export default async function handler(req, res) {
                 return res.status(400).json({ message: 'Brak ID zamówienia' });
             }
 
+            // 🔄 REVERSE WORKFLOW: Jeśli status zmieniony na 'pending', przenieś z powrotem do rezerwacji
+            if (updatedOrder.status === 'pending' && updatedOrder.reservationId) {
+                console.log('🔄 Status changed to pending - reverting to reservation');
+                
+                const { readReservations, updateReservation } = require('../../utils/dataStorage');
+                const reservations = readReservations();
+                const reservation = reservations.find(r => r.id === updatedOrder.reservationId);
+                
+                if (reservation) {
+                    console.log('📋 Found original reservation:', reservation.id);
+                    
+                    // Usuń powiązanie z zamówieniem w rezerwacji
+                    updateReservation(reservation.id, {
+                        status: 'pending',
+                        orderId: null,
+                        orderNumber: null,
+                        convertedToOrder: false,
+                        convertedAt: null,
+                        revertedAt: new Date().toISOString(),
+                        revertedBy: 'admin'
+                    });
+                    
+                    console.log('✅ Reservation reverted to pending');
+                    
+                    // Usuń zamówienie (już nie jest potrzebne)
+                    const deleteSuccess = await deleteOrder(updatedOrder.id);
+                    
+                    if (deleteSuccess) {
+                        console.log('✅ Order deleted after reverting to reservation');
+                        return res.status(200).json({ 
+                            message: 'Zlecenie przeniesione z powrotem do rezerwacji',
+                            revertedToReservation: true,
+                            reservationId: reservation.id
+                        });
+                    }
+                }
+            }
+
             const result = updateOrder(updatedOrder);
             if (result) {
                 console.log(`✅ Order updated: ${result.id}`);

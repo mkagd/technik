@@ -109,6 +109,114 @@
         "userAgent": "node",
         "source": "api"
       }
+    },
+    {
+      "id": "VLOG_1759889718322_ka3cwmzy",
+      "visitId": "VIS1759889078154",
+      "orderId": "ORD2025000001",
+      "timestamp": "2025-10-08T02:15:18.322Z",
+      "userId": "admin",
+      "userName": "Administrator",
+      "action": "updated",
+      "entity": "visit",
+      "changes": [
+        {
+          "field": "technicianId",
+          "oldValue": "EMPA252780002",
+          "newValue": "EMPA252780001",
+          "displayName": "ID technika"
+        },
+        {
+          "field": "technicianName",
+          "oldValue": "Mariusz Bielaszka",
+          "newValue": "Mario Średziński undefined",
+          "displayName": "Technik"
+        }
+      ],
+      "reason": "Edycja wizyty przez panel administracyjny",
+      "metadata": {
+        "ip": "127.0.0.1",
+        "userAgent": "node",
+        "source": "api"
+      }
+    },
+    {
+      "id": "VLOG_1759890280435_8h6lrhyi",
+      "visitId": "VIS1759869823687",
+      "orderId": 1759869572836,
+      "timestamp": "2025-10-08T02:24:40.435Z",
+      "userId": "admin",
+      "userName": "Administrator",
+      "action": "deleted",
+      "entity": "visit",
+      "changes": [
+        {
+          "field": "status",
+          "oldValue": "scheduled",
+          "newValue": "cancelled",
+          "displayName": "Status"
+        },
+        {
+          "field": "cancelledAt",
+          "newValue": "2025-10-08T02:24:40.160Z",
+          "displayName": "cancelledAt"
+        },
+        {
+          "field": "cancelledBy",
+          "newValue": "admin",
+          "displayName": "cancelledBy"
+        },
+        {
+          "field": "cancelReason",
+          "newValue": "Anulowano z panelu administracyjnego",
+          "displayName": "cancelReason"
+        }
+      ],
+      "reason": "Anulowano wizytę VIS1759869823687 dla klienta Mariusz Bielaszka",
+      "metadata": {
+        "ip": "127.0.0.1",
+        "userAgent": "node",
+        "source": "api"
+      }
+    },
+    {
+      "id": "VLOG_1760133484534_mb4f3d95",
+      "visitId": "VIS1759891907363",
+      "orderId": 1759889409396,
+      "timestamp": "2025-10-10T21:58:04.534Z",
+      "userId": "admin",
+      "userName": "Administrator",
+      "action": "deleted",
+      "entity": "visit",
+      "changes": [
+        {
+          "field": "status",
+          "oldValue": "pending",
+          "newValue": "cancelled",
+          "displayName": "Status"
+        },
+        {
+          "field": "cancelledAt",
+          "newValue": "2025-10-10T21:58:04.101Z",
+          "displayName": "cancelledAt"
+        },
+        {
+          "field": "cancelledBy",
+          "newValue": "admin",
+          "displayName": "cancelledBy"
+        },
+        {
+          "field": "cancelReason",
+          "newValue": "Anulowano z panelu administracyjnego",
+          "displayName": "cancelReason"
+        }
+      ],
+      "reason": "Anulowano wizytę VIS1759891907363 dla klienta Technik B",
+      "metadata": {
+        "ip": "127.0.0.1",
+        "userAgent": "node",
+        "source": "api"
+      }
     }
   ],
   "_metadata": {

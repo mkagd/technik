@@ -1,1 +1,36 @@
-[]
+[
+  {
+    "id": "admin-001",
+    "email": "admin@technik.pl",
+    "password": "$2b$12$S9pYt8HBv.N4mqMbCtFQsuL0E.nlIV4WsJAYZ0sNyEHOh/tDLa4eO",
+    "name": "Administrator Systemu",
+    "role": "admin",
+    "permissions": [
+      "*"
+    ],
+    "isActive": true,
+    "createdAt": "2025-10-10T20:57:52.967Z",
+    "lastLogin": "2025-10-10T21:56:40.201Z",
+    "loginAttempts": 0,
+    "lockedUntil": null
+  },
+  {
+    "id": "manager-001",
+    "email": "manager@technik.pl",
+    "password": "$2b$12$QoHjKRpdtb10S.ZK81WRB.UFvZ9mWMEe2OErrAqH4Cd1QS3AtTEWi",
+    "name": "Kierownik Serwisu",
+    "role": "manager",
+    "permissions": [
+      "orders.view",
+      "orders.edit",
+      "clients.view",
+      "clients.edit",
+      "reports.view"
+    ],
+    "isActive": true,
+    "createdAt": "2025-10-10T20:57:53.274Z",
+    "lastLogin": "2025-10-10T21:51:50.444Z",
+    "loginAttempts": 0,
+    "lockedUntil": null
+  }
+]

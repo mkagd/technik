@@ -1,7 +1,5 @@
 {
-  "_comment": "Aplikacja Production wymaga weryfikacji w Allegro Developer Portal",
-  "_instruction": "Użyj DEMO mode lub zarejestruj aplikację Sandbox na allegrosandbox.pl",
-  "clientId": "",
-  "clientSecret": "",
-  "sandbox": true
+  "clientId": "5c208152333144ad9edd14caaea0f24c",
+  "sandbox": false,
+  "clientSecret": "LtsICVIW0a4F0P9bUfO7fbmMF8AQ0PhPFveIcRC0A2phxvnh8fBPQEFTyesxWXG8"
 }

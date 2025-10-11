@@ -1,0 +1,42 @@
+{
+  "39-300": {
+    "city": "Mielec",
+    "voivodeship": "województwo podkarpackie",
+    "country": "Polska"
+  },
+  "39-331": {
+    "city": "Chorzelów",
+    "voivodeship": "województwo podkarpackie",
+    "country": "Polska"
+  },
+  "30-732": {
+    "city": "Kraków",
+    "voivodeship": "województwo małopolskie",
+    "country": "Polska"
+  },
+  "30-731": {
+    "city": "Kraków",
+    "voivodeship": "województwo małopolskie",
+    "country": "Polska"
+  },
+  "28-133": {
+    "city": "Słupia",
+    "voivodeship": "województwo świętokrzyskie",
+    "country": "Polska"
+  },
+  "33-100": {
+    "city": "Tarnów",
+    "voivodeship": "województwo małopolskie",
+    "country": "Polska"
+  },
+  "45-001": {
+    "city": "Opole",
+    "voivodeship": "województwo opolskie",
+    "country": "Polska"
+  },
+  "28-130": {
+    "city": "Kąty Stare",
+    "voivodeship": "województwo świętokrzyskie",
+    "country": "Polska"
+  }
+}

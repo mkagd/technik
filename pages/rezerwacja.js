@@ -1,8 +1,10 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { FiTool, FiMapPin, FiUser, FiClock, FiArrowRight, FiArrowLeft, FiCheck, FiX } from 'react-icons/fi';
 import GoogleGeocoder from '../geocoding/simple/GoogleGeocoder.js';
 import ModelAIScanner from '../components/ModelAIScanner';
+import ClientMatchModal from '../components/ClientMatchModal';
 import { getDeviceCode, getDeviceBadgeProps } from '../utils/deviceCodes';
+import { usePostalCode } from '../lib/postal-code/usePostalCode';
 
 export default function RezerwacjaNowa() {
     // Symulacja sesji - w tym projekcie autoryzacja jest na poziomie routingu
@@ -22,6 +24,8 @@ export default function RezerwacjaNowa() {
         checkAuth();
     }, []);
     const geocoder = useRef(null);
+    const isSubmittingRef = useRef(false); // 🔒 Ref do natychmiastowej blokady
+    const lastStepChangeTime = useRef(Date.now()); // 🕐 Timestamp ostatniej zmiany kroku
     const [currentStep, setCurrentStep] = useState(1);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [message, setMessage] = useState('');
@@ -38,6 +42,24 @@ export default function RezerwacjaNowa() {
     const [lastSaved, setLastSaved] = useState(null);
     const [isSaving, setIsSaving] = useState(false);
     const [showNewReservationButton, setShowNewReservationButton] = useState(true);
+    
+    // ✅ NOWE: Tworzenie konta podczas rezerwacji
+    const [showAccountCreation, setShowAccountCreation] = useState(false);
+    const [wantsAccount, setWantsAccount] = useState(false);
+    const [accountCreationStep, setAccountCreationStep] = useState(null); // 'offer', 'creating', 'success', 'error'
+    const [accountPassword, setAccountPassword] = useState('');
+    const [accountPasswordConfirm, setAccountPasswordConfirm] = useState('');
+    const [accountCreationError, setAccountCreationError] = useState('');
+    
+    // ✅ NOWE: Wykrywanie istniejącego klienta
+    const [showClientModal, setShowClientModal] = useState(false);
+    const [matchedClients, setMatchedClients] = useState([]);
+    const [selectedExistingClient, setSelectedExistingClient] = useState(null);
+    const [searchingClient, setSearchingClient] = useState(false);
+    const phoneSearchTimeoutRef = useRef(null);
+    
+    // ✅ NOWE: Auto-uzupełnianie miasta po kodzie pocztowym
+    const { getCityFromPostalCode, isLoading: isLoadingCity } = usePostalCode();
     
     const [formData, setFormData] = useState({
         // Multi-device support
@@ -292,26 +314,325 @@ export default function RezerwacjaNowa() {
         ).slice(0, 10);
     };
 
-    const handleChange = (e) => {
+    const handleChange = async (e) => {
         const { name, value } = e.target;
+        
+        let finalValue = value;
+        
+        // ✅ NOWE: Auto-uzupełnianie miasta po kodzie pocztowym
+        if (name === 'postalCode') {
+            const cleanCode = value.replace(/\s/g, '');
+            
+            // Sprawdź czy kod jest kompletny (format: 12-345 lub 12345)
+            if (/^\d{2}-?\d{3}$/.test(cleanCode)) {
+                try {
+                    const result = await getCityFromPostalCode(value);
+                    
+                    if (result && result.city) {
+                        console.log('✅ Auto-uzupełniono miasto:', result.city);
+                        // Ustaw miasto automatycznie
+                        setFormData(prev => ({
+                            ...prev,
+                            postalCode: finalValue,
+                            city: result.city
+                        }));
+                        return; // Wyjdź wcześniej, już zaktualizowaliśmy stan
+                    }
+                } catch (error) {
+                    console.error('❌ Błąd pobierania miasta:', error);
+                }
+            }
+        }
+        
+        // ✅ NOWE: Inteligentne auto-uzupełnianie adresu dla wsi
+        if (name === 'street') {
+            // Sprawdź czy użytkownik wpisał tylko numer (np. "228J" lub "123")
+            // Jeśli tak, i mamy już nazwę miasta, dodaj ją automatycznie
+            const isOnlyNumber = /^[\d\s\/-]+[a-zA-Z]?$/.test(value.trim());
+            
+            if (isOnlyNumber && formData.city && !value.includes(formData.city)) {
+                // Auto-uzupełnij: "228J" -> "Nagawczyna 228J"
+                finalValue = `${formData.city} ${value.trim()}`;
+            }
+        }
+        
         setFormData(prev => ({
             ...prev,
-            [name]: value
+            [name]: finalValue
         }));
+        
+        // ✅ NOWE: Sprawdź czy użytkownik ma konto gdy podaje email
+        if (name === 'email' && finalValue.includes('@')) {
+            checkExistingAccount(finalValue, 'email');
+        }
+        if (name === 'phone' && finalValue.length >= 9) {
+            checkExistingAccount(finalValue, 'phone');
+            // ✅ NOWE: Wyszukaj klienta po telefonie (z debounce)
+            searchClientByPhone(finalValue);
+        }
+    };
+    
+    // ✅ NOWE: Sprawdź czy użytkownik już ma konto
+    const checkExistingAccount = async (identifier, type) => {
+        try {
+            const response = await fetch('/api/client/auth', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    action: 'check',
+                    identifier,
+                    type
+                })
+            });
+            
+            const data = await response.json();
+            
+            if (data.found) {
+                // Użytkownik ma już konto - nie pokazuj propozycji
+                setShowAccountCreation(false);
+                setWantsAccount(false);
+                setAccountCreationStep(null);
+            } else {
+                // Nowy użytkownik - pokaż propozycję utworzenia konta
+                // Tylko jeśli ma email i telefon
+                if (formData.email && formData.phone && !wantsAccount) {
+                    setShowAccountCreation(true);
+                    setAccountCreationStep('offer');
+                }
+            }
+        } catch (error) {
+            console.error('❌ Błąd sprawdzania konta:', error);
+        }
+    };
+    
+    // ✅ NOWE: Utwórz konto podczas rezerwacji
+    const handleCreateAccount = async () => {
+        // Walidacja
+        if (!accountPassword || accountPassword.length < 6) {
+            setAccountCreationError('Hasło musi mieć minimum 6 znaków');
+            return;
+        }
+        
+        if (accountPassword !== accountPasswordConfirm) {
+            setAccountCreationError('Hasła nie są identyczne');
+            return;
+        }
+        
+        if (!formData.email || !formData.phone || !formData.name) {
+            setAccountCreationError('Wypełnij wszystkie dane: imię, email i telefon');
+            return;
+        }
+        
+        setAccountCreationStep('creating');
+        setAccountCreationError('');
+        
+        try {
+            // Podziel imię i nazwisko
+            const nameParts = formData.name.trim().split(' ');
+            const firstName = nameParts[0] || formData.name;
+            const lastName = nameParts.slice(1).join(' ') || firstName;
+            
+            const response = await fetch('/api/client/auth', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    action: 'register',
+                    type: 'individual',
+                    firstName,
+                    lastName,
+                    email: formData.email,
+                    phone: formData.phone,
+                    mobile: formData.phone,
+                    address: {
+                        street: formData.street || '',
+                        buildingNumber: '',
+                        apartmentNumber: '',
+                        city: formData.city || '',
+                        postalCode: formData.postalCode || '',
+                        voivodeship: 'podkarpackie',
+                        country: 'Polska'
+                    },
+                    password: accountPassword
+                })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                setAccountCreationStep('success');
+                setWantsAccount(true);
+                
+                // Pokaż komunikat sukcesu
+                setTimeout(() => {
+                    setShowAccountCreation(false);
+                }, 3000);
+            } else {
+                setAccountCreationStep('error');
+                setAccountCreationError(data.message || 'Nie udało się utworzyć konta');
+            }
+        } catch (error) {
+            console.error('❌ Błąd tworzenia konta:', error);
+            setAccountCreationStep('error');
+            setAccountCreationError('Błąd serwera. Spróbuj ponownie później.');
+        }
+    };
+
+    // ✅ NOWE: Wyszukaj klienta po adresie (tylko dla zalogowanych pracowników)
+    const searchClientByAddress = async () => {
+        // 🔒 ZABEZPIECZENIE: Funkcja dostępna tylko dla zalogowanych pracowników
+        if (!session?.user?.id || session.user.id.startsWith('ADMIN-')) {
+            console.log('⚠️ Wyszukiwanie klientów wyłączone dla niezalogowanych użytkowników');
+            return false; // Wyłączone dla publicznego dostępu
+        }
+
+        if (!formData.street || !formData.city) {
+            return false; // Brak wystarczających danych
+        }
+
+        setSearchingClient(true);
+        try {
+            // Pobierz token z localStorage (jeśli istnieje)
+            const token = localStorage.getItem('authToken');
+            
+            const response = await fetch('/api/clients/search-by-address', {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    ...(token && { 'Authorization': `Bearer ${token}` })
+                },
+                body: JSON.stringify({
+                    street: formData.street,
+                    city: formData.city,
+                    postalCode: formData.postalCode || ''
+                })
+            });
+
+            const data = await response.json();
+            
+            if (response.status === 401 || response.status === 403) {
+                console.warn('⚠️ Brak uprawnień do wyszukiwania klientów');
+                return false; // Brak uprawnień - kontynuuj bez wyszukiwania
+            }
+            
+            if (data.success && data.matches && data.matches.length > 0) {
+                console.log('🔍 Znaleziono klientów po adresie:', data.matches.length);
+                setMatchedClients(data.matches);
+                setShowClientModal(true);
+                return true; // Znaleziono klienta
+            }
+            
+            return false; // Nie znaleziono
+        } catch (error) {
+            console.error('❌ Błąd wyszukiwania klienta po adresie:', error);
+            return false;
+        } finally {
+            setSearchingClient(false);
+        }
+    };
+
+    // ✅ NOWE: Wyszukaj klienta po telefonie (z debounce) - tylko dla zalogowanych
+    const searchClientByPhone = useCallback(async (phone) => {
+        // 🔒 ZABEZPIECZENIE: Funkcja dostępna tylko dla zalogowanych pracowników
+        if (!session?.user?.id || session.user.id.startsWith('ADMIN-')) {
+            return; // Wyłączone dla publicznego dostępu
+        }
+
+        if (!phone || phone.length < 9) {
+            return;
+        }
+
+        // Wyczyść poprzedni timeout
+        if (phoneSearchTimeoutRef.current) {
+            clearTimeout(phoneSearchTimeoutRef.current);
+        }
+
+        // Ustaw nowy timeout (500ms debounce)
+        phoneSearchTimeoutRef.current = setTimeout(async () => {
+            try {
+                const token = localStorage.getItem('authToken');
+                
+                const response = await fetch('/api/clients/search-by-phone', {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        ...(token && { 'Authorization': `Bearer ${token}` })
+                    },
+                    body: JSON.stringify({ phone })
+                });
+
+                if (response.status === 401 || response.status === 403) {
+                    return; // Brak uprawnień - kontynuuj bez wyszukiwania
+                }
+
+                const data = await response.json();
+                
+                if (data.success && data.matches && data.matches.length > 0) {
+                    console.log('🔍 Znaleziono klientów po telefonie:', data.matches.length);
+                    setMatchedClients(data.matches);
+                    setShowClientModal(true);
+                }
+            } catch (error) {
+                console.error('❌ Błąd wyszukiwania klienta po telefonie:', error);
+            }
+        }, 500);
+    }, [session]);
+
+    // ✅ NOWE: Handler wyboru istniejącego klienta
+    const handleSelectExistingClient = (client) => {
+        console.log('✅ Wybrano istniejącego klienta:', client);
+        
+        // Wypełnij formularz danymi klienta
+        setFormData(prev => ({
+            ...prev,
+            name: client.name || prev.name,
+            phone: client.phone || prev.phone,
+            email: client.email || prev.email,
+            // Adres już jest wypełniony (bo po nim szukaliśmy)
+        }));
+        
+        // Zapisz info o wybranym kliencie
+        setSelectedExistingClient(client);
+        setShowClientModal(false);
+        
+        // Przejdź do następnego kroku
+        setCurrentStep(currentStep + 1);
+    };
+
+    // ✅ NOWE: Handler "to nowy klient"
+    const handleCreateNewClient = () => {
+        console.log('🆕 Użytkownik wybrał: to nowy klient');
+        setSelectedExistingClient(null);
+        setShowClientModal(false);
+        
+        // Przejdź do następnego kroku
+        setCurrentStep(currentStep + 1);
     };
 
     const nextStep = async () => {
+        console.log('➡️ nextStep wywołana - currentStep:', currentStep);
+        
+        // ✅ NOWE: Sprawdź istniejącego klienta po kroku 1 (adres)
+        if (currentStep === 1) {
+            const foundClient = await searchClientByAddress();
+            if (foundClient) {
+                // Modal się pojawi, zatrzymaj przejście do kolejnego kroku
+                return;
+            }
+        }
+        
         if (currentStep < 5) {
             // Jeśli przechodzimy do kroku 4 (dostępność), pobierz dane
             if (currentStep === 3 && formData.postalCode && formData.city) {
                 await fetchAvailability();
             }
             setCurrentStep(currentStep + 1);
+            console.log('➡️ Ustawiono nowy krok:', currentStep + 1);
         }
     };
 
     // Pobierz dostępność w czasie rzeczywistym
     const fetchAvailability = async () => {
+        console.log('🔄 fetchAvailability rozpoczęta');
         setLoadingAvailability(true);
         try {
             const response = await fetch('/api/availability', {
@@ -337,6 +658,7 @@ export default function RezerwacjaNowa() {
             console.error('❌ Błąd przy pobieraniu dostępności:', error);
         } finally {
             setLoadingAvailability(false);
+            console.log('🏁 fetchAvailability zakończona');
         }
     };
 
@@ -404,20 +726,49 @@ export default function RezerwacjaNowa() {
     };
 
     const handleSubmit = async (e) => {
+        const timeSinceStepChange = Date.now() - lastStepChangeTime.current;
+        
+        console.log('🔔 handleSubmit wywołany!', {
+            currentStep,
+            isSubmitting,
+            isSubmittingRef: isSubmittingRef.current,
+            timeSinceStepChange: timeSinceStepChange + 'ms',
+            timestamp: new Date().toISOString()
+        });
+        
+        // 🔒 OCHRONA 0: Natychmiastowa blokada PRZED jakimikolwiek operacjami!
+        if (isSubmittingRef.current) {
+            console.log('🚫 ZABLOKOWANO NA SAMYM POCZĄTKU! Zgłoszenie już jest wysyłane');
+            e.preventDefault();
+            return;
+        }
+        
+        // 🔒 OCHRONA 0.5: Zablokuj jeśli submit jest wywołany zbyt szybko po zmianie kroku (auto-trigger)
+        if (timeSinceStepChange < 500) {
+            console.log('� ZABLOKOWANO! Submit wywołany zbyt szybko po zmianie kroku (auto-trigger suspected)');
+            e.preventDefault();
+            return;
+        }
+        
+        // Ustaw blokadę NATYCHMIAST
+        isSubmittingRef.current = true;
         e.preventDefault();
 
         // ✅ OCHRONA 1: Zgłoszenie tylko na kroku 5 (podsumowanie)
         if (currentStep !== 5) {
             console.log(`⚠️ Zgłoszenie można wysłać tylko na kroku 5! Obecny krok: ${currentStep}`);
+            isSubmittingRef.current = false; // Odblokuj bo to nie był prawdziwy submit
             return;
         }
 
-        // ✅ OCHRONA 2: Zapobiegaj wielokrotnym wysyłkom
+        // ✅ OCHRONA 2: Dodatkowa blokada przez state
         if (isSubmitting) {
-            console.log('⚠️ Zgłoszenie już jest wysyłane - zignorowano kolejne kliknięcie');
+            console.log('⚠️ Zgłoszenie już jest wysyłane - zignorowano kolejne kliknięcie (isSubmitting)');
+            isSubmittingRef.current = false; // Odblokuj bo już jest chronione przez state
             return;
         }
 
+        console.log('✅ Rozpoczynam wysyłanie zgłoszenia...');
         setIsSubmitting(true);
         setMessage('');
 
@@ -534,11 +885,18 @@ export default function RezerwacjaNowa() {
                 if (currentDraftId) {
                     try {
                         localStorage.removeItem('reservationDraft');
-                        await fetch(`/api/drafts?id=${currentDraftId}`, { method: 'DELETE' });
+                        const deleteResponse = await fetch(`/api/drafts?draftId=${currentDraftId}`, { method: 'DELETE' });
+                        const deleteResult = await deleteResponse.json();
+                        
+                        if (deleteResponse.ok) {
+                            console.log('🗑️ Draft usunięty po wysłaniu:', deleteResult.message);
+                        } else {
+                            console.warn('⚠️ Problem z usunięciem draftu:', deleteResult.message);
+                        }
                         setCurrentDraftId(null);
-                        console.log('🗑️ Draft usunięty po wysłaniu');
                     } catch (error) {
                         console.error('❌ Błąd usuwania draftu:', error);
+                        // Nie przerywaj - zgłoszenie zostało wysłane pomyślnie
                     }
                 }
                 
@@ -554,9 +912,11 @@ export default function RezerwacjaNowa() {
         } catch (error) {
             console.error('❌ Błąd wysyłania:', error);
             setMessage(`❌ Błąd połączenia: ${error.message}`);
+        } finally {
+            // 🔓 Odblokuj możliwość ponownego wysłania
+            isSubmittingRef.current = false;
+            setIsSubmitting(false);
         }
-
-        setIsSubmitting(false);
     };
 
     const isStepValid = (step) => {
@@ -582,6 +942,8 @@ export default function RezerwacjaNowa() {
     };
 
     const goToSummary = () => {
+        console.log('📊 goToSummary wywołana - przechodzę do kroku 5');
+        lastStepChangeTime.current = Date.now(); // 🕐 Zapisz czas zmiany kroku
         setShowSummary(true);
         setCurrentStep(5);
     };
@@ -690,7 +1052,22 @@ export default function RezerwacjaNowa() {
                 )}
 
                 {/* Form Card */}
-                <form onSubmit={handleSubmit}>
+                <form onSubmit={(e) => {
+                    console.log('📝 Form onSubmit - isSubmittingRef:', isSubmittingRef.current, 'currentStep:', currentStep);
+                    // 🔒 WIELOWARSTWOWA OCHRONA przed podwójnym submitem
+                    if (isSubmittingRef.current || currentStep !== 5) {
+                        console.log('🚫 Form submit zablokowany!');
+                        e.preventDefault();
+                        return;
+                    }
+                    handleSubmit(e);
+                }} onKeyDown={(e) => {
+                    // ✅ ZABEZPIECZENIE: Zapobiegaj wysyłaniu formularza przez Enter przed krokiem 5
+                    if (e.key === 'Enter' && currentStep !== 5) {
+                        e.preventDefault();
+                        console.log('⚠️ Naciśnięto Enter - zablokowano wysyłanie (nie jesteśmy na kroku 5)');
+                    }
+                }}>
                     <div className="bg-white rounded-lg shadow-lg">
                         {/* Step 1: Lokalizacja */}
                         {currentStep === 1 && (
@@ -705,15 +1082,28 @@ export default function RezerwacjaNowa() {
                                         <label className="block text-sm font-medium text-gray-700 mb-2">
                                             Kod pocztowy *
                                         </label>
-                                        <input
-                                            type="text"
-                                            name="postalCode"
-                                            value={formData.postalCode}
-                                            onChange={handleChange}
-                                            required
-                                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                                            placeholder="00-000"
-                                        />
+                                        <div className="relative">
+                                            <input
+                                                type="text"
+                                                name="postalCode"
+                                                value={formData.postalCode}
+                                                onChange={handleChange}
+                                                required
+                                                maxLength={6}
+                                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                                placeholder="00-000"
+                                            />
+                                            {isLoadingCity && (
+                                                <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                                                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-600"></div>
+                                                </div>
+                                            )}
+                                        </div>
+                                        {isLoadingCity && (
+                                            <p className="text-xs text-blue-600 mt-1">
+                                                🔍 Wyszukuję miasto...
+                                            </p>
+                                        )}
                                     </div>
 
                                     <div>
@@ -727,13 +1117,18 @@ export default function RezerwacjaNowa() {
                                             onChange={handleChange}
                                             required
                                             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                                            placeholder="Warszawa"
+                                            placeholder="Zostanie uzupełnione automatycznie"
                                         />
+                                        {formData.city && (
+                                            <p className="text-xs text-green-600 mt-1">
+                                                ✅ Miasto uzupełnione
+                                            </p>
+                                        )}
                                     </div>
 
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-2">
-                                            Ulica i numer *
+                                            Ulica i numer / Miejscowość i numer *
                                         </label>
                                         <input
                                             type="text"
@@ -742,8 +1137,11 @@ export default function RezerwacjaNowa() {
                                             onChange={handleChange}
                                             required
                                             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                                            placeholder="ul. Główna 123"
+                                            placeholder="np. Główna 123 lub Nagawczyna 228J"
                                         />
+                                        <p className="text-xs text-gray-500 mt-1">
+                                            💡 Dla wsi wpisz: nazwa miejscowości + numer (np. "Nagawczyna 228J")
+                                        </p>
                                     </div>
 
                                     {formData.postalCode && formData.city && formData.street && (
@@ -823,6 +1221,130 @@ export default function RezerwacjaNowa() {
                                             </p>
                                         </div>
                                     </div>
+
+                                    {/* ✅ NOWE: Propozycja utworzenia konta */}
+                                    {showAccountCreation && accountCreationStep === 'offer' && formData.email && formData.phone && (
+                                        <div className="mt-4 p-4 bg-gradient-to-br from-purple-50 to-blue-50 border-2 border-purple-300 rounded-xl shadow-sm">
+                                            <div className="flex items-start">
+                                                <div className="flex-shrink-0">
+                                                    <div className="w-10 h-10 bg-purple-500 rounded-full flex items-center justify-center">
+                                                        <FiUser className="w-5 h-5 text-white" />
+                                                    </div>
+                                                </div>
+                                                <div className="ml-4 flex-1">
+                                                    <h4 className="text-lg font-semibold text-gray-900 mb-2">
+                                                        🎉 Chcesz utworzyć konto?
+                                                    </h4>
+                                                    <p className="text-sm text-gray-700 mb-3">
+                                                        Masz już email i telefon - możesz teraz utworzyć konto i zyskać:
+                                                    </p>
+                                                    <ul className="text-sm text-gray-700 space-y-1 mb-4">
+                                                        <li className="flex items-center">
+                                                            <FiCheck className="w-4 h-4 text-green-600 mr-2 flex-shrink-0" />
+                                                            Dostęp do historii wszystkich napraw
+                                                        </li>
+                                                        <li className="flex items-center">
+                                                            <FiCheck className="w-4 h-4 text-green-600 mr-2 flex-shrink-0" />
+                                                            Śledzenie statusu online w czasie rzeczywistym
+                                                        </li>
+                                                        <li className="flex items-center">
+                                                            <FiCheck className="w-4 h-4 text-green-600 mr-2 flex-shrink-0" />
+                                                            Łatwe składanie kolejnych zgłoszeń
+                                                        </li>
+                                                        <li className="flex items-center">
+                                                            <FiCheck className="w-4 h-4 text-green-600 mr-2 flex-shrink-0" />
+                                                            Dostęp do faktur i dokumentów
+                                                        </li>
+                                                    </ul>
+                                                    
+                                                    <div className="space-y-3">
+                                                        <div>
+                                                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                                                Ustaw hasło (minimum 6 znaków)
+                                                            </label>
+                                                            <input
+                                                                type="password"
+                                                                value={accountPassword}
+                                                                onChange={(e) => setAccountPassword(e.target.value)}
+                                                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
+                                                                placeholder="••••••"
+                                                            />
+                                                        </div>
+                                                        
+                                                        <div>
+                                                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                                                Powtórz hasło
+                                                            </label>
+                                                            <input
+                                                                type="password"
+                                                                value={accountPasswordConfirm}
+                                                                onChange={(e) => setAccountPasswordConfirm(e.target.value)}
+                                                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
+                                                                placeholder="••••••"
+                                                            />
+                                                        </div>
+                                                        
+                                                        {accountCreationError && (
+                                                            <div className="p-2 bg-red-50 border border-red-200 rounded-lg">
+                                                                <p className="text-sm text-red-700">{accountCreationError}</p>
+                                                            </div>
+                                                        )}
+                                                        
+                                                        <div className="flex gap-2">
+                                                            <button
+                                                                type="button"
+                                                                onClick={handleCreateAccount}
+                                                                className="flex-1 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium text-sm"
+                                                            >
+                                                                ✨ Utwórz konto
+                                                            </button>
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => {
+                                                                    setShowAccountCreation(false);
+                                                                    setAccountCreationStep(null);
+                                                                }}
+                                                                className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors font-medium text-sm"
+                                                            >
+                                                                Pomiń
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    <p className="text-xs text-gray-500 mt-3">
+                                                        💡 <strong>Bezpieczeństwo:</strong> Twoje hasło jest szyfrowane. Otrzymasz email powitalny z potwierdzeniem.
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+                                    
+                                    {/* ✅ NOWE: Tworzenie konta w toku */}
+                                    {accountCreationStep === 'creating' && (
+                                        <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                                            <div className="flex items-center">
+                                                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-600 mr-3"></div>
+                                                <p className="text-sm text-blue-800 font-medium">Tworzę konto...</p>
+                                            </div>
+                                        </div>
+                                    )}
+                                    
+                                    {/* ✅ NOWE: Konto utworzone pomyślnie */}
+                                    {accountCreationStep === 'success' && (
+                                        <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-lg">
+                                            <div className="flex items-start">
+                                                <FiCheck className="w-5 h-5 text-green-600 mr-3 flex-shrink-0 mt-0.5" />
+                                                <div>
+                                                    <p className="text-sm text-green-800 font-semibold mb-1">
+                                                        ✅ Konto utworzone pomyślnie!
+                                                    </p>
+                                                    <p className="text-sm text-green-700">
+                                                        Wysłaliśmy email powitalny na {formData.email}. Możesz teraz kontynuować rezerwację.
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         )}
@@ -867,10 +1389,6 @@ export default function RezerwacjaNowa() {
                                                         onChange={handleCategoryToggle}
                                                         className="sr-only"
                                                     />
-                                                    {/* Kod urządzenia na górze */}
-                                                    <div className={`inline-flex items-center px-2 py-1 mb-2 text-xs font-bold rounded border ${deviceBadge.className}`}>
-                                                        [{deviceBadge.code}]
-                                                    </div>
                                                     <div className={`w-12 h-12 mx-auto mb-2 rounded-full bg-gradient-to-br ${option.color} flex items-center justify-center text-white shadow-md p-2`}>
                                                         <img 
                                                             src={option.icon} 
@@ -900,9 +1418,6 @@ export default function RezerwacjaNowa() {
                                                 return (
                                                 <div key={category} className="border rounded-lg p-4 bg-gray-50">
                                                     <h4 className="text-md font-semibold mb-3 flex items-center">
-                                                        <span className={`inline-flex items-center px-2 py-1 mr-2 text-xs font-bold rounded border ${deviceBadge.className}`}>
-                                                            [{deviceBadge.code}]
-                                                        </span>
                                                         <span className="w-6 h-6 mr-2 flex items-center justify-center">
                                                             <img 
                                                                 src={`/icons/agd/${category === 'Pralka' ? 'pralka' : category === 'Zmywarka' ? 'zmywarka' : category === 'Lodówka' ? 'lodowka' : category === 'Piekarnik' ? 'piekarnik' : category === 'Suszarka' ? 'suszarka' : category === 'Kuchenka' ? 'kuchenka' : category === 'Mikrofalówka' ? 'mikrofalowka' : category === 'Okap' ? 'okap' : 'inne'}.svg`}
@@ -1350,13 +1865,10 @@ export default function RezerwacjaNowa() {
                                                         <div key={category} className="pl-3 border-l-2 border-blue-300">
                                                             <div className="text-sm text-gray-700">
                                                                 <div className="font-semibold mb-1 flex items-center">
-                                                                    <span className={`inline-flex items-center px-2 py-0.5 mr-2 text-xs font-bold rounded border ${deviceBadge.className}`}>
-                                                                        [{deviceBadge.code}]
-                                                                    </span>
                                                                     <img 
                                                                         src={`/icons/agd/${category === 'Pralka' ? 'pralka' : category === 'Zmywarka' ? 'zmywarka' : category === 'Lodówka' ? 'lodowka' : category === 'Piekarnik' ? 'piekarnik' : category === 'Suszarka' ? 'suszarka' : category === 'Kuchenka' ? 'kuchenka' : category === 'Mikrofalówka' ? 'mikrofalowka' : category === 'Okap' ? 'okap' : 'inne'}.svg`}
                                                                         alt={category}
-                                                                        className="w-4 h-4 mr-1"
+                                                                        className="w-4 h-4 mr-2"
                                                                     />
                                                                     {category}
                                                                     {(formData.brands[index] || formData.devices[index]) && ' - '}
@@ -1494,20 +2006,32 @@ export default function RezerwacjaNowa() {
                                 <button
                                     type="button"
                                     onClick={nextStep}
-                                    disabled={!isStepValid(currentStep)}
+                                    disabled={!isStepValid(currentStep) || searchingClient}
                                     className={`flex items-center px-6 py-3 rounded-lg font-medium ml-auto ${
-                                        isStepValid(currentStep)
+                                        isStepValid(currentStep) && !searchingClient
                                             ? 'bg-blue-600 text-white hover:bg-blue-700'
                                             : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                                     }`}
                                 >
-                                    Dalej
-                                    <FiArrowRight className="ml-2" />
+                                    {searchingClient && currentStep === 1 ? (
+                                        <>
+                                            <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                                            Sprawdzam bazę...
+                                        </>
+                                    ) : (
+                                        <>
+                                            Dalej
+                                            <FiArrowRight className="ml-2" />
+                                        </>
+                                    )}
                                 </button>
                             ) : currentStep === 4 ? (
                                 <button
                                     type="button"
-                                    onClick={goToSummary}
+                                    onClick={() => {
+                                        console.log('🖱️ KLIKNIĘTO przycisk "Przejdź do podsumowania"');
+                                        goToSummary();
+                                    }}
                                     disabled={!isStepValid(currentStep)}
                                     className={`flex items-center px-6 py-3 rounded-lg font-medium ml-auto ${
                                         isStepValid(currentStep)
@@ -1521,9 +2045,17 @@ export default function RezerwacjaNowa() {
                             ) : (
                                 <button
                                     type="submit"
-                                    disabled={isSubmitting}
+                                    disabled={isSubmitting || isSubmittingRef.current}
+                                    onClick={(e) => {
+                                        console.log('🖱️ KLIKNIĘTO przycisk Submit - isSubmittingRef:', isSubmittingRef.current);
+                                        if (isSubmittingRef.current) {
+                                            e.preventDefault();
+                                            e.stopPropagation();
+                                            console.log('🚫 Kliknięcie zablokowane przez isSubmittingRef');
+                                        }
+                                    }}
                                     className={`flex items-center justify-center w-full px-6 py-4 rounded-lg font-semibold text-lg ${
-                                        !isSubmitting
+                                        !isSubmitting && !isSubmittingRef.current
                                             ? 'bg-green-600 text-white hover:bg-green-700'
                                             : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                                     }`}
@@ -1571,6 +2103,15 @@ export default function RezerwacjaNowa() {
                     </div>
                 </div>
             )}
+
+            {/* Modal wykrywania istniejącego klienta */}
+            <ClientMatchModal
+                isOpen={showClientModal}
+                matches={matchedClients}
+                onSelectClient={handleSelectExistingClient}
+                onCreateNew={handleCreateNewClient}
+                searchType="address"
+            />
 
             {/* Modal AI Scanner */}
             {showAIScanner && (
