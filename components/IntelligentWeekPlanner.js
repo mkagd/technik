@@ -2457,6 +2457,12 @@ const IntelligentWeekPlanner = () => {
       
       if (saveResponse.ok) {
         console.log(`✅ Zapisano scheduledDate dla ${order.id}`);
+        
+        // 🆕 Zapisz cały plan do bazy, żeby utworzyć wizytę
+        console.log('💾 Zapisywanie całego planu do stworzenia wizyty...');
+        setTimeout(() => {
+          savePlanToDatabase();
+        }, 500);
       } else {
         console.warn(`⚠️ Nie udało się zapisać scheduledDate:`, await saveResponse.text());
         // Wycofaj optymistyczną aktualizację w przypadku błędu
