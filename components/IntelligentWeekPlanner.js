@@ -212,6 +212,7 @@ const IntelligentWeekPlanner = () => {
   
   // ⏰ Stan dla zakresu godzin timeline
   const [timeRange, setTimeRange] = useState({ start: 6, end: 23 }); // Domyślnie 6:00-23:00
+  const [hideUnusedHours, setHideUnusedHours] = useState(false); // Ukryj godziny poza zakresem
 
   // 🆕 Handler dla kliknięcia w zlecenie - otwiera modal ze szczegółami
   // 🆕 Funkcja pomocnicza do obsługi obu struktur danych (stara i nowa)
@@ -4652,6 +4653,16 @@ ODPOWIADAJ KONKRETNIE z praktycznymi sugestiami i przyciskami akcji.`
                   <option value="8-18">08:00 - 18:00 (biznesowe)</option>
                   <option value="9-17">09:00 - 17:00 (biurowe)</option>
                 </select>
+                <label className="flex items-center gap-1 text-xs text-gray-700 cursor-pointer hover:text-blue-600 transition-colors">
+                  <input
+                    type="checkbox"
+                    checked={hideUnusedHours}
+                    onChange={(e) => setHideUnusedHours(e.target.checked)}
+                    className="w-4 h-4 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
+                    title="Ukryj godziny poza wybranym zakresem (zwiń timeline)"
+                  />
+                  <span className="whitespace-nowrap">Ukryj niewykorzystane</span>
+                </label>
               </div>
 
               {/* Sortowanie */}
@@ -4919,7 +4930,17 @@ ODPOWIADAJ KONKRETNIE z praktycznymi sugestiami i przyciskami akcji.`
                   // Konwersja czasu na procent wysokości (0-100%)
                   const timeToPixels = (time) => {
                     const [h, m] = time.split(':').map(Number);
-                    return ((h * 60 + m) / (24 * 60)) * 100;
+                    const totalMinutes = h * 60 + m;
+                    
+                    if (hideUnusedHours) {
+                      // Tryb zwinięty - mapuj tylko zakres timeRange.start do timeRange.end na 0-100%
+                      const rangeMinutes = (timeRange.end - timeRange.start) * 60;
+                      const offsetMinutes = totalMinutes - (timeRange.start * 60);
+                      return (offsetMinutes / rangeMinutes) * 100;
+                    } else {
+                      // Tryb pełny - mapuj 0-24h na 0-100%
+                      return (totalMinutes / (24 * 60)) * 100;
+                    }
                   };
                   
                   // Pobierz czas rozpoczęcia wizyty z zlecenia
@@ -4957,7 +4978,17 @@ ODPOWIADAJ KONKRETNIE z praktycznymi sugestiami i przyciskami akcji.`
                     const rect = e.currentTarget.getBoundingClientRect();
                     const relativeY = mouseY - rect.top;
                     const percentY = (relativeY / rect.height) * 100;
-                    const totalMinutes = (percentY / 100) * 24 * 60;
+                    
+                    let totalMinutes;
+                    if (hideUnusedHours) {
+                      // Tryb zwinięty - mapuj 0-100% na zakres timeRange
+                      const rangeMinutes = (timeRange.end - timeRange.start) * 60;
+                      totalMinutes = (timeRange.start * 60) + (percentY / 100) * rangeMinutes;
+                    } else {
+                      // Tryb pełny - mapuj 0-100% na 0-24h
+                      totalMinutes = (percentY / 100) * 24 * 60;
+                    }
+                    
                     const hour = Math.floor(totalMinutes / 60);
                     const minute = Math.floor((totalMinutes % 60) / 15) * 15; // Zaokrąglij do 15 min
                     const newTime = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
@@ -5033,7 +5064,17 @@ ODPOWIADAJ KONKRETNIE z praktycznymi sugestiami i przyciskami akcji.`
                           const rect = e.currentTarget.getBoundingClientRect();
                           const relativeY = e.clientY - rect.top;
                           const percentY = (relativeY / rect.height) * 100;
-                          const totalMinutes = (percentY / 100) * 24 * 60;
+                          
+                          let totalMinutes;
+                          if (hideUnusedHours) {
+                            // Tryb zwinięty
+                            const rangeMinutes = (timeRange.end - timeRange.start) * 60;
+                            totalMinutes = (timeRange.start * 60) + (percentY / 100) * rangeMinutes;
+                          } else {
+                            // Tryb pełny
+                            totalMinutes = (percentY / 100) * 24 * 60;
+                          }
+                          
                           const hour = Math.floor(totalMinutes / 60);
                           const minute = Math.floor((totalMinutes % 60) / 15) * 15;
                           const time = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
@@ -5065,8 +5106,15 @@ ODPOWIADAJ KONKRETNIE z praktycznymi sugestiami i przyciskami akcji.`
                         const m = totalMinutes % 60;
                         const isFullHour = m === 0;
                         
-                        // Oblicz pozycję względem całej doby (0-24h)
-                        const positionPercent = (totalMinutes / (24 * 60)) * 100;
+                        // Oblicz pozycję - w trybie zwiniętym mapuj na 0-100%, w pełnym na pozycję w dobie
+                        let positionPercent;
+                        if (hideUnusedHours) {
+                          // Tryb zwinięty - linie równomiernie rozłożone 0-100%
+                          positionPercent = (i / ((timeRange.end - timeRange.start) * 2)) * 100;
+                        } else {
+                          // Tryb pełny - pozycja względem całej doby (0-24h)
+                          positionPercent = (totalMinutes / (24 * 60)) * 100;
+                        }
                         
                         return (
                           <div
@@ -5090,8 +5138,8 @@ ODPOWIADAJ KONKRETNIE z praktycznymi sugestiami i przyciskami akcji.`
                         );
                       })}
                       
-                      {/* Przyciemnienie godzin poza zakresem */}
-                      {timeRange.start > 0 && (
+                      {/* Przyciemnienie godzin poza zakresem - tylko w trybie pełnym */}
+                      {!hideUnusedHours && timeRange.start > 0 && (
                         <div 
                           className="absolute w-full bg-gray-900 opacity-10 pointer-events-none z-10"
                           style={{
@@ -5101,7 +5149,7 @@ ODPOWIADAJ KONKRETNIE z praktycznymi sugestiami i przyciskami akcji.`
                           title={`Ukryto godziny: 00:00 - ${timeRange.start.toString().padStart(2, '0')}:00`}
                         />
                       )}
-                      {timeRange.end < 24 && (
+                      {!hideUnusedHours && timeRange.end < 24 && (
                         <div 
                           className="absolute w-full bg-gray-900 opacity-10 pointer-events-none z-10"
                           style={{
