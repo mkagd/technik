@@ -101,6 +101,10 @@ const formatOrderForPlanner = (order) => {
     status: order.status || 'pending',
     createdAt: order.createdAt || order.receivedAt || new Date().toISOString(),
     
+    // 🆕 KRYTYCZNE: scheduledDate i assignedTo dla intelligent plannera
+    scheduledDate: order.scheduledDate || null,
+    assignedTo: order.assignedTo || null,
+    
     // Dodatkowe pola dla optymalizacji
     isVIP: order.isVIP || false,
     regionPriority: order.regionPriority || 1,
