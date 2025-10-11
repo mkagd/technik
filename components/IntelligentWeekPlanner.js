@@ -210,12 +210,44 @@ const IntelligentWeekPlanner = () => {
   const [servicemanSchedules, setServicemanSchedules] = useState({});
   const [dragOverInfo, setDragOverInfo] = useState(null); // Podgląd pozycji podczas przeciągania na timeline
   
-  // ⏰ Stan dla zakresu godzin timeline
-  const [timeRange, setTimeRange] = useState({ start: 6, end: 23 }); // Domyślnie 6:00-23:00
-  const [hideUnusedHours, setHideUnusedHours] = useState(false); // Ukryj godziny poza zakresem
+  // 💾 Pomocnicze funkcje do localStorage
+  const loadFromLocalStorage = (key, defaultValue) => {
+    try {
+      const saved = localStorage.getItem(`weekPlanner_${key}`);
+      return saved !== null ? JSON.parse(saved) : defaultValue;
+    } catch (error) {
+      console.warn(`Failed to load ${key} from localStorage:`, error);
+      return defaultValue;
+    }
+  };
+
+  const saveToLocalStorage = (key, value) => {
+    try {
+      localStorage.setItem(`weekPlanner_${key}`, JSON.stringify(value));
+    } catch (error) {
+      console.warn(`Failed to save ${key} to localStorage:`, error);
+    }
+  };
+
+  // ⏰ Stan dla zakresu godzin timeline (z localStorage)
+  const [timeRange, setTimeRange] = useState(() => loadFromLocalStorage('timeRange', { start: 6, end: 23 }));
+  const [hideUnusedHours, setHideUnusedHours] = useState(() => loadFromLocalStorage('hideUnusedHours', false));
   
-  // 🏷️ Stan dla wyboru nagłówka karty zlecenia
-  const [cardHeaderField, setCardHeaderField] = useState('clientName'); // Opcje: clientName, address, deviceType, description
+  // 🏷️ Stan dla wyboru nagłówka karty zlecenia (z localStorage)
+  const [cardHeaderField, setCardHeaderField] = useState(() => loadFromLocalStorage('cardHeaderField', 'clientName'));
+
+  // Zapisuj zmiany do localStorage
+  useEffect(() => {
+    saveToLocalStorage('timeRange', timeRange);
+  }, [timeRange]);
+
+  useEffect(() => {
+    saveToLocalStorage('hideUnusedHours', hideUnusedHours);
+  }, [hideUnusedHours]);
+
+  useEffect(() => {
+    saveToLocalStorage('cardHeaderField', cardHeaderField);
+  }, [cardHeaderField]);
 
   // 🆕 Handler dla kliknięcia w zlecenie - otwiera modal ze szczegółami
   // 🆕 Funkcja pomocnicza do obsługi obu struktur danych (stara i nowa)
@@ -1495,6 +1527,19 @@ const IntelligentWeekPlanner = () => {
           >
             {isCompleted ? '✓' : '○'}
           </button>
+          
+          {/* Przycisk do przeniesienia z powrotem do nieprzypisanych */}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              moveOrderToUnscheduled(order, currentDay);
+            }}
+            className="px-2 py-1 rounded text-xs font-medium bg-gray-200 text-gray-700 hover:bg-red-100 hover:text-red-700 transition-colors"
+            title="Przenieś z powrotem do nieprzypisanych"
+          >
+            ↩️
+          </button>
+          
           <span className={`px-2 py-1 rounded text-xs font-medium ${
             order.priority === 'high' ? 'bg-red-200 text-red-800' :
             order.priority === 'medium' ? 'bg-yellow-200 text-yellow-800' :
@@ -2245,6 +2290,50 @@ const IntelligentWeekPlanner = () => {
     }
   }, [currentServiceman, startLocation?.coordinates?.lat, startLocation?.coordinates?.lng, optimizationPreferences?.startLocation?.lat, optimizationPreferences?.startLocation?.lng, validateAndNormalizeCoordinates]);
 
+  // Funkcja do usuwania zlecenia z kalendarza (przywracanie do nieprzypisanych)
+  const moveOrderToUnscheduled = async (order, sourceDay) => {
+    try {
+      console.log(`📤 Przenoszenie zlecenia ${order.id} z ${sourceDay} do nieprzypisanych`);
+      
+      const updatedPlan = { ...weeklyPlan };
+      const scheduledOrders = [...(updatedPlan.scheduledOrders || [])];
+      const unscheduledOrders = [...(updatedPlan.unscheduledOrders || [])];
+      
+      // Usuń z scheduledOrders i dodaj do unscheduledOrders
+      const orderToMove = scheduledOrders.find(o => o.id === order.id);
+      if (orderToMove) {
+        updatedPlan.scheduledOrders = scheduledOrders.filter(o => o.id !== order.id);
+        updatedPlan.unscheduledOrders = [...unscheduledOrders, { ...orderToMove, scheduledDate: null }];
+        
+        setWeeklyPlan(updatedPlan);
+        
+        // Zapisz do API - usuń scheduledDate
+        const saveResponse = await fetch(`/api/orders/${order.id}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            scheduledDate: null,
+            assignedTo: null
+          })
+        });
+        
+        if (saveResponse.ok) {
+          console.log(`✅ Przeniesiono zlecenie ${order.id} do nieprzypisanych`);
+          showNotification(`✅ Zlecenie "${getCardHeaderText(order)}" przeniesione do nieprzypisanych`, 'success');
+        } else {
+          console.warn(`⚠️ Nie udało się zapisać zmian:`, await saveResponse.text());
+          // Wycofaj zmiany
+          loadIntelligentPlan();
+          showNotification(`❌ Błąd zapisywania zmian`, 'error');
+        }
+      }
+    } catch (error) {
+      console.error('❌ Błąd przenoszenia zlecenia:', error);
+      showNotification(`❌ Błąd: ${error.message}`, 'error');
+      loadIntelligentPlan();
+    }
+  };
+
   // Funkcje drag & drop dla zleceń
   const handleDragStart = (e, order, sourceDay) => {
     // Nie pozwalaj przeciągać wykonanych zleceń
@@ -2803,11 +2892,11 @@ const IntelligentWeekPlanner = () => {
   const [aiInputMessage, setAiInputMessage] = useState('');
   const [isAiThinking, setIsAiThinking] = useState(false);
 
-  // Nowe funkcje UI - rozwijanie, sortowanie, filtrowanie
+  // Nowe funkcje UI - rozwijanie, sortowanie, filtrowanie (z localStorage)
   const [expandedDay, setExpandedDay] = useState(null); // Rozwinięty dzień na pełny ekran
-  const [viewMode, setViewMode] = useState(7); // 1-7 kolumn (cały tydzień)
-  const [sortBy, setSortBy] = useState('default'); // default, priority, time, revenue, distance
-  const [filterBy, setFilterBy] = useState('all'); // all, high, medium, low, completed
+  const [viewMode, setViewMode] = useState(() => loadFromLocalStorage('viewMode', 7)); // 1-7 kolumn (cały tydzień)
+  const [sortBy, setSortBy] = useState(() => loadFromLocalStorage('sortBy', 'default')); // default, priority, time, revenue, distance
+  const [filterBy, setFilterBy] = useState(() => loadFromLocalStorage('filterBy', 'all')); // all, high, medium, low, completed
   const [ordersPerPage, setOrdersPerPage] = useState(10); // Paginacja
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -2815,6 +2904,19 @@ const IntelligentWeekPlanner = () => {
   useEffect(() => {
     setCurrentPage(1);
   }, [expandedDay, sortBy, filterBy]);
+
+  // Zapisuj ustawienia UI do localStorage
+  useEffect(() => {
+    saveToLocalStorage('viewMode', viewMode);
+  }, [viewMode]);
+
+  useEffect(() => {
+    saveToLocalStorage('sortBy', sortBy);
+  }, [sortBy]);
+
+  useEffect(() => {
+    saveToLocalStorage('filterBy', filterBy);
+  }, [filterBy]);
 
   // Funkcje sortowania i filtrowania zleceń
   const sortOrders = (orders, sortType) => {
@@ -4794,7 +4896,19 @@ ODPOWIADAJ KONKRETNIE z praktycznymi sugestiami i przyciskami akcji.`
           }
           
           return (
-            <div className="mb-6 bg-gradient-to-r from-orange-50 to-yellow-50 rounded-lg shadow-sm border-2 border-orange-200 h-[300px] flex flex-col">
+            <div 
+              className="mb-6 bg-gradient-to-r from-orange-50 to-yellow-50 rounded-lg shadow-sm border-2 border-orange-200 h-[300px] flex flex-col"
+              onDragOver={(e) => {
+                e.preventDefault();
+                e.dataTransfer.dropEffect = 'move';
+              }}
+              onDrop={async (e) => {
+                e.preventDefault();
+                if (draggedOrder && draggedOrder.sourceDay !== 'unscheduled') {
+                  await moveOrderToUnscheduled(draggedOrder.order, draggedOrder.sourceDay);
+                }
+              }}
+            >
               <div className="flex items-center justify-between p-4 flex-shrink-0">
                 <div className="flex items-center gap-3">
                   <div className="p-2 bg-orange-500 text-white rounded-lg">
