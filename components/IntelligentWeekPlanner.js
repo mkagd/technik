@@ -4999,7 +4999,7 @@ ODPOWIADAJ KONKRETNIE z praktycznymi sugestiami i przyciskami akcji.`
                   
                   return (
                     <div 
-                      className="relative h-[900px] bg-gray-50 border-b border-gray-200 overflow-hidden"
+                      className="relative h-[1600px] bg-gray-50 border-b border-gray-200 overflow-hidden"
                       onDragOver={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
@@ -5094,8 +5094,8 @@ ODPOWIADAJ KONKRETNIE z praktycznymi sugestiami i przyciskami akcji.`
                         const duration = getOrderDuration(order);
                         const heightPercent = timeToPixels(endTime) - timeToPixels(startTime);
                         
-                        // Oblicz rzeczywistą wysokość w pikselach (900px * heightPercent / 100)
-                        const heightPx = Math.max(50, (900 * heightPercent) / 100);
+                        // Oblicz rzeczywistą wysokość w pikselach (1600px * heightPercent / 100)
+                        const heightPx = Math.max(50, (1600 * heightPercent) / 100);
                         
                         return (
                           <div

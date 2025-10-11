@@ -387,7 +387,7 @@
     "visits": [],
     "category": "Lodówki",
     "serviceType": "AEG",
-    "scheduledDate": "2025-10-07",
+    "scheduledDate": "2025-10-06",
     "availability": "Nie określono",
     "devices": [
       {
@@ -444,6 +444,6 @@
     "updatedBy": null,
     "assignedTo": "EMP25189001",
     "preferredTime": "24:00",
-    "scheduledTime": "06:15"
+    "scheduledTime": "06:30"
   }
 ]
