@@ -40,7 +40,7 @@
     "scheduledDate": "2025-10-06",
     "assignedTo": "EMP25189001",
     "preferredTime": "09:00",
-    "scheduledTime": "12:30"
+    "scheduledTime": "09:45"
   },
   {
     "id": "ORD-2025-002",
@@ -79,9 +79,9 @@
     "isVIP": true,
     "regionPriority": 1,
     "customerRating": 5,
-    "scheduledDate": "2025-10-06",
+    "scheduledDate": "2025-10-08",
     "assignedTo": "EMP25189001",
-    "scheduledTime": "15:15"
+    "scheduledTime": "00:30"
   },
   {
     "id": "ORD-2025-003",
@@ -444,6 +444,6 @@
     "updatedBy": null,
     "assignedTo": "EMP25189001",
     "preferredTime": "24:00",
-    "scheduledTime": "06:30"
+    "scheduledTime": "08:00"
   }
 ]

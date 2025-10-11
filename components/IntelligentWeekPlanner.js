@@ -209,6 +209,9 @@ const IntelligentWeekPlanner = () => {
   // 📅 Stan dla harmonogramów serwisantów (dostępność godzinowa)
   const [servicemanSchedules, setServicemanSchedules] = useState({});
   const [dragOverInfo, setDragOverInfo] = useState(null); // Podgląd pozycji podczas przeciągania na timeline
+  
+  // ⏰ Stan dla zakresu godzin timeline
+  const [timeRange, setTimeRange] = useState({ start: 6, end: 23 }); // Domyślnie 6:00-23:00
 
   // 🆕 Handler dla kliknięcia w zlecenie - otwiera modal ze szczegółami
   // 🆕 Funkcja pomocnicza do obsługi obu struktur danych (stara i nowa)
@@ -4630,6 +4633,27 @@ ODPOWIADAJ KONKRETNIE z praktycznymi sugestiami i przyciskami akcji.`
                 </div>
               </div>
 
+              {/* Zakres godzin timeline */}
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-medium text-gray-700">Godziny:</span>
+                <select
+                  value={`${timeRange.start}-${timeRange.end}`}
+                  onChange={(e) => {
+                    const [start, end] = e.target.value.split('-').map(Number);
+                    setTimeRange({ start, end });
+                  }}
+                  className="text-xs border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  title="Wybierz zakres godzin wyświetlanych na osi czasu"
+                >
+                  <option value="0-24">00:00 - 24:00 (całą dobę)</option>
+                  <option value="6-23">06:00 - 23:00 (domyślnie)</option>
+                  <option value="7-22">07:00 - 22:00 (godziny pracy)</option>
+                  <option value="8-20">08:00 - 20:00 (standard)</option>
+                  <option value="8-18">08:00 - 18:00 (biznesowe)</option>
+                  <option value="9-17">09:00 - 17:00 (biurowe)</option>
+                </select>
+              </div>
+
               {/* Sortowanie */}
               <div className="flex items-center gap-2">
                 <span className="text-sm font-medium text-gray-700">Sortuj:</span>
@@ -5034,12 +5058,15 @@ ODPOWIADAJ KONKRETNIE z praktycznymi sugestiami i przyciskami akcji.`
                           </span>
                         </div>
                       )}
-                      {/* Siatka godzin (6:00-22:00) - z liniami co 30 min */}
-                      {Array.from({ length: 17 * 2 }, (_, i) => {
-                        const totalMinutes = (6 * 60) + (i * 30); // Start at 6:00, increment by 30 min
+                      {/* Siatka godzin - dynamiczny zakres z liniami co 30 min */}
+                      {Array.from({ length: (timeRange.end - timeRange.start) * 2 }, (_, i) => {
+                        const totalMinutes = (timeRange.start * 60) + (i * 30); // Start at selected hour, increment by 30 min
                         const h = Math.floor(totalMinutes / 60);
                         const m = totalMinutes % 60;
                         const isFullHour = m === 0;
+                        
+                        // Oblicz pozycję względem całej doby (0-24h)
+                        const positionPercent = (totalMinutes / (24 * 60)) * 100;
                         
                         return (
                           <div
@@ -5047,7 +5074,7 @@ ODPOWIADAJ KONKRETNIE z praktycznymi sugestiami i przyciskami akcji.`
                             className={`absolute w-full pointer-events-none ${
                               isFullHour ? 'border-t-2 border-gray-300' : 'border-t border-gray-200 border-dashed'
                             }`}
-                            style={{ top: `${(totalMinutes / (24 * 60)) * 100}%` }}
+                            style={{ top: `${positionPercent}%` }}
                           >
                             {isFullHour && (
                               <span className="text-[11px] text-gray-600 ml-1 bg-gray-50 px-1.5 py-0.5 font-semibold rounded shadow-sm">
@@ -5062,6 +5089,28 @@ ODPOWIADAJ KONKRETNIE z praktycznymi sugestiami i przyciskami akcji.`
                           </div>
                         );
                       })}
+                      
+                      {/* Przyciemnienie godzin poza zakresem */}
+                      {timeRange.start > 0 && (
+                        <div 
+                          className="absolute w-full bg-gray-900 opacity-10 pointer-events-none z-10"
+                          style={{
+                            top: 0,
+                            height: `${(timeRange.start / 24) * 100}%`
+                          }}
+                          title={`Ukryto godziny: 00:00 - ${timeRange.start.toString().padStart(2, '0')}:00`}
+                        />
+                      )}
+                      {timeRange.end < 24 && (
+                        <div 
+                          className="absolute w-full bg-gray-900 opacity-10 pointer-events-none z-10"
+                          style={{
+                            top: `${(timeRange.end / 24) * 100}%`,
+                            height: `${((24 - timeRange.end) / 24) * 100}%`
+                          }}
+                          title={`Ukryto godziny: ${timeRange.end.toString().padStart(2, '0')}:00 - 24:00`}
+                        />
+                      )}
                       
                       {/* Tło dostępności serwisanta (półprzezroczyste zielone) */}
                       {schedule && schedule.workSlots && schedule.workSlots.map((slot, idx) => (
