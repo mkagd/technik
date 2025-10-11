@@ -4724,8 +4724,8 @@ ODPOWIADAJ KONKRETNIE z praktycznymi sugestiami i przyciskami akcji.`
           }
           
           return (
-            <div className="mb-6 bg-gradient-to-r from-orange-50 to-yellow-50 rounded-lg shadow-sm p-6 border-2 border-orange-200">
-              <div className="flex items-center justify-between mb-4">
+            <div className="mb-6 bg-gradient-to-r from-orange-50 to-yellow-50 rounded-lg shadow-sm border-2 border-orange-200 h-[300px] flex flex-col">
+              <div className="flex items-center justify-between p-4 flex-shrink-0">
                 <div className="flex items-center gap-3">
                   <div className="p-2 bg-orange-500 text-white rounded-lg">
                     <Calendar className="h-5 w-5" />
@@ -4753,7 +4753,7 @@ ODPOWIADAJ KONKRETNIE z praktycznymi sugestiami i przyciskami akcji.`
                 </button>
               </div>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 max-h-96 overflow-y-auto">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 overflow-y-auto px-4 pb-4 flex-1">
                 {unscheduledOrders.map((order) => (
                   <div
                     key={order.id}
@@ -4823,7 +4823,7 @@ ODPOWIADAJ KONKRETNIE z praktycznymi sugestiami i przyciskami akcji.`
         })()}
 
         {/* Plan tygodniowy z datami */}
-        <div className={`grid gap-6 ${
+        <div className={`grid gap-6 h-[calc(100vh-500px)] ${
           expandedDay ? 'grid-cols-1' : 
           viewMode === 1 ? 'grid-cols-1' :
           viewMode === 2 ? 'grid-cols-1 md:grid-cols-2' :
@@ -4838,12 +4838,12 @@ ODPOWIADAJ KONKRETNIE z praktycznymi sugestiami i przyciskami akcji.`
             const dayInfo = formatDayWithDate(day, currentWeekStart);
             
             return (
-              <div key={day} className={`bg-white rounded-lg shadow-sm ${
+              <div key={day} className={`bg-white rounded-lg shadow-sm flex flex-col ${
                 dayInfo.isToday ? 'ring-2 ring-blue-400 bg-blue-50' : 
                 dayInfo.isPast ? 'opacity-75' : ''
               }`}>
-                <div className="p-4 border-b border-gray-200">
-                  <div className="flex items-center justify-between mb-2">
+                <div className="p-4 border-b border-gray-200 h-[140px] flex-shrink-0 flex flex-col justify-between">
+                  <div className="flex items-center justify-between">
                     <div>
                       <h3 className={`font-semibold text-lg ${dayInfo.isToday ? 'text-blue-700' : ''}`}>
                         {dayInfo.name}
@@ -4860,7 +4860,7 @@ ODPOWIADAJ KONKRETNIE z praktycznymi sugestiami i przyciskami akcji.`
                   </div>
                   
                   {dayOrders.length > 0 && (
-                    <div className="flex items-center gap-2 flex-wrap">
+                    <div className="flex items-center gap-2">
                       <button
                         onClick={() => openDayRoute(day)}
                         className="flex items-center gap-1 px-3 py-1 bg-blue-600 text-white text-xs rounded-lg hover:bg-blue-700"
@@ -4999,7 +4999,7 @@ ODPOWIADAJ KONKRETNIE z praktycznymi sugestiami i przyciskami akcji.`
                   
                   return (
                     <div 
-                      className="relative h-[1600px] bg-gray-50 border-b border-gray-200 overflow-hidden"
+                      className="relative flex-1 bg-gray-50 border-b border-gray-200 overflow-y-auto min-h-[1600px]"
                       onDragOver={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
