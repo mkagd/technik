@@ -213,6 +213,9 @@ const IntelligentWeekPlanner = () => {
   // ⏰ Stan dla zakresu godzin timeline
   const [timeRange, setTimeRange] = useState({ start: 6, end: 23 }); // Domyślnie 6:00-23:00
   const [hideUnusedHours, setHideUnusedHours] = useState(false); // Ukryj godziny poza zakresem
+  
+  // 🏷️ Stan dla wyboru nagłówka karty zlecenia
+  const [cardHeaderField, setCardHeaderField] = useState('clientName'); // Opcje: clientName, address, deviceType, description
 
   // 🆕 Handler dla kliknięcia w zlecenie - otwiera modal ze szczegółami
   // 🆕 Funkcja pomocnicza do obsługi obu struktur danych (stara i nowa)
@@ -1406,6 +1409,22 @@ const IntelligentWeekPlanner = () => {
     window.open(googleMapsUrl, '_blank');
   };
 
+  // Funkcja pomocnicza do pobierania tekstu nagłówka karty
+  const getCardHeaderText = (order) => {
+    switch (cardHeaderField) {
+      case 'clientName':
+        return order.clientName || 'Nieznany klient';
+      case 'address':
+        return order.address || 'Brak adresu';
+      case 'deviceType':
+        return order.deviceType || order.device?.type || 'Brak urządzenia';
+      case 'description':
+        return order.description || 'Brak opisu';
+      default:
+        return order.clientName || 'Nieznany klient';
+    }
+  };
+
   // Renderowanie karty zlecenia z obsługą drag & drop
   const renderOrderCard = (order, currentDay, orderIndex) => {
     // Użyj orderNumber z wizyty (np. ORDW252750001) lub visitId jako fallback
@@ -1430,7 +1449,7 @@ const IntelligentWeekPlanner = () => {
           <div className="flex-1">
             <div className="flex items-center gap-2">
               <h4 className={`font-semibold text-sm ${isCompleted ? 'line-through text-gray-500' : ''}`}>
-                {order.clientName}
+                {getCardHeaderText(order)}
               </h4>
               <span className="text-xs text-blue-600 font-mono bg-blue-100 px-2 py-1 rounded">{orderNumber}</span>
               <span className="text-xs text-gray-500">📋 Przeciągnij</span>
@@ -4665,6 +4684,22 @@ ODPOWIADAJ KONKRETNIE z praktycznymi sugestiami i przyciskami akcji.`
                 </label>
               </div>
 
+              {/* Nagłówek karty */}
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-medium text-gray-700">Nagłówek:</span>
+                <select
+                  value={cardHeaderField}
+                  onChange={(e) => setCardHeaderField(e.target.value)}
+                  className="text-xs border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  title="Wybierz, co ma być wyświetlane jako nagłówek karty zlecenia"
+                >
+                  <option value="clientName">Imię i nazwisko</option>
+                  <option value="address">Adres</option>
+                  <option value="deviceType">Typ sprzętu</option>
+                  <option value="description">Problem/Opis</option>
+                </select>
+              </div>
+
               {/* Sortowanie */}
               <div className="flex items-center gap-2">
                 <span className="text-sm font-medium text-gray-700">Sortuj:</span>
@@ -4803,7 +4838,7 @@ ODPOWIADAJ KONKRETNIE z praktycznymi sugestiami i przyciskami akcji.`
                     <div className="flex items-start justify-between mb-2">
                       <div className="flex-1">
                         <h4 className="font-semibold text-gray-900 text-sm">
-                          {order.clientName || 'Brak nazwy'}
+                          {getCardHeaderText(order)}
                         </h4>
                         <p className="text-xs text-gray-600 mt-1">
                           {order.deviceType} {order.brand && `- ${order.brand}`}
@@ -5227,7 +5262,7 @@ ODPOWIADAJ KONKRETNIE z praktycznymi sugestiami i przyciskami akcji.`
                               
                               <div className="flex items-start justify-between mb-1">
                                 <div className="flex-1 min-w-0">
-                                  <h4 className="font-semibold text-xs truncate">{order.clientName || 'Brak nazwy'}</h4>
+                                  <h4 className="font-semibold text-xs truncate">{getCardHeaderText(order)}</h4>
                                   <p className="text-[10px] text-gray-600 truncate">{order.deviceType}</p>
                                 </div>
                                 <span className="text-sm font-bold ml-1">
