@@ -1389,15 +1389,18 @@ const IntelligentWeekPlanner = () => {
 
   // Otwórz trasę dla całego dnia w Google Maps
   const openDayRoute = (day) => {
-    // Pobierz wizyty dla danego dnia
-    const dayPlan = weeklyPlan?.weeklyPlan?.[day];
-    if (!dayPlan || !dayPlan.orders || dayPlan.orders.length === 0) {
-      alert('Brak wizyt do wyświetlenia na trasie');
+    // Pobierz zlecenia dla danego dnia używając getOrdersForWeekDay
+    const dayOrders = getOrdersForWeekDay(day);
+    
+    console.log(`🗺️ openDayRoute dla ${day}:`, dayOrders.length, 'zleceń');
+    
+    if (!dayOrders || dayOrders.length === 0) {
+      alert('Brak zleceń do wyświetlenia na trasie dla tego dnia');
       return;
     }
 
-    // Generuj URL Google Maps na podstawie aktualnej kolejności WIZYT
-    const visits = dayPlan.orders;
+    // Generuj URL Google Maps na podstawie aktualnej kolejności ZLECEŃ
+    const visits = dayOrders;
     
     console.log('DEBUG: Wizyty dla trasy:', visits);
     
@@ -1478,20 +1481,23 @@ const IntelligentWeekPlanner = () => {
         style={isCompleted ? { cursor: 'default' } : { cursor: 'move' }}
       >
         <div className="flex items-start justify-between">
-          <div className="flex-1">
-            <div className="flex items-center gap-2">
-              <h4 className={`font-semibold text-sm ${isCompleted ? 'line-through text-gray-500' : ''}`}>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 flex-wrap">
+              <h4 
+                className={`font-semibold text-sm truncate max-w-[200px] ${isCompleted ? 'line-through text-gray-500' : ''}`}
+                title={getCardHeaderText(order)}
+              >
                 {getCardHeaderText(order)}
               </h4>
-              <span className="text-xs text-blue-600 font-mono bg-blue-100 px-2 py-1 rounded">{orderNumber}</span>
-              <span className="text-xs text-gray-500">📋 Przeciągnij</span>
-              {isCompleted && <span className="text-xs text-green-600">✅ Wykonane</span>}
+              <span className="text-xs text-blue-600 font-mono bg-blue-100 px-2 py-1 rounded whitespace-nowrap">{orderNumber}</span>
+              <span className="text-xs text-gray-500 whitespace-nowrap hidden sm:inline">📋 Przeciągnij</span>
+              {isCompleted && <span className="text-xs text-green-600 whitespace-nowrap">✅ Wykonane</span>}
             </div>
-          <p className="text-xs opacity-75 mb-1">{order.description}</p>
-          <div className="flex items-center gap-3 text-xs">
-            <span className="flex items-center gap-1">
-              <MapPin className="h-3 w-3" />
-              {order.address.split(',')[0]}
+          <p className="text-xs opacity-75 mb-1 truncate" title={order.description}>{order.description}</p>
+          <div className="flex items-center gap-3 text-xs flex-wrap">
+            <span className="flex items-center gap-1 truncate max-w-[150px]" title={order.address}>
+              <MapPin className="h-3 w-3 flex-shrink-0" />
+              <span className="truncate">{order.address.split(',')[0]}</span>
             </span>
             <span className="flex items-center gap-1">
               <Clock className="h-3 w-3" />
@@ -4897,10 +4903,7 @@ ODPOWIADAJ KONKRETNIE z praktycznymi sugestiami i przyciskami akcji.`
           // Znajdź wszystkie zlecenia bez przypisanego dnia (scheduledDate === null)
           const unscheduledOrders = weeklyPlan.unscheduledOrders || [];
           
-          if (unscheduledOrders.length === 0) {
-            return null;
-          }
-          
+          // ✅ ZAWSZE POKAZUJ SEKCJĘ - nawet gdy pusta (żeby można było przeciągać zlecenia z powrotem)
           return (
             <div 
               className="mb-6 bg-gradient-to-r from-orange-50 to-yellow-50 rounded-lg shadow-sm border-2 border-orange-200 h-[300px] flex flex-col"
@@ -4944,7 +4947,14 @@ ODPOWIADAJ KONKRETNIE z praktycznymi sugestiami i przyciskami akcji.`
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 overflow-y-auto px-4 pb-4 flex-1">
-                {unscheduledOrders.map((order) => (
+                {unscheduledOrders.length === 0 ? (
+                  <div className="col-span-full flex flex-col items-center justify-center h-full text-gray-500">
+                    <Calendar className="h-16 w-16 mb-4 opacity-30" />
+                    <p className="text-lg font-medium">Wszystkie zlecenia zostały zaplanowane! 🎉</p>
+                    <p className="text-sm mt-2">Przeciągnij zlecenie tutaj aby cofnąć planowanie</p>
+                  </div>
+                ) : (
+                  unscheduledOrders.map((order) => (
                   <div
                     key={order.id}
                     className={`p-4 bg-white rounded-lg border-2 shadow-sm hover:shadow-md transition-all cursor-move ${
@@ -4955,16 +4965,19 @@ ODPOWIADAJ KONKRETNIE z praktycznymi sugestiami i przyciskami akcji.`
                     onDragEnd={handleDragEnd}
                     title="Przeciągnij to zlecenie na wybrany dzień"
                   >
-                    <div className="flex items-start justify-between mb-2">
-                      <div className="flex-1">
-                        <h4 className="font-semibold text-gray-900 text-sm">
+                    <div className="flex items-start justify-between mb-2 gap-2">
+                      <div className="flex-1 min-w-0">
+                        <h4 
+                          className="font-semibold text-gray-900 text-sm truncate"
+                          title={getCardHeaderText(order)}
+                        >
                           {getCardHeaderText(order)}
                         </h4>
-                        <p className="text-xs text-gray-600 mt-1">
+                        <p className="text-xs text-gray-600 mt-1 truncate">
                           {order.deviceType} {order.brand && `- ${order.brand}`}
                         </p>
                       </div>
-                      <span className={`text-xs px-2 py-1 rounded-full font-medium ${
+                      <span className={`text-xs px-2 py-1 rounded-full font-medium whitespace-nowrap flex-shrink-0 ${
                         order.priority === 'urgent' ? 'bg-red-100 text-red-800' :
                         order.priority === 'high' ? 'bg-orange-100 text-orange-800' :
                         order.priority === 'medium' ? 'bg-yellow-100 text-yellow-800' :
@@ -5006,7 +5019,8 @@ ODPOWIADAJ KONKRETNIE z praktycznymi sugestiami i przyciskami akcji.`
                       </div>
                     )}
                   </div>
-                ))}
+                  ))
+                )}
               </div>
             </div>
           );
@@ -5050,29 +5064,29 @@ ODPOWIADAJ KONKRETNIE z praktycznymi sugestiami i przyciskami akcji.`
                   </div>
                   
                   {dayOrders.length > 0 && (
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-1 flex-wrap">
                       <button
                         onClick={() => openDayRoute(day)}
-                        className="flex items-center gap-1 px-3 py-1 bg-blue-600 text-white text-xs rounded-lg hover:bg-blue-700"
+                        className="flex items-center gap-1 px-2 py-1 bg-blue-600 text-white text-[10px] rounded hover:bg-blue-700 transition-colors whitespace-nowrap"
                         title="Otwórz trasę w Google Maps"
                       >
                         <Navigation className="h-3 w-3" />
-                        Trasa
+                        <span className="hidden sm:inline">Trasa</span>
                       </button>
                       <button
                         onClick={() => optimizeSingleDay(day)}
-                        className="flex items-center gap-1 px-3 py-1 bg-purple-600 text-white text-xs rounded-lg hover:bg-purple-700"
+                        className="flex items-center gap-1 px-2 py-1 bg-purple-600 text-white text-[10px] rounded hover:bg-purple-700 transition-colors whitespace-nowrap"
                         title="Optymalizuj tylko ten dzień"
                       >
                         <TrendingUp className="h-3 w-3" />
-                        Optymalizuj
+                        <span className="hidden lg:inline">Opt.</span>
                       </button>
                       <button
                         onClick={() => setSelectedDay(selectedDay === day ? null : day)}
-                        className="flex items-center gap-1 px-3 py-1 bg-gray-600 text-white text-xs rounded-lg hover:bg-gray-700"
+                        className="flex items-center gap-1 px-2 py-1 bg-gray-600 text-white text-[10px] rounded hover:bg-gray-700 transition-colors whitespace-nowrap"
                       >
                         <Settings className="h-3 w-3" />
-                        {selectedDay === day ? 'Ukryj' : 'Szczegóły'}
+                        <span className="hidden md:inline">{selectedDay === day ? 'Ukryj' : 'Szczeg.'}</span>
                       </button>
                     </div>
                   )}
@@ -5318,7 +5332,7 @@ ODPOWIADAJ KONKRETNIE z praktycznymi sugestiami i przyciskami akcji.`
                       {/* Tło dostępności serwisanta (półprzezroczyste zielone) */}
                       {schedule && schedule.workSlots && schedule.workSlots.map((slot, idx) => (
                         <div
-                          key={`work-${idx}`}
+                          key={`work-${day}-${idx}`}
                           className="absolute w-full bg-green-100 opacity-30 pointer-events-none"
                           style={{
                             top: `${timeToPixels(slot.startTime)}%`,
@@ -5330,7 +5344,7 @@ ODPOWIADAJ KONKRETNIE z praktycznymi sugestiami i przyciskami akcji.`
                       {/* Przerwy serwisanta (półprzezroczyste pomarańczowe) */}
                       {schedule && schedule.breaks && schedule.breaks.map((breakSlot, idx) => (
                         <div
-                          key={`break-${idx}`}
+                          key={`break-${day}-${idx}`}
                           className="absolute w-full bg-orange-200 opacity-40 pointer-events-none"
                           style={{
                             top: `${timeToPixels(breakSlot.startTime)}%`,
