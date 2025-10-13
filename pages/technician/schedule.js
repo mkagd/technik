@@ -14,6 +14,10 @@ export default function TechnicianSchedule() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   
+  // 🆕 Wizyty/zlecenia technika
+  const [visits, setVisits] = useState([]);
+  const [visitsLoading, setVisitsLoading] = useState(false);
+  
   // Tydzień (domyślnie bieżący)
   const [currentWeekStart, setCurrentWeekStart] = useState(null);
   
@@ -59,21 +63,66 @@ export default function TechnicianSchedule() {
       setEmployee(emp);
       
       // Oblicz poniedziałek bieżącego tygodnia
+      // ⚠️ CRITICAL: Używamy daty lokalnej z przeglądarki (nie UTC!)
       const now = new Date();
-      const dayOfWeek = now.getDay();
-      const diff = now.getDate() - dayOfWeek + (dayOfWeek === 0 ? -6 : 1);
-      const monday = new Date();
-      monday.setDate(diff);
-      const weekStart = monday.toISOString().split('T')[0];
+      const year = now.getFullYear();
+      const month = now.getMonth();
+      const day = now.getDate();
+      const localNow = new Date(year, month, day, 12, 0, 0); // Noon lokalne
+      
+      const dayOfWeek = localNow.getDay(); // 0=Nd, 1=Pn, ..., 6=So
+      console.log('🗓️ Today:', localNow.toDateString(), 'Day of week:', dayOfWeek, ['Niedziela', 'Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek', 'Sobota'][dayOfWeek]);
+      
+      // Oblicz offset do poniedziałku: jeśli Niedziela (0) → -6 dni wstecz, w przeciwnym razie -(dayOfWeek-1)
+      const daysToMonday = dayOfWeek === 0 ? -6 : -(dayOfWeek - 1);
+      const monday = new Date(localNow);
+      monday.setDate(localNow.getDate() + daysToMonday);
+      const weekStart = `${monday.getFullYear()}-${String(monday.getMonth() + 1).padStart(2, '0')}-${String(monday.getDate()).padStart(2, '0')}`;
       
       console.log('📅 Calculated weekStart:', weekStart);
       setCurrentWeekStart(weekStart);
       loadSchedule(token, weekStart);
+      loadVisits(token); // 🆕 Załaduj wizyty
     } catch (err) {
       console.error('❌ Auth error:', err);
       router.push('/technician/login');
     }
   }, [router]);
+
+  // 🆕 Auto-refresh wizyt co 30 sekund
+  useEffect(() => {
+    const token = localStorage.getItem('technicianToken');
+    if (!token) return;
+
+    const interval = setInterval(() => {
+      console.log('🔄 Auto-refresh wizyt...');
+      loadVisits(token);
+    }, 30000); // 30 sekund
+
+    return () => clearInterval(interval);
+  }, []);
+
+  // 🆕 Nasłuchuj na zmiany wizyt (np. z intelligent-planner)
+  useEffect(() => {
+    const handleVisitsChanged = () => {
+      console.log('🔔 Wykryto zmianę wizyt - odświeżam kalendarz...');
+      const token = localStorage.getItem('technicianToken');
+      if (token) {
+        loadVisits(token);
+      }
+    };
+
+    // Nasłuchuj na custom event
+    window.addEventListener('visitsChanged', handleVisitsChanged);
+    
+    // Nasłuchuj na focus - odśwież gdy użytkownik wraca do zakładki
+    window.addEventListener('focus', handleVisitsChanged);
+
+    return () => {
+      window.removeEventListener('visitsChanged', handleVisitsChanged);
+      window.removeEventListener('focus', handleVisitsChanged);
+    };
+  }, []);
 
   const loadSchedule = async (token, weekStart) => {
     setLoading(true);
@@ -100,6 +149,62 @@ export default function TechnicianSchedule() {
       setError('Nie udało się załadować harmonogramu');
     } finally {
       setLoading(false);
+    }
+  };
+
+  // 🆕 Ładowanie wizyt technika
+  const loadVisits = async (token) => {
+    setVisitsLoading(true);
+    
+    try {
+      const res = await fetch('/api/technician/visits', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        console.log(`📅 Załadowano ${data.visits.length} wizyt`);
+        
+        // 🔍 DEBUG: Sprawdź czy są duplikaty w danych z API
+        const visitIds = data.visits.map(v => v.visitId);
+        const uniqueIds = [...new Set(visitIds)];
+        if (visitIds.length !== uniqueIds.length) {
+          console.error(`⚠️ API zwróciło DUPLIKATY wizyt:`, {
+            total: visitIds.length,
+            unique: uniqueIds.length,
+            duplicates: visitIds.filter((id, idx) => visitIds.indexOf(id) !== idx)
+          });
+          
+          // Pokaż szczegóły duplikatów
+          const duplicateIds = visitIds.filter((id, idx) => visitIds.indexOf(id) !== idx);
+          duplicateIds.forEach(dupId => {
+            const dupVisits = data.visits.filter(v => v.visitId === dupId);
+            console.error(`   Wizyta ${dupId} występuje ${dupVisits.length}x:`, dupVisits);
+          });
+        } else {
+          console.log(`✅ Wszystkie wizyty są unikalne`);
+        }
+        
+        // Lista wizyt z datami
+        console.table(data.visits.map(v => ({
+          visitId: v.visitId,
+          date: v.scheduledDate || v.date,
+          time: v.time,
+          status: v.status,
+          client: v.clientName
+        })));
+        
+        setVisits(data.visits || []);
+      } else {
+        console.error('❌ Błąd ładowania wizyt:', data.message);
+      }
+    } catch (err) {
+      console.error('❌ Error loading visits:', err);
+    } finally {
+      setVisitsLoading(false);
     }
   };
 
@@ -268,6 +373,7 @@ export default function TechnicianSchedule() {
     
     const token = localStorage.getItem('technicianToken');
     loadSchedule(token, newWeekStart);
+    loadVisits(token); // 🆕 Odśwież też wizyty
   };
 
   // Generuj wszystkie 15-minutowe interwały (00:00 - 23:45)
@@ -461,6 +567,63 @@ export default function TechnicianSchedule() {
   const renderDayTimeline = (dayIndex) => {
     const workSlotsForDay = schedule?.workSlots?.filter(s => s.dayOfWeek === dayIndex) || [];
     const breaksForDay = schedule?.breaks?.filter(s => s.dayOfWeek === dayIndex) || [];
+    
+    // 📅 Oblicz datę dla tego dnia (dayIndex: 0=Niedziela, 1=Poniedziałek, ..., 6=Sobota)
+    const getDateForDay = (dayIdx) => {
+      if (!currentWeekStart) return null;
+      const monday = new Date(currentWeekStart + 'T00:00:00'); // Force local timezone
+      // currentWeekStart to poniedziałek (dayOfWeek=1)
+      // Oblicz offset od poniedziałku: 
+      // 1(Pn)=0, 2(Wt)=1, 3(Śr)=2, 4(Cz)=3, 5(Pt)=4, 6(So)=5, 0(Nd)=6
+      let offset;
+      if (dayIdx === 0) {
+        offset = 6; // Niedziela - koniec tygodnia
+      } else {
+        offset = dayIdx - 1; // Poniedziałek-Sobota
+      }
+      const date = new Date(monday);
+      date.setDate(monday.getDate() + offset);
+      return date;
+    };
+    
+    const dayDate = getDateForDay(dayIndex);
+    const dayDateStr = dayDate ? `${dayDate.getDate()}.${dayDate.getMonth() + 1}` : '';
+    
+    // 🆕 Filtruj wizyty dla tego dnia (według DOKŁADNEJ daty, nie tylko dnia tygodnia)
+    const visitsForDay = visits.filter(visit => {
+      if (!visit.scheduledDate && !visit.date) return false;
+      if (!dayDate) return false;
+      
+      const visitDate = new Date(visit.scheduledDate || visit.date);
+      
+      // Porównaj dokładną datę (rok, miesiąc, dzień) - ignoruj godziny
+      const matches = (
+        visitDate.getFullYear() === dayDate.getFullYear() &&
+        visitDate.getMonth() === dayDate.getMonth() &&
+        visitDate.getDate() === dayDate.getDate()
+      );
+      
+      if (matches) {
+        console.log(`✅ Wizyta ${visit.visitId} pasuje do ${dayNames[dayIndex]} (${dayDateStr}):`, {
+          visitDate: visit.scheduledDate || visit.date,
+          dayDate: dayDate.toISOString().split('T')[0]
+        });
+      }
+      
+      return matches;
+    });
+    
+    // 🔍 DEBUG: Sprawdź czy są duplikaty
+    const visitIds = visitsForDay.map(v => v.visitId);
+    const uniqueIds = [...new Set(visitIds)];
+    if (visitIds.length !== uniqueIds.length) {
+      console.warn(`⚠️ DUPLIKATY dla ${dayNames[dayIndex]} (${dayDateStr}):`, {
+        total: visitIds.length,
+        unique: uniqueIds.length,
+        ids: visitIds,
+        duplicates: visitIds.filter((id, idx) => visitIds.indexOf(id) !== idx)
+      });
+    }
 
     return (
       <div key={dayIndex} className="flex-1 min-w-[80px] lg:min-w-[120px] border-r border-gray-200 last:border-r-0">
@@ -468,6 +631,7 @@ export default function TechnicianSchedule() {
         <div className="sticky top-0 bg-gradient-to-br from-blue-500 to-blue-600 text-white p-2 lg:p-3 text-center font-semibold shadow-sm z-10">
           <div className="text-[10px] lg:text-xs opacity-90">{dayNamesShort[dayIndex]}</div>
           <div className="text-xs lg:text-sm hidden sm:block">{dayNames[dayIndex]}</div>
+          <div className="text-[10px] lg:text-xs opacity-75 mt-0.5">📅 {dayDateStr}</div>
         </div>
 
         {/* Timeline (siatka 15-minutowa) */}
@@ -589,6 +753,112 @@ export default function TechnicianSchedule() {
               </div>
             </div>
           ))}
+
+          {/* 🆕 WIZYTY/ZLECENIA (niebieskie kafelki) */}
+          {visitsForDay.map(visit => {
+            const visitTime = visit.time || visit.scheduledTime || '09:00';
+            const estimatedDuration = visit.estimatedDuration || 60; // domyślnie 60 min
+            
+            // Oblicz czas końca
+            const [hours, minutes] = visitTime.split(':').map(Number);
+            const startMinutes = hours * 60 + minutes;
+            const endMinutes = startMinutes + estimatedDuration;
+            const endHours = Math.floor(endMinutes / 60);
+            const endMins = endMinutes % 60;
+            const endTime = `${endHours.toString().padStart(2, '0')}:${endMins.toString().padStart(2, '0')}`;
+            
+            // Kolor według statusu (zgodny z orderStatusConstants.js)
+            const getStatusColor = (status) => {
+              switch(status) {
+                case 'pending': 
+                  return 'from-yellow-400 to-yellow-500 border-yellow-600'; // ⏳ Oczekuje na kontakt
+                case 'contacted': 
+                  return 'from-blue-400 to-blue-500 border-blue-600'; // 📞 Skontaktowano się
+                case 'unscheduled': 
+                  return 'from-orange-400 to-orange-500 border-orange-600'; // 📦 Nieprzypisane
+                case 'scheduled': 
+                  return 'from-purple-400 to-purple-500 border-purple-600'; // 📅 Umówiona wizyta
+                case 'confirmed': 
+                  return 'from-green-400 to-green-500 border-green-600'; // ✅ Potwierdzona
+                case 'in_progress': 
+                  return 'from-indigo-400 to-indigo-500 border-indigo-600'; // 🔧 W trakcie realizacji
+                case 'waiting_parts': 
+                  return 'from-amber-400 to-amber-500 border-amber-600'; // 🔩 Oczekuje na części
+                case 'ready': 
+                  return 'from-teal-400 to-teal-500 border-teal-600'; // 🎉 Gotowe do odbioru
+                case 'completed': 
+                  return 'from-emerald-400 to-emerald-500 border-emerald-600'; // ✔️ Zakończone
+                case 'cancelled': 
+                  return 'from-red-400 to-red-500 border-red-600'; // ❌ Anulowane
+                case 'no_show': 
+                  return 'from-gray-400 to-gray-500 border-gray-600'; // 👻 Nie stawił się
+                default: 
+                  return 'from-slate-400 to-slate-500 border-slate-600'; // Nieznany status
+              }
+            };
+            
+            // Ikona i label statusu
+            const getStatusInfo = (status) => {
+              switch(status) {
+                case 'pending': return { icon: '⏳', label: 'Oczekuje na kontakt' };
+                case 'contacted': return { icon: '📞', label: 'Skontaktowano się' };
+                case 'unscheduled': return { icon: '📦', label: 'Nieprzypisane' };
+                case 'scheduled': return { icon: '📅', label: 'Umówiona wizyta' };
+                case 'confirmed': return { icon: '✅', label: 'Potwierdzona' };
+                case 'in_progress': return { icon: '🔧', label: 'W trakcie realizacji' };
+                case 'waiting_parts': return { icon: '🔩', label: 'Oczekuje na części' };
+                case 'ready': return { icon: '🎉', label: 'Gotowe do odbioru' };
+                case 'completed': return { icon: '✔️', label: 'Zakończone' };
+                case 'cancelled': return { icon: '❌', label: 'Anulowane' };
+                case 'no_show': return { icon: '👻', label: 'Nie stawił się' };
+                default: return { icon: '📋', label: 'Nieznany' };
+              }
+            };
+            
+            const statusInfo = getStatusInfo(visit.status);
+            
+            return (
+              <div
+                key={visit.visitId || visit.orderId}
+                className="absolute w-full px-1 cursor-pointer group z-25 pointer-events-auto"
+                style={{
+                  top: `${timeToPixels(visitTime)}%`,
+                  height: `${timeToPixels(endTime) - timeToPixels(visitTime)}%`,
+                  minHeight: '40px'
+                }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  router.push(`/technician/visit/${visit.visitId || visit.orderId}`);
+                }}
+                onMouseDown={(e) => e.stopPropagation()}
+                title={`${statusInfo.icon} ${statusInfo.label}\n${visit.clientName}\n${visit.deviceType || visit.device}\n${visit.orderNumber}\n${visitTime} - ${endTime} (${estimatedDuration} min)`}
+              >
+                <div className={`h-full rounded-lg shadow-lg border-2 flex flex-col justify-start items-start text-white text-[9px] lg:text-xs font-semibold p-1.5 lg:p-2 transition-all bg-gradient-to-r ${getStatusColor(visit.status)} group-hover:scale-[1.02] group-hover:shadow-xl`}>
+                  <div className="flex items-center justify-between w-full mb-0.5">
+                    <div className="text-[10px] lg:text-xs font-bold truncate flex-1">
+                      {visit.clientName}
+                    </div>
+                    <div className="text-xs lg:text-sm ml-1">
+                      {statusInfo.icon}
+                    </div>
+                  </div>
+                  <div className="text-[8px] lg:text-[10px] opacity-90 truncate w-full">
+                    {visit.deviceType || visit.device}
+                  </div>
+                  <div className="text-[8px] lg:text-[10px] opacity-80">
+                    {visitTime} - {endTime}
+                  </div>
+                  <div className="text-[7px] lg:text-[9px] opacity-70 truncate w-full">
+                    {visit.orderNumber}
+                  </div>
+                  {/* Status badge (pokazuje się na hover) */}
+                  <div className="hidden group-hover:block absolute bottom-1 right-1 bg-black bg-opacity-70 rounded px-1.5 py-0.5 text-[7px] lg:text-[9px]">
+                    {statusInfo.label}
+                  </div>
+                </div>
+              </div>
+            );
+          })}
 
         </div>
       </div>
@@ -777,26 +1047,79 @@ export default function TechnicianSchedule() {
           </div>
         </div>
 
-        {/* Legenda */}
+        {/* Legenda statusów wizyt */}
         <div className="mt-6 bg-white rounded-xl shadow-lg p-4">
+          <div className="flex items-center justify-between mb-3">
+            <h4 className="font-semibold text-gray-800">🎨 Kolory statusów wizyt</h4>
+            <div className="flex items-center gap-2 text-sm text-gray-600">
+              <span className="text-blue-600 font-semibold">{visits.length} wizyt</span>
+              {visitsLoading && <span className="text-xs text-gray-400 animate-pulse">🔄 Odświeżanie...</span>}
+            </div>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mb-4">
+            <div className="flex items-center gap-2">
+              <div className="w-6 h-6 bg-gradient-to-r from-yellow-400 to-yellow-500 rounded border-2 border-yellow-600 flex items-center justify-center text-xs">⏳</div>
+              <span className="text-xs text-gray-600">Oczekuje</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-6 h-6 bg-gradient-to-r from-blue-400 to-blue-500 rounded border-2 border-blue-600 flex items-center justify-center text-xs">📞</div>
+              <span className="text-xs text-gray-600">Kontakt</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-6 h-6 bg-gradient-to-r from-purple-400 to-purple-500 rounded border-2 border-purple-600 flex items-center justify-center text-xs">📅</div>
+              <span className="text-xs text-gray-600">Umówiona</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-6 h-6 bg-gradient-to-r from-green-400 to-green-500 rounded border-2 border-green-600 flex items-center justify-center text-xs">✅</div>
+              <span className="text-xs text-gray-600">Potwierdz.</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-6 h-6 bg-gradient-to-r from-indigo-400 to-indigo-500 rounded border-2 border-indigo-600 flex items-center justify-center text-xs">🔧</div>
+              <span className="text-xs text-gray-600">W trakcie</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-6 h-6 bg-gradient-to-r from-amber-400 to-amber-500 rounded border-2 border-amber-600 flex items-center justify-center text-xs">🔩</div>
+              <span className="text-xs text-gray-600">Części</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-6 h-6 bg-gradient-to-r from-teal-400 to-teal-500 rounded border-2 border-teal-600 flex items-center justify-center text-xs">🎉</div>
+              <span className="text-xs text-gray-600">Gotowe</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-6 h-6 bg-gradient-to-r from-emerald-400 to-emerald-500 rounded border-2 border-emerald-600 flex items-center justify-center text-xs">✔️</div>
+              <span className="text-xs text-gray-600">Zakończ.</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-6 h-6 bg-gradient-to-r from-red-400 to-red-500 rounded border-2 border-red-600 flex items-center justify-center text-xs">❌</div>
+              <span className="text-xs text-gray-600">Anulowane</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-6 h-6 bg-gradient-to-r from-gray-400 to-gray-500 rounded border-2 border-gray-600 flex items-center justify-center text-xs">👻</div>
+              <span className="text-xs text-gray-600">Nie przysz.</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Legenda ogólna */}
+        <div className="mt-4 bg-white rounded-xl shadow-lg p-4">
           <h4 className="font-semibold text-gray-800 mb-3">ℹ️ Jak korzystać?</h4>
           <div className="flex gap-6 flex-wrap">
             <div className="flex items-center gap-2">
               <div className="w-6 h-6 bg-gradient-to-r from-green-400 to-green-500 rounded border-2 border-green-600"></div>
-              <span className="text-sm text-gray-600">💼 Blok pracy</span>
+              <span className="text-sm text-gray-600">� Blok pracy</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-6 h-6 bg-gradient-to-r from-orange-300 to-orange-400 rounded border-2 border-orange-500"></div>
               <span className="text-sm text-gray-600">☕ Przerwa</span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-600">🖱️ <strong>Zaznacz myszką</strong> na osi czasu</span>
+              <span className="text-sm text-gray-600">🖱️ <strong>Zaznacz myszką</strong> na osi czasu aby dodać blok</span>
             </div>
             <div className="flex items-center gap-2">
               <span className="text-sm text-gray-600">🗑️ Kliknij slot aby usunąć</span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-600">➕ Lub użyj przycisków powyżej</span>
+              <span className="text-sm text-gray-600">🔧 Kliknij wizytę aby zobaczyć szczegóły</span>
             </div>
           </div>
         </div>

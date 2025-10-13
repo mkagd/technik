@@ -81,7 +81,9 @@ const formatOrderForPlanner = (order) => {
     coordinates = { lat: order.lat, lng: order.lng };
   } else {
     // Spróbuj oszacować z adresu
-    coordinates = estimateCoordinatesFromAddress(order.address || order.clientAddress);
+    const address = order.address || order.clientAddress || order.city;
+    coordinates = estimateCoordinatesFromAddress(address);
+    console.log(`📍 Estimated coordinates for ${order.clientName || order.id}: ${address} -> ${coordinates.lat}, ${coordinates.lng}`);
   }
   
   return {
@@ -197,13 +199,14 @@ export default async function handler(req, res) {
       console.log(`🔍 Filtered for serviceman ${servicemanId}: ${assignedOrders.length} assigned + ${unassignedOrders.length} unassigned = ${orders.length} total`);
     }
     
-    // Filtruj zlecenia - tylko te bez przydzielonych wizyt lub w trakcie
+    // 🔄 Filtruj zlecenia - tylko aktywne (ACTIVE_STATUSES)
+    // Akceptowane statusy: pending, contacted, unscheduled, scheduled, confirmed, in_progress, waiting_parts
+    const ACTIVE_ORDER_STATUSES = ['pending', 'contacted', 'unscheduled', 'scheduled', 'confirmed', 'in_progress', 'waiting_parts'];
+    
     orders = orders.filter(order => {
       const status = order.status?.toLowerCase();
-      return status === 'pending' || 
-             status === 'new' || 
-             status === 'in_progress' ||
-             status === 'awaiting_diagnosis' ||
+      // Pokaż zlecenia z aktywnym statusem LUB bez wizyt
+      return ACTIVE_ORDER_STATUSES.includes(status) || 
              !order.visits || 
              order.visits.length === 0 ||
              order.visits.some(v => v.status === 'pending' || v.status === 'scheduled');
@@ -227,21 +230,25 @@ export default async function handler(req, res) {
         }))
       );
       
+      console.log(`📋 Wszystkich wizyt w systemie: ${visits.length}`);
+      
       // Filtruj wizyty dla konkretnego serwisanta jeśli podano
-      if (servicemanId) {
+      if (servicemanId && servicemanId !== 'all') {
+        const beforeFilter = visits.length;
         visits = visits.filter(v => 
           v.employeeId === servicemanId || 
           v.technicianId === servicemanId ||
-          v.servicemanId === servicemanId
+          v.servicemanId === servicemanId ||
+          v.assignedTo === servicemanId
         );
+        console.log(`🔍 Po filtrze serwisanta ${servicemanId}: ${visits.length} wizyt (było ${beforeFilter})`);
       }
       
-      // Filtruj tylko zaplanowane i w trakcie
-      visits = visits.filter(v => 
-        v.status === 'scheduled' || 
-        v.status === 'in_progress' ||
-        v.status === 'pending'
-      );
+      // 🔄 Filtruj tylko aktywne wizyty (nie pokazuj completed, cancelled, no_show)
+      const ACTIVE_VISIT_STATUSES = ['scheduled', 'confirmed', 'in_progress', 'pending'];
+      visits = visits.filter(v => ACTIVE_VISIT_STATUSES.includes(v.status));
+      
+      console.log(`✅ Finalna liczba wizyt: ${visits.length} (statuses: ${ACTIVE_VISIT_STATUSES.join(', ')})`);
       
     } catch (error) {
       console.warn('⚠️ No visits data available:', error.message);

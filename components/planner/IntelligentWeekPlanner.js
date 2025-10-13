@@ -1,0 +1,4387 @@
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { useRouter } from 'next/router';
+// USUNIĘTO: GeocodingService i DistanceMatrixService importy
+// Powód: CORS - używamy API endpoints zamiast bezpośrednich wywołań
+import GoogleGeocoder from '../../geocoding/simple/GoogleGeocoder.js';
+import { suggestVisitDuration } from '../../utils/repairTimeCalculator';
+import { getApiCostMonitor } from '../../utils/apiCostMonitor';
+import { calculateEstimatedDuration, updateOrderEstimatedDuration } from './utils/timeCalculations';
+import { 
+  AlertTriangle,
+  Bot,
+  Calendar,
+  Car, 
+  CheckCircle,
+  ChevronLeft,
+  ChevronRight,
+  Clock, 
+  DollarSign,
+  Home,
+  MapPin, 
+  MessageCircle,
+  RefreshCw,
+  Settings,
+  TrendingUp,
+  Truck, 
+  Users,
+  Save
+} from 'lucide-react';
+
+const IntelligentWeekPlanner = () => {
+  console.log('🚀🚀🚀 IntelligentWeekPlanner COMPONENT RENDERING 🚀🚀🚀');
+  
+  const router = useRouter();
+  
+  // USUNIĘTO: Bezpośrednie inicjalizacje GeocodingService i DistanceMatrixService
+  // Powód: CORS - frontend nie może bezpośrednio wywoływać Google API
+  // Rozwiązanie: Wszystkie wywołania przechodzą przez API endpoints (/api/geocoding, /api/distance-matrix)
+
+  // Stan przechowuje plany dla wszystkich serwisantów
+  const [weeklyPlans, setWeeklyPlans] = useState({}); // { servicemanId: weeklyPlan }
+  const [weeklyPlan, setWeeklyPlan] = useState(null); // Aktualnie wyświetlany plan
+  const [isLoading, setIsLoading] = useState(false);
+  const [selectedDay, setSelectedDay] = useState(null);
+  
+  // 🆕 Stan dla modalu ze szczegółami zlecenia
+  const [selectedOrderModal, setSelectedOrderModal] = useState(null);
+  const [showOrderDetailsModal, setShowOrderDetailsModal] = useState(false);
+  
+  //  Stan dla harmonogramów serwisantów (dostępność godzinowa)
+  const [servicemanSchedules, setServicemanSchedules] = useState({});
+  const [dragOverInfo, setDragOverInfo] = useState(null); // Podgląd pozycji podczas przeciągania na timeline
+  
+  // � Stan dla linii aktualnej godziny
+  const [currentTime, setCurrentTime] = useState(new Date());
+  
+  // Aktualizuj czas co minutę
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 60000); // Co 60 sekund
+    
+    return () => clearInterval(timer);
+  }, []);
+  
+  // �💾 Pomocnicze funkcje do localStorage
+  const loadFromLocalStorage = (key, defaultValue) => {
+    try {
+      const saved = localStorage.getItem(`weekPlanner_${key}`);
+      return saved !== null ? JSON.parse(saved) : defaultValue;
+    } catch (error) {
+      console.warn(`Failed to load ${key} from localStorage:`, error);
+      return defaultValue;
+    }
+  };
+
+  const saveToLocalStorage = (key, value) => {
+    try {
+      localStorage.setItem(`weekPlanner_${key}`, JSON.stringify(value));
+    } catch (error) {
+      console.warn(`Failed to save ${key} to localStorage:`, error);
+    }
+  };
+
+  // ⏰ Stan dla zakresu godzin timeline (z localStorage)
+  const [timeRange, setTimeRange] = useState(() => loadFromLocalStorage('timeRange', { start: 6, end: 23 }));
+  const [hideUnusedHours, setHideUnusedHours] = useState(() => loadFromLocalStorage('hideUnusedHours', false));
+  
+  // 🏷️ Stan dla wyboru nagłówka karty zlecenia (z localStorage)
+  const [cardHeaderField, setCardHeaderField] = useState(() => loadFromLocalStorage('cardHeaderField', 'clientName'));
+
+  // Zapisuj zmiany do localStorage
+  useEffect(() => {
+    saveToLocalStorage('timeRange', timeRange);
+  }, [timeRange]);
+
+  useEffect(() => {
+    saveToLocalStorage('hideUnusedHours', hideUnusedHours);
+  }, [hideUnusedHours]);
+
+  useEffect(() => {
+    saveToLocalStorage('cardHeaderField', cardHeaderField);
+  }, [cardHeaderField]);
+
+  // 🆕 Handler dla kliknięcia w zlecenie - otwiera modal ze szczegółami
+  // 🆕 Funkcja pomocnicza do obsługi obu struktur danych (stara i nowa)
+  const getWeeklyPlanData = useCallback((plan) => {
+    if (!plan) return null;
+    
+    // Nowa struktura: { monday: {...}, tuesday: {...}, ..., unscheduledOrders: [...] }
+    // Stara struktura: { weeklyPlan: { monday: {...}, ... }, unscheduledOrders: [...] }
+    
+    // Sprawdź czy to nowa struktura (ma bezpośrednio dni tygodnia)
+    if (plan.monday || plan.tuesday || plan.wednesday) {
+      return plan; // Nowa struktura
+    }
+    
+    // Sprawdź czy to stara struktura (ma zagnieżdżony weeklyPlan)
+    if (plan.weeklyPlan) {
+      return plan.weeklyPlan; // Zwróć zagnieżdżony plan
+    }
+    
+    return null;
+  }, []);
+
+  const handleOrderClick = useCallback((order) => {
+    console.log('📋 Kliknięto zlecenie:', order);
+    setSelectedOrderModal(order);
+    setShowOrderDetailsModal(true);
+  }, []);
+
+  // Initialize Google Geocoder
+  const geocoder = useRef(null);
+  
+  useEffect(() => {
+    try {
+      const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
+      if (apiKey) {
+        geocoder.current = new GoogleGeocoder(apiKey);
+        console.log('🌍 Google Geocoder initialized successfully');
+      } else {
+        console.error('❌ Google Maps API key not found');
+      }
+    } catch (error) {
+      console.error('❌ Failed to initialize Google Geocoder:', error);
+    }
+  }, []);
+
+  const [optimizationPreferences, setOptimizationPreferences] = useState({
+    priorityMode: 'balanced', // balanced, revenue, priority, time, vip
+    maxDailyOrders: 12, // Zwiększone do realistycznej liczby
+    preferredStartTime: '08:00',
+    startLocation: null, // Będzie ustawione dynamicznie
+    workingHours: {
+      start: '06:00', // Najwcześniejszy możliwy wyjazd
+      end: '22:00', // Najpóźniejszy możliwy powrót
+      maxWorkingHours: 12 // Maksymalne godziny pracy dziennie
+    }
+  });
+
+  // Stan dla lokalizacji startu
+  const [startLocation, setStartLocation] = useState(null);
+
+  // Dodajmy stan dla zaawansowanych opcji optymalizacji
+  const [selectedOptimizationStrategy, setSelectedOptimizationStrategy] = useState('balanced');
+  const [draggedOrder, setDraggedOrder] = useState(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [completedOrders, setCompletedOrders] = useState(new Set());
+  const [currentWeekStart, setCurrentWeekStart] = useState(() => {
+    // Znajdź poniedziałek obecnego tygodnia
+    const today = new Date();
+    const dayOfWeek = today.getDay(); // 0 = niedziela, 1 = poniedziałek...
+    const mondayOffset = dayOfWeek === 0 ? -6 : 1 - dayOfWeek; 
+    const monday = new Date(today);
+    monday.setDate(today.getDate() + mondayOffset);
+    monday.setHours(0, 0, 0, 0);
+    return monday;
+  });
+
+  // Stan dla systemu serwisantów (z localStorage)
+  const [availableServicemen, setAvailableServicemen] = useState([]);
+  const [currentServiceman, setCurrentServiceman] = useState(() => loadFromLocalStorage('currentServiceman', null));
+  const [showServicemanSelector, setShowServicemanSelector] = useState(false);
+  
+  // Zapisuj wybranego serwisanta do localStorage
+  useEffect(() => {
+    if (currentServiceman) {
+      saveToLocalStorage('currentServiceman', currentServiceman);
+    }
+  }, [currentServiceman]);
+  
+  // 🔍 Stan dla zoom timeline
+  const [timelineZoom, setTimelineZoom] = useState(1); // 1x = normalna, 2x = 2x większa, 0.5x = zmniejszona
+  
+  const recalculateTimerRef = useRef({});
+
+  // Dostępne strategie optymalizacji
+  const optimizationStrategies = {
+    balanced: {
+      name: '⚖️ Zbalansowana',
+      description: 'Optymalne połączenie priorytetu i przychodu',
+      color: 'blue',
+      focus: 'Uniwersalna strategia dla większości przypadków'
+    },
+    time: {
+      name: '⏰ Najkrótszy Dzień',
+      description: 'Minimalizacja całkowitego czasu pracy',
+      color: 'purple',
+      focus: 'Maksymalna efektywność czasowa'
+    },
+    revenue: {
+      name: '💰 Maksymalny Przychód',
+      description: 'Priorytet dla najdroższych zleceń',
+      color: 'yellow',
+      focus: 'Optymalizacja zysku dziennego'
+    },
+    priority: {
+      name: '🚨 Pilne Najpierw',
+      description: 'Obsługa pilnych zleceń w pierwszej kolejności',
+      color: 'red',
+      focus: 'Zarządzanie kryzysowe i awarie'
+    },
+    vip: {
+      name: '👑 Klienci VIP',
+      description: 'Preferencyjne traktowanie ważnych klientów',
+      color: 'indigo',
+      focus: 'Obsługa strategicznych partnerów'
+    },
+    windows: {
+      name: '🕐 Okna Czasowe',
+      description: 'Respektowanie preferencji klientów co do godzin',
+      color: 'orange',
+      focus: 'Dostosowanie do dostępności klientów'
+    }
+  };
+
+  // Funkcja do formatowania dnia z datą
+  const formatDayWithDate = (dayKey, weekStart) => {
+    const dayNames = {
+      monday: 'Poniedziałek',
+      tuesday: 'Wtorek', 
+      wednesday: 'Środa',
+      thursday: 'Czwartek',
+      friday: 'Piątek',
+      saturday: 'Sobota',
+      sunday: 'Niedziela'
+    };
+    
+    const dayOffsets = {
+      monday: 0,
+      tuesday: 1,
+      wednesday: 2,
+      thursday: 3,
+      friday: 4,
+      saturday: 5,
+      sunday: 6
+    };
+    
+    const dayDate = new Date(weekStart);
+    dayDate.setDate(weekStart.getDate() + dayOffsets[dayKey]);
+    
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    dayDate.setHours(0, 0, 0, 0);
+    
+    const isToday = dayDate.getTime() === today.getTime();
+    const isPast = dayDate.getTime() < today.getTime();
+    
+    const dateStr = dayDate.toLocaleDateString('pl-PL', { 
+      day: '2-digit', 
+      month: '2-digit' 
+    });
+    
+    return {
+      name: dayNames[dayKey],
+      date: dateStr,
+      fullDate: dayDate,
+      isToday,
+      isPast
+    };
+  };
+
+  const dayNames = {
+    monday: 'Poniedziałek',
+    tuesday: 'Wtorek', 
+    wednesday: 'Środa',
+    thursday: 'Czwartek',
+    friday: 'Piątek',
+    saturday: 'Sobota',
+    sunday: 'Niedziela'
+  };
+
+  const priorityColors = {
+    high: 'bg-red-100 border-red-300 text-red-800',
+    medium: 'bg-yellow-100 border-yellow-300 text-yellow-800',
+    low: 'bg-green-100 border-green-300 text-green-800'
+  };
+
+  // 🆕 FUNKCJA: Ładowanie pracowników z API
+  const loadEmployeesFromAPI = useCallback(async () => {
+    console.log('👷👷👷 loadEmployeesFromAPI CALLED 👷👷👷');
+    console.log('👷 Loading employees from /api/employees...');
+    
+    try {
+      const response = await fetch('/api/employees');
+      
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      
+      const result = await response.json();
+      
+      if (result.employees && Array.isArray(result.employees)) {
+        console.log(`✅ Loaded ${result.employees.length} employees`);
+        
+        // 🔍 DEBUG: Co przyszło z API?
+        console.log('🔍 SUROWE DANE z API - pierwsi 2 pracownicy:', result.employees.slice(0, 2));
+        result.employees.forEach(emp => {
+          if (emp.role === 'Serwisant') {
+            console.log(`🔍 API Serwisant ${emp.name}:`, {
+              id: emp.id,
+              hasRepairTimes: !!emp.repairTimes,
+              repairTimesKeys: emp.repairTimes ? Object.keys(emp.repairTimes) : 'BRAK'
+            });
+          }
+        });
+        
+        // Kolory dla pracowników
+        const colors = ['#3B82F6', '#10B981', '#F59E0B', '#8B5CF6', '#EF4444', '#06B6D4', '#EC4899'];
+        
+        // Przekształć pracowników na format używany przez planer
+        // 🔧 TYLKO SERWISANCI - filtrujemy logistics/admin
+        const servicemen = result.employees
+          .filter(emp => emp.isActive && emp.role === 'Serwisant')
+          .map((emp, index) => ({
+            id: emp.id,
+            name: emp.name,
+            isActive: index === 0, // Pierwszy aktywny domyślnie
+            color: colors[index % colors.length],
+            email: emp.email,
+            phone: emp.phone,
+            specializations: emp.specializations || [],
+            repairTimes: emp.repairTimes || {}, // 🤖 Czasy naprawy dla auto-kalkulacji
+            builtInWorkTimes: emp.builtInWorkTimes || {}, // 🏗️ Czasy montażu/demontażu zabudowy
+            agdSpecializations: emp.agdSpecializations // 🔧 Specjalizacje AGD
+          }));
+        
+        setAvailableServicemen(servicemen);
+        console.log('👷 Available servicemen set:', servicemen.map(s => `${s.name} (${s.id})`));
+        
+        // 🔍 DEBUG: Sprawdź czy repairTimes są w danych
+        servicemen.forEach(s => {
+          console.log(`🔍 ${s.name}: repairTimes keys =`, s.repairTimes ? Object.keys(s.repairTimes) : 'BRAK');
+          console.log(`🔍 ${s.name} FULL OBJECT (JSON):`, JSON.stringify(s, null, 2));
+        });
+        
+        // Ustaw pierwszego pracownika jako domyślnego
+        if (servicemen.length > 0 && !currentServiceman) {
+          setCurrentServiceman(servicemen[0].id);
+          console.log('✅ Default serviceman set:', servicemen[0].name);
+        }
+        
+        return { success: true, servicemen };
+      } else {
+        console.error('❌ Invalid response format');
+        return { success: false, error: 'Invalid response format' };
+      }
+    } catch (error) {
+      console.error('❌ Error loading employees:', error);
+      showNotification('Błąd ładowania pracowników', 'error');
+      return { success: false, error: error.message };
+    }
+  }, [currentServiceman]);
+
+  // 🆕 NOWA FUNKCJA: Ładowanie rzeczywistych danych z bazy (data/)
+  const loadRealDataFromAPI = useCallback(async () => {
+    console.log('📦 Loading real data from data/ folder...');
+    console.log('🔍 Current serviceman:', currentServiceman);
+    
+    try {
+      const response = await fetch(`/api/intelligent-planner/get-data?servicemanId=${currentServiceman || 'all'}`);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      
+      const result = await response.json();
+      
+      if (result.success) {
+        console.log('✅ Loaded real data:', result.data.metadata);
+        console.log(`   📦 Orders: ${result.data.orders.length}`);
+        console.log(`   👷 Servicemen: ${result.data.servicemen.length}`);
+        console.log(`   📅 Existing visits: ${result.data.visits.length}`);
+        
+        // Loguj przykładowe zlecenia
+        if (result.data.orders.length > 0) {
+          console.log('   📝 Przykładowe zlecenia:');
+          result.data.orders.slice(0, 3).forEach(order => {
+            console.log(`      - ${order.id}: ${order.clientName} (status: ${order.status}, scheduledDate: ${order.scheduledDate}, assignedTo: ${order.assignedTo})`);
+          });
+        }
+        
+        // Loguj wizyty
+        if (result.data.visits.length > 0) {
+          console.log('   📅 Przykładowe wizyty:');
+          result.data.visits.slice(0, 5).forEach(visit => {
+            console.log(`      - ${visit.id || visit.visitId}: Zlecenie ${visit.orderId}, technik ${visit.technicianId || visit.servicemanId}, data ${visit.scheduledDate}, status ${visit.status}`);
+          });
+        }
+        
+        // Tutaj możesz zapisać dane do lokalnego stanu jeśli potrzebujesz
+        // Na razie API intelligent-route-optimization sam je pobierze
+        
+        return {
+          success: true,
+          orders: result.data.orders,
+          servicemen: result.data.servicemen,
+          visits: result.data.visits
+        };
+      } else {
+        console.error('❌ Failed to load real data:', result.error);
+        return { success: false, error: result.error };
+      }
+    } catch (error) {
+      console.error('❌ Error loading real data:', error);
+      showNotification('Błąd ładowania danych z bazy', 'error');
+      return { success: false, error: error.message };
+    }
+  }, [currentServiceman]);
+
+  // 🆕 NOWA FUNKCJA: Zapisywanie planu do bazy danych
+  const savePlanToDatabase = useCallback(async () => {
+    const planData = getWeeklyPlanData(weeklyPlan);
+    if (!weeklyPlan || !planData) {
+      showNotification('❌ Brak planu do zapisania', 'error');
+      return;
+    }
+    
+    console.log('💾 Saving plan to database...');
+    setIsLoading(true);
+    
+    try {
+      const currentServicemanData = availableServicemen.find(s => s.id === currentServiceman);
+      
+      const response = await fetch('/api/intelligent-planner/save-plan', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          servicemanId: currentServiceman,
+          servicemanName: currentServicemanData?.name || 'Serwisant',
+          weeklyPlan: planData,
+          weekStart: currentWeekStart.toISOString()
+        })
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      
+      const result = await response.json();
+      
+      if (result.success) {
+        console.log('✅ Plan saved successfully:', result.data);
+        showNotification(
+          `✅ Plan zapisany! Utworzono ${result.data.createdVisitsCount} wizyt dla ${result.data.updatedOrdersCount} zleceń`,
+          'success'
+        );
+        
+        // 🔔 EMIT EVENT - Powiadom inne komponenty (np. kalendarz technika) o zmianie wizyt
+        console.log('🔔 Emitting visitsChanged event...');
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new CustomEvent('visitsChanged', {
+            detail: {
+              source: 'intelligent-planner',
+              action: 'plan-saved',
+              servicemanId: currentServiceman,
+              createdVisitsCount: result.data.createdVisitsCount,
+              updatedOrdersCount: result.data.updatedOrdersCount
+            }
+          }));
+        }
+        
+        // Odśwież dane po zapisaniu
+        setTimeout(() => {
+          loadRealDataFromAPI();
+        }, 1000);
+        
+        return true;
+      } else {
+        throw new Error(result.message || 'Unknown error');
+      }
+    } catch (error) {
+      console.error('❌ Error saving plan:', error);
+      showNotification(`❌ Błąd zapisywania planu: ${error.message}`, 'error');
+      return false;
+    } finally {
+      setIsLoading(false);
+    }
+  }, [weeklyPlan, currentServiceman, availableServicemen, currentWeekStart, loadRealDataFromAPI]);
+
+  // Helper function: Walidacja i normalizacja współrzędnych
+  const validateAndNormalizeCoordinates = useCallback((location) => {
+    if (!location) return null;
+    
+    // Jeśli to obiekt z coordinates
+    if (location.coordinates) {
+      const { lat, lng } = location.coordinates;
+      if (typeof lat === 'number' && typeof lng === 'number' && 
+          !isNaN(lat) && !isNaN(lng) && 
+          lat >= -90 && lat <= 90 && 
+          lng >= -180 && lng <= 180) {
+        return {
+          lat,
+          lng,
+          address: location.address || `${lat}, ${lng}`
+        };
+      }
+    }
+    
+    // Jeśli to bezpośrednio współrzędne
+    if (location.lat && location.lng) {
+      const { lat, lng } = location;
+      if (typeof lat === 'number' && typeof lng === 'number' && 
+          !isNaN(lat) && !isNaN(lng) && 
+          lat >= -90 && lat <= 90 && 
+          lng >= -180 && lng <= 180) {
+        return {
+          lat,
+          lng,
+          address: location.address || `${lat}, ${lng}`
+        };
+      }
+    }
+    
+    return null;
+  }, []);
+
+  // Ładowanie inteligentnego planu tygodniowego
+  const loadIntelligentPlan = useCallback(async () => {
+    console.log('🚀 loadIntelligentPlan WYWOŁANE');
+    
+    // Prevent multiple concurrent executions
+    if (loadIntelligentPlanMutexRef.current) {
+      console.log('🔒 loadIntelligentPlan already in progress, skipping...');
+      return;
+    }
+    
+    loadIntelligentPlanMutexRef.current = true;
+    console.log('🔒 Acquired mutex for loadIntelligentPlan');
+    
+    setIsLoading(true);
+    try {
+      // 🆕 KROK 1: Najpierw załaduj rzeczywiste dane z bazy
+      console.log('📊 STEP 1: Loading real data from database...');
+      const realData = await loadRealDataFromAPI();
+      
+      // 📅 KROK 1.5: Załaduj harmonogramy serwisantów (dostępność godzinowa)
+      if (currentServiceman) {
+        try {
+          // 📅 Załaduj harmonogramy dla wszystkich 7 dni tygodnia
+          const allSchedulesMap = {};
+          const daysOfWeek = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+          
+          for (let i = 0; i < 7; i++) {
+            const dayDate = new Date(currentWeekStart);
+            dayDate.setDate(dayDate.getDate() + i);
+            // 🔧 FIX: Użyj lokalnej daty zamiast UTC
+            const dateStr = `${dayDate.getFullYear()}-${String(dayDate.getMonth() + 1).padStart(2, '0')}-${String(dayDate.getDate()).padStart(2, '0')}`;
+            
+            const scheduleResponse = await fetch(`/api/employee-calendar?action=get-all-schedules&date=${dateStr}`);
+            const scheduleData = await scheduleResponse.json();
+            
+            if (scheduleData.success && scheduleData.schedules) {
+              // Dla każdego pracownika, dodaj jego schedule tego dnia
+              Object.keys(scheduleData.schedules).forEach(employeeId => {
+                if (!allSchedulesMap[employeeId]) {
+                  allSchedulesMap[employeeId] = {
+                    workSlots: [],
+                    breaks: []
+                  };
+                }
+                
+                const schedule = scheduleData.schedules[employeeId];
+                const dayOfWeek = dayDate.getDay() || 7; // 0=Nd→7, 1=Pon, ..., 6=Sob
+                
+                // Konwertuj timeSlots na workSlots (zakresy czasowe)
+                if (schedule.timeSlots && schedule.timeSlots.length > 0) {
+                  let currentSlot = null;
+                  
+                  schedule.timeSlots.forEach((slot) => {
+                    if (slot.status === 'available' || slot.status === 'busy') {
+                      if (!currentSlot) {
+                        currentSlot = { startTime: slot.time, endTime: slot.time, dayOfWeek, type: 'work' };
+                      }
+                      currentSlot.endTime = slot.time;
+                    } else if (slot.status === 'break') {
+                      if (currentSlot) {
+                        allSchedulesMap[employeeId].workSlots.push({...currentSlot});
+                        currentSlot = null;
+                      }
+                    }
+                  });
+                  
+                  if (currentSlot) {
+                    allSchedulesMap[employeeId].workSlots.push({...currentSlot});
+                  }
+                }
+              });
+            }
+          }
+          
+          setServicemanSchedules(allSchedulesMap);
+          console.log('📅 Załadowano harmonogramy dla całego tygodnia:', Object.keys(allSchedulesMap).length, 'serwisantów');
+          if (allSchedulesMap[currentServiceman]) {
+            console.log(`  ✅ ${currentServiceman}: ${allSchedulesMap[currentServiceman].workSlots.length} workSlots`);
+          }
+        } catch (error) {
+          console.warn('⚠️ Nie udało się załadować harmonogramów:', error);
+        }
+      }
+      
+      if (!realData.success) {
+        showNotification('⚠️ Nie udało się załadować danych. Używam danych testowych.', 'warning');
+        // Kontynuuj mimo to - API ma swoje fallbacki
+      } else {
+        console.log('✅ Real data loaded successfully');
+        showNotification(`📦 Załadowano ${realData.orders.length} zleceń z bazy danych`, 'success');
+      }
+      const preferences = { ...optimizationPreferences };
+      
+      // 🆕 UPROSZCZONE ŁADOWANIE: Pomijamy API optymalizacji (wymaga przypisanych zleceń)
+      // Zamiast tego używamy już załadowanych danych z realData
+      console.log('📦 Pomijam API optymalizacji - używam już załadowanych danych');
+      
+      // Sprawdź czy realData ma orders
+      if (!realData || !realData.orders) {
+        console.error('❌ realData.orders jest undefined!', realData);
+        showNotification('⚠️ Nie udało się załadować zleceń', 'error');
+        setWeeklyPlan({
+          monday: { orders: [], stats: {} },
+          tuesday: { orders: [], stats: {} },
+          wednesday: { orders: [], stats: {} },
+          thursday: { orders: [], stats: {} },
+          friday: { orders: [], stats: {} },
+          saturday: { orders: [], stats: {} },
+          sunday: { orders: [], stats: {} },
+          unscheduledOrders: [],
+          recommendations: [],
+          costAnalysis: {}
+        });
+        return;
+      }
+      
+      // ✅ NOWA LOGIKA: Wszystkie zlecenia trafiają do "niezaplanowanych"
+      // scheduledDate w bazie NIE MA ZNACZENIA - administrator przypisuje ręcznie w plannerze
+      console.log('🔍 Ładuję zlecenia do plannera...');
+      console.log(`   Wszystkich zleceń z API: ${realData.orders.length}`);
+      
+      // ✅ POPRAWKA: Pokazuj wszystkie zlecenia OPRÓCZ zakończonych/anulowanych
+      // Dzięki temu zmiana statusu nie spowoduje zniknięcia zlecenia z widoku
+      let unscheduledOrders = realData.orders.filter(order => {
+        // Wyklucz tylko zlecenia zakończone, anulowane i te które nie stawili się
+        const isExcludedStatus = order.status === 'completed' || 
+                                 order.status === 'cancelled' || 
+                                 order.status === 'no-show';
+        
+        // Sprawdź czy zlecenie ma podstawowe dane (eliminuj uszkodzone rekordy)
+        const hasValidData = order.clientName && (order.address || order.city);
+        
+        if (!hasValidData) {
+          console.warn(`⚠️ Pomijam zlecenie ${order.id} - brak danych (clientName: ${order.clientName}, address: ${order.address})`);
+        }
+        
+        // Pokaż zlecenie jeśli NIE jest wykluczone i MA dane
+        return !isExcludedStatus && hasValidData;
+      });
+      
+      // 🆕 AUTOMATYCZNE OBLICZANIE CZASU dla zleceń z przypisanym pracownikiem
+      unscheduledOrders = unscheduledOrders.map(order => {
+        if (order.assignedTo && (!order.estimatedDuration || order.estimatedDuration === 60)) {
+          // 🔒 Używamy TYLKO serwisantów (z filtrowanej listy), nie logistyków
+          const employee = servicemen.find(emp => emp.id === order.assignedTo);
+          if (employee && employee.repairTimes) {
+            const calculatedTime = calculateEstimatedDuration(order, employee);
+            console.log(`⏱️ Auto-obliczam czas dla ${order.clientName}: ${calculatedTime}min (${order.deviceType})`);
+            return { ...order, estimatedDuration: calculatedTime };
+          } else if (!employee && order.assignedTo) {
+            // 🔧 Zlecenie przypisane do pracownika logistyki lub nieaktywnego - resetuj przypisanie
+            console.log(`🔧 Resetuję przypisanie zlecenia ${order.clientName} (był przypisany do nieaktywnego/logistyka: ${order.assignedTo})`);
+            return { ...order, assignedTo: null };
+          }
+        }
+        return order;
+      });
+      
+      // Nie używamy już scheduledOrders z bazy - wszystko idzie do unscheduled
+      const scheduledOrders = [];
+      
+      console.log(`📊 Zlecenia do zaplanowania: ${unscheduledOrders.length}`);
+      console.log(`📊 Pominięto zleceń: ${realData.orders.length - unscheduledOrders.length}`);
+      
+      // Loguj wszystkie statusy zleceń
+      const statusCounts = {};
+      realData.orders.forEach(order => {
+        const status = order.status || 'unknown';
+        statusCounts[status] = (statusCounts[status] || 0) + 1;
+      });
+      console.log(`📊 Statusy zleceń (wszystkie):`, statusCounts);
+      console.log(`   ✅ Zaakceptowane statusy: pending, unscheduled, new, contacted, scheduled, confirmed, in-progress, waiting-parts, ready`);
+      console.log(`   ❌ Wykluczone statusy: completed, cancelled, no-show`);
+      
+      // Loguj pominięte zlecenia z powodu statusu
+      const excludedOrders = realData.orders.filter(o => 
+        o.status === 'completed' || o.status === 'cancelled' || o.status === 'no-show'
+      );
+      if (excludedOrders.length > 0) {
+        console.log(`🚫 Pominięto ${excludedOrders.length} zleceń (completed/cancelled/no-show):`, 
+          excludedOrders.map(o => ({ id: o.id, status: o.status, client: o.clientName }))
+        );
+      }
+      
+      // Loguj zlecenia z brakującymi danymi
+      const ordersWithMissingData = realData.orders.filter(o => 
+        !o.clientName || (!o.address && !o.city)
+      );
+      if (ordersWithMissingData.length > 0) {
+        console.warn(`⚠️ Znaleziono ${ordersWithMissingData.length} zleceń z brakującymi danymi:`, 
+          ordersWithMissingData.map(o => ({ 
+            id: o.id, 
+            status: o.status,
+            hasClient: !!o.clientName, 
+            hasAddress: !!(o.address || o.city),
+            data: o
+          }))
+        );
+      }
+      
+      // Pokaż przykładowe zlecenie
+      if (unscheduledOrders.length > 0) {
+        console.log(`  📝 Przykład zlecenia do zaplanowania:`, {
+          id: unscheduledOrders[0].id,
+          client: unscheduledOrders[0].clientName,
+          address: unscheduledOrders[0].address,
+          status: unscheduledOrders[0].status,
+          hasCoordinates: !!unscheduledOrders[0].coordinates
+        });
+      }
+      
+      // ✅ ROZDZIEL ZLECENIA: Zaplanowane trafiają do dni, reszta do unscheduled
+      const weekPlan = {
+        monday: { orders: [], stats: {} },
+        tuesday: { orders: [], stats: {} },
+        wednesday: { orders: [], stats: {} },
+        thursday: { orders: [], stats: {} },
+        friday: { orders: [], stats: {} },
+        saturday: { orders: [], stats: {} },
+        sunday: { orders: [], stats: {} },
+        unscheduledOrders: [],
+        recommendations: [],
+        costAnalysis: {}
+      };
+      
+      // Mapowanie dat na dni tygodnia względem currentWeekStart
+      const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+      
+      console.log(`📅 currentWeekStart: ${currentWeekStart.toISOString().split('T')[0]}`);
+      console.log(`📅 Dzisiaj: ${new Date().toISOString().split('T')[0]}`);
+      
+      unscheduledOrders.forEach(order => {
+        // 📅 Jeśli zlecenie ma assignedTo + scheduledDate → przypisz do dnia
+        // ✅ POPRAWKA: Usunięto warunek order.status === 'scheduled', bo:
+        //    - Zlecenie może mieć status 'unscheduled' (jako zamówienie)
+        //    - ALE mieć wizytę z scheduledDate (zaplanowaną)
+        //    - Sprawdzamy tylko czy MA datę i przypisanie, nie patrzymy na status
+        if (order.assignedTo && order.scheduledDate) {
+          const orderDate = new Date(order.scheduledDate + 'T00:00:00'); // Force local timezone
+          const weekStart = new Date(currentWeekStart);
+          weekStart.setHours(0, 0, 0, 0);
+          
+          // Sprawdź czy data należy do obecnego tygodnia
+          const daysDiff = Math.floor((orderDate - weekStart) / (1000 * 60 * 60 * 24));
+          
+          console.log(`🔍 Zlecenie ${order.clientName}: data=${order.scheduledDate}, daysDiff=${daysDiff}, dayOfWeek=${orderDate.getDay()}, status=${order.status}`);
+          
+          if (daysDiff >= 0 && daysDiff < 7) {
+            const dayName = dayNames[orderDate.getDay()];
+            weekPlan[dayName].orders.push(order);
+            console.log(`  ✅ Przypisano do ${dayName} (status: ${order.status})`);
+          } else {
+            // Data poza obecnym tygodniem - do unscheduled
+            weekPlan.unscheduledOrders.push(order);
+            console.log(`  ⚠️ Poza tygodniem (oczekiwano 0-6, otrzymano ${daysDiff})`);
+          }
+        } else {
+          // Brak przypisania lub scheduledDate → do unscheduled
+          weekPlan.unscheduledOrders.push(order);
+          if (!order.assignedTo) {
+            console.log(`  ℹ️ ${order.clientName}: Brak assignedTo`);
+          } else if (!order.scheduledDate) {
+            console.log(`  ℹ️ ${order.clientName}: Brak scheduledDate`);
+          }
+        }
+      });
+      
+      console.log(`📊 Rozdzielono zlecenia:`);
+      console.log(`   - Nieprzypisane: ${weekPlan.unscheduledOrders.length}`);
+      Object.keys(dayNames).forEach(day => {
+        const dayKey = dayNames[day];
+        if (weekPlan[dayKey] && weekPlan[dayKey].orders.length > 0) {
+          console.log(`   - ${dayKey}: ${weekPlan[dayKey].orders.length} zleceń`);
+        }
+      });
+      
+      setWeeklyPlan(weekPlan);
+      
+      showNotification(`✅ Załadowano ${realData.orders.length} zleceń`, 'success');
+    } catch (error) {
+      console.error('Network error:', error);
+      showNotification(`Błąd sieci: ${error.message}`, 'error');
+    } finally {
+      setIsLoading(false);
+      // Release mutex lock
+      loadIntelligentPlanMutexRef.current = false;
+      console.log('🔓 Released mutex for loadIntelligentPlan');
+    }
+  }, [startLocation, optimizationPreferences, currentServiceman]); // ✅ Dodano currentServiceman!
+
+  // Ładowanie pracowników przy montowaniu komponentu
+  useEffect(() => {
+    console.log('🔥🔥🔥 useEffect EMPLOYEES FIRED 🔥🔥🔥');
+    
+    // Wywołaj funkcję bezpośrednio
+    const loadEmployees = async () => {
+      console.log('👷👷👷 Loading employees INLINE 👷👷👷');
+      try {
+        const response = await fetch('/api/employees');
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        
+        const result = await response.json();
+        console.log('✅✅✅ GOT EMPLOYEES:', result.employees?.length);
+        
+        if (result.employees && Array.isArray(result.employees)) {
+          const colors = ['#3B82F6', '#10B981', '#F59E0B', '#8B5CF6', '#EF4444', '#06B6D4', '#EC4899'];
+          
+          // 🔧 TYLKO SERWISANCI - filtrujemy logistics/admin
+          const servicemen = result.employees
+            .filter(emp => emp.isActive && emp.role === 'Serwisant')
+            .map((emp, index) => ({
+              id: emp.id,
+              name: emp.name,
+              isActive: index === 0,
+              color: colors[index % colors.length],
+              email: emp.email,
+              phone: emp.phone,
+              specializations: emp.specializations || [],
+              repairTimes: emp.repairTimes || {}, // 🤖 Czasy naprawy dla auto-kalkulacji
+              builtInWorkTimes: emp.builtInWorkTimes || {}, // 🏗️ Czasy montażu/demontażu zabudowy
+              agdSpecializations: emp.agdSpecializations, // 🔧 Specjalizacje AGD
+              address: emp.address || null,
+              city: emp.city || null
+            }));
+          
+          console.log('👷 Setting availableServicemen:', servicemen.length);
+          console.log('🔍 Servicemen with repairTimes:', servicemen.map(s => `${s.name}: ${s.repairTimes ? Object.keys(s.repairTimes).length : 0} devices`));
+          setAvailableServicemen(servicemen);
+          
+          if (servicemen.length > 0 && !currentServiceman) {
+            console.log('✅ Setting default serviceman:', servicemen[0].name);
+            setCurrentServiceman(servicemen[0].id);
+          }
+        }
+      } catch (error) {
+        console.error('❌❌❌ Error loading employees:', error);
+      }
+    };
+    
+    loadEmployees();
+  }, []); // Tylko raz przy montowaniu
+
+  // Ustaw lokalizację startu na podstawie wybranego pracownika
+  useEffect(() => {
+    if (!currentServiceman || !availableServicemen.length) return;
+
+    const serviceman = availableServicemen.find(s => s.id === currentServiceman);
+    if (!serviceman) return;
+
+    // Ustaw domyślną lokalizację startu - Kraków centrum jako fallback
+    if (!startLocation) {
+      setStartLocation({
+        address: serviceman.address || serviceman.city || 'Kraków, Polska',
+        coordinates: {
+          lat: 50.0647,
+          lng: 19.9450
+        }
+      });
+      console.log('🏠 Ustawiono domyślną lokalizację startu:', serviceman.address || 'Kraków, Polska');
+    }
+  }, [currentServiceman, availableServicemen, startLocation]);
+
+  // Ładowanie danych przy pierwszym renderowaniu - tylko raz!
+  useEffect(() => {
+    // Tylko przy pierwszym mount
+    if (!isInitialMountRef.current) return;
+    
+    // Poczekaj aż lokalizacja będzie gotowa, lub użyj domyślnej po 2 sekundach
+    initialLoadTimerRef.current = setTimeout(() => {
+      if (isInitialMountRef.current) {
+        console.log('⏰ Inicjalne ładowanie planu - startLocation:', startLocation);
+        loadIntelligentPlan();
+        isInitialMountRef.current = false;
+      }
+    }, 2000);
+    
+    // Jeśli startLocation się już pojawi wcześniej, załaduj od razu
+    if (startLocation?.coordinates && isInitialMountRef.current) {
+      clearTimeout(initialLoadTimerRef.current);
+      console.log('🎯 Rychłe ładowanie - startLocation dostępne:', startLocation.coordinates);
+      loadIntelligentPlan();
+      isInitialMountRef.current = false;
+    }
+    
+    return () => {
+      if (initialLoadTimerRef.current) {
+        clearTimeout(initialLoadTimerRef.current);
+      }
+      isInitialMountRef.current = false;
+    };
+  }, []); // TYLKO przy mount, bez dependencies na functions
+
+  // Przełączanie planów gdy zmieni się serwisant - TYLKO na zmianę serwisanta!
+  useEffect(() => {
+    // Sprawdź czy rzeczywiście zmienił się serwisant
+    if (prevServicemanRef.current === currentServiceman) {
+      return;
+    }
+    
+    // Zapisz aktualny plan przed przełączeniem
+    if (weeklyPlan && prevServicemanRef.current) {
+      setWeeklyPlans(prev => ({
+        ...prev,
+        [prevServicemanRef.current]: weeklyPlan
+      }));
+    }
+
+    // Załaduj plan dla nowego serwisanta
+    // ⚠️ POPRAWKA: Nie używaj weeklyPlans w dependencies! To powoduje nieskończoną pętlę
+    // Zamiast tego użyj functional update w callback
+    setWeeklyPlans(prevPlans => {
+      if (prevPlans[currentServiceman]) {
+        setWeeklyPlan(prevPlans[currentServiceman]);
+      } else {
+        // Jeśli nie ma planu dla tego serwisanta, załaduj nowy
+        const loadTimer = setTimeout(() => {
+          loadIntelligentPlan();
+        }, 100);
+      }
+      return prevPlans;
+    });
+    
+    // Zaktualizuj poprzedni serwisant
+    prevServicemanRef.current = currentServiceman;
+  }, [currentServiceman]); // ✅ TYLKO currentServiceman - bez weeklyPlans!
+
+  // Przeładuj plan gdy zmieni się lokalizacja startu - ZAWSZE reaguj na zmiany
+  useEffect(() => {
+    // Sprawdź czy rzeczywiście zmienił się updatedAt
+    if (!startLocation?.updatedAt || !startLocation?.coordinates) return;
+    if (prevUpdatedAtRef.current === startLocation.updatedAt) return;
+    
+    console.log('🗺️ Przeładowuję plan z nową lokalizacją startu:', startLocation.address);
+    console.log('📍 Nowa lokalizacja współrzędne:', startLocation.coordinates);
+    
+    // Wyczyść poprzedni debounce timer
+    if (planReloadDebounceRef.current) {
+      clearTimeout(planReloadDebounceRef.current);
+    }
+    
+    // Debounce żeby uniknąć wielokrotnych wywołań
+    planReloadDebounceRef.current = setTimeout(() => {
+      console.log('🔄 Wykonuję przeładowanie planu po zmianie lokalizacji');
+      loadIntelligentPlan();
+      prevUpdatedAtRef.current = startLocation.updatedAt;
+    }, 1000); // Zwiększono do 1 sekundy dla stabilności
+    
+    return () => {
+      if (planReloadDebounceRef.current) {
+        clearTimeout(planReloadDebounceRef.current);
+      }
+    };
+  }, [startLocation?.updatedAt]); // Reaguj na updatedAt ale z zabezpieczeniami
+
+  // Comprehensive cleanup on component unmount
+  useEffect(() => {
+    return () => {
+      // Clear all notification timeouts
+      if (notificationTimeouts.current) {
+        notificationTimeouts.current.forEach((timeoutId) => {
+          clearTimeout(timeoutId);
+        });
+        notificationTimeouts.current.clear();
+      }
+      
+      // Clear all calculation debounce timers
+      if (calculationDebounceRef.current) {
+        calculationDebounceRef.current.forEach((timerId) => clearTimeout(timerId));
+        calculationDebounceRef.current.clear();
+      }
+      
+      // Clear location change debounce
+      if (locationChangeDebounceRef.current) {
+        clearTimeout(locationChangeDebounceRef.current);
+      }
+      
+      // Clear plan reload debounce
+      if (planReloadDebounceRef.current) {
+        clearTimeout(planReloadDebounceRef.current);
+      }
+      
+      // Clear initial load timer
+      if (initialLoadTimerRef.current) {
+        clearTimeout(initialLoadTimerRef.current);
+      }
+      
+      // Reset mutex
+      if (loadIntelligentPlanMutexRef.current) {
+        loadIntelligentPlanMutexRef.current = false;
+      }
+      
+      console.log('🧹 Component cleanup completed - all timers cleared');
+    };
+  }, []);
+
+  // Funkcja pomocnicza do pobierania tekstu nagłówka karty
+  const getCardHeaderText = (order) => {
+    switch (cardHeaderField) {
+      case 'clientName':
+        return order.clientName || 'Nieznany klient';
+      case 'address':
+        return order.address || 'Brak adresu';
+      case 'deviceType':
+        return order.deviceType || order.device?.type || 'Brak urządzenia';
+      case 'description':
+        return order.description || 'Brak opisu';
+      default:
+        return order.clientName || 'Nieznany klient';
+    }
+  };
+
+  // Renderowanie karty zlecenia z obsługą drag & drop
+  const renderOrderCard = (order, currentDay, orderIndex) => {
+    // Przygotuj numery do wyświetlenia
+    const orderNumber = order.orderNumber || order.visitId || `ORD-${order.id}`;
+    const clientId = order.clientId || order.customerId || 'BRAK';
+    const visitNumbers = order.visits && order.visits.length > 0 
+      ? order.visits.map(v => v.visitId || v.id).join(', ')
+      : 'Brak wizyt';
+    
+    console.log('📋 Rendering order card:', { 
+      orderNumber, 
+      clientId, 
+      visitCount: order.visits?.length || 0,
+      orderData: order 
+    });
+    
+    const isCompleted = completedOrders.has(order.id);
+    
+    return (
+      <div 
+        key={`${currentDay}-${order.id}-${orderIndex}`} 
+        className={`p-3 rounded-lg border-2 mb-2 transition-all hover:shadow-md relative ${
+          isCompleted 
+            ? 'bg-green-50 border-green-300 opacity-75' 
+            : priorityColors[order.priority]
+        } ${isDragging && draggedOrder?.order.id === order.id ? 'opacity-50 scale-95' : ''}`}
+        draggable={!isCompleted}
+        onDragStart={(e) => handleDragStart(e, order, currentDay)}
+        onDragEnd={handleDragEnd}
+        title="Przeciągnij aby przenieść zlecenie do innego dnia"
+        style={isCompleted ? { cursor: 'default' } : { cursor: 'move' }}
+      >
+        <div className="flex items-start justify-between">
+          <div className="flex-1 min-w-0">
+            {/* Nagłówek z nazwą klienta i statusem */}
+            <div className="flex items-center gap-2 flex-wrap mb-1">
+              <h4 
+                className={`font-semibold text-sm truncate max-w-[200px] ${isCompleted ? 'line-through text-gray-500' : ''}`}
+                title={getCardHeaderText(order)}
+              >
+                {getCardHeaderText(order)}
+              </h4>
+              <span className="text-xs text-gray-500 whitespace-nowrap hidden sm:inline">📋 Przeciągnij</span>
+              {isCompleted && <span className="text-xs text-green-600 whitespace-nowrap">✅ Wykonane</span>}
+            </div>
+            
+            {/* Numery: Zlecenie, Klient, Wizyty */}
+            <div className="flex items-center gap-2 flex-wrap text-xs">
+              <span className="text-blue-700 font-mono bg-blue-50 px-2 py-0.5 rounded" title="Numer zlecenia">
+                🔢 {orderNumber}
+              </span>
+              <span className="text-purple-700 font-mono bg-purple-50 px-2 py-0.5 rounded" title="ID klienta">
+                � {clientId}
+              </span>
+              {order.visits && order.visits.length > 0 && (
+                <span className="text-green-700 font-mono bg-green-50 px-2 py-0.5 rounded" title={`Wizyty: ${visitNumbers}`}>
+                  📅 {order.visits.length} wiz.
+                </span>
+              )}
+            </div>
+          <p className="text-xs opacity-75 mb-1 truncate" title={order.description}>{order.description}</p>
+          <div className="flex items-center gap-3 text-xs flex-wrap">
+            <span className="flex items-center gap-1 truncate max-w-[150px]" title={order.address}>
+              <MapPin className="h-3 w-3 flex-shrink-0" />
+              <span className="truncate">{order.address.split(',')[0]}</span>
+            </span>
+            <span className="flex items-center gap-1">
+              <Clock className="h-3 w-3" />
+              {order.estimatedDuration || 60}min
+              {order.assignedTo && order.estimatedDuration && (
+                <span 
+                  className="ml-1 px-1.5 py-0.5 bg-blue-100 text-blue-700 rounded text-[10px] font-medium" 
+                  title="Czas automatycznie obliczony na podstawie typu urządzenia i pracownika"
+                >
+                  🤖 Auto
+                </span>
+              )}
+            </span>
+            <span className="flex items-center gap-1">
+              <DollarSign className="h-3 w-3" />
+              {order.serviceCost}zł
+            </span>
+          </div>
+          {/* Rzeczywisty czas dojazdu */}
+          <div className="mt-1">
+            <TravelTimeInfo 
+              order={order}
+              previousLocation={orderIndex === 0 ? null : weeklyPlan?.weeklyPlan?.[currentDay]?.orders?.[orderIndex-1]?.coordinates}
+              className="text-blue-600"
+            />
+          </div>
+        </div>
+        <div className="flex items-start gap-2">
+          {/* Przycisk do oznaczania jako wykonane */}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              toggleOrderCompletion(order.id);
+            }}
+            className={`px-2 py-1 rounded-full text-xs font-bold transition-colors ${
+              isCompleted 
+                ? 'bg-green-500 text-white hover:bg-green-600' 
+                : 'bg-gray-200 text-gray-600 hover:bg-green-500 hover:text-white'
+            }`}
+            title={isCompleted ? "Oznacz jako niewykonane" : "Oznacz jako wykonane"}
+          >
+            {isCompleted ? '✓' : '○'}
+          </button>
+          
+          {/* Przycisk do przeniesienia z powrotem do nieprzypisanych */}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              moveOrderToUnscheduled(order, currentDay);
+            }}
+            className="px-2 py-1 rounded text-xs font-medium bg-gray-200 text-gray-700 hover:bg-red-100 hover:text-red-700 transition-colors"
+            title="Przenieś z powrotem do nieprzypisanych"
+          >
+            ↩️
+          </button>
+          
+          {/* Przycisk do zmiany technika */}
+          {(() => {
+            console.log('🔍 DEBUG Dropdown:', { 
+              availableServicemen: availableServicemen.length, 
+              currentServiceman,
+              shouldShow: availableServicemen.length > 1 
+            });
+            return availableServicemen.length > 1;
+          })() && (
+            <select
+              onClick={(e) => e.stopPropagation()}
+              onChange={async (e) => {
+                e.stopPropagation();
+                const newTechnicianId = e.target.value;
+                if (newTechnicianId && newTechnicianId !== currentServiceman) {
+                  // Oblicz datę z currentDay (format: "2025-01-13")
+                  const scheduledDate = order.scheduledDate || currentDay;
+                  
+                  console.log(`🔄 Zmiana technika: ${currentServiceman} → ${newTechnicianId}`, {
+                    orderId: order.id,
+                    orderNumber: order.orderNumber,
+                    scheduledDate: scheduledDate,
+                    currentDay: currentDay
+                  });
+                  
+                  try {
+                    // 🆕 Oblicz nowy estimatedDuration na podstawie pracownika
+                    const newEmployee = availableServicemen.find(emp => emp.id === newTechnicianId);
+                    let newEstimatedDuration = order.estimatedDuration || 60;
+                    
+                    if (newEmployee) {
+                      newEstimatedDuration = calculateEstimatedDuration(order, newEmployee);
+                      console.log(`⏱️ Obliczony nowy czas: ${newEstimatedDuration} min (poprzednio: ${order.estimatedDuration} min)`);
+                    }
+                    
+                    const response = await fetch(`/api/orders/${order.id}`, {
+                      method: 'PATCH',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({ 
+                        assignedTo: newTechnicianId,
+                        scheduledDate: scheduledDate, // Zachowaj datę planowania!
+                        estimatedDuration: newEstimatedDuration // 🆕 Zaktualizowany czas
+                      })
+                    });
+                    
+                    if (response.ok) {
+                      const result = await response.json();
+                      console.log('✅ Zmiana technika zapisana:', result);
+                      showNotification(`✅ Zlecenie przypisane do innego technika (czas: ${newEstimatedDuration}min)`, 'success');
+                      
+                      // Przeładuj dane po zapisie
+                      setTimeout(() => {
+                        loadIntelligentPlan();
+                      }, 500);
+                    } else {
+                      const error = await response.json();
+                      console.error('❌ Błąd odpowiedzi API:', error);
+                      showNotification(`❌ Błąd zmiany technika: ${error.message}`, 'error');
+                    }
+                  } catch (error) {
+                    console.error('❌ Błąd zmiany technika:', error);
+                    showNotification(`❌ Błąd zmiany technika`, 'error');
+                  }
+                }
+              }}
+              className="px-2 py-1 rounded text-xs font-medium bg-blue-100 text-blue-700 hover:bg-blue-200 transition-colors cursor-pointer"
+              title="Zmień technika"
+              value={currentServiceman}
+            >
+              <option value="">👤 Zmień...</option>
+              {availableServicemen.map(tech => (
+                <option key={tech.id} value={tech.id}>
+                  {tech.name}
+                </option>
+              ))}
+            </select>
+          )}
+          
+          <span className={`px-2 py-1 rounded text-xs font-medium ${
+            order.priority === 'high' ? 'bg-red-200 text-red-800' :
+            order.priority === 'medium' ? 'bg-yellow-200 text-yellow-800' :
+            'bg-green-200 text-green-800'
+          }`}>
+            {order.priority === 'high' ? 'Pilne' : 
+             order.priority === 'medium' ? 'Średnie' : 'Niskie'}
+          </span>
+        </div>
+      </div>
+      
+      {/* Dostępność klienta */}
+      <div className="mt-2 pt-2 border-t border-gray-200">
+        <div className="text-xs text-gray-600">
+          <strong>Dostępny:</strong>
+          {order.preferredTimeSlots?.map((slot, idx) => (
+            <span key={idx} className="ml-1">
+              {slot.day === 'monday' ? 'Pon' :
+               slot.day === 'tuesday' ? 'Wt' :
+               slot.day === 'wednesday' ? 'Śr' :
+               slot.day === 'thursday' ? 'Czw' :
+               slot.day === 'friday' ? 'Pt' :
+               slot.day === 'saturday' ? 'Sob' :
+               slot.day === 'sunday' ? 'Nd' : slot.day} 
+              ({slot.start}-{slot.end})
+              {idx < order.preferredTimeSlots.length - 1 ? ', ' : ''}
+            </span>
+          ))}
+        </div>
+        {order.unavailableDates?.length > 0 && (
+          <div className="text-xs text-red-600 mt-1">
+            <strong>Niedostępny:</strong> {order.unavailableDates.join(', ')}
+          </div>
+        )}
+        {order.assignedTimeSlot && (
+          <div className="text-xs text-blue-600 mt-1 font-medium">
+            <strong>Przydzielone:</strong> {order.assignedTimeSlot.start}-{order.assignedTimeSlot.end}
+            {order.assignedTimeSlot.autoAssigned && (
+              <span className="ml-1 text-blue-500">⚡ (auto)</span>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+    );
+  };
+
+  // 🆕 Pobierz zlecenia dla konkretnego dnia w aktualnym tygodniu
+  const getOrdersForWeekDay = (day) => {
+    // ✅ POPRAWIONA LOGIKA: Filtruj zlecenia po KONKRETNEJ DACIE, nie po dniu tygodnia!
+    // Oblicz datę dla tego dnia w bieżącym tygodniu
+    const dayIndex = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].indexOf(day);
+    if (dayIndex === -1) {
+      console.warn(`⚠️ Nieprawidłowy dzień: ${day}`);
+      return [];
+    }
+    
+    // Oblicz konkretną datę (np. środa 9 października 2025)
+    const targetDate = new Date(currentWeekStart);
+    targetDate.setDate(currentWeekStart.getDate() + dayIndex);
+    // 🔧 FIX: Użyj lokalnej daty zamiast UTC
+    const targetDateStr = `${targetDate.getFullYear()}-${String(targetDate.getMonth() + 1).padStart(2, '0')}-${String(targetDate.getDate()).padStart(2, '0')}`; // YYYY-MM-DD
+    
+    console.log(`📅 getOrdersForWeekDay(${day}) - szukam zleceń dla daty: ${targetDateStr}`);
+    
+    // Pobierz wszystkie zlecenia z weeklyPlan[day].orders
+    const allDayOrders = (weeklyPlan[day] && weeklyPlan[day].orders) || [];
+    
+    // Filtruj tylko te, które mają scheduledDate pasującą do targetDateStr
+    const filteredOrders = allDayOrders.filter(order => {
+      const orderDate = order.scheduledDate;
+      if (!orderDate) return false;
+      
+      // Porównaj daty (bez czasu)
+      const orderDateStr = orderDate.split('T')[0];
+      const matches = orderDateStr === targetDateStr;
+      
+      if (!matches) {
+        console.log(`  ⏭️ Pomijam zlecenie ${order.id} - ma datę ${orderDateStr}, a szukam ${targetDateStr}`);
+      }
+      
+      return matches;
+    });
+    
+    console.log(`  ✅ Zwracam ${filteredOrders.length} zleceń dla ${day} (${targetDateStr})`);
+    
+    return filteredOrders;
+  };
+
+  // 📅 Pobierz harmonogram serwisanta dla danego dnia
+  const getServicemanScheduleForDay = useCallback((day, servicemanId) => {
+    if (!servicemanId) {
+      return null;
+    }
+    
+    if (!servicemanSchedules[servicemanId]) {
+      return null;
+    }
+    
+    // dayOfWeek: 1=Pon, 2=Wt, ..., 7=Nd
+    const dayOfWeekMap = {
+      monday: 1,
+      tuesday: 2,
+      wednesday: 3,
+      thursday: 4,
+      friday: 5,
+      saturday: 6,
+      sunday: 7
+    };
+    
+    const dayOfWeek = dayOfWeekMap[day];
+    const schedule = servicemanSchedules[servicemanId];
+    
+    // Znajdź workSlots dla tego dnia
+    const workSlots = (schedule.workSlots || []).filter(slot => slot.dayOfWeek === dayOfWeek);
+    const breaks = (schedule.breaks || []).filter(br => br.dayOfWeek === dayOfWeek);
+    
+    console.log(`  ✅ Zwracam: ${workSlots.length} workSlots, ${breaks.length} breaks`);
+    
+    return { workSlots, breaks };
+  }, [servicemanSchedules]);
+
+  // Renderowanie harmonogramu dnia z rekomendacjami czasu
+  const renderDaySchedule = (day, dayPlan) => {
+    // 🆕 Zamiast używać dayPlan.orders, pobierz rzeczywiste zlecenia z bazy filtrowane po dacie
+    const orders = getOrdersForWeekDay(day);
+    
+    if (!orders || orders.length === 0) return null;
+    
+    // Usunięto kod rzeczywistych harmonogramów (Distance Matrix API)
+    const realSchedule = null;
+    
+    // Jeśli mamy rzeczywisty harmonogram, użyj go
+    if (realSchedule && realSchedule.schedule) {
+      const schedule = realSchedule.schedule;
+      const departure = schedule.find(s => s.type === 'departure');
+      const visits = schedule.filter(s => s.type === 'visit');
+      const arrivalHome = schedule.find(s => s.type === 'arrival_home');
+      
+      return (
+        <div className="mt-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
+          <h4 className="font-semibold text-sm mb-3 flex items-center gap-2 text-blue-800">
+            <Clock className="h-4 w-4" />
+            Harmonogram z Rzeczywistymi Czasami
+            <span className="ml-2 px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">
+              🌐 Real-time
+            </span>
+          </h4>
+          
+          {/* Czas wyjazdu */}
+          <div className="mb-3 p-2 bg-green-100 rounded border border-green-300">
+            <div className="flex items-center justify-between">
+              <span className="font-medium text-green-800">🚗 Wyjazd z domu:</span>
+              <span className="font-bold text-green-800">
+                {departure.time.toLocaleTimeString('pl-PL', {hour: '2-digit', minute: '2-digit'})}
+              </span>
+            </div>
+            <div className="text-xs text-green-600 mt-1">
+              📍 {startLocation.address}
+            </div>
+          </div>
+          
+          {/* Harmonogram wizyt */}
+          <div className="space-y-2">
+            {visits.map((visit, idx) => {
+              const visitTypeLabels = {
+                diagnosis: '🔍 Diagnoza',
+                repair: '🔧 Naprawa',
+                control: '✅ Kontrola',
+                installation: '📦 Montaż'
+              };
+              const visitTypeLabel = visitTypeLabels[visit.order.visitType] || '📋 Wizyta';
+              
+              return (
+                <div 
+                  key={visit.order.visitId || `order-${visit.order.id}-${idx}`} 
+                  onClick={() => handleOrderClick(visit.order)}
+                  className="p-2 bg-white rounded border border-gray-200 cursor-pointer hover:shadow-lg hover:border-blue-400 transition-all duration-200"
+                >
+                  <div className="flex items-center justify-between mb-1">
+                    <div className="flex items-center gap-2">
+                      <span className="font-medium text-sm hover:text-blue-600">
+                        {visit.order.clientName}
+                      </span>
+                      {/* Typ wizyty */}
+                      <span className="px-2 py-0.5 bg-blue-100 text-blue-800 text-xs rounded-full">
+                        {visitTypeLabel}
+                      </span>
+                      {/* Numer wizyty w zleceniu */}
+                      {visit.order.visitNumber && (
+                        <span className="text-xs text-gray-500">
+                          (wizyta {visit.order.visitNumber})
+                        </span>
+                      )}
+                    </div>
+                    <span className="text-xs text-gray-500">#{idx + 1}</span>
+                  </div>
+                  
+                  {/* Numer zlecenia */}
+                  {visit.order.orderNumber && (
+                    <div className="text-xs text-gray-500 mb-2">
+                      📋 Zlecenie: <span className="font-mono">{visit.order.orderNumber}</span>
+                    </div>
+                  )}
+                  
+                  <div className="grid grid-cols-2 gap-2 text-xs">
+                    <div>
+                      <span className="text-green-600">📍 Przyjazd:</span>
+                      <span className="font-medium ml-1">
+                        {visit.arrivalTime.toLocaleTimeString('pl-PL', {hour: '2-digit', minute: '2-digit'})}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="text-red-600">🏁 Wyjazd:</span>
+                      <span className="font-medium ml-1">
+                        {visit.departureTime.toLocaleTimeString('pl-PL', {hour: '2-digit', minute: '2-digit'})}
+                      </span>
+                    </div>
+                    <div className="col-span-2 text-gray-600">
+                    🔧 {visit.order.description || visit.order.issueDescription} ({visit.duration}min, {visit.order.serviceCost}zł)
+                  </div>
+                  <div className="col-span-2 text-gray-500 text-xs">
+                    📍 {visit.order.address}
+                  </div>
+                  <div className="col-span-2">
+                    <TravelTimeInfo 
+                      order={visit.order}
+                      previousLocation={idx === 0 ? null : visits[idx-1]?.order?.coordinates}
+                      className="mt-1"
+                    />
+                  </div>
+                </div>
+                <div className="mt-2 text-xs text-blue-600 hover:text-blue-800">
+                  👆 Kliknij aby zobaczyć szczegóły
+                </div>
+              </div>
+              );
+            })}
+          </div>
+          
+          {/* Czas powrotu */}
+          <div className="mt-3 p-2 bg-purple-100 rounded border border-purple-300">
+            <div className="flex items-center justify-between">
+              <span className="font-medium text-purple-800">🏠 Powrót do domu:</span>
+              <span className="font-bold text-purple-800">
+                {arrivalHome.time.toLocaleTimeString('pl-PL', {hour: '2-digit', minute: '2-digit'})}
+              </span>
+            </div>
+            <div className="text-xs text-purple-600 mt-1">
+              ⏱️ Całkowity czas pracy: {(realSchedule.totalDuration / (1000 * 60 * 60)).toFixed(1)}h
+            </div>
+          </div>
+        </div>
+      );
+    }
+    
+    // Fallback do starego systemu jeśli jeszcze nie obliczono rzeczywistego harmonogramu
+    const startTime = optimizationPreferences.preferredStartTime;
+    const firstOrder = orders[0];
+    
+    // Użyj symulowanego czasu jako fallback
+    const travelToFirst = 30; // Fallback 30 minut
+    const firstVisitTime = new Date(`2025-10-01T${startTime}:00`);
+    const departureTime = new Date(firstVisitTime.getTime() - travelToFirst * 60000);
+    
+    const minDepartureHour = parseTime(optimizationPreferences.workingHours.start);
+    if (departureTime.getHours() * 60 + departureTime.getMinutes() < minDepartureHour) {
+      departureTime.setHours(Math.floor(minDepartureHour / 60), minDepartureHour % 60, 0, 0);
+      firstVisitTime.setTime(departureTime.getTime() + travelToFirst * 60000);
+    }
+    
+    let currentTime = new Date(firstVisitTime);
+
+    return (
+      <div className="mt-3 p-3 bg-yellow-50 rounded-lg border border-yellow-200">
+        <h4 className="font-semibold text-sm mb-3 flex items-center gap-2 text-yellow-800">
+          <Clock className="h-4 w-4" />
+          Harmonogram (obliczanie czasu rzeczywistego...)
+          <span className="ml-2 px-2 py-1 bg-yellow-100 text-yellow-800 text-xs rounded-full">
+            📡 Loading...
+          </span>
+        </h4>
+        
+        {/* Czas wyjazdu */}
+        <div className="mb-3 p-2 bg-green-100 rounded border border-green-300">
+          <div className="flex items-center justify-between">
+            <span className="font-medium text-green-800">🚗 Wyjazd z domu:</span>
+            <span className="font-bold text-green-800">
+              {departureTime.toLocaleTimeString('pl-PL', {hour: '2-digit', minute: '2-digit'})}
+            </span>
+          </div>
+          <div className="text-xs text-green-600 mt-1">
+            📍 {startLocation.address}
+          </div>
+        </div>
+        
+        {/* Harmonogram wizyt */}
+        <div className="space-y-2">
+          {orders.map((order, idx) => {
+            // Jeśli to nie pierwsza wizyta, dodaj symulowany czas dojazdu
+            if (idx > 0) {
+              currentTime = new Date(currentTime.getTime() + 20 * 60000); // 20 min fallback
+            }
+            
+            const arrivalTime = new Date(currentTime);
+            const orderDepartureTime = new Date(currentTime.getTime() + order.estimatedDuration * 60000);
+            currentTime = orderDepartureTime;
+            
+            return (
+              <div 
+                key={`unassigned-${order.id}-${idx}`} 
+                onClick={() => handleOrderClick(order)}
+                className="p-2 bg-white rounded border border-gray-200 opacity-75 cursor-pointer hover:shadow-lg hover:border-blue-400 hover:opacity-100 transition-all duration-200"
+              >
+                <div className="flex items-center justify-between mb-1">
+                  <span className="font-medium text-sm hover:text-blue-600">{order.clientName}</span>
+                  <span className="text-xs text-gray-500">#{idx + 1}</span>
+                </div>
+                <div className="grid grid-cols-2 gap-2 text-xs">
+                  <div>
+                    <span className="text-green-600">📍 Przyjazd:</span>
+                    <span className="font-medium ml-1">
+                      {arrivalTime.toLocaleTimeString('pl-PL', {hour: '2-digit', minute: '2-digit'})}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-red-600">🏁 Wyjazd:</span>
+                    <span className="font-medium ml-1">
+                      {orderDepartureTime.toLocaleTimeString('pl-PL', {hour: '2-digit', minute: '2-digit'})}
+                    </span>
+                  </div>
+                  <div className="col-span-2 text-gray-600">
+                    🔧 {order.description} ({order.estimatedDuration}min, {order.serviceCost}zł)
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+        
+        {/* Czas powrotu */}
+        <div className="mt-3 p-2 bg-purple-100 rounded border border-purple-300">
+          <div className="flex items-center justify-between">
+            <span className="font-medium text-purple-800">🏠 Powrót do domu:</span>
+            <span className="font-bold text-purple-800">
+              {new Date(currentTime.getTime() + 30 * 60000).toLocaleTimeString('pl-PL', {hour: '2-digit', minute: '2-digit'})}
+            </span>
+          </div>
+          <div className="text-xs text-purple-600 mt-1">
+            ⏱️ Szacowany czas pracy (dokładne za chwilę)
+          </div>
+        </div>
+      </div>
+    );
+  };  
+
+  // Individual calculation mutex per day to prevent race conditions
+  const dayCalculationMutexRef = useRef(new Map());
+  const loadIntelligentPlanMutexRef = useRef(false);
+  const calculationDebounceRef = useRef(new Map()); // Debounce timers for calculations
+  const apiCallQueueRef = useRef([]); // Queue for API calls to prevent rate limiting
+  const lastApiCallRef = useRef(0); // Timestamp of last API call
+  
+  // Additional refs for preventing infinite loops and memory leaks
+  const isInitialMountRef = useRef(true);
+  const initialLoadTimerRef = useRef(null);
+  const prevServicemanRef = useRef(currentServiceman);
+  const planVersionRef = useRef(0);
+  const prevLocationRef = useRef(null);
+  const locationChangeDebounceRef = useRef(null);
+  const prevUpdatedAtRef = useRef(null);
+  const planReloadDebounceRef = useRef(null);
+
+  // Rate limited API call function
+  const makeRateLimitedApiCall = useCallback(async (url, options) => {
+    const minInterval = 100; // Minimum 100ms between API calls
+    const now = Date.now();
+    const timeSinceLastCall = now - lastApiCallRef.current;
+    
+    if (timeSinceLastCall < minInterval) {
+      await new Promise(resolve => setTimeout(resolve, minInterval - timeSinceLastCall));
+    }
+    
+    lastApiCallRef.current = Date.now();
+    return fetch(url, options);
+  }, []);
+
+  // Funkcja do zapisywania zlecenia do kalendarza (przypisywanie do konkretnego dnia)
+  const saveOrderToSchedule = async (order, targetDay) => {
+    try {
+      console.log('📌 Zapisywanie zlecenia', order.id, 'na dzień', targetDay);
+      
+      const updatedPlan = { ...weeklyPlan };
+      const unscheduledOrders = [...(updatedPlan.unscheduledOrders || [])];
+      
+      // Usuń z unscheduledOrders jeśli tam jest
+      updatedPlan.unscheduledOrders = unscheduledOrders.filter(o => o.id !== order.id);
+      
+      // ✅ NOWA STRUKTURA: Dodaj zlecenie bezpośrednio do weeklyPlan[day].orders
+      // Najpierw sprawdź który dzień tygodnia odpowiada tej dacie
+      const dayMap = {
+        monday: updatedPlan.monday,
+        tuesday: updatedPlan.tuesday,
+        wednesday: updatedPlan.wednesday,
+        thursday: updatedPlan.thursday,
+        friday: updatedPlan.friday,
+        saturday: updatedPlan.saturday,
+        sunday: updatedPlan.sunday
+      };
+      
+      // Znajdź dzień który odpowiada targetDay (nazwa dnia, np. 'monday')
+      const dayKey = Object.keys(dayMap).find(key => key === targetDay);
+      
+      if (dayKey && updatedPlan[dayKey]) {
+        const updatedOrder = { ...order, scheduledDate: targetDay, assignedTo: currentServiceman };
+        const currentOrders = [...(updatedPlan[dayKey].orders || [])];
+        
+        // Usuń jeśli już istnieje i dodaj zaktualizowaną wersję
+        const filteredOrders = currentOrders.filter(o => o.id !== order.id);
+        updatedPlan[dayKey].orders = [...filteredOrders, updatedOrder];
+        
+        console.log(`✅ Dodano zlecenie ${order.id} do weeklyPlan.${dayKey}.orders (${updatedPlan[dayKey].orders.length} zleceń)`);
+      } else {
+        console.error(`❌ Nie znaleziono dnia: ${targetDay}`);
+      }
+      
+      setWeeklyPlan(updatedPlan);
+      
+      // Zapisz do API
+      const saveResponse = await fetch(`/api/orders/${order.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          scheduledDate: targetDay,
+          assignedTo: currentServiceman
+        })
+      });
+      
+      if (saveResponse.ok) {
+        console.log(`✅ Zapisano zlecenie ${order.id} na dzień ${targetDay}`);
+        showNotification(`✅ Zlecenie "${getCardHeaderText(order)}" zapisane na ${targetDay}`, 'success');
+      } else {
+        console.warn(`⚠️ Nie udało się zapisać zmian:`, await saveResponse.text());
+        loadIntelligentPlan();
+        showNotification(`❌ Błąd zapisywania zmian`, 'error');
+      }
+    } catch (error) {
+      console.error('❌ Błąd zapisywania zlecenia:', error);
+      showNotification(`❌ Błąd: ${error.message}`, 'error');
+      loadIntelligentPlan();
+    }
+  };
+
+  // Funkcja do usuwania zlecenia z kalendarza (przywracanie do nieprzypisanych)
+  const moveOrderToUnscheduled = async (order, sourceDay) => {
+    try {
+      console.log(`📤 Przenoszenie zlecenia ${order.id} z ${sourceDay} do nieprzypisanych`);
+      
+      const updatedPlan = { ...weeklyPlan };
+      const unscheduledOrders = [...(updatedPlan.unscheduledOrders || [])];
+      
+      // ✅ NOWA STRUKTURA: Usuń z weeklyPlan[sourceDay].orders
+      let orderToMove = null;
+      
+      if (sourceDay && updatedPlan[sourceDay]) {
+        const dayOrders = [...(updatedPlan[sourceDay].orders || [])];
+        orderToMove = dayOrders.find(o => o.id === order.id);
+        
+        if (orderToMove) {
+          // Usuń z dnia
+          updatedPlan[sourceDay].orders = dayOrders.filter(o => o.id !== order.id);
+          console.log(`✅ Usunięto zlecenie ${order.id} z weeklyPlan.${sourceDay}.orders`);
+        }
+      }
+      
+      // Dodaj do unscheduledOrders
+      if (orderToMove) {
+        updatedPlan.unscheduledOrders = [...unscheduledOrders, { ...orderToMove, scheduledDate: null, assignedTo: null }];
+        console.log(`✅ Dodano zlecenie ${order.id} do unscheduledOrders (${updatedPlan.unscheduledOrders.length} zleceń)`);
+        
+        setWeeklyPlan(updatedPlan);
+        
+        // Zapisz do API - usuń scheduledDate i zmień status na 'unscheduled'
+        const saveResponse = await fetch(`/api/orders/${order.id}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            scheduledDate: null,
+            scheduledTime: null,
+            assignedTo: null,
+            status: 'unscheduled' // 🔄 Zmień status na 'nieprzypisane'
+          })
+        });
+        
+        if (saveResponse.ok) {
+          console.log(`✅ Przeniesiono zlecenie ${order.id} do nieprzypisanych`);
+          showNotification(`✅ Zlecenie "${getCardHeaderText(order)}" przeniesione do nieprzypisanych`, 'success');
+          
+          // 🔔 EMIT EVENT - Powiadom kalendarz technika o usunięciu wizyty
+          console.log('🔔 Emitting visitsChanged event (visit removed)...');
+          if (typeof window !== 'undefined') {
+            window.dispatchEvent(new CustomEvent('visitsChanged', {
+              detail: {
+                source: 'intelligent-planner',
+                action: 'visit-removed',
+                orderId: order.id,
+                previousServiceman: currentServiceman
+              }
+            }));
+          }
+        } else {
+          console.warn(`⚠️ Nie udało się zapisać zmian:`, await saveResponse.text());
+          // Wycofaj zmiany
+          loadIntelligentPlan();
+          showNotification(`❌ Błąd zapisywania zmian`, 'error');
+        }
+      }
+    } catch (error) {
+      console.error('❌ Błąd przenoszenia zlecenia:', error);
+      showNotification(`❌ Błąd: ${error.message}`, 'error');
+      loadIntelligentPlan();
+    }
+  };
+
+  // Funkcje drag & drop dla zleceń
+  const handleDragStart = (e, order, sourceDay) => {
+    // Nie pozwalaj przeciągać wykonanych zleceń
+    if (completedOrders.has(order.id)) {
+      e.preventDefault();
+      console.log('❌ Cannot drag completed order:', order.clientName);
+      return;
+    }
+    
+    console.log('🔵 Drag start:', order.clientName, 'from', sourceDay);
+    setDraggedOrder({ order, sourceDay, sourceServiceman: currentServiceman });
+    setIsDragging(true);
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', ''); // Potrzebne dla niektórych przeglądarek
+    e.target.style.opacity = '0.5';
+  };
+
+  const handleDragEnd = (e) => {
+    console.log('🔴 Drag end');
+    e.target.style.opacity = '1';
+    setIsDragging(false);
+    setDraggedOrder(null);
+  };
+
+  const handleDragOver = (e, targetDay) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    // console.log('🟡 Drag over:', targetDay); // Zakomentowane żeby nie spamować
+  };
+
+  const handleDrop = async (e, targetDay, insertIndex = null, targetServiceman = null) => {
+    e.preventDefault();
+    console.log('🟢 Drop:', targetDay, 'insertIndex:', insertIndex, 'targetServiceman:', targetServiceman);
+    
+    if (!draggedOrder) {
+      console.log('❌ No dragged order found');
+      return;
+    }
+
+    const { order, sourceDay, sourceServiceman } = draggedOrder;
+    const actualTargetServiceman = targetServiceman || currentServiceman;
+    console.log('📦 Moving:', order.clientName, 'from', sourceDay, 'to', targetDay, 
+                'from serviceman', sourceServiceman, 'to serviceman', actualTargetServiceman);
+    
+    // Przenoszenie między serwisantami
+    if (sourceServiceman !== actualTargetServiceman) {
+      await handleServicemanTransfer(order, sourceDay, targetDay, sourceServiceman, actualTargetServiceman);
+      return;
+    }
+    
+    // Jeśli to ten sam dzień i ten sam serwisant - zmiana kolejności
+    if (sourceDay === targetDay) {
+      if (insertIndex !== null) {
+        // TODO: Implementacja zmiany kolejności dla nowej struktury
+        // Obecnie nie modyfikujemy scheduledOrders - kolejność będzie sortowana przez getOrdersForWeekDay
+        console.log('ℹ️ Zmiana kolejności w tym samym dniu - pomijam (wymaga osobnej implementacji)');
+        
+        showNotification(`✅ Zmieniono kolejność zlecenia "${order.clientName}" w ${getDayName(targetDay)}`);
+      }
+      return;
+    }
+
+    // Walidacja przeniesienia między dniami
+    const validation = validateOrderMove(order, sourceDay, targetDay);
+    if (!validation.isValid) {
+      showNotification(`❌ Nie można przenieść zlecenia: ${validation.reason}`, 'error');
+      return;
+    }
+
+    // Sprawdź ostrzeżenia
+    if (validation.warnings && validation.warnings.length > 0) {
+      validation.warnings.forEach(warning => {
+        showNotification(`⚠️ ${warning}`, 'warning');
+      });
+    }
+
+    // ✅ Aktualizuj plan tygodniowy - NOWA STRUKTURA
+    const updatedPlan = { ...weeklyPlan };
+    const unscheduledOrders = [...(updatedPlan.unscheduledOrders || [])];
+    
+    // Oblicz docelową datę
+    const targetDate = getDateForDay(targetDay);
+    // 🔧 FIX: Użyj lokalnej daty zamiast UTC
+    const scheduledDate = targetDate ? `${targetDate.getFullYear()}-${String(targetDate.getMonth() + 1).padStart(2, '0')}-${String(targetDate.getDate()).padStart(2, '0')}` : targetDay;
+    
+    // 🤖 AUTO-KALKULACJA: Oblicz czas gdy przypisujemy pracownika
+    const assignedEmployee = actualTargetServiceman || currentServiceman;
+    let autoCalculatedTime = null;
+    
+    if (assignedEmployee && order.deviceType) {
+      const employee = availableServicemen.find(e => e.id === assignedEmployee);
+      if (employee) {
+        autoCalculatedTime = calculateEstimatedDuration(order, employee);
+        if (autoCalculatedTime) {
+          console.log(`⏱️ Auto-obliczono czas dla "${order.clientName}": ${autoCalculatedTime}min (pracownik: ${employee.name})`);
+        }
+      }
+    }
+    
+    const updatedOrder = { 
+      ...order, 
+      scheduledDate: scheduledDate,
+      assignedTo: assignedEmployee,
+      estimatedDuration: autoCalculatedTime || order.estimatedDuration
+    };
+    
+    if (sourceDay === 'unscheduled') {
+      // Przenieś z unscheduled do konkretnego dnia
+      updatedPlan.unscheduledOrders = unscheduledOrders.filter(o => o.id !== order.id);
+      console.log(`📤 Usunięto z unscheduled (pozostało: ${updatedPlan.unscheduledOrders.length})`);
+      
+      // Dodaj do weeklyPlan[targetDay].orders
+      if (updatedPlan[targetDay]) {
+        const dayOrders = [...(updatedPlan[targetDay].orders || [])];
+        updatedPlan[targetDay].orders = [...dayOrders, updatedOrder];
+        console.log(`📥 Dodano do weeklyPlan.${targetDay}.orders (teraz: ${updatedPlan[targetDay].orders.length})`);
+      }
+    } else {
+      // Przenoszenie między dniami
+      // Usuń z dnia źródłowego
+      if (updatedPlan[sourceDay]) {
+        const sourceOrders = [...(updatedPlan[sourceDay].orders || [])];
+        updatedPlan[sourceDay].orders = sourceOrders.filter(o => o.id !== order.id);
+        console.log(`📤 Usunięto z ${sourceDay} (pozostało: ${updatedPlan[sourceDay].orders.length})`);
+      }
+      
+      // Dodaj do dnia docelowego
+      if (updatedPlan[targetDay]) {
+        const targetOrders = [...(updatedPlan[targetDay].orders || [])];
+        updatedPlan[targetDay].orders = [...targetOrders, updatedOrder];
+        console.log(`📥 Dodano do ${targetDay} (teraz: ${updatedPlan[targetDay].orders.length})`);
+      }
+    }
+    
+    setWeeklyPlan(updatedPlan);
+    
+    // 🆕 Zapisz scheduledDate do bazy danych (w tle)
+    try {
+      console.log(`💾 Zapisuję scheduledDate dla zlecenia ${order.id}: ${scheduledDate}`);
+      
+      // 📋 Loguj dokładnie co zapisujemy
+      const assignmentData = {
+        orderId: order.id,
+        scheduledDate: scheduledDate,
+        scheduledTime: updatedOrder.scheduledTime || '09:00',
+        assignedTo: assignedEmployee,
+        assignedEmployeeName: availableServicemen.find(e => e.id === assignedEmployee)?.name,
+        estimatedDuration: autoCalculatedTime || order.estimatedDuration,
+        status: 'scheduled'
+      };
+      console.log('💾 Wysyłam do API /orders/[id] PATCH:', assignmentData);
+
+      const saveResponse = await fetch(`/api/orders/${order.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          scheduledDate: assignmentData.scheduledDate,
+          scheduledTime: assignmentData.scheduledTime,
+          assignedTo: assignmentData.assignedTo, // ✅ Użyj assignedEmployee
+          estimatedDuration: assignmentData.estimatedDuration,
+          status: assignmentData.status // ✅ Automatycznie zmień status
+        })
+      });
+      
+      if (saveResponse.ok) {
+        console.log(`✅ Zapisano scheduledDate dla ${order.id}`);
+        
+        // 🔔 EMIT EVENT - Powiadom kalendarz technika o zmianie wizyty
+        console.log('🔔 Emitting visitsChanged event (visit moved)...');
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new CustomEvent('visitsChanged', {
+            detail: {
+              source: 'intelligent-planner',
+              action: 'visit-moved',
+              orderId: order.id,
+              newDate: scheduledDate,
+              servicemanId: assignedEmployee
+            }
+          }));
+        }
+        
+        // 🆕 Zapisz cały plan do bazy, żeby utworzyć wizytę
+        console.log('💾 Zapisywanie całego planu do stworzenia wizyty...');
+        setTimeout(() => {
+          savePlanToDatabase();
+        }, 500);
+      } else {
+        console.warn(`⚠️ Nie udało się zapisać scheduledDate:`, await saveResponse.text());
+        // Wycofaj optymistyczną aktualizację w przypadku błędu
+        loadIntelligentPlan(); // Przeładuj dane z serwera
+      }
+    } catch (error) {
+      console.error('❌ Błąd zapisywania scheduledDate:', error);
+    }
+    
+    // Pokaż powiadomienie o sukcesie
+    const sourceLabel = sourceDay === 'unscheduled' ? 'puli niezaplanowanych' : getDayName(sourceDay);
+    showNotification(`✅ Zlecenie "${order.clientName}" przeniesione z ${sourceLabel} na ${getDayName(targetDay)}`);
+  };
+
+  // Walidacja przeniesienia zlecenia
+  const validateOrderMove = (order, sourceDay, targetDay) => {
+    const planData = getWeeklyPlanData(weeklyPlan) || {};
+    const targetDayOrders = planData[targetDay]?.orders || [];
+    const warnings = [];
+    
+    // Sprawdź limit zleceń dziennych
+    if (targetDayOrders.length >= optimizationPreferences.maxDailyOrders) {
+      return {
+        isValid: false,
+        reason: `Dzień ${getDayName(targetDay)} ma już maksymalną liczbę zleceń (${optimizationPreferences.maxDailyOrders})`
+      };
+    }
+    
+    // Sprawdź dostępność klienta w nowej dacie
+    const targetDate = getDateForDay(targetDay);
+    if (order.unavailableDates && order.unavailableDates.some(date => 
+      new Date(date).toDateString() === targetDate.toDateString()
+    )) {
+      return {
+        isValid: false,
+        reason: `Klient ${order.clientName} nie jest dostępny w dniu ${targetDate.toLocaleDateString('pl-PL')}`
+      };
+    }
+    
+    // Sprawdź godziny pracy - oblicz szacowany czas zakończenia dnia
+    const newOrdersList = [...targetDayOrders, order];
+    
+    // Dla walidacji używamy szybkiej symulacji, dokładne obliczenia będą później
+    let estimatedWorkingTime = 0;
+    estimatedWorkingTime += newOrdersList.reduce((sum, ord) => sum + (ord.estimatedDuration || 60), 0);
+    estimatedWorkingTime += (newOrdersList.length - 1) * 15; // Przybliżone dojazdy między
+    estimatedWorkingTime += 60; // Z domu i z powrotem
+    
+    const workStart = parseTime(optimizationPreferences.workingHours.start);
+    const workEnd = parseTime(optimizationPreferences.workingHours.end);
+    const maxWorkingHours = optimizationPreferences.workingHours.maxWorkingHours;
+    
+    if (estimatedWorkingTime > maxWorkingHours * 60) { // Konwersja na minuty
+      return {
+        isValid: false,
+        reason: `Dzień pracy przekroczyłby maksymalny czas (${maxWorkingHours}h). Szacowany czas: ${Math.round(estimatedWorkingTime/60)}h`
+      };
+    }
+    
+    // Sprawdź czy dzień zmieści się w godzinach pracy (6:00-22:00)
+    const estimatedEndTime = workStart + estimatedWorkingTime;
+    if (estimatedEndTime > workEnd) {
+      const endHour = Math.floor(estimatedEndTime / 60);
+      const endMinute = estimatedEndTime % 60;
+      return {
+        isValid: false,
+        reason: `Praca zakończyłaby się o ${endHour.toString().padStart(2, '0')}:${endMinute.toString().padStart(2, '0')} (po dozwolonych godzinach pracy)`
+      };
+    }
+    
+    // Sprawdź konflikty czasowe - bardziej elastyczne podejście
+    const timeConflicts = [];
+    targetDayOrders.forEach(existingOrder => {
+      if (order.preferredTimeSlots && existingOrder.preferredTimeSlots) {
+        const conflicts = order.preferredTimeSlots.filter(orderSlot => 
+          existingOrder.preferredTimeSlots.some(existingSlot => 
+            doTimeSlotsOverlap(orderSlot, existingSlot)
+          )
+        );
+        if (conflicts.length > 0) {
+          timeConflicts.push({
+            conflictingOrder: existingOrder,
+            conflictingSlots: conflicts
+          });
+        }
+      }
+    });
+    
+    if (timeConflicts.length > 0) {
+      // Sprawdź czy można automatycznie rozwiązać konflikty
+      const canResolveAutomatically = timeConflicts.every(conflict => 
+        order.preferredTimeSlots && order.preferredTimeSlots.length > 1
+      );
+      
+      if (canResolveAutomatically) {
+        warnings.push(`Wykryto ${timeConflicts.length} konflikt(ów) czasowych - zostaną automatycznie rozwiązane`);
+      } else {
+        // Tylko blokuj jeśli nie można automatycznie rozwiązać
+        const conflictDetails = timeConflicts.map(c => 
+          `${c.conflictingOrder.clientName} (${c.conflictingSlots[0].start}-${c.conflictingSlots[0].end})`
+        ).join(', ');
+        warnings.push(`Konflikty czasowe z: ${conflictDetails} - sprawdź harmonogram po przeniesieniu`);
+      }
+    }
+    
+    // Sprawdź ostrzeżenia (ale nie blokuj przeniesienia)
+    
+    // Ostrzeżenie o przekroczeniu optymalnej liczby zleceń
+    if (targetDayOrders.length >= 10) {
+      warnings.push(`Dzień ${getDayName(targetDay)} będzie miał już ${targetDayOrders.length + 1} zleceń - może być przeciążony`);
+    }
+    
+    // Ostrzeżenie o priorytecie
+    if (order.priority === 'high' && targetDay !== 'monday') {
+      warnings.push(`Pilne zlecenie zostanie przesunięte na ${getDayName(targetDay)} - rozważ obsługę wcześniej`);
+    }
+    
+    return { 
+      isValid: true, 
+      warnings: warnings.length > 0 ? warnings : null 
+    };
+  };
+
+  // Funkcje pomocnicze do obsługi czasu i dat
+  const parseTime = (timeString) => {
+    // Konwertuje czas "HH:MM" na minuty od północy
+    const [hours, minutes] = timeString.split(':').map(Number);
+    return hours * 60 + minutes;
+  };
+
+  const getDateForDay = (dayName) => {
+    const dayIndex = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].indexOf(dayName);
+    const date = new Date(currentWeekStart);
+    date.setDate(currentWeekStart.getDate() + dayIndex);
+    return date;
+  };
+
+  const getISODateForDay = (dayName) => {
+    const date = getDateForDay(dayName);
+    // 🔧 FIX: Użyj lokalnej daty zamiast UTC
+    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`; // YYYY-MM-DD
+  };
+
+  const calculateDayWorkingTime = async (orders, departureTime = null) => {
+    // Szacuje całkowity czas pracy dla listy zleceń (w minutach)
+    if (!orders || orders.length === 0) return 0;
+    
+    let totalTime = 0;
+    
+    // Czas na każde zlecenie
+    totalTime += orders.reduce((sum, order) => sum + (order.estimatedDuration || 60), 0);
+    
+    // Rzeczywisty czas dojazdów
+    try {
+      const travelTime = await calculateTotalTravelTime(orders, departureTime);
+      totalTime += travelTime;
+    } catch (error) {
+      console.warn('⚠️ Błąd obliczania czasu dojazdu, używam fallback:', error);
+      // Fallback do starych obliczeń
+      totalTime += (orders.length - 1) * 15; // Między zleceniami
+      totalTime += 60; // Z domu i z powrotem
+    }
+    
+    return totalTime;
+  };
+
+  const doTimeSlotsOverlap = (slot1, slot2) => {
+    // Sprawdza czy dwa okna czasowe się pokrywają
+    if (!slot1 || !slot2) return false;
+    
+    const start1 = parseTime(slot1.start);
+    const end1 = parseTime(slot1.end);
+    const start2 = parseTime(slot2.start);
+    const end2 = parseTime(slot2.end);
+    
+    return (start1 < end2 && start2 < end1);
+  };
+
+  // Obsługa przenoszenia zlecenia między serwisantami
+  const handleServicemanTransfer = async (order, sourceDay, targetDay, sourceServiceman, targetServiceman) => {
+    // Pobierz plany obu serwisantów
+    const sourcePlan = sourceServiceman === currentServiceman ? weeklyPlan : weeklyPlans[sourceServiceman];
+    const targetPlan = targetServiceman === currentServiceman ? weeklyPlan : weeklyPlans[targetServiceman];
+
+    if (!sourcePlan || !targetPlan) {
+      showNotification('❌ Nie można przenieść zlecenia - brak dostępu do planu serwisanta', 'error');
+      return;
+    }
+
+    // Walidacja przeniesienia dla docelowego serwisanta
+    const validation = validateOrderMoveForServiceman(order, targetDay, targetPlan);
+    if (!validation.isValid) {
+      const targetServicemanName = availableServicemen.find(s => s.id === targetServiceman)?.name;
+      showNotification(`❌ Nie można przenieść do ${targetServicemanName}: ${validation.reason}`, 'error');
+      return;
+    }
+
+    // Wykonaj transfer
+    const updatedSourcePlan = { ...sourcePlan };
+    const updatedTargetPlan = { ...targetPlan };
+
+    // Usuń z planu źródłowego
+    updatedSourcePlan.weeklyPlan[sourceDay].orders = updatedSourcePlan.weeklyPlan[sourceDay].orders.filter(
+      o => o.id !== order.id
+    );
+
+    // 🤖 AUTO-KALKULACJA: Oblicz czas dla nowego pracownika
+    let autoCalculatedTime = null;
+    if (targetServiceman && order.deviceType) {
+      const employee = availableServicemen.find(e => e.id === targetServiceman);
+      if (employee) {
+        autoCalculatedTime = calculateEstimatedDuration(order, employee);
+        if (autoCalculatedTime) {
+          console.log(`⏱️ Auto-obliczono czas dla "${order.clientName}": ${autoCalculatedTime}min (nowy pracownik: ${employee.name})`);
+        }
+      }
+    }
+
+    const updatedOrder = {
+      ...order,
+      assignedTo: targetServiceman,
+      estimatedDuration: autoCalculatedTime || order.estimatedDuration
+    };
+
+    // Dodaj do planu docelowego
+    if (!updatedTargetPlan.weeklyPlan[targetDay].orders) {
+      updatedTargetPlan.weeklyPlan[targetDay].orders = [];
+    }
+    updatedTargetPlan.weeklyPlan[targetDay].orders.push(updatedOrder);
+
+    // 💾 Zapisz do bazy danych
+    try {
+      const scheduledDate = getISODateForDay(targetDay);
+      console.log('💾 Zapisuję transfer do bazy:', {
+        orderId: order.id,
+        assignedTo: targetServiceman,
+        scheduledDate,
+        estimatedDuration: updatedOrder.estimatedDuration
+      });
+
+      const saveResponse = await fetch(`/api/orders/${order.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          scheduledDate: scheduledDate,
+          scheduledTime: updatedOrder.scheduledTime || '09:00',
+          assignedTo: targetServiceman, // ✅ Przypisz do nowego serwisanta
+          estimatedDuration: updatedOrder.estimatedDuration,
+          status: 'scheduled'
+        })
+      });
+
+      if (!saveResponse.ok) {
+        throw new Error(`Błąd zapisywania: ${saveResponse.status}`);
+      }
+
+      console.log('✅ Transfer zapisany w bazie danych');
+    } catch (error) {
+      console.error('❌ Błąd podczas zapisywania transferu:', error);
+      showNotification('⚠️ Zlecenie przeniesione lokalnie, ale wystąpił problem z zapisem do bazy', 'warning');
+    }
+
+    // Przelicz statystyki
+    await recalculateDayStats(updatedSourcePlan, sourceDay);
+    await recalculateDayStats(updatedTargetPlan, targetDay);
+
+    // Zaktualizuj stany
+    if (sourceServiceman === currentServiceman) {
+      setWeeklyPlan(updatedSourcePlan);
+    } else {
+      setWeeklyPlans(prev => ({ ...prev, [sourceServiceman]: updatedSourcePlan }));
+    }
+
+    if (targetServiceman === currentServiceman) {
+      setWeeklyPlan(updatedTargetPlan);
+    } else {
+      setWeeklyPlans(prev => ({ ...prev, [targetServiceman]: updatedTargetPlan }));
+    }
+
+    // Powiadomienie
+    const sourceServicemanName = availableServicemen.find(s => s.id === sourceServiceman)?.name;
+    const targetServicemanName = availableServicemen.find(s => s.id === targetServiceman)?.name;
+    showNotification(
+      `✅ Zlecenie "${order.clientName}" przeniesione z ${sourceServicemanName} (${getDayName(sourceDay)}) do ${targetServicemanName} (${getDayName(targetDay)})`,
+      'success'
+    );
+  };
+
+  // Walidacja przeniesienia dla konkretnego serwisanta
+  const validateOrderMoveForServiceman = (order, targetDay, targetPlan) => {
+    const targetDayOrders = targetPlan.weeklyPlan[targetDay]?.orders || [];
+    
+    // Sprawdź limit zleceń dziennych
+    if (targetDayOrders.length >= optimizationPreferences.maxDailyOrders) {
+      return {
+        isValid: false,
+        reason: `Dzień ${getDayName(targetDay)} ma już maksymalną liczbę zleceń (${optimizationPreferences.maxDailyOrders})`
+      };
+    }
+
+    // Sprawdź godziny pracy - szybka walidacja
+    const newOrdersList = [...targetDayOrders, order];
+    let estimatedWorkingTime = 0;
+    estimatedWorkingTime += newOrdersList.reduce((sum, ord) => sum + (ord.estimatedDuration || 60), 0);
+    estimatedWorkingTime += (newOrdersList.length - 1) * 15; // Przybliżone dojazdy
+    estimatedWorkingTime += 60; // Z domu i z powrotem
+    
+    const maxWorkingHours = optimizationPreferences.workingHours.maxWorkingHours;
+    
+    if (estimatedWorkingTime > maxWorkingHours * 60) {
+      return {
+        isValid: false,
+        reason: `Dzień pracy przekroczyłby maksymalny czas (${maxWorkingHours}h)`
+      };
+    }
+
+    return { isValid: true };
+  };
+
+  // Automatyczne rozwiązywanie konfliktów czasowych
+  const resolveTimeConflicts = (dayOrders) => {
+    const resolvedOrders = [...dayOrders];
+    const workStart = parseTime(optimizationPreferences.workingHours.start);
+    const workEnd = parseTime(optimizationPreferences.workingHours.end);
+    
+    // Sortuj zlecenia według priorytetu: pilne -> średnie -> niskie
+    resolvedOrders.sort((a, b) => {
+      const priorityOrder = { high: 3, medium: 2, low: 1 };
+      return priorityOrder[b.priority] - priorityOrder[a.priority];
+    });
+    
+    // Przydziel automatycznie sloty czasowe
+    let currentTime = workStart;
+    const slotDuration = 90; // 1.5 godziny na zlecenie + dojazd
+    
+    resolvedOrders.forEach(order => {
+      if (currentTime + slotDuration > workEnd) {
+        // Jeśli nie mieści się w dniu pracy, przydziel na początek następnego dostępnego czasu
+        currentTime = workStart;
+      }
+      
+      // Stwórz nowy slot czasowy
+      const startHour = Math.floor(currentTime / 60);
+      const startMinute = currentTime % 60;
+      const endTime = currentTime + slotDuration;
+      const endHour = Math.floor(endTime / 60);
+      const endMinute = endTime % 60;
+      
+      order.assignedTimeSlot = {
+        start: `${startHour.toString().padStart(2, '0')}:${startMinute.toString().padStart(2, '0')}`,
+        end: `${endHour.toString().padStart(2, '0')}:${endMinute.toString().padStart(2, '0')}`,
+        autoAssigned: true
+      };
+      
+      currentTime = endTime;
+    });
+    
+    return resolvedOrders;
+  };
+
+  // Przelicz statystyki dnia po zmianie
+  const recalculateDayStats = async (plan, day) => {
+    // 🔥 OPTYMALIZACJA: Debounce 2s - nie przeliczaj przy każdym drag!
+    if (recalculateTimerRef.current[day]) {
+      clearTimeout(recalculateTimerRef.current[day]);
+    }
+    
+    return new Promise((resolve) => {
+      recalculateTimerRef.current[day] = setTimeout(async () => {
+        console.log(`💰 Recalculating stats for ${day} (debounced)...`);
+        
+        // ✅ NOWA STRUKTURA: Pobierz zlecenia bezpośrednio z plan[day].orders
+        let dayOrders = [];
+        
+        if (plan[day] && plan[day].orders) {
+          dayOrders = [...plan[day].orders];
+          console.log(`📦 Znaleziono ${dayOrders.length} zleceń w plan.${day}.orders`);
+        } else {
+          console.warn(`⚠️ Brak zleceń dla ${day}`);
+          resolve();
+          return;
+        }
+        
+        // Automatycznie rozwiąż konflikty czasowe
+        if (dayOrders.length > 1) {
+          dayOrders = resolveTimeConflicts(dayOrders);
+          // Zaktualizuj orders w dniu
+          plan[day].orders = dayOrders;
+        }
+        
+        // Obsługa obu struktur dla zapisania stats
+        const isOldStructure = plan.weeklyPlan !== undefined;
+        const dayData = isOldStructure ? plan.weeklyPlan[day] : plan[day];
+        
+        if (!dayData) {
+          console.warn(`⚠️ recalculateDayStats: brak struktury dnia dla ${day}`);
+          resolve();
+          return;
+        }
+        
+        if (dayOrders.length === 0) {
+          dayData.stats = {
+            totalRevenue: 0,
+            totalTime: 0,
+            efficiency: 0
+          };
+          resolve();
+          return;
+        }
+        
+        const totalRevenue = dayOrders.reduce((sum, order) => sum + (order.serviceCost || 0), 0);
+        const totalWorkTime = dayOrders.reduce((sum, order) => sum + (order.estimatedDuration || 60), 0);
+        
+        // Oblicz rzeczywisty czas dojazdu
+        let totalTravelTime = 0;
+        try {
+          totalTravelTime = await calculateTotalTravelTime(dayOrders);
+        } catch (error) {
+          console.warn('⚠️ Błąd obliczania dojazdu w recalculateDayStats:', error);
+          // Fallback
+          totalTravelTime = dayOrders.length > 0 ? (dayOrders.length - 1) * 15 + 60 : 0;
+        }
+        
+        const totalTime = totalTravelTime + totalWorkTime;
+        
+        // Zapisz statystyki do właściwej struktury
+        dayData.stats = {
+          totalRevenue,
+          totalTime,
+          efficiency: totalRevenue / (totalTime / 60) // zł/godzinę
+        };
+        
+        resolve();
+      }, 2000); // 2 sekundy debounce - czekaj aż użytkownik skończy przeciągać
+    });
+  };
+
+  // Pomocnicza funkcja do nazw dni
+  const getDayName = (day) => {
+    const dayNames = {
+      monday: 'Poniedziałek',
+      tuesday: 'Wtorek',
+      wednesday: 'Środa',
+      thursday: 'Czwartek',
+      friday: 'Piątek',
+      saturday: 'Sobota',
+      sunday: 'Niedziela'
+    };
+    
+    // Jeśli mamy dostęp do currentWeekStart, pokazuj datę
+    if (currentWeekStart) {
+      const dayInfo = formatDayWithDate(day, currentWeekStart);
+      return `${dayNames[day] || day} (${dayInfo.date})`;
+    }
+    
+    return dayNames[day] || day;
+  };
+
+  // System powiadomień
+  const [notifications, setNotifications] = useState([]);
+  const notificationTimeouts = useRef(new Map()); // Track timeout IDs to prevent memory leaks
+  // Nowe funkcje UI - rozwijanie, sortowanie, filtrowanie (z localStorage)
+  const [expandedDay, setExpandedDay] = useState(null); // Rozwinięty dzień na pełny ekran
+  const [viewMode, setViewMode] = useState(() => loadFromLocalStorage('viewMode', 7)); // 1-7 kolumn (cały tydzień)
+  const [sortBy, setSortBy] = useState(() => loadFromLocalStorage('sortBy', 'default')); // default, priority, time, revenue, client
+  const [filterBy, setFilterBy] = useState(() => loadFromLocalStorage('filterBy', 'all')); // all, pending, contacted, unscheduled, scheduled, confirmed, in_progress, waiting_parts
+  const [ordersPerPage, setOrdersPerPage] = useState(10); // Paginacja
+  const [currentPage, setCurrentPage] = useState(1);
+
+  // Reset paginacji gdy zmienia się dzień, sortowanie lub filtrowanie
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [expandedDay, sortBy, filterBy]);
+
+  // Zapisuj ustawienia UI do localStorage
+  useEffect(() => {
+    saveToLocalStorage('viewMode', viewMode);
+  }, [viewMode]);
+
+  useEffect(() => {
+    saveToLocalStorage('sortBy', sortBy);
+  }, [sortBy]);
+
+  useEffect(() => {
+    saveToLocalStorage('filterBy', filterBy);
+  }, [filterBy]);
+
+  // Funkcje sortowania i filtrowania zleceń
+  const sortOrders = (orders, sortType) => {
+    if (!orders || orders.length === 0) return orders;
+    
+    const sorted = [...orders];
+    switch (sortType) {
+      case 'priority':
+        const priorityOrder = { high: 3, medium: 2, low: 1 };
+        return sorted.sort((a, b) => (priorityOrder[b.priority] || 1) - (priorityOrder[a.priority] || 1));
+      case 'time':
+        return sorted.sort((a, b) => (a.estimatedDuration || 60) - (b.estimatedDuration || 60));
+      case 'revenue':
+        return sorted.sort((a, b) => (b.serviceCost || 0) - (a.serviceCost || 0));
+      case 'client':
+        return sorted.sort((a, b) => (a.clientName || '').localeCompare(b.clientName || ''));
+      default:
+        return sorted;
+    }
+  };
+
+  const filterOrders = (orders, filterType) => {
+    if (!orders || orders.length === 0) return orders;
+    
+    // 🔄 Filtruj po statusie zlecenia (zamiast priorytetu)
+    switch (filterType) {
+      case 'pending':
+        return orders.filter(order => order.status === 'pending');
+      case 'contacted':
+        return orders.filter(order => order.status === 'contacted');
+      case 'unscheduled':
+        return orders.filter(order => order.status === 'unscheduled');
+      case 'scheduled':
+        return orders.filter(order => order.status === 'scheduled');
+      case 'confirmed':
+        return orders.filter(order => order.status === 'confirmed');
+      case 'in_progress':
+        return orders.filter(order => order.status === 'in_progress');
+      case 'waiting_parts':
+        return orders.filter(order => order.status === 'waiting_parts');
+      case 'all':
+      default:
+        return orders; // Wszystkie zlecenia
+    }
+  };
+
+  const getProcessedOrders = (dayOrders) => {
+    let processed = [...(dayOrders || [])];
+    processed = filterOrders(processed, filterBy);
+    processed = sortOrders(processed, sortBy);
+    return processed;
+  };
+
+  // Funkcja do oznaczania zlecenia jako wykonane/niewykonane
+  const toggleOrderCompletion = (orderId) => {
+    setCompletedOrders(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(orderId)) {
+        newSet.delete(orderId);
+        showNotification('📝 Zlecenie oznaczone jako niewykonane', 'info');
+      } else {
+        newSet.add(orderId);
+        showNotification('✅ Zlecenie oznaczone jako wykonane!', 'success');
+      }
+      return newSet;
+    });
+  };
+
+  const showNotification = (message, type = 'success') => {
+    const notification = {
+      id: Date.now(),
+      message,
+      type, // success, warning, error, info
+      timestamp: new Date()
+    };
+    
+    setNotifications(prev => [...prev, notification]);
+    
+    // Automatycznie usuń powiadomienie po 5 sekundach z proper cleanup
+    const timeoutId = setTimeout(() => {
+      setNotifications(prev => prev.filter(n => n.id !== notification.id));
+      notificationTimeouts.current.delete(notification.id);
+    }, 5000);
+    
+    // Store timeout ID for cleanup
+    notificationTimeouts.current.set(notification.id, timeoutId);
+  };
+
+  const removeNotification = (id) => {
+    // Clear timeout if exists
+    const timeoutId = notificationTimeouts.current.get(id);
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+      notificationTimeouts.current.delete(id);
+    }
+    
+    setNotifications(prev => prev.filter(n => n.id !== id));
+  };
+
+  // Optymalizacja pojedynczego dnia lub wszystkich dni
+  const optimizeSingleDay = async (day) => {
+    if (!weeklyPlan) return;
+
+    setIsLoading(true);
+    
+    try {
+      if (day === 'all') {
+        // Optymalizuj wszystkie dni
+        const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+        const updatedPlan = { ...weeklyPlan };
+        
+        for (const singleDay of days) {
+          if (updatedPlan.weeklyPlan[singleDay]?.orders?.length > 0) {
+            const dayOrders = [...updatedPlan.weeklyPlan[singleDay].orders];
+            const optimizedOrders = applyOptimizationStrategy(dayOrders);
+            updatedPlan.weeklyPlan[singleDay].orders = optimizedOrders;
+            await recalculateDayStats(updatedPlan, singleDay);
+          }
+        }
+        
+        setWeeklyPlan(updatedPlan);
+        showNotification(`✅ Wszystkie dni zostały zoptymalizowane przy użyciu strategii: ${optimizationStrategies[selectedOptimizationStrategy].name}`, 'success');
+        return;
+      }
+
+      // Optymalizuj pojedynczy dzień
+      const planData = getWeeklyPlanData(weeklyPlan);
+      if (!planData || !planData[day] || !planData[day].orders) {
+        return;
+      }
+
+      const dayOrders = [...planData[day].orders];
+      let optimizedOrders = applyOptimizationStrategy(dayOrders);
+
+      // Aktualizuj plan
+      const updatedPlan = { ...weeklyPlan };
+      if (updatedPlan.weeklyPlan) {
+        // Stara struktura
+        updatedPlan.weeklyPlan[day].orders = optimizedOrders;
+      } else {
+        // Nowa struktura
+        updatedPlan[day].orders = optimizedOrders;
+      }
+      
+      // Przelicz statystyki
+      await recalculateDayStats(updatedPlan, day);
+      
+      setWeeklyPlan(updatedPlan);
+      showNotification(`✅ ${getDayName(day)} został zoptymalizowany przy użyciu strategii: ${optimizationStrategies[selectedOptimizationStrategy].name}`, 'success');
+      
+    } catch (error) {
+      console.error('Błąd optymalizacji dnia:', error);
+      showNotification(`❌ Nie udało się zoptymalizować dnia ${getDayName(day)}`, 'error');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Zastosuj wybraną strategię optymalizacji
+  const applyOptimizationStrategy = (dayOrders) => {
+    switch (selectedOptimizationStrategy) {
+      case 'time':
+        return optimizeByTime(dayOrders);
+      case 'revenue':
+        return optimizeByRevenue(dayOrders);
+      case 'priority':
+        return optimizeByPriority(dayOrders);
+      case 'vip':
+        return optimizeByVIP(dayOrders);
+      case 'windows':
+        return optimizeByTimeWindows(dayOrders);
+      default:
+        return optimizeBalanced(dayOrders);
+    }
+  };
+
+  // Strategie optymalizacji pojedynczego dnia
+  const optimizeByTime = (orders) => {
+    // Sortuj po czasie realizacji (najkrótsze najpierw)
+    return orders.sort((a, b) => (a.estimatedDuration || 60) - (b.estimatedDuration || 60));
+  };
+
+  const optimizeByRevenue = (orders) => {
+    // Sortuj po przychodzie (najdroższe najpierw)
+    return orders.sort((a, b) => (b.serviceCost || 0) - (a.serviceCost || 0));
+  };
+
+  const optimizeByPriority = (orders) => {
+    // Sortuj po priorytecie
+    const priorityOrder = { 'high': 3, 'medium': 2, 'low': 1 };
+    return orders.sort((a, b) => (priorityOrder[b.priority] || 1) - (priorityOrder[a.priority] || 1));
+  };
+
+  const optimizeByVIP = (orders) => {
+    // Priorytet dla klientów VIP/premium
+    return orders.sort((a, b) => {
+      const isVipA = a.clientType === 'premium' || a.priority === 'high';
+      const isVipB = b.clientType === 'premium' || b.priority === 'high';
+      if (isVipA && !isVipB) return -1;
+      if (!isVipA && isVipB) return 1;
+      return (b.serviceCost || 0) - (a.serviceCost || 0);
+    });
+  };
+
+  const optimizeByTimeWindows = (orders) => {
+    // Sortuj po preferowanych oknach czasowych klientów
+    return orders.sort((a, b) => {
+      const timeA = a.preferredTimeSlots?.[0]?.start || '08:00';
+      const timeB = b.preferredTimeSlots?.[0]?.start || '08:00';
+      return timeA.localeCompare(timeB);
+    });
+  };
+
+  const optimizeBalanced = (orders) => {
+    // Strategia zbalansowana - kombinacja wszystkich czynników (priorytet + przychód)
+    return orders.sort((a, b) => {
+      const priorityOrder = { 'high': 3, 'medium': 2, 'low': 1 };
+      
+      const scoreA = (priorityOrder[a.priority] || 1) * 0.4 + 
+                    ((a.serviceCost || 0) / 1000) * 0.6;
+      const scoreB = (priorityOrder[b.priority] || 1) * 0.4 + 
+                    ((b.serviceCost || 0) / 1000) * 0.6;
+      return scoreB - scoreA;
+    });
+  };
+
+  // Renderowanie szczegółowych statystyk dnia z zarobkami
+  const renderDayStats = (day, stats) => {
+    if (!stats) return null;
+    
+    const planData = getWeeklyPlanData(weeklyPlan) || {};
+    const dayOrders = planData[day]?.orders || [];
+    
+    return (
+      <div className="mt-3 p-3 bg-gray-50 rounded-lg">
+        <h4 className="font-semibold text-sm mb-2 flex items-center gap-2">
+          <TrendingUp className="h-4 w-4" />
+          Szczegółowe statystyki dnia
+        </h4>
+        
+        {/* Główne statystyki */}
+        <div className="grid grid-cols-2 gap-3 text-xs mb-3">
+          <div>
+            <span className="font-medium">Zlecenia:</span> {stats.totalOrders}
+          </div>
+          <div className="font-semibold text-green-600">
+            <span className="font-medium">Łącznie zarobię:</span> {stats.totalRevenue}zł
+          </div>
+          <div>
+            <span className="font-medium">Czas serwisu:</span> {Math.round(stats.totalServiceTime/60)}h
+          </div>
+          <div>
+            <span className="font-medium">Czas dojazdu:</span> {Math.round(stats.totalTravelTime/60)}h
+          </div>
+          <div className="col-span-2">
+            <span className="font-medium">Regiony:</span> {stats.regions?.join(', ')}
+          </div>
+          <div className="col-span-2">
+            <span className="font-medium">Efektywność:</span> 
+            <span className={`ml-1 ${stats.efficiency > 15 ? 'text-green-600' : 
+                             stats.efficiency > 10 ? 'text-yellow-600' : 'text-red-600'}`}>
+              {stats.efficiency?.toFixed(1)}zł/min
+            </span>
+          </div>
+        </div>
+
+        {/* Szczegółowy breakdown zarobków */}
+        {dayOrders.length > 0 && (
+          <div className="border-t border-gray-200 pt-3">
+            <h5 className="font-medium text-xs mb-2 text-gray-700">💰 Detale zarobków:</h5>
+            <div className="space-y-1">
+              {dayOrders.map((order, index) => (
+                <div key={`earnings-${order.id}-${index}`} className="flex justify-between items-center text-xs">
+                  <span className="text-gray-600">
+                    {index + 1}. {order.clientName}
+                  </span>
+                  <span className="font-medium text-green-600">{order.serviceCost}zł</span>
+                </div>
+              ))}
+              <div className="border-t border-gray-300 pt-1 flex justify-between items-center text-xs font-bold">
+                <span>Razem dziennie:</span>
+                <span className="text-green-600 text-sm">{dayOrders.reduce((sum, order) => sum + order.serviceCost, 0)}zł</span>
+              </div>
+              <div className="text-xs text-gray-500 mt-1">
+                Średnio na zlecenie: {dayOrders.length > 0 ? Math.round(dayOrders.reduce((sum, order) => sum + order.serviceCost, 0) / dayOrders.length) : 0}zł
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  // Komponent do wyświetlania informacji o czasie dojazdu
+  const TravelTimeInfo = ({ order, previousLocation = null, className = "" }) => {
+    const fromLocation = previousLocation || startLocation?.coordinates;
+    if (!fromLocation || !order.coordinates) return null;
+
+    const key = `${fromLocation.lat},${fromLocation.lng}->${order.coordinates.lat},${order.coordinates.lng}`;
+    const travelInfo = realTravelTimes.get(key);
+    const isLoading = loadingTravelTimes.has(key);
+
+    if (isLoading) {
+      return (
+        <div className={`flex items-center gap-1 text-xs text-gray-500 ${className}`}>
+          <Clock className="h-3 w-3 animate-pulse" />
+          <span>Obliczam...</span>
+        </div>
+      );
+    }
+
+    if (!travelInfo) {
+      return (
+        <div className={`flex items-center gap-1 text-xs text-gray-400 ${className}`}>
+          <Clock className="h-3 w-3" />
+          <span>~15min</span>
+        </div>
+      );
+    }
+
+    return (
+      <div className={`flex items-center gap-1 text-xs ${className}`}>
+        <Car className="h-3 w-3" />
+        <span className={travelInfo.hasTraffic ? 'text-orange-600' : 'text-blue-600'}>
+          {travelInfo.distance}km, {travelInfo.duration}min
+        </span>
+        {travelInfo.trafficDelay > 0 && (
+          <span className="text-red-500" title={`Opóźnienie z powodu ruchu: +${travelInfo.trafficDelay}min`}>
+            (+{travelInfo.trafficDelay})
+          </span>
+        )}
+      </div>
+    );
+  };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <RefreshCw className="h-8 w-8 animate-spin mx-auto mb-4 text-blue-600" />
+          <p className="text-lg font-semibold">Optymalizuję trasy tygodniowe...</p>
+          <p className="text-sm text-gray-600 mt-2">Analizuję dostępność klientów i grupuję geograficznie</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!weeklyPlan) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center max-w-md">
+          <AlertTriangle className="h-12 w-12 mx-auto mb-4 text-yellow-600" />
+          <h2 className="text-xl font-bold mb-2">Brak danych do optymalizacji</h2>
+          <p className="text-gray-600 mb-4">Nie udało się załadować planu tygodniowego.</p>
+          <button 
+            onClick={loadIntelligentPlan}
+            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+          >
+            Spróbuj ponownie
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // 🆕 Komponent modalu ze szczegółami zlecenia
+  const OrderDetailsModal = () => {
+    if (!showOrderDetailsModal || !selectedOrderModal) return null;
+
+    const order = selectedOrderModal;
+
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="bg-white rounded-lg shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+          {/* Header */}
+          <div className="sticky top-0 bg-gradient-to-r from-blue-600 to-purple-600 text-white p-6 rounded-t-lg">
+            <div className="flex items-start justify-between">
+              <div>
+                <h3 className="text-2xl font-bold mb-2">
+                  {order.clientName || 'Nieznany klient'}
+                </h3>
+                <p className="text-blue-100 text-sm">
+                  ID: {order.id}
+                </p>
+              </div>
+              <button
+                onClick={() => setShowOrderDetailsModal(false)}
+                className="text-white hover:bg-white hover:bg-opacity-20 rounded-full p-2 transition-colors"
+              >
+                ✕
+              </button>
+            </div>
+          </div>
+
+          {/* Body */}
+          <div className="p-6 space-y-6">
+            {/* Podstawowe informacje */}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="col-span-2 md:col-span-1">
+                <h4 className="text-sm font-semibold text-gray-600 mb-2 flex items-center gap-2">
+                  <MapPin className="h-4 w-4" />
+                  Adres
+                </h4>
+                <p className="text-gray-800">{order.address || 'Brak adresu'}</p>
+                {order.coordinates && (
+                  <p className="text-xs text-gray-500 mt-1">
+                    📍 {order.coordinates.lat?.toFixed(4)}, {order.coordinates.lng?.toFixed(4)}
+                  </p>
+                )}
+              </div>
+
+              <div className="col-span-2 md:col-span-1">
+                <h4 className="text-sm font-semibold text-gray-600 mb-2 flex items-center gap-2">
+                  <Users className="h-4 w-4" />
+                  Kontakt
+                </h4>
+                <p className="text-gray-800">{order.phone || 'Brak telefonu'}</p>
+              </div>
+            </div>
+
+            {/* Opis problemu */}
+            <div>
+              <h4 className="text-sm font-semibold text-gray-600 mb-2">
+                🔧 Opis problemu
+              </h4>
+              <p className="text-gray-800 bg-gray-50 p-3 rounded-lg">
+                {order.description || order.issueDescription || 'Brak opisu'}
+              </p>
+            </div>
+
+            {/* Szczegóły serwisowe */}
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+              <div className="bg-blue-50 p-4 rounded-lg">
+                <p className="text-sm text-gray-600 mb-1">Priorytet</p>
+                <p className={`font-bold text-lg ${
+                  order.priority === 'high' ? 'text-red-600' :
+                  order.priority === 'medium' ? 'text-yellow-600' :
+                  'text-green-600'
+                }`}>
+                  {order.priority === 'high' ? '🔴 Wysoki' :
+                   order.priority === 'medium' ? '🟡 Średni' :
+                   '🟢 Niski'}
+                </p>
+              </div>
+
+              <div className="bg-green-50 p-4 rounded-lg">
+                <p className="text-sm text-gray-600 mb-1">Szacowany czas</p>
+                <p className="font-bold text-lg text-gray-800">
+                  ⏱️ {order.estimatedDuration || 60} min
+                </p>
+              </div>
+
+              <div className="bg-purple-50 p-4 rounded-lg">
+                <p className="text-sm text-gray-600 mb-1">Koszt usługi</p>
+                <p className="font-bold text-lg text-gray-800">
+                  💰 {order.serviceCost || 0} zł
+                </p>
+              </div>
+            </div>
+
+            {/* Preferowane terminy */}
+            {order.preferredTimeSlots && order.preferredTimeSlots.length > 0 && (
+              <div>
+                <h4 className="text-sm font-semibold text-gray-600 mb-3">
+                  📅 Dostępność klienta
+                </h4>
+                <div className="space-y-2">
+                  {order.preferredTimeSlots.map((slot, idx) => (
+                    <div key={idx} className="bg-blue-50 p-3 rounded-lg flex items-center justify-between">
+                      <span className="font-medium capitalize">
+                        {slot.day === 'monday' ? 'Poniedziałek' :
+                         slot.day === 'tuesday' ? 'Wtorek' :
+                         slot.day === 'wednesday' ? 'Środa' :
+                         slot.day === 'thursday' ? 'Czwartek' :
+                         slot.day === 'friday' ? 'Piątek' :
+                         slot.day === 'saturday' ? 'Sobota' :
+                         'Niedziela'}
+                      </span>
+                      <span className="text-sm text-gray-600">
+                        {slot.start} - {slot.end}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Niedostępne daty */}
+            {order.unavailableDates && order.unavailableDates.length > 0 && (
+              <div>
+                <h4 className="text-sm font-semibold text-gray-600 mb-2">
+                  ❌ Niedostępne daty
+                </h4>
+                <div className="flex flex-wrap gap-2">
+                  {order.unavailableDates.map((date, idx) => (
+                    <span key={idx} className="px-3 py-1 bg-red-100 text-red-800 rounded-full text-sm">
+                      {date}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Czy można przełożyć */}
+            <div className="flex items-center gap-3 bg-gray-50 p-4 rounded-lg">
+              <div className={`w-3 h-3 rounded-full ${order.canReschedule ? 'bg-green-500' : 'bg-red-500'}`} />
+              <span className="text-gray-700">
+                {order.canReschedule ? 
+                  '✅ Zlecenie można przełożyć na inny termin' : 
+                  '🔒 Zlecenie ma sztywny termin'}
+              </span>
+            </div>
+
+            {/* 🆕 SEKCJA WIZYT - Timeline wizyt w zleceniu */}
+            {order.orderNumber && (
+              <div className="border-t-2 border-blue-200 pt-6">
+                <h4 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+                  📋 Historia wizyt w zleceniu {order.orderNumber}
+                </h4>
+                
+                {/* Informacja o aktualnej wizycie */}
+                {order.visitNumber && (
+                  <div className="mb-4 p-3 bg-blue-100 border-l-4 border-blue-500 rounded">
+                    <p className="text-sm text-blue-800">
+                      <strong>Obecnie wyświetlasz:</strong> Wizyta #{order.visitNumber} 
+                      {order.visitType && ` - ${
+                        order.visitType === 'diagnosis' ? '🔍 Diagnoza' :
+                        order.visitType === 'repair' ? '🔧 Naprawa' :
+                        order.visitType === 'control' ? '✅ Kontrola' :
+                        order.visitType === 'installation' ? '📦 Montaż' :
+                        order.visitType
+                      }`}
+                    </p>
+                  </div>
+                )}
+
+                {/* Przykładowa timeline - w prawdziwej implementacji pobierzesz to z API */}
+                <div className="space-y-3">
+                  <div className="text-sm text-gray-600 italic mb-3">
+                    💡 Poniżej zobaczysz wszystkie wizyty powiązane z tym zleceniem
+                  </div>
+                  
+                  {/* Wizyta obecna (przykład) */}
+                  <div className={`p-4 rounded-lg border-2 ${
+                    order.visitNumber === 1 ? 'border-blue-500 bg-blue-50' : 'border-gray-200 bg-white'
+                  }`}>
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="font-bold text-gray-800">
+                        {order.visitType === 'diagnosis' ? '🔍 Diagnoza' : 
+                         order.visitType === 'repair' ? '🔧 Naprawa' :
+                         order.visitType === 'control' ? '✅ Kontrola' :
+                         '📋 Wizyta'} #{order.visitNumber || 1}
+                      </span>
+                      <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                        order.status === 'completed' ? 'bg-green-100 text-green-800' :
+                        order.status === 'scheduled' ? 'bg-blue-100 text-blue-800' :
+                        order.status === 'in_progress' ? 'bg-yellow-100 text-yellow-800' :
+                        'bg-gray-100 text-gray-800'
+                      }`}>
+                        {order.status === 'completed' ? '✅ Zakończona' :
+                         order.status === 'scheduled' ? '📅 Zaplanowana' :
+                         order.status === 'in_progress' ? '🔄 W trakcie' :
+                         order.status}
+                      </span>
+                    </div>
+                    
+                    {order.scheduledDate && (
+                      <p className="text-sm text-gray-600 mb-1">
+                        📅 {new Date(order.scheduledDate).toLocaleDateString('pl-PL')}
+                        {order.scheduledTime && ` o ${order.scheduledTime}`}
+                      </p>
+                    )}
+                    
+                    {order.technicianName && (
+                      <p className="text-sm text-gray-600">
+                        👤 Technik: {order.technicianName}
+                      </p>
+                    )}
+
+                    {order.visitNumber === 1 && (
+                      <div className="mt-2 pt-2 border-t border-blue-200">
+                        <p className="text-xs text-blue-700">
+                          🎯 <strong>To jest wizyta, którą obecnie przeglądasz</strong>
+                        </p>
+                      </div>
+                    )}
+
+                    {/* Szybka akcja - Edytuj wizytę */}
+                    <div className="mt-3 flex gap-2">
+                      <button
+                        onClick={() => {
+                          const orderId = order.orderId || order.id;
+                          router.push(`/zlecenie-szczegoly?id=${orderId}`);
+                        }}
+                        className="flex-1 px-3 py-1.5 bg-blue-100 text-blue-700 text-xs rounded hover:bg-blue-200 transition-colors flex items-center justify-center gap-1"
+                      >
+                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                        </svg>
+                        Edytuj
+                      </button>
+                      {order.status !== 'completed' && (
+                        <button
+                          onClick={() => {
+                            alert('Funkcja oznaczania wizyty jako zakończonej - wkrótce!');
+                          }}
+                          className="flex-1 px-3 py-1.5 bg-green-100 text-green-700 text-xs rounded hover:bg-green-200 transition-colors flex items-center justify-center gap-1"
+                        >
+                          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                          </svg>
+                          Zakończ
+                        </button>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Placeholder dla przyszłych wizyt */}
+                  <div className="p-4 rounded-lg border-2 border-dashed border-gray-300 bg-gray-50">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="font-medium text-gray-600">
+                        ➕ Dodaj kolejną wizytę
+                      </span>
+                      <button 
+                        className="px-3 py-1 bg-blue-500 text-white text-xs rounded hover:bg-blue-600 transition-colors flex items-center gap-1"
+                        onClick={() => {
+                          // Otwórz stronę edycji zlecenia, gdzie można dodać wizytę
+                          const orderId = order.orderId || order.id;
+                          router.push(`/zlecenie-szczegoly?id=${orderId}&action=add-visit`);
+                        }}
+                      >
+                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                        </svg>
+                        Dodaj wizytę
+                      </button>
+                    </div>
+                    <p className="text-xs text-gray-500">
+                      Możesz zaplanować np. naprawę po diagnozie lub wizytę kontrolną
+                    </p>
+                  </div>
+                </div>
+
+                {/* Info box */}
+                <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                  <p className="text-xs text-yellow-800">
+                    <strong>ℹ️ Jak to działa:</strong> Jedno zlecenie może mieć wiele wizyt. 
+                    Klient dzwoni → tworzymy zlecenie → planujemy wizyty (diagnoza, naprawa, kontrola). 
+                    Inteligentny planer optymalizuje WIZYTY, nie zlecenia.
+                  </p>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Footer */}
+          <div className="sticky bottom-0 bg-gray-50 p-4 rounded-b-lg border-t flex justify-end gap-3">
+            <button
+              onClick={() => setShowOrderDetailsModal(false)}
+              className="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
+            >
+              Zamknij
+            </button>
+            <button
+              onClick={() => {
+                console.log('🔧 Przekierowanie do edycji zlecenia:', order.orderId || order.id);
+                // Przekieruj do strony szczegółów/edycji zlecenia
+                const orderId = order.orderId || order.id;
+                router.push(`/zlecenie-szczegoly?id=${orderId}`);
+              }}
+              className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+              </svg>
+              Edytuj zlecenie
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {/* 🆕 Modal ze szczegółami zlecenia */}
+      <OrderDetailsModal />
+      {/* Powiadomienia */}
+      {notifications.length > 0 && (
+        <div className="fixed top-4 right-4 z-50 space-y-2">
+          {notifications.map(notification => (
+            <div
+              key={notification.id}
+              className={`p-4 rounded-lg shadow-lg border max-w-sm transition-all duration-300 ${
+                notification.type === 'success' ? 'bg-green-50 border-green-200 text-green-800' :
+                notification.type === 'warning' ? 'bg-yellow-50 border-yellow-200 text-yellow-800' :
+                notification.type === 'error' ? 'bg-red-50 border-red-200 text-red-800' :
+                'bg-blue-50 border-blue-200 text-blue-800'
+              }`}
+            >
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <p className="text-sm font-medium">{notification.message}</p>
+                  <p className="text-xs opacity-75 mt-1">
+                    {notification.timestamp.toLocaleTimeString('pl-PL', { 
+                      hour: '2-digit', 
+                      minute: '2-digit' 
+                    })}
+                  </p>
+                </div>
+                <button
+                  onClick={() => removeNotification(notification.id)}
+                  className="ml-2 text-gray-400 hover:text-gray-600"
+                >
+                  ✕
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+      
+      {/* Header */}
+      <div className="bg-white shadow-sm border-b">
+        <div className="max-w-7xl mx-auto px-4 py-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-3">
+                <Calendar className="h-8 w-8 text-blue-600" />
+                Inteligentny Planer Tygodniowy
+              </h1>
+              <p className="text-gray-600 mt-1">
+                Planowanie wizyt z uwzględnieniem dostępności klientów i priorytetów
+              </p>
+            </div>
+            <div className="flex items-center gap-3">
+              {/* Przycisk wyboru serwisanta przeniesiony do sekcji nieprzypisanych zleceń */}
+            </div>
+          </div>
+          
+          {/* Aktualna lokalizacja startowa */}
+          <div className="mt-3 p-3 bg-gray-50 rounded-lg">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <MapPin className="h-4 w-4 text-gray-600" />
+                <span className="text-sm font-medium text-gray-700">Punkt startowy:</span>
+                <span className="text-sm text-gray-900">{startLocation.address}</span>
+                {startLocation.isDetected && (
+                  <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">
+                    📍 Wykryto automatycznie
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
+          
+          {/* Panel ustawień godzin pracy */}
+          <div className="mt-3 p-4 bg-orange-50 rounded-lg border border-orange-200">
+            <h3 className="font-semibold text-orange-800 mb-3 flex items-center gap-2">
+              <Clock className="h-4 w-4" />
+              Godziny Pracy - {availableServicemen.find(s => s.id === currentServiceman)?.name}
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Rozpoczęcie pracy
+                </label>
+                <input
+                  type="time"
+                  value={optimizationPreferences.workingHours.start}
+                  onChange={(e) => setOptimizationPreferences(prev => ({
+                    ...prev,
+                    workingHours: { ...prev.workingHours, start: e.target.value }
+                  }))}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Zakończenie pracy
+                </label>
+                <input
+                  type="time"
+                  value={optimizationPreferences.workingHours.end}
+                  onChange={(e) => setOptimizationPreferences(prev => ({
+                    ...prev,
+                    workingHours: { ...prev.workingHours, end: e.target.value }
+                  }))}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Max godzin dziennie
+                </label>
+                <select
+                  value={optimizationPreferences.workingHours.maxWorkingHours}
+                  onChange={(e) => setOptimizationPreferences(prev => ({
+                    ...prev,
+                    workingHours: { ...prev.workingHours, maxWorkingHours: parseInt(e.target.value) }
+                  }))}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500"
+                >
+                  <option value={8}>8 godzin</option>
+                  <option value={10}>10 godzin</option>
+                  <option value={12}>12 godzin</option>
+                  <option value={14}>14 godzin</option>
+                </select>
+              </div>
+            </div>
+            <div className="mt-3 text-xs text-orange-600">
+              ⚠️ System zapewni, że harmonogram nie przekroczy tych limitów podczas przenoszenia zleceń
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 py-6">
+        {/* Analiza kosztów */}
+        {weeklyPlan.costAnalysis && weeklyPlan.costAnalysis.optimized && (
+          <div className="mb-6 bg-white rounded-lg shadow-sm p-6">
+            <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+              <DollarSign className="h-5 w-5 text-green-600" />
+              Analiza Kosztów i Oszczędności
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div className="text-center p-4 bg-green-50 rounded-lg">
+                <div className="text-2xl font-bold text-green-600">
+                  {weeklyPlan.costAnalysis.savings}zł
+                </div>
+                <div className="text-sm text-gray-600">Oszczędności</div>
+                <div className="text-xs text-green-600 font-medium">
+                  {weeklyPlan.costAnalysis.savingsPercentage}% taniej
+                </div>
+              </div>
+              <div className="text-center p-4 bg-blue-50 rounded-lg">
+                <div className="text-2xl font-bold text-blue-600">
+                  {weeklyPlan.costAnalysis.optimized.totalDistance}km
+                </div>
+                <div className="text-sm text-gray-600">Całkowity dystans</div>
+                <div className="text-xs text-blue-600 font-medium">
+                  {weeklyPlan.costAnalysis.optimized.totalFuelCost}zł paliwa
+                </div>
+              </div>
+              <div className="text-center p-4 bg-purple-50 rounded-lg">
+                <div className="text-2xl font-bold text-purple-600">
+                  {weeklyPlan.costAnalysis.optimized.totalRevenue}zł
+                </div>
+                <div className="text-sm text-gray-600">Przychód</div>
+                <div className="text-xs text-purple-600 font-medium">
+                  {weeklyPlan.costAnalysis.optimized.profit}zł zysku
+                </div>
+              </div>
+              <div className="text-center p-4 bg-orange-50 rounded-lg">
+                <div className="text-2xl font-bold text-orange-600">
+                  {weeklyPlan.costAnalysis.efficiency}%
+                </div>
+                <div className="text-sm text-gray-600">Efektywność</div>
+                <div className="text-xs text-orange-600 font-medium">
+                  Marża zysku
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Rekomendacje */}
+        {weeklyPlan.recommendations && weeklyPlan.recommendations.length > 0 && (
+          <div className="mb-6 bg-white rounded-lg shadow-sm p-6">
+            <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+              <AlertTriangle className="h-5 w-5 text-yellow-600" />
+              Rekomendacje Systemu
+            </h2>
+            <div className="space-y-3">
+              {weeklyPlan.recommendations.map((rec, idx) => (
+                <div key={idx} className={`p-3 rounded-lg border-l-4 ${
+                  rec.priority === 'high' ? 'bg-red-50 border-red-400' :
+                  rec.priority === 'medium' ? 'bg-yellow-50 border-yellow-400' :
+                  'bg-blue-50 border-blue-400'
+                }`}>
+                  <div className="flex items-start gap-3">
+                    <div className={`mt-1 ${
+                      rec.type === 'warning' ? 'text-yellow-600' :
+                      rec.type === 'optimization' ? 'text-blue-600' :
+                      'text-green-600'
+                    }`}>
+                      {rec.type === 'warning' ? <AlertTriangle className="h-4 w-4" /> :
+                       rec.type === 'optimization' ? <TrendingUp className="h-4 w-4" /> :
+                       <CheckCircle className="h-4 w-4" />}
+                    </div>
+                    <p className="text-sm font-medium">{rec.message}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Nawigacja tygodniowa */}
+        <div className="mb-6 bg-white rounded-lg shadow-sm p-4">
+          <div className="flex items-center justify-between">
+            <button
+              onClick={() => {
+                const newWeekStart = new Date(currentWeekStart);
+                newWeekStart.setDate(currentWeekStart.getDate() - 7);
+                setCurrentWeekStart(newWeekStart);
+              }}
+              className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+            >
+              <ChevronLeft className="h-4 w-4" />
+              Poprzedni tydzień
+            </button>
+            
+            <div className="text-center">
+              <h2 className="text-lg font-semibold">
+                Tydzień {currentWeekStart.toLocaleDateString('pl-PL', { 
+                  day: '2-digit', 
+                  month: '2-digit',
+                  year: 'numeric'
+                })} - {(() => {
+                  const weekEnd = new Date(currentWeekStart);
+                  weekEnd.setDate(currentWeekStart.getDate() + 6);
+                  return weekEnd.toLocaleDateString('pl-PL', { 
+                    day: '2-digit', 
+                    month: '2-digit',
+                    year: 'numeric'
+                  });
+                })()}
+              </h2>
+              <p className="text-sm text-gray-600">
+                {(() => {
+                  const today = new Date();
+                  const weekStart = new Date(currentWeekStart);
+                  weekStart.setHours(0, 0, 0, 0);
+                  today.setHours(0, 0, 0, 0);
+                  
+                  if (weekStart.getTime() === today.getTime() - (today.getDay() === 0 ? 6 : today.getDay() - 1) * 24 * 60 * 60 * 1000) {
+                    return "Obecny tydzień";
+                  } else if (weekStart.getTime() > today.getTime()) {
+                    return "Przyszły tydzień";
+                  } else {
+                    return "Miniony tydzień";
+                  }
+                })()}
+              </p>
+            </div>
+            
+            <button
+              onClick={() => {
+                const newWeekStart = new Date(currentWeekStart);
+                newWeekStart.setDate(currentWeekStart.getDate() + 7);
+                setCurrentWeekStart(newWeekStart);
+              }}
+              className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+            >
+              Następny tydzień
+              <ChevronRight className="h-4 w-4" />
+            </button>
+          </div>
+        </div>
+        
+        {/* Toolbar z opcjami widoku */}
+        <div className="mb-6 bg-white rounded-lg shadow-sm p-4">
+          <div className="flex flex-col gap-4">
+            {/* Pierwsza linia: Widok i podstawowe opcje */}
+            <div className="flex flex-wrap items-center gap-4">
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-medium text-gray-700">Widok:</span>
+                <div className="flex border rounded-lg overflow-hidden">
+                  {[1, 2, 3, 4, 5, 7].map(cols => (
+                    <button
+                      key={cols}
+                      onClick={() => setViewMode(cols)}
+                      className={`px-3 py-1 text-xs font-medium transition-colors ${
+                        viewMode === cols 
+                          ? 'bg-blue-600 text-white' 
+                          : 'bg-white text-gray-700 hover:bg-gray-50'
+                      }`}
+                      title={`${cols} ${cols === 1 ? 'kolumna' : cols < 5 ? 'kolumny' : 'kolumn'}`}
+                    >
+                      {cols}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Zakres godzin timeline */}
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-medium text-gray-700">Godziny:</span>
+                <select
+                  value={`${timeRange.start}-${timeRange.end}`}
+                  onChange={(e) => {
+                    const [start, end] = e.target.value.split('-').map(Number);
+                    setTimeRange({ start, end });
+                  }}
+                  className="text-xs border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  title="Wybierz zakres godzin wyświetlanych na osi czasu"
+                >
+                  <option value="0-24">00:00 - 24:00 (całą dobę)</option>
+                  <option value="6-23">06:00 - 23:00 (domyślnie)</option>
+                  <option value="7-22">07:00 - 22:00 (godziny pracy)</option>
+                  <option value="8-20">08:00 - 20:00 (standard)</option>
+                  <option value="8-18">08:00 - 18:00 (biznesowe)</option>
+                  <option value="9-17">09:00 - 17:00 (biurowe)</option>
+                </select>
+                <label className="flex items-center gap-1 text-xs text-gray-700 cursor-pointer hover:text-blue-600 transition-colors">
+                  <input
+                    type="checkbox"
+                    checked={hideUnusedHours}
+                    onChange={(e) => setHideUnusedHours(e.target.checked)}
+                    className="w-4 h-4 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
+                    title="Ukryj godziny poza wybranym zakresem (zwiń timeline)"
+                  />
+                  <span className="whitespace-nowrap">Ukryj niewykorzystane</span>
+                </label>
+              </div>
+            </div>
+
+            {/* 🔍 DRUGA LINIA: Zoom Timeline - bardziej widoczny */}
+            <div className="flex items-center gap-4 p-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200">
+              <div className="flex items-center gap-3">
+                <span className="text-sm font-bold text-blue-900">🔍 Powiększenie osi czasu:</span>
+                <button
+                  onClick={() => setTimelineZoom(Math.max(0.5, timelineZoom - 0.25))}
+                  className="px-3 py-2 text-sm font-medium bg-white hover:bg-blue-100 border border-blue-300 rounded-lg transition-colors shadow-sm"
+                  title="Zmniejsz zoom (pokaż więcej)"
+                >
+                  − Zmniejsz
+                </button>
+                <input
+                  type="range"
+                  min="0.5"
+                  max="3"
+                  step="0.25"
+                  value={timelineZoom}
+                  onChange={(e) => setTimelineZoom(parseFloat(e.target.value))}
+                  className="w-32 h-3 bg-blue-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                  title="Dostosuj skalę timeline"
+                />
+                <button
+                  onClick={() => setTimelineZoom(Math.min(3, timelineZoom + 0.25))}
+                  className="px-3 py-2 text-sm font-medium bg-white hover:bg-blue-100 border border-blue-300 rounded-lg transition-colors shadow-sm"
+                  title="Zwiększ zoom (pokaż szczegóły)"
+                >
+                  + Powiększ
+                </button>
+                <span className="text-sm font-bold text-blue-900 min-w-[60px] text-center bg-white px-3 py-2 rounded-lg border border-blue-300 shadow-sm">
+                  {timelineZoom.toFixed(2)}x
+                </span>
+                {timelineZoom !== 1 && (
+                  <button
+                    onClick={() => setTimelineZoom(1)}
+                    className="px-3 py-2 text-sm font-medium text-blue-700 hover:text-blue-900 hover:bg-blue-100 transition-colors rounded-lg border border-blue-300 bg-white shadow-sm"
+                    title="Resetuj zoom do 1x"
+                  >
+                    ↺ Reset
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {/* TRZECIA LINIA: Pozostałe opcje */}
+            <div className="flex flex-wrap items-center gap-4">
+              {/* Nagłówek karty */}
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-medium text-gray-700">Nagłówek:</span>
+                <select
+                  value={cardHeaderField}
+                  onChange={(e) => setCardHeaderField(e.target.value)}
+                  className="text-xs border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  title="Wybierz, co ma być wyświetlane jako nagłówek karty zlecenia"
+                >
+                  <option value="clientName">Imię i nazwisko</option>
+                  <option value="address">Adres</option>
+                  <option value="deviceType">Typ sprzętu</option>
+                  <option value="description">Problem/Opis</option>
+                </select>
+              </div>
+
+              {/* Sortowanie */}
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-medium text-gray-700">Sortuj:</span>
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  className="text-xs border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="default">Domyślnie</option>
+                  <option value="priority">Priorytet</option>
+                  <option value="time">Czas realizacji</option>
+                  <option value="revenue">Wartość zlecenia</option>
+                  <option value="client">Nazwa klienta</option>
+                </select>
+              </div>
+
+              {/* Filtrowanie */}
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-medium text-gray-700">Filtruj:</span>
+                <select
+                  value={filterBy}
+                  onChange={(e) => setFilterBy(e.target.value)}
+                  className="text-xs border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="all">Wszystkie statusy</option>
+                  <option value="pending">⏳ Oczekuje na kontakt</option>
+                  <option value="contacted">📞 Skontaktowano się</option>
+                  <option value="unscheduled">📦 Nieprzypisane</option>
+                  <option value="scheduled">📅 Umówiona wizyta</option>
+                  <option value="confirmed">✅ Potwierdzona</option>
+                  <option value="in_progress">🔧 W trakcie</option>
+                  <option value="waiting_parts">🔩 Oczekuje na części</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Statystyki i dodatkowe opcje */}
+            <div className="flex flex-wrap items-center gap-4 text-xs text-gray-600">
+              <span className="flex items-center gap-1">
+                📊 {Object.values(getWeeklyPlanData(weeklyPlan) || {}).reduce((sum, day) => sum + (day?.orders?.length || 0), 0)} zleceń
+              </span>
+              <span className="flex items-center gap-1">
+                💰 {Object.values(getWeeklyPlanData(weeklyPlan) || {}).reduce((sum, day) => 
+                  sum + (day?.orders?.reduce((daySum, order) => daySum + (order.serviceCost || 0), 0) || 0), 0
+                )} zł
+              </span>
+              {expandedDay && (
+                <div className="flex items-center gap-2 ml-4">
+                  <span className="text-sm font-medium">Widok:</span>
+                  <select
+                    value={ordersPerPage}
+                    onChange={(e) => setOrdersPerPage(Number(e.target.value))}
+                    className="text-xs border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value={5}>5 na stronę</option>
+                    <option value={10}>10 na stronę</option>
+                    <option value={20}>20 na stronę</option>
+                    <option value={50}>50 na stronę</option>
+                  </select>
+                </div>
+              )}
+              {expandedDay && (
+                <button
+                  onClick={() => setExpandedDay(null)}
+                  className="flex items-center gap-1 px-2 py-1 bg-red-100 text-red-700 rounded text-xs hover:bg-red-200"
+                  title="Zamknij rozwinięty widok"
+                >
+                  <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                  Zamknij
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Backdrop dla rozwiniętego widoku */}
+        {expandedDay && (
+          <div 
+            className="fixed inset-0 bg-black bg-opacity-50 z-40"
+            onClick={() => setExpandedDay(null)}
+          />
+        )}
+
+        {/* Pula niezapisanych zleceń */}
+        {(() => {
+          // Znajdź wszystkie zlecenia bez przypisanego dnia (scheduledDate === null)
+          const unscheduledOrders = weeklyPlan.unscheduledOrders || [];
+          
+          // ✅ ZAWSZE POKAZUJ SEKCJĘ - nawet gdy pusta (żeby można było przeciągać zlecenia z powrotem)
+          return (
+            <div 
+              className="mb-6 bg-gradient-to-r from-orange-50 to-yellow-50 rounded-lg shadow-sm border-2 border-orange-200 h-[300px] flex flex-col"
+              onDragOver={(e) => {
+                e.preventDefault();
+                e.dataTransfer.dropEffect = 'move';
+              }}
+              onDrop={async (e) => {
+                e.preventDefault();
+                if (draggedOrder && draggedOrder.sourceDay !== 'unscheduled') {
+                  await moveOrderToUnscheduled(draggedOrder.order, draggedOrder.sourceDay);
+                }
+              }}
+            >
+              <div className="flex items-center justify-between p-4 flex-shrink-0">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-orange-500 text-white rounded-lg">
+                    <Calendar className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <h2 className="text-lg font-semibold text-orange-900">
+                      📦 Niezaplanowane zlecenia ({unscheduledOrders.length})
+                    </h2>
+                    <p className="text-sm text-orange-700">
+                      Przeciągnij zlecenie na wybrany dzień tygodnia, aby je zaplanować
+                    </p>
+                  </div>
+                </div>
+                {/* Selector serwisanta */}
+                <div className="relative">
+                  <button
+                    onClick={() => setShowServicemanSelector(!showServicemanSelector)}
+                    className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                    title="Wybierz serwisanta"
+                  >
+                    <Users className="h-4 w-4" />
+                    {availableServicemen.find(s => s.id === currentServiceman)?.name || 'Serwisant'}
+                  </button>
+                  
+                  {showServicemanSelector && (
+                    <div className="absolute top-full left-0 mt-2 w-64 bg-white rounded-lg shadow-lg border z-50">
+                      <div className="p-3 border-b">
+                        <h3 className="font-semibold text-gray-900">Wybierz serwisanta</h3>
+                        <p className="text-xs text-gray-600 mt-1">Każdy serwisant ma osobny planner</p>
+                      </div>
+                      <div className="p-2">
+                        {availableServicemen.map(serviceman => (
+                          <button
+                            key={serviceman.id}
+                            onClick={() => {
+                              console.log('🔄 Zmieniono serwisanta na:', serviceman.id, serviceman.name);
+                              setCurrentServiceman(serviceman.id);
+                              setShowServicemanSelector(false);
+                              // Oznacz serwisanta jako aktywnego
+                              setAvailableServicemen(prev => prev.map(s => ({
+                                ...s,
+                                isActive: s.id === serviceman.id
+                              })));
+                              // ✅ Przeładuj plan dla nowego serwisanta
+                              setTimeout(() => loadIntelligentPlan(), 100);
+                            }}
+                            className={`w-full flex items-center gap-3 p-3 rounded-lg text-left hover:bg-gray-50 ${
+                              currentServiceman === serviceman.id ? 'bg-blue-50 border border-blue-200' : ''
+                            }`}
+                          >
+                            <div 
+                              className="w-4 h-4 rounded-full" 
+                              style={{ backgroundColor: serviceman.color }}
+                            ></div>
+                            <div className="flex-1">
+                              <div className="font-medium text-gray-900">{serviceman.name}</div>
+                              <div className="text-xs text-gray-500">
+                                {serviceman.isActive ? 'Aktywny' : 'Dostępny'}
+                              </div>
+                            </div>
+                            {currentServiceman === serviceman.id && (
+                              <CheckCircle className="h-4 w-4 text-blue-600" />
+                            )}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <button
+                  onClick={() => {
+                    // Automatycznie zaplanuj wszystkie zlecenia
+                    showNotification('🤖 Automatyczne planowanie...', 'info');
+                    loadIntelligentPlan();
+                  }}
+                  className="flex items-center gap-2 px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors"
+                  title="Automatycznie rozplanuj wszystkie zlecenia"
+                >
+                  <Bot className="h-4 w-4" />
+                  Auto-plan
+                </button>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 overflow-y-auto px-4 pb-4 flex-1">
+                {unscheduledOrders.length === 0 ? (
+                  <div className="col-span-full flex flex-col items-center justify-center h-full text-gray-500">
+                    <Calendar className="h-16 w-16 mb-4 opacity-30" />
+                    <p className="text-lg font-medium">Wszystkie zlecenia zostały zaplanowane! 🎉</p>
+                    <p className="text-sm mt-2">Przeciągnij zlecenie tutaj aby cofnąć planowanie</p>
+                  </div>
+                ) : (
+                  unscheduledOrders.map((order, idx) => (
+                  <div
+                    key={`grid-unscheduled-${order.id}-${idx}`}
+                    className={`p-4 bg-white rounded-lg border-2 shadow-sm hover:shadow-md transition-all cursor-move ${
+                      priorityColors[order.priority] || 'border-gray-300'
+                    }`}
+                    draggable={true}
+                    onDragStart={(e) => handleDragStart(e, order, 'unscheduled')}
+                    onDragEnd={handleDragEnd}
+                    title="Przeciągnij to zlecenie na wybrany dzień"
+                  >
+                    <div className="flex items-start justify-between mb-2 gap-2">
+                      <div className="flex-1 min-w-0">
+                        <h4 
+                          className="font-semibold text-gray-900 text-sm truncate"
+                          title={getCardHeaderText(order)}
+                        >
+                          {getCardHeaderText(order)}
+                        </h4>
+                        <p className="text-xs text-gray-600 mt-1 truncate">
+                          {order.deviceType} {order.brand && `- ${order.brand}`}
+                        </p>
+                      </div>
+                      <span className={`text-xs px-2 py-1 rounded-full font-medium whitespace-nowrap flex-shrink-0 ${
+                        order.priority === 'urgent' ? 'bg-red-100 text-red-800' :
+                        order.priority === 'high' ? 'bg-orange-100 text-orange-800' :
+                        order.priority === 'medium' ? 'bg-yellow-100 text-yellow-800' :
+                        'bg-green-100 text-green-800'
+                      }`}>
+                        {order.priority === 'urgent' ? '🔥 Pilne' :
+                         order.priority === 'high' ? '⚡ Wysokie' :
+                         order.priority === 'medium' ? '📌 Średnie' :
+                         '✅ Niskie'}
+                      </span>
+                    </div>
+                    
+                    <div className="text-xs text-gray-600 mb-2 line-clamp-2">
+                      {order.description || order.problemDescription || 'Brak opisu'}
+                    </div>
+                    
+                    <div className="flex items-center justify-between text-xs text-gray-500">
+                      <span className="flex items-center gap-1">
+                        <Clock className="h-3 w-3" />
+                        {order.estimatedDuration || 60} min
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <DollarSign className="h-3 w-3" />
+                        {order.serviceCost || 150} zł
+                      </span>
+                    </div>
+                    
+                    {order.address && (
+                      <div className="mt-2 pt-2 border-t border-gray-200">
+                        <p className="text-xs text-gray-600 truncate" title={order.address}>
+                          📍 {order.address}
+                        </p>
+                      </div>
+                    )}
+                    
+                    {order.preferredDate && (
+                      <div className="mt-2 text-xs text-blue-600 font-medium">
+                        Preferowana: {new Date(order.preferredDate).toLocaleDateString('pl-PL')}
+                      </div>
+                    )}
+                  </div>
+                  ))
+                )}
+              </div>
+            </div>
+          );
+        })()}
+
+        {/* Plan tygodniowy z datami */}
+        <div className={`grid gap-6 h-[calc(100vh-500px)] ${
+          expandedDay ? 'grid-cols-1' : 
+          viewMode === 1 ? 'grid-cols-1' :
+          viewMode === 2 ? 'grid-cols-1 md:grid-cols-2' :
+          viewMode === 3 ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' :
+          viewMode === 4 ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-4' :
+          viewMode === 5 ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-5' :
+          'grid-cols-1 md:grid-cols-2 lg:grid-cols-7'
+        }`}>
+          {Object.keys(dayNames).map(day => {
+            const dayPlan = weeklyPlan[day] || { orders: [], stats: {} };
+            const dayOrders = getOrdersForWeekDay(day); // 🆕 Użyj funkcji filtrującej zamiast dayPlan.orders
+            const dayInfo = formatDayWithDate(day, currentWeekStart);
+            
+            return (
+              <div key={day} className={`bg-white rounded-lg shadow-sm flex flex-col ${
+                dayInfo.isToday ? 'ring-2 ring-blue-400 bg-blue-50' : 
+                dayInfo.isPast ? 'opacity-75' : ''
+              }`}>
+                <div className="p-4 border-b border-gray-200 h-[140px] flex-shrink-0 flex flex-col justify-between">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className={`font-semibold text-lg ${dayInfo.isToday ? 'text-blue-700' : ''}`}>
+                        {dayInfo.name}
+                      </h3>
+                      <p className={`text-sm ${dayInfo.isToday ? 'text-blue-600 font-medium' : 'text-gray-500'}`}>
+                        {dayInfo.date}
+                        {dayInfo.isToday && <span className="ml-2 px-2 py-1 bg-blue-200 text-blue-800 text-xs rounded-full">Dziś</span>}
+                        {dayInfo.isPast && <span className="ml-2 px-2 py-1 bg-gray-200 text-gray-600 text-xs rounded-full">Przeszłość</span>}
+                      </p>
+                    </div>
+                    <span className="text-sm text-gray-500">
+                      {dayOrders.length} {dayOrders.length === 1 ? 'zlecenie' : 'zleceń'}
+                    </span>
+                  </div>
+                  
+                  {dayOrders.length > 0 && (
+                    <div className="flex items-center gap-1 flex-wrap">
+                      <button
+                        onClick={() => optimizeSingleDay(day)}
+                        className="flex items-center gap-1 px-2 py-1 bg-purple-600 text-white text-[10px] rounded hover:bg-purple-700 transition-colors whitespace-nowrap"
+                        title="Optymalizuj tylko ten dzień"
+                      >
+                        <TrendingUp className="h-3 w-3" />
+                        <span className="hidden lg:inline">Opt.</span>
+                      </button>
+                      <button
+                        onClick={() => setSelectedDay(selectedDay === day ? null : day)}
+                        className="flex items-center gap-1 px-2 py-1 bg-gray-600 text-white text-[10px] rounded hover:bg-gray-700 transition-colors whitespace-nowrap"
+                      >
+                        <Settings className="h-3 w-3" />
+                        <span className="hidden md:inline">{selectedDay === day ? 'Ukryj' : 'Szczeg.'}</span>
+                      </button>
+                    </div>
+                  )}
+                </div>
+                
+                {/* 📅 Timeline z osią czasu i zleceniami */}
+                {(() => {
+                  const schedule = getServicemanScheduleForDay(day, currentServiceman);
+                  
+                  // Konwersja czasu na procent wysokości (0-100%)
+                  const timeToPixels = (time) => {
+                    const [h, m] = time.split(':').map(Number);
+                    const totalMinutes = h * 60 + m;
+                    
+                    if (hideUnusedHours) {
+                      // Tryb zwinięty - mapuj tylko zakres timeRange.start do timeRange.end na 0-100%
+                      const rangeMinutes = (timeRange.end - timeRange.start) * 60;
+                      const offsetMinutes = totalMinutes - (timeRange.start * 60);
+                      return (offsetMinutes / rangeMinutes) * 100;
+                    } else {
+                      // Tryb pełny - mapuj 0-24h na 0-100%
+                      return (totalMinutes / (24 * 60)) * 100;
+                    }
+                  };
+                  
+                  // Pobierz czas rozpoczęcia wizyty z zlecenia
+                  const getOrderStartTime = (order) => {
+                    // Sprawdź czy zlecenie ma zapisany czas wizyty
+                    if (order.scheduledTime) return order.scheduledTime;
+                    if (order.preferredTime) return order.preferredTime;
+                    // Jeśli brak - użyj domyślnego (8:00)
+                    return '08:00';
+                  };
+                  
+                  const getOrderDuration = (order) => {
+                    return order.estimatedDuration || 60; // minuty
+                  };
+                  
+                  // Oblicz czas zakończenia
+                  const getOrderEndTime = (order) => {
+                    const startTime = getOrderStartTime(order);
+                    const duration = getOrderDuration(order);
+                    const [h, m] = startTime.split(':').map(Number);
+                    const totalMinutes = h * 60 + m + duration;
+                    const endH = Math.floor(totalMinutes / 60);
+                    const endM = totalMinutes % 60;
+                    return `${endH.toString().padStart(2, '0')}:${endM.toString().padStart(2, '0')}`;
+                  };
+                  
+                  // Funkcja do obsługi upuszczenia zlecenia na timeline (zmiana godziny/dnia)
+                  const handleTimelineDrop = async (e, targetDay, mouseY) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    if (!draggedOrder) return;
+                    
+                    // Oblicz godzinę na podstawie pozycji Y myszy
+                    const rect = e.currentTarget.getBoundingClientRect();
+                    const relativeY = mouseY - rect.top;
+                    const percentY = (relativeY / rect.height) * 100;
+                    
+                    let totalMinutes;
+                    if (hideUnusedHours) {
+                      // Tryb zwinięty - mapuj 0-100% na zakres timeRange
+                      const rangeMinutes = (timeRange.end - timeRange.start) * 60;
+                      totalMinutes = (timeRange.start * 60) + (percentY / 100) * rangeMinutes;
+                    } else {
+                      // Tryb pełny - mapuj 0-100% na 0-24h
+                      totalMinutes = (percentY / 100) * 24 * 60;
+                    }
+                    
+                    const hour = Math.floor(totalMinutes / 60);
+                    const minute = Math.floor((totalMinutes % 60) / 15) * 15; // Zaokrąglij do 15 min
+                    const newTime = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+                    
+                    console.log(`📍 Upuszczono zlecenie na ${targetDay} o godzinie ${newTime}`);
+                    
+                    // Aktualizuj zlecenie z nową datą i godziną
+                    const targetDate = getDateForDay(targetDay);
+                    // 🔧 FIX: Użyj lokalnej daty zamiast UTC
+                    const dateStr = `${targetDate.getFullYear()}-${String(targetDate.getMonth() + 1).padStart(2, '0')}-${String(targetDate.getDate()).padStart(2, '0')}`;
+                    
+                    // 🤖 AUTO-KALKULACJA: Oblicz czas gdy upuszczamy zlecenie na timeline
+                    let autoCalculatedTime = null;
+                    let employee = null; // 👷 Deklaracja na wyższym poziomie żeby była dostępna w try-catch
+                    
+                    if (currentServiceman && draggedOrder.order.deviceType) {
+                      console.log('🔍 DEBUG availableServicemen count:', availableServicemen.length);
+                      console.log('🔍 DEBUG currentServiceman ID:', currentServiceman);
+                      employee = availableServicemen.find(e => e.id === currentServiceman);
+                      console.log('🔍 DEBUG znaleziony employee (JSON):', JSON.stringify(employee, null, 2));
+                      if (employee) {
+                        console.log('🔍 DEBUG employee.repairTimes:', employee.repairTimes);
+                        console.log('🔍 DEBUG typeof repairTimes:', typeof employee.repairTimes);
+                        console.log('🔍 DEBUG keys repairTimes:', employee.repairTimes ? Object.keys(employee.repairTimes) : 'BRAK');
+                        autoCalculatedTime = calculateEstimatedDuration(draggedOrder.order, employee);
+                        if (autoCalculatedTime) {
+                          console.log(`⏱️ Auto-obliczono czas dla "${draggedOrder.order.clientName}": ${autoCalculatedTime}min (pracownik: ${employee.name})`);
+                        }
+                      } else {
+                        console.warn(`⚠️ NIE ZNALEZIONO pracownika o ID: ${currentServiceman}`);
+                      }
+                    }
+                    
+                    // ✅ OPTYMISTYCZNA AKTUALIZACJA STANU (przed zapisem do API)
+                    const updatedOrder = {
+                      ...draggedOrder.order,
+                      scheduledDate: dateStr,
+                      scheduledTime: newTime,
+                      assignedTo: currentServiceman,
+                      estimatedDuration: autoCalculatedTime || draggedOrder.order.estimatedDuration
+                    };
+                    
+                    // ✅ Aktualizuj stan lokalny natychmiast - NOWA STRUKTURA
+                    setWeeklyPlan(prevPlan => {
+                      const newPlan = { ...prevPlan };
+                      
+                      // Usuń ze starego miejsca
+                      if (draggedOrder.sourceDay === 'unscheduled') {
+                        newPlan.unscheduledOrders = newPlan.unscheduledOrders.filter(o => o.id !== draggedOrder.order.id);
+                      } else if (draggedOrder.sourceDay && newPlan[draggedOrder.sourceDay]) {
+                        // Usuń z dnia źródłowego
+                        const sourceOrders = [...(newPlan[draggedOrder.sourceDay].orders || [])];
+                        newPlan[draggedOrder.sourceDay].orders = sourceOrders.filter(o => o.id !== draggedOrder.order.id);
+                      }
+                      
+                      // Dodaj do docelowego dnia w weeklyPlan[targetDay].orders
+                      if (newPlan[targetDay]) {
+                        const targetOrders = [...(newPlan[targetDay].orders || [])];
+                        newPlan[targetDay].orders = [...targetOrders, updatedOrder];
+                      }
+                      
+                      return newPlan;
+                    });
+                    
+                    try {
+                      console.log(`💾 Zapisuję zlecenie do bazy:`, {
+                        orderId: draggedOrder.order.id,
+                        scheduledDate: dateStr,
+                        scheduledTime: newTime,
+                        assignedTo: currentServiceman,
+                        estimatedDuration: autoCalculatedTime || draggedOrder.order.estimatedDuration
+                      });
+                      
+                      const response = await fetch(`/api/orders/${draggedOrder.order.id}`, {
+                        method: 'PATCH',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                          scheduledDate: dateStr,
+                          scheduledTime: newTime,
+                          assignedTo: currentServiceman, // 👷 Przypisz do serwisanta
+                          estimatedDuration: autoCalculatedTime || draggedOrder.order.estimatedDuration, // ⏱️ Zapisz obliczony czas
+                          status: 'scheduled' // 📅 Ustaw status na "zaplanowane"
+                        })
+                      });
+                      
+                      if (response.ok) {
+                        const result = await response.json();
+                        console.log(`✅ Zlecenie zapisane w bazie:`, result);
+                        showNotification(`✅ Zlecenie przypisane do ${employee?.name || 'serwisanta'} na ${targetDay} o ${newTime}`, 'success');
+                        // Nie ładuj ponownie całego planu - już zaktualizowaliśmy lokalnie
+                      } else {
+                        const errorText = await response.text();
+                        console.error(`❌ Błąd API (${response.status}):`, errorText);
+                        // Jeśli API zwróciło błąd, cofnij zmiany
+                        showNotification('❌ Nie udało się zapisać zmian', 'error');
+                        await loadIntelligentPlan(); // Przywróć z API
+                      }
+                    } catch (error) {
+                      console.error('❌ Błąd aktualizacji zlecenia:', error);
+                      showNotification('❌ Nie udało się przenieść zlecenia', 'error');
+                      await loadIntelligentPlan(); // Przywróć z API
+                    }
+                    
+                    setDraggedOrder(null);
+                    setIsDragging(false);
+                    setDragOverInfo(null);
+                  };
+                  
+                  return (
+                    <div 
+                      className="flex-1 bg-gray-50 border-b border-gray-200 overflow-y-auto"
+                      onDragOver={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        
+                        // Pokaż podgląd gdzie zlecenie zostanie upuszczone
+                        if (isDragging) {
+                          const rect = e.currentTarget.getBoundingClientRect();
+                          const relativeY = e.clientY - rect.top;
+                          const percentY = (relativeY / rect.height) * 100;
+                          
+                          let totalMinutes;
+                          if (hideUnusedHours) {
+                            // Tryb zwinięty
+                            const rangeMinutes = (timeRange.end - timeRange.start) * 60;
+                            totalMinutes = (timeRange.start * 60) + (percentY / 100) * rangeMinutes;
+                          } else {
+                            // Tryb pełny
+                            totalMinutes = (percentY / 100) * 24 * 60;
+                          }
+                          
+                          const hour = Math.floor(totalMinutes / 60);
+                          const minute = Math.floor((totalMinutes % 60) / 15) * 15;
+                          const time = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+                          
+                          setDragOverInfo({ y: percentY, time, day });
+                        }
+                      }}
+                      onDragLeave={() => setDragOverInfo(null)}
+                      onDrop={(e) => {
+                        handleTimelineDrop(e, day, e.clientY);
+                        setDragOverInfo(null);
+                      }}
+                    >
+                      {/* Wewnętrzny kontener z pełną wysokością dla pozycjonowania absolute */}
+                      <div 
+                        className="relative w-full"
+                        style={{ height: `${1600 * timelineZoom}px` }}
+                      >
+                      {/* Linia podglądu podczas przeciągania */}
+                      {dragOverInfo && dragOverInfo.day === day && (
+                        <div
+                          className="absolute w-full border-t-2 border-dashed border-purple-500 z-30 pointer-events-none"
+                          style={{ top: `${dragOverInfo.y}%` }}
+                        >
+                          <span className="absolute right-2 -top-3 text-xs font-bold text-purple-600 bg-purple-100 px-2 py-0.5 rounded shadow-sm">
+                            📍 {dragOverInfo.time}
+                          </span>
+                        </div>
+                      )}
+                      {/* Siatka godzin - dynamiczny zakres z liniami co 30 min */}
+                      {Array.from({ length: (timeRange.end - timeRange.start) * 2 }, (_, i) => {
+                        const totalMinutes = (timeRange.start * 60) + (i * 30); // Start at selected hour, increment by 30 min
+                        const h = Math.floor(totalMinutes / 60);
+                        const m = totalMinutes % 60;
+                        const isFullHour = m === 0;
+                        
+                        // Oblicz pozycję - w trybie zwiniętym mapuj na 0-100%, w pełnym na pozycję w dobie
+                        let positionPercent;
+                        if (hideUnusedHours) {
+                          // Tryb zwinięty - linie równomiernie rozłożone 0-100%
+                          positionPercent = (i / ((timeRange.end - timeRange.start) * 2)) * 100;
+                        } else {
+                          // Tryb pełny - pozycja względem całej doby (0-24h)
+                          positionPercent = (totalMinutes / (24 * 60)) * 100;
+                        }
+                        
+                        return (
+                          <div
+                            key={`grid-${h}-${m}`}
+                            className={`absolute w-full pointer-events-none ${
+                              isFullHour ? 'border-t-2 border-gray-300' : 'border-t border-gray-200 border-dashed'
+                            }`}
+                            style={{ top: `${positionPercent}%` }}
+                          >
+                            {isFullHour && (
+                              <span className="text-[11px] text-gray-600 ml-1 bg-gray-50 px-1.5 py-0.5 font-semibold rounded shadow-sm">
+                                {h.toString().padStart(2, '0')}:00
+                              </span>
+                            )}
+                            {!isFullHour && (
+                              <span className="text-[9px] text-gray-400 ml-1 bg-gray-50/80 px-1">
+                                {h.toString().padStart(2, '0')}:{m.toString().padStart(2, '0')}
+                              </span>
+                            )}
+                          </div>
+                        );
+                      })}
+                      
+                      {/* Przyciemnienie godzin poza zakresem - tylko w trybie pełnym */}
+                      {!hideUnusedHours && timeRange.start > 0 && (
+                        <div 
+                          className="absolute w-full bg-gray-900 opacity-10 pointer-events-none z-10"
+                          style={{
+                            top: 0,
+                            height: `${(timeRange.start / 24) * 100}%`
+                          }}
+                          title={`Ukryto godziny: 00:00 - ${timeRange.start.toString().padStart(2, '0')}:00`}
+                        />
+                      )}
+                      {!hideUnusedHours && timeRange.end < 24 && (
+                        <div 
+                          className="absolute w-full bg-gray-900 opacity-10 pointer-events-none z-10"
+                          style={{
+                            top: `${(timeRange.end / 24) * 100}%`,
+                            height: `${((24 - timeRange.end) / 24) * 100}%`
+                          }}
+                          title={`Ukryto godziny: ${timeRange.end.toString().padStart(2, '0')}:00 - 24:00`}
+                        />
+                      )}
+                      
+                      {/* Tło dostępności serwisanta (półprzezroczyste zielone) */}
+                      {schedule && schedule.workSlots && schedule.workSlots.map((slot, idx) => (
+                        <div
+                          key={`work-${day}-${idx}`}
+                          className="absolute w-full bg-green-100 opacity-30 pointer-events-none"
+                          style={{
+                            top: `${timeToPixels(slot.startTime)}%`,
+                            height: `${timeToPixels(slot.endTime) - timeToPixels(slot.startTime)}%`
+                          }}
+                        />
+                      ))}
+                      
+                      {/* Przerwy serwisanta (półprzezroczyste pomarańczowe) */}
+                      {schedule && schedule.breaks && schedule.breaks.map((breakSlot, idx) => (
+                        <div
+                          key={`break-${day}-${idx}`}
+                          className="absolute w-full bg-orange-200 opacity-40 pointer-events-none"
+                          style={{
+                            top: `${timeToPixels(breakSlot.startTime)}%`,
+                            height: `${timeToPixels(breakSlot.endTime) - timeToPixels(breakSlot.startTime)}%`
+                          }}
+                        />
+                      ))}
+                      
+                      {/* 🕐 LINIA AKTUALNEJ GODZINY */}
+                      {(() => {
+                        const now = currentTime;
+                        const currentHour = now.getHours();
+                        const currentMinute = now.getMinutes();
+                        const currentTimeString = `${currentHour.toString().padStart(2, '0')}:${currentMinute.toString().padStart(2, '0')}`;
+                        
+                        // Sprawdź czy aktualna godzina jest w zakresie wyświetlanym
+                        const isInRange = currentHour >= timeRange.start && currentHour < timeRange.end;
+                        
+                        if (!isInRange && hideUnusedHours) {
+                          return null; // Nie pokazuj linii jeśli jest poza zakresem w trybie zwiniętym
+                        }
+                        
+                        const currentPosition = timeToPixels(currentTimeString);
+                        
+                        return (
+                          <div
+                            key={`current-time-${day}`}
+                            className="absolute w-full pointer-events-none z-30"
+                            style={{ top: `${currentPosition}%` }}
+                          >
+                            {/* Czerwona linia */}
+                            <div className="absolute w-full h-0.5 bg-red-500 shadow-lg"></div>
+                            {/* Czerwony kółko po lewej */}
+                            <div className="absolute -left-1 -top-1.5 w-3 h-3 bg-red-500 rounded-full shadow-lg"></div>
+                            {/* Etykieta z czasem */}
+                            <div className="absolute left-4 -top-2.5 bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded shadow-lg">
+                              TERAZ {currentTimeString}
+                            </div>
+                          </div>
+                        );
+                      })()}
+                      
+                      {/* ZLECENIA na timeline - PRZECIĄGALNE */}
+                      {dayOrders.map((order) => {
+                        const startTime = getOrderStartTime(order);
+                        const endTime = getOrderEndTime(order);
+                        const duration = getOrderDuration(order);
+                        const heightPercent = timeToPixels(endTime) - timeToPixels(startTime);
+                        
+                        // 🔧 FIX: Użyj pikseli zamiast procentów, żeby przewijały się razem z siatką
+                        const containerHeight = 1600 * timelineZoom; // Całkowita wysokość kontenera
+                        const topPx = (timeToPixels(startTime) / 100) * containerHeight;
+                        const heightPx = Math.max(50, (heightPercent / 100) * containerHeight);
+                        
+                        return (
+                          <div
+                            key={`timeline-${day}-${order.id}`}
+                            className="absolute w-full px-2 z-20 cursor-move group"
+                            style={{
+                              top: `${topPx}px`,
+                              height: `${heightPx}px`,
+                              minHeight: '50px' // Minimum dla czytelności
+                            }}
+                            title={`${startTime} - ${endTime} (${duration} min)\nPrzeciągnij aby zmienić godzinę lub dzień`}
+                            draggable={true}
+                            onDragStart={(e) => {
+                              handleDragStart(e, order, day);
+                              e.currentTarget.style.opacity = '0.5';
+                            }}
+                            onDragEnd={(e) => {
+                              handleDragEnd(e);
+                              e.currentTarget.style.opacity = '1';
+                            }}
+                          >
+                            <div className={`h-full rounded-lg shadow-lg border-4 p-2 bg-white group-hover:shadow-xl transition-all overflow-hidden cursor-move ${
+                              order.priority === 'urgent' ? 'border-red-500 bg-red-200' :
+                              order.priority === 'high' ? 'border-orange-500 bg-orange-200' :
+                              order.priority === 'medium' ? 'border-yellow-500 bg-yellow-200' :
+                              'border-blue-500 bg-blue-200'
+                            }`}>
+                              {/* Ikona przeciągania */}
+                              <div className="absolute top-1 right-1 text-gray-400 text-xs opacity-0 group-hover:opacity-100 transition-opacity">
+                                ⋮⋮
+                              </div>
+                              
+                              <div className="flex items-start justify-between mb-1">
+                                <div className="flex-1 min-w-0">
+                                  <h4 
+                                    className="font-semibold text-xs truncate" 
+                                    title={getCardHeaderText(order)}
+                                  >
+                                    {getCardHeaderText(order)}
+                                  </h4>
+                                  
+                                  {/* Badge'y z numerami */}
+                                  <div className="flex items-center gap-1 flex-wrap mt-0.5">
+                                    <span className="text-[8px] font-mono bg-blue-100 text-blue-700 px-1 rounded" title="Numer zlecenia">
+                                      🔢 {order.orderNumber || order.visitId || `ORD-${order.id}`}
+                                    </span>
+                                    <span className="text-[8px] font-mono bg-purple-100 text-purple-700 px-1 rounded" title="ID klienta">
+                                      👤 {order.clientId || order.customerId || 'BRAK'}
+                                    </span>
+                                    {order.visits && order.visits.length > 0 && (
+                                      <span className="text-[8px] font-mono bg-green-100 text-green-700 px-1 rounded" title={`Wizyty: ${order.visits.map(v => v.visitId || v.id).join(', ')}`}>
+                                        📅 {order.visits.length}
+                                      </span>
+                                    )}
+                                  </div>
+                                  
+                                  {/* Przyciski akcji */}
+                                  {heightPercent > 5 && (
+                                    <div className="flex items-center gap-1 mt-1">
+                                      {/* Dropdown zmiany technika */}
+                                      {availableServicemen.length > 1 && (
+                                        <select
+                                          onClick={(e) => e.stopPropagation()}
+                                          onChange={async (e) => {
+                                            e.stopPropagation();
+                                            const newTechnicianId = e.target.value;
+                                            if (newTechnicianId && newTechnicianId !== currentServiceman) {
+                                              const scheduledDate = order.scheduledDate || day;
+                                              try {
+                                                const response = await fetch(`/api/orders/${order.id}`, {
+                                                  method: 'PATCH',
+                                                  headers: { 'Content-Type': 'application/json' },
+                                                  body: JSON.stringify({ 
+                                                    assignedTo: newTechnicianId,
+                                                    scheduledDate: scheduledDate
+                                                  })
+                                                });
+                                                if (response.ok) {
+                                                  showNotification(`✅ Przeniesiono do innego technika`, 'success');
+                                                  setTimeout(() => loadIntelligentPlan(), 500);
+                                                }
+                                              } catch (error) {
+                                                console.error('Błąd:', error);
+                                                showNotification(`❌ Błąd zmiany technika`, 'error');
+                                              }
+                                            }
+                                          }}
+                                          className="text-[8px] px-1 py-0.5 rounded bg-blue-100 text-blue-700 hover:bg-blue-200 cursor-pointer border-0"
+                                          value={currentServiceman}
+                                        >
+                                          <option value="">👤 Zmień...</option>
+                                          {availableServicemen.map(tech => (
+                                            <option key={tech.id} value={tech.id}>{tech.name}</option>
+                                          ))}
+                                        </select>
+                                      )}
+                                      
+                                      {/* Przycisk przeniesienia do nieprzypisanych */}
+                                      <button
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          moveOrderToUnscheduled(order, day);
+                                        }}
+                                        className="text-[8px] px-1 py-0.5 rounded bg-gray-100 text-gray-700 hover:bg-red-100 hover:text-red-700"
+                                        title="Przenieś do nieprzypisanych"
+                                      >
+                                        ↩️
+                                      </button>
+                                    </div>
+                                  )}
+                                  
+                                  <p 
+                                    className="text-[10px] text-gray-600 truncate mt-0.5"
+                                    title={order.deviceType}
+                                  >
+                                    {order.deviceType}
+                                  </p>
+                                </div>
+                                <span className="text-sm font-bold ml-1">
+                                  {order.priority === 'urgent' ? '🔥' :
+                                   order.priority === 'high' ? '⚡' :
+                                   order.priority === 'medium' ? '📌' : '✅'}
+                                </span>
+                              </div>
+                              
+                              <div className="text-[10px] text-gray-700 font-bold bg-white/50 rounded px-1 py-0.5 inline-block">
+                                🕒 {startTime} - {endTime}
+                              </div>
+                              
+                              <div className="text-[9px] text-gray-600 mt-1">
+                                ⏱️ {duration} min
+                              </div>
+                              
+                              {order.address && heightPercent > 4 && (
+                                <div className="text-[8px] text-gray-500 mt-1 truncate" title={order.address}>
+                                  📍 {order.address}
+                                </div>
+                              )}
+                              
+                              {/* Wskazówka przy hover */}
+                              <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2 text-[8px] text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap bg-white/80 px-1 rounded">
+                                Przeciągnij ↕️ lub ↔️
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                      </div>
+                      {/* Zamknięcie wewnętrznego kontenera z relative */}
+                    </div>
+                  );
+                })()}
+                
+                {/* Statystyki dnia (pod timeline) */}
+                <div className="p-3 bg-gray-50 border-t border-gray-200">
+                  {dayOrders.length === 0 ? (
+                    <div className="text-center text-xs text-gray-500">
+                      {isDragging 
+                        ? `📦 Przeciągnij "${draggedOrder?.order?.clientName}" na timeline` 
+                        : 'Brak zleceń - przeciągnij zlecenie z puli nieprzypisanych'
+                      }
+                    </div>
+                  ) : (
+                    <div className="text-xs text-gray-600 space-y-1">
+                      <div>📦 Zlecenia: <strong>{dayOrders.length}</strong></div>
+                      <div>⏱️ Łączny czas: <strong>{dayOrders.reduce((sum, o) => sum + (o.estimatedDuration || 60), 0)} min</strong></div>
+                      <div>💰 Przychód: <strong>{dayOrders.reduce((sum, o) => sum + (o.serviceCost || 150), 0)} zł</strong></div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default IntelligentWeekPlanner;
