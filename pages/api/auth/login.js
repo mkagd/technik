@@ -34,6 +34,15 @@ export default async function handler(req, res) {
     const { email, password } = req.body;
     const DEFAULT_ADMIN = getDefaultAdmin();
 
+    console.log('🔐 Login attempt:', {
+      receivedEmail: email,
+      receivedPassword: password ? '***' + password.slice(-3) : 'undefined',
+      expectedEmail: DEFAULT_ADMIN.email,
+      expectedPassword: DEFAULT_ADMIN.password ? '***' + DEFAULT_ADMIN.password.slice(-3) : 'undefined',
+      ADMIN_PASSWORD_env: process.env.ADMIN_PASSWORD ? '***' + process.env.ADMIN_PASSWORD.slice(-3) : 'undefined',
+      NEXT_PUBLIC_ADMIN_PASS_env: process.env.NEXT_PUBLIC_ADMIN_PASS ? '***' + process.env.NEXT_PUBLIC_ADMIN_PASS.slice(-3) : 'undefined'
+    });
+
     // Basic validation
     if (!email || !password) {
       return res.status(400).json({
@@ -45,6 +54,7 @@ export default async function handler(req, res) {
 
     // Check if email matches admin
     if (email.toLowerCase() !== DEFAULT_ADMIN.email.toLowerCase()) {
+      console.log('🔐 Email mismatch:', email, 'vs', DEFAULT_ADMIN.email);
       // Simulate processing time to prevent timing attacks
       await new Promise(resolve => setTimeout(resolve, 100));
       return res.status(401).json({
@@ -57,6 +67,7 @@ export default async function handler(req, res) {
     // Simple password comparison (no hashing for env-based auth)
     // In production, use proper database with hashed passwords
     if (password !== DEFAULT_ADMIN.password) {
+      console.log('🔐 Password mismatch. Received length:', password?.length, 'Expected length:', DEFAULT_ADMIN.password?.length);
       return res.status(401).json({
         success: false,
         error: 'INVALID_CREDENTIALS',
