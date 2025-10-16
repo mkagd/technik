@@ -24,6 +24,7 @@
 - [x] `/api/parts` - GET/POST/PUT/DELETE (parts inventory management)
 - [x] `/api/stats` - GET (dashboard statistics and analytics)
 - [x] `/api/visits/index` - GET/POST/PUT/DELETE (visits management with filters, search, pagination)
+- [x] `/api/part-requests/index` - GET/POST/PUT (parts requests management)
 
 ## 🔄 IN PROGRESS - Critical API Endpoints
 
