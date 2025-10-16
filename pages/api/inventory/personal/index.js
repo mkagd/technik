@@ -6,6 +6,8 @@ const employeesPath = path.join(process.cwd(), 'data', 'employees.json');
 const partsInventoryPath = path.join(process.cwd(), 'data', 'parts-inventory.json');
 const partUsagePath = path.join(process.cwd(), 'data', 'part-usage.json');
 const notificationsPath = path.join(process.cwd(), 'data', 'notifications.json');
+const technicianSessionsPath = path.join(process.cwd(), 'data', 'technician-sessions.json');
+const employeeSessionsPath = path.join(process.cwd(), 'data', 'employee-sessions.json');
 
 function readJSON(filePath) {
   try {
@@ -56,19 +58,69 @@ function findPart(partId) {
   return parts.find(p => p.id === partId);
 }
 
+// Walidacja tokenu (multi-auth: technician + employee)
+function validateToken(token) {
+  if (!token) return null;
+
+  // Try technician-sessions.json
+  const techSessions = readJSON(technicianSessionsPath);
+  if (techSessions) {
+    const session = techSessions.find(s => s.token === token && s.isValid);
+    if (session) {
+      return session.employeeId;
+    }
+  }
+
+  // Try employee-sessions.json (fallback)
+  const empSessions = readJSON(employeeSessionsPath);
+  if (empSessions) {
+    const session = empSessions.find(s => s.token === token && s.isValid);
+    if (session) {
+      return session.employeeId;
+    }
+  }
+
+  return null;
+}
+
 export default function handler(req, res) {
   if (req.method === 'GET') {
     // ============================================
-    // GET: Magazyn osobisty pracownika
+    // GET: Magazyn osobisty pracownika lub wszystkich
     // ============================================
     const { employeeId } = req.query;
-    
-    if (!employeeId) {
-      return res.status(400).json({ 
+
+    // Walidacja tokenu
+    const token = req.headers.authorization?.replace('Bearer ', '');
+    const authenticatedEmployeeId = validateToken(token);
+
+    if (!authenticatedEmployeeId) {
+      return res.status(401).json({ 
         success: false, 
-        error: 'Brak employeeId' 
+        error: 'Brak autoryzacji - zaloguj się ponownie' 
       });
     }
+
+    // ✅ Jeśli brak employeeId, zwróć wszystkie magazyny (tylko dla adminów - TODO: sprawdzić rolę)
+    if (!employeeId) {
+      const inventories = readJSON(personalInventoriesPath) || [];
+      console.log(`✅ Returning all ${inventories.length} personal inventories`);
+      return res.status(200).json({ 
+        success: true, 
+        inventories 
+      });
+    }
+
+    // 🔒 BEZPIECZEŃSTWO: Użytkownik może pobierać tylko SWÓJ magazyn
+    if (authenticatedEmployeeId !== employeeId) {
+      console.error(`❌ Access denied: ${authenticatedEmployeeId} tried to access ${employeeId}`);
+      return res.status(403).json({ 
+        success: false, 
+        error: 'Nie masz uprawnień do tego magazynu' 
+      });
+    }
+
+    console.log(`✅ Authenticated GET for employeeId: ${employeeId}`);
     
     // Znajdź pracownika
     const employee = findEmployee(employeeId);
@@ -220,7 +272,8 @@ export default function handler(req, res) {
     const totalParts = inventory.parts.reduce((sum, p) => sum + p.quantity, 0);
     const totalValue = inventory.parts.reduce((sum, p) => {
       const partDetails = findPart(p.partId);
-      return sum + (partDetails?.price || 0) * p.quantity;
+      const price = partDetails?.pricing?.retailPrice || partDetails?.price || 0;
+      return sum + price * p.quantity;
     }, 0);
     
     inventory.statistics = {

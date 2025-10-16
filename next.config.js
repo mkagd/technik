@@ -1,8 +1,8 @@
 const withPWA = require('next-pwa')({
   dest: 'public',
-  disable: true, // CAŁKOWICIE WYŁĄCZ PWA (service worker blokuje API)
-  register: false,
-  skipWaiting: false,
+  disable: false, // ✅ TYMCZASOWO WŁĄCZONE dla testów (normalnie: process.env.NODE_ENV === 'development')
+  register: true,
+  skipWaiting: true,
   runtimeCaching: [
     {
       urlPattern: /^https:\/\/fonts\.(?:gstatic)\.com\/.*/i,
@@ -170,7 +170,28 @@ const withPWA = require('next-pwa')({
 const nextConfig = {
   reactStrictMode: false,
   swcMinify: false,
-  compress: true
+  compress: true,
+  
+  // ✅ Wyłącz verbose logging w development
+  onDemandEntries: {
+    maxInactiveAge: 25 * 1000,
+    pagesBufferLength: 2,
+  },
+  
+  // ✅ KOMPLETNIE BEZ CSP (dla iframe North.pl)
+  async headers() {
+    return [
+      {
+        source: '/:path*',
+        headers: [
+          {
+            key: 'Content-Security-Policy',
+            value: "default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; frame-src *;"
+          }
+        ]
+      }
+    ];
+  }
 };
 
 module.exports = withPWA(nextConfig);

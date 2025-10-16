@@ -114,6 +114,16 @@ export default function AdminVisitsList() {
     }
   }, []);
 
+  // Initialize search filter from URL query parameter
+  useEffect(() => {
+    if (router.isReady && router.query.search) {
+      setFilters(prev => ({
+        ...prev,
+        search: router.query.search
+      }));
+    }
+  }, [router.isReady, router.query.search]);
+
   // Load data
   useEffect(() => {
     loadVisits();
@@ -2507,6 +2517,61 @@ export default function AdminVisitsList() {
                       );
                     })}
                   </div>
+                </div>
+              )}
+
+              {/* 🔧 Assigned Parts - Przypisane części z zamówienia */}
+              {selectedVisit.parts && selectedVisit.parts.length > 0 && (
+                <div className="mb-6">
+                  <h3 className="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
+                    <FiPackage className="w-4 h-4 text-green-600" />
+                    Przypisane części z zamówienia ({selectedVisit.parts.length})
+                  </h3>
+                  <div className="bg-green-50 border-2 border-green-200 rounded-lg overflow-hidden">
+                    <table className="w-full text-sm">
+                      <thead className="bg-green-100 border-b border-green-200">
+                        <tr>
+                          <th className="px-4 py-2 text-left text-gray-700 font-medium">Nazwa części</th>
+                          <th className="px-4 py-2 text-center text-gray-700 font-medium">Nr katalogowy</th>
+                          <th className="px-4 py-2 text-center text-gray-700 font-medium">Ilość</th>
+                          <th className="px-4 py-2 text-right text-gray-700 font-medium">Cena jedn.</th>
+                          <th className="px-4 py-2 text-right text-gray-700 font-medium">Suma</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {selectedVisit.parts.map((part, idx) => (
+                          <tr key={idx} className="border-b border-green-200 last:border-0 hover:bg-white transition">
+                            <td className="px-4 py-2">
+                              <div className="font-medium text-gray-900">{part.partName}</div>
+                              {part.priceNotes && (
+                                <div className="text-xs text-gray-500 mt-0.5 italic">💡 {part.priceNotes}</div>
+                              )}
+                            </td>
+                            <td className="px-4 py-2 text-center">
+                              <code className="text-xs bg-gray-200 px-2 py-0.5 rounded font-mono">{part.partNumber || '-'}</code>
+                            </td>
+                            <td className="px-4 py-2 text-center font-medium">{part.quantity || 1}</td>
+                            <td className="px-4 py-2 text-right text-blue-600 font-medium">{(part.unitPrice || 0).toFixed(2)} zł</td>
+                            <td className="px-4 py-2 text-right font-bold text-green-600">
+                              {(part.totalPrice || (part.quantity * part.unitPrice)).toFixed(2)} zł
+                            </td>
+                          </tr>
+                        ))}
+                        {/* Total Row */}
+                        <tr className="bg-green-100 font-bold">
+                          <td colSpan="4" className="px-4 py-3 text-right text-gray-700">
+                            Łącznie przypisane części:
+                          </td>
+                          <td className="px-4 py-3 text-right text-green-700">
+                            {selectedVisit.parts.reduce((sum, p) => sum + (p.totalPrice || (p.quantity * p.unitPrice)), 0).toFixed(2)} zł
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <p className="text-xs text-gray-500 mt-2">
+                    ℹ️ To są części przypisane do wizyty z zamówienia. Mogą zawierać niestandardowe ceny (marża, przesyłka).
+                  </p>
                 </div>
               )}
 

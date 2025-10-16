@@ -171,7 +171,7 @@ export function middleware(request) {
   response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
   response.headers.set('Permissions-Policy', 'geolocation=(), microphone=(), camera=()');
   
-  // CSP header
+  // CSP header (✅ allow iframe for North.pl proxy)
   response.headers.set('Content-Security-Policy', [
     "default-src 'self'",
     "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
@@ -180,7 +180,7 @@ export function middleware(request) {
     "connect-src 'self' https:",
     "font-src 'self'",
     "media-src 'self'",
-    "frame-src 'none'"
+    "frame-src 'self' https://north.pl"
   ].join('; '));
   
   // Remove server info

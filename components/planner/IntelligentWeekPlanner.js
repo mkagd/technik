@@ -1,10 +1,11 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+﻿import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useRouter } from 'next/router';
-// USUNIĘTO: GeocodingService i DistanceMatrixService importy
-// Powód: CORS - używamy API endpoints zamiast bezpośrednich wywołań
+// USUNIÄTO: GeocodingService i DistanceMatrixService importy
+// PowĂłd: CORS - uĹĽywamy API endpoints zamiast bezpoĹ›rednich wywoĹ‚aĹ„
 import GoogleGeocoder from '../../geocoding/simple/GoogleGeocoder.js';
 import { suggestVisitDuration } from '../../utils/repairTimeCalculator';
 import { getApiCostMonitor } from '../../utils/apiCostMonitor';
+import { logger } from '../../utils/logger';
 import { calculateEstimatedDuration, updateOrderEstimatedDuration } from './utils/timeCalculations';
 import { 
   AlertTriangle,
@@ -28,32 +29,32 @@ import {
 } from 'lucide-react';
 
 const IntelligentWeekPlanner = () => {
-  console.log('🚀🚀🚀 IntelligentWeekPlanner COMPONENT RENDERING 🚀🚀🚀');
+  logger.debug('đźš€đźš€đźš€ IntelligentWeekPlanner COMPONENT RENDERING đźš€đźš€đźš€');
   
   const router = useRouter();
   
-  // USUNIĘTO: Bezpośrednie inicjalizacje GeocodingService i DistanceMatrixService
-  // Powód: CORS - frontend nie może bezpośrednio wywoływać Google API
-  // Rozwiązanie: Wszystkie wywołania przechodzą przez API endpoints (/api/geocoding, /api/distance-matrix)
+  // USUNIÄTO: BezpoĹ›rednie inicjalizacje GeocodingService i DistanceMatrixService
+  // PowĂłd: CORS - frontend nie moĹĽe bezpoĹ›rednio wywoĹ‚ywaÄ‡ Google API
+  // RozwiÄ…zanie: Wszystkie wywoĹ‚ania przechodzÄ… przez API endpoints (/api/geocoding, /api/distance-matrix)
 
-  // Stan przechowuje plany dla wszystkich serwisantów
+  // Stan przechowuje plany dla wszystkich serwisantĂłw
   const [weeklyPlans, setWeeklyPlans] = useState({}); // { servicemanId: weeklyPlan }
-  const [weeklyPlan, setWeeklyPlan] = useState(null); // Aktualnie wyświetlany plan
+  const [weeklyPlan, setWeeklyPlan] = useState(null); // Aktualnie wyĹ›wietlany plan
   const [isLoading, setIsLoading] = useState(false);
   const [selectedDay, setSelectedDay] = useState(null);
   
-  // 🆕 Stan dla modalu ze szczegółami zlecenia
+  // đź†• Stan dla modalu ze szczegĂłĹ‚ami zlecenia
   const [selectedOrderModal, setSelectedOrderModal] = useState(null);
   const [showOrderDetailsModal, setShowOrderDetailsModal] = useState(false);
   
-  //  Stan dla harmonogramów serwisantów (dostępność godzinowa)
+  //  Stan dla harmonogramĂłw serwisantĂłw (dostÄ™pnoĹ›Ä‡ godzinowa)
   const [servicemanSchedules, setServicemanSchedules] = useState({});
-  const [dragOverInfo, setDragOverInfo] = useState(null); // Podgląd pozycji podczas przeciągania na timeline
+  const [dragOverInfo, setDragOverInfo] = useState(null); // PodglÄ…d pozycji podczas przeciÄ…gania na timeline
   
-  // � Stan dla linii aktualnej godziny
+  // ďż˝ Stan dla linii aktualnej godziny
   const [currentTime, setCurrentTime] = useState(new Date());
   
-  // Aktualizuj czas co minutę
+  // Aktualizuj czas co minutÄ™
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentTime(new Date());
@@ -62,7 +63,7 @@ const IntelligentWeekPlanner = () => {
     return () => clearInterval(timer);
   }, []);
   
-  // �💾 Pomocnicze funkcje do localStorage
+  // ďż˝đź’ľ Pomocnicze funkcje do localStorage
   const loadFromLocalStorage = (key, defaultValue) => {
     try {
       const saved = localStorage.getItem(`weekPlanner_${key}`);
@@ -81,11 +82,11 @@ const IntelligentWeekPlanner = () => {
     }
   };
 
-  // ⏰ Stan dla zakresu godzin timeline (z localStorage)
+  // âŹ° Stan dla zakresu godzin timeline (z localStorage)
   const [timeRange, setTimeRange] = useState(() => loadFromLocalStorage('timeRange', { start: 6, end: 23 }));
   const [hideUnusedHours, setHideUnusedHours] = useState(() => loadFromLocalStorage('hideUnusedHours', false));
   
-  // 🏷️ Stan dla wyboru nagłówka karty zlecenia (z localStorage)
+  // đźŹ·ď¸Ź Stan dla wyboru nagĹ‚Ăłwka karty zlecenia (z localStorage)
   const [cardHeaderField, setCardHeaderField] = useState(() => loadFromLocalStorage('cardHeaderField', 'clientName'));
 
   // Zapisuj zmiany do localStorage
@@ -101,29 +102,29 @@ const IntelligentWeekPlanner = () => {
     saveToLocalStorage('cardHeaderField', cardHeaderField);
   }, [cardHeaderField]);
 
-  // 🆕 Handler dla kliknięcia w zlecenie - otwiera modal ze szczegółami
-  // 🆕 Funkcja pomocnicza do obsługi obu struktur danych (stara i nowa)
+  // đź†• Handler dla klikniÄ™cia w zlecenie - otwiera modal ze szczegĂłĹ‚ami
+  // đź†• Funkcja pomocnicza do obsĹ‚ugi obu struktur danych (stara i nowa)
   const getWeeklyPlanData = useCallback((plan) => {
     if (!plan) return null;
     
     // Nowa struktura: { monday: {...}, tuesday: {...}, ..., unscheduledOrders: [...] }
     // Stara struktura: { weeklyPlan: { monday: {...}, ... }, unscheduledOrders: [...] }
     
-    // Sprawdź czy to nowa struktura (ma bezpośrednio dni tygodnia)
+    // SprawdĹş czy to nowa struktura (ma bezpoĹ›rednio dni tygodnia)
     if (plan.monday || plan.tuesday || plan.wednesday) {
       return plan; // Nowa struktura
     }
     
-    // Sprawdź czy to stara struktura (ma zagnieżdżony weeklyPlan)
+    // SprawdĹş czy to stara struktura (ma zagnieĹĽdĹĽony weeklyPlan)
     if (plan.weeklyPlan) {
-      return plan.weeklyPlan; // Zwróć zagnieżdżony plan
+      return plan.weeklyPlan; // ZwrĂłÄ‡ zagnieĹĽdĹĽony plan
     }
     
     return null;
   }, []);
 
   const handleOrderClick = useCallback((order) => {
-    console.log('📋 Kliknięto zlecenie:', order);
+    logger.success('đź“‹ KlikniÄ™to zlecenie:', order);
     setSelectedOrderModal(order);
     setShowOrderDetailsModal(true);
   }, []);
@@ -136,23 +137,23 @@ const IntelligentWeekPlanner = () => {
       const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
       if (apiKey) {
         geocoder.current = new GoogleGeocoder(apiKey);
-        console.log('🌍 Google Geocoder initialized successfully');
+        logger.success('đźŚŤ Google Geocoder initialized successfully');
       } else {
-        console.error('❌ Google Maps API key not found');
+        console.error('âťŚ Google Maps API key not found');
       }
     } catch (error) {
-      console.error('❌ Failed to initialize Google Geocoder:', error);
+      console.error('âťŚ Failed to initialize Google Geocoder:', error);
     }
   }, []);
 
   const [optimizationPreferences, setOptimizationPreferences] = useState({
     priorityMode: 'balanced', // balanced, revenue, priority, time, vip
-    maxDailyOrders: 12, // Zwiększone do realistycznej liczby
+    maxDailyOrders: 12, // ZwiÄ™kszone do realistycznej liczby
     preferredStartTime: '08:00',
-    startLocation: null, // Będzie ustawione dynamicznie
+    startLocation: null, // BÄ™dzie ustawione dynamicznie
     workingHours: {
-      start: '06:00', // Najwcześniejszy możliwy wyjazd
-      end: '22:00', // Najpóźniejszy możliwy powrót
+      start: '06:00', // NajwczeĹ›niejszy moĹĽliwy wyjazd
+      end: '22:00', // NajpĂłĹşniejszy moĹĽliwy powrĂłt
       maxWorkingHours: 12 // Maksymalne godziny pracy dziennie
     }
   });
@@ -166,9 +167,9 @@ const IntelligentWeekPlanner = () => {
   const [isDragging, setIsDragging] = useState(false);
   const [completedOrders, setCompletedOrders] = useState(new Set());
   const [currentWeekStart, setCurrentWeekStart] = useState(() => {
-    // Znajdź poniedziałek obecnego tygodnia
+    // ZnajdĹş poniedziaĹ‚ek obecnego tygodnia
     const today = new Date();
-    const dayOfWeek = today.getDay(); // 0 = niedziela, 1 = poniedziałek...
+    const dayOfWeek = today.getDay(); // 0 = niedziela, 1 = poniedziaĹ‚ek...
     const mondayOffset = dayOfWeek === 0 ? -6 : 1 - dayOfWeek; 
     const monday = new Date(today);
     monday.setDate(today.getDate() + mondayOffset);
@@ -176,7 +177,7 @@ const IntelligentWeekPlanner = () => {
     return monday;
   });
 
-  // Stan dla systemu serwisantów (z localStorage)
+  // Stan dla systemu serwisantĂłw (z localStorage)
   const [availableServicemen, setAvailableServicemen] = useState([]);
   const [currentServiceman, setCurrentServiceman] = useState(() => loadFromLocalStorage('currentServiceman', null));
   const [showServicemanSelector, setShowServicemanSelector] = useState(false);
@@ -188,59 +189,59 @@ const IntelligentWeekPlanner = () => {
     }
   }, [currentServiceman]);
   
-  // 🔍 Stan dla zoom timeline
-  const [timelineZoom, setTimelineZoom] = useState(1); // 1x = normalna, 2x = 2x większa, 0.5x = zmniejszona
+  // đź”Ť Stan dla zoom timeline
+  const [timelineZoom, setTimelineZoom] = useState(1); // 1x = normalna, 2x = 2x wiÄ™ksza, 0.5x = zmniejszona
   
   const recalculateTimerRef = useRef({});
 
-  // Dostępne strategie optymalizacji
+  // DostÄ™pne strategie optymalizacji
   const optimizationStrategies = {
     balanced: {
-      name: '⚖️ Zbalansowana',
-      description: 'Optymalne połączenie priorytetu i przychodu',
+      name: 'âš–ď¸Ź Zbalansowana',
+      description: 'Optymalne poĹ‚Ä…czenie priorytetu i przychodu',
       color: 'blue',
-      focus: 'Uniwersalna strategia dla większości przypadków'
+      focus: 'Uniwersalna strategia dla wiÄ™kszoĹ›ci przypadkĂłw'
     },
     time: {
-      name: '⏰ Najkrótszy Dzień',
-      description: 'Minimalizacja całkowitego czasu pracy',
+      name: 'âŹ° NajkrĂłtszy DzieĹ„',
+      description: 'Minimalizacja caĹ‚kowitego czasu pracy',
       color: 'purple',
-      focus: 'Maksymalna efektywność czasowa'
+      focus: 'Maksymalna efektywnoĹ›Ä‡ czasowa'
     },
     revenue: {
-      name: '💰 Maksymalny Przychód',
-      description: 'Priorytet dla najdroższych zleceń',
+      name: 'đź’° Maksymalny PrzychĂłd',
+      description: 'Priorytet dla najdroĹĽszych zleceĹ„',
       color: 'yellow',
       focus: 'Optymalizacja zysku dziennego'
     },
     priority: {
-      name: '🚨 Pilne Najpierw',
-      description: 'Obsługa pilnych zleceń w pierwszej kolejności',
+      name: 'đźš¨ Pilne Najpierw',
+      description: 'ObsĹ‚uga pilnych zleceĹ„ w pierwszej kolejnoĹ›ci',
       color: 'red',
-      focus: 'Zarządzanie kryzysowe i awarie'
+      focus: 'ZarzÄ…dzanie kryzysowe i awarie'
     },
     vip: {
-      name: '👑 Klienci VIP',
-      description: 'Preferencyjne traktowanie ważnych klientów',
+      name: 'đź‘‘ Klienci VIP',
+      description: 'Preferencyjne traktowanie waĹĽnych klientĂłw',
       color: 'indigo',
-      focus: 'Obsługa strategicznych partnerów'
+      focus: 'ObsĹ‚uga strategicznych partnerĂłw'
     },
     windows: {
-      name: '🕐 Okna Czasowe',
-      description: 'Respektowanie preferencji klientów co do godzin',
+      name: 'đź• Okna Czasowe',
+      description: 'Respektowanie preferencji klientĂłw co do godzin',
       color: 'orange',
-      focus: 'Dostosowanie do dostępności klientów'
+      focus: 'Dostosowanie do dostÄ™pnoĹ›ci klientĂłw'
     }
   };
 
-  // Funkcja do formatowania dnia z datą
+  // Funkcja do formatowania dnia z datÄ…
   const formatDayWithDate = (dayKey, weekStart) => {
     const dayNames = {
-      monday: 'Poniedziałek',
+      monday: 'PoniedziaĹ‚ek',
       tuesday: 'Wtorek', 
-      wednesday: 'Środa',
+      wednesday: 'Ĺšroda',
       thursday: 'Czwartek',
-      friday: 'Piątek',
+      friday: 'PiÄ…tek',
       saturday: 'Sobota',
       sunday: 'Niedziela'
     };
@@ -280,11 +281,11 @@ const IntelligentWeekPlanner = () => {
   };
 
   const dayNames = {
-    monday: 'Poniedziałek',
+    monday: 'PoniedziaĹ‚ek',
     tuesday: 'Wtorek', 
-    wednesday: 'Środa',
+    wednesday: 'Ĺšroda',
     thursday: 'Czwartek',
-    friday: 'Piątek',
+    friday: 'PiÄ…tek',
     saturday: 'Sobota',
     sunday: 'Niedziela'
   };
@@ -295,10 +296,10 @@ const IntelligentWeekPlanner = () => {
     low: 'bg-green-100 border-green-300 text-green-800'
   };
 
-  // 🆕 FUNKCJA: Ładowanie pracowników z API
+  // đź†• FUNKCJA: Ĺadowanie pracownikĂłw z API
   const loadEmployeesFromAPI = useCallback(async () => {
-    console.log('👷👷👷 loadEmployeesFromAPI CALLED 👷👷👷');
-    console.log('👷 Loading employees from /api/employees...');
+    logger.success('đź‘·đź‘·đź‘· loadEmployeesFromAPI CALLED đź‘·đź‘·đź‘·');
+    logger.success('đź‘· Loading employees from /api/employees...');
     
     try {
       const response = await fetch('/api/employees');
@@ -310,13 +311,13 @@ const IntelligentWeekPlanner = () => {
       const result = await response.json();
       
       if (result.employees && Array.isArray(result.employees)) {
-        console.log(`✅ Loaded ${result.employees.length} employees`);
+        logger.success(`âś… Loaded ${result.employees.length} employees`);
         
-        // 🔍 DEBUG: Co przyszło z API?
-        console.log('🔍 SUROWE DANE z API - pierwsi 2 pracownicy:', result.employees.slice(0, 2));
+        // đź”Ť DEBUG: Co przyszĹ‚o z API?
+        logger.success('đź”Ť SUROWE DANE z API - pierwsi 2 pracownicy:', result.employees.slice(0, 2));
         result.employees.forEach(emp => {
           if (emp.role === 'Serwisant') {
-            console.log(`🔍 API Serwisant ${emp.name}:`, {
+            logger.success(`đź”Ť API Serwisant ${emp.name}:`, {
               id: emp.id,
               hasRepairTimes: !!emp.repairTimes,
               repairTimesKeys: emp.repairTimes ? Object.keys(emp.repairTimes) : 'BRAK'
@@ -324,57 +325,57 @@ const IntelligentWeekPlanner = () => {
           }
         });
         
-        // Kolory dla pracowników
+        // Kolory dla pracownikĂłw
         const colors = ['#3B82F6', '#10B981', '#F59E0B', '#8B5CF6', '#EF4444', '#06B6D4', '#EC4899'];
         
-        // Przekształć pracowników na format używany przez planer
-        // 🔧 TYLKO SERWISANCI - filtrujemy logistics/admin
+        // PrzeksztaĹ‚Ä‡ pracownikĂłw na format uĹĽywany przez planer
+        // đź”§ TYLKO SERWISANCI - filtrujemy logistics/admin
         const servicemen = result.employees
           .filter(emp => emp.isActive && emp.role === 'Serwisant')
           .map((emp, index) => ({
             id: emp.id,
             name: emp.name,
-            isActive: index === 0, // Pierwszy aktywny domyślnie
+            isActive: index === 0, // Pierwszy aktywny domyĹ›lnie
             color: colors[index % colors.length],
             email: emp.email,
             phone: emp.phone,
             specializations: emp.specializations || [],
-            repairTimes: emp.repairTimes || {}, // 🤖 Czasy naprawy dla auto-kalkulacji
-            builtInWorkTimes: emp.builtInWorkTimes || {}, // 🏗️ Czasy montażu/demontażu zabudowy
-            agdSpecializations: emp.agdSpecializations // 🔧 Specjalizacje AGD
+            repairTimes: emp.repairTimes || {}, // đź¤– Czasy naprawy dla auto-kalkulacji
+            builtInWorkTimes: emp.builtInWorkTimes || {}, // đźŹ—ď¸Ź Czasy montaĹĽu/demontaĹĽu zabudowy
+            agdSpecializations: emp.agdSpecializations // đź”§ Specjalizacje AGD
           }));
         
         setAvailableServicemen(servicemen);
-        console.log('👷 Available servicemen set:', servicemen.map(s => `${s.name} (${s.id})`));
+        logger.success('đź‘· Available servicemen set:', servicemen.map(s => `${s.name} (${s.id})`));
         
-        // 🔍 DEBUG: Sprawdź czy repairTimes są w danych
+        // đź”Ť DEBUG: SprawdĹş czy repairTimes sÄ… w danych
         servicemen.forEach(s => {
-          console.log(`🔍 ${s.name}: repairTimes keys =`, s.repairTimes ? Object.keys(s.repairTimes) : 'BRAK');
-          console.log(`🔍 ${s.name} FULL OBJECT (JSON):`, JSON.stringify(s, null, 2));
+          logger.success(`đź”Ť ${s.name}: repairTimes keys =`, s.repairTimes ? Object.keys(s.repairTimes) : 'BRAK');
+          logger.success(`đź”Ť ${s.name} FULL OBJECT (JSON):`, JSON.stringify(s, null, 2));
         });
         
-        // Ustaw pierwszego pracownika jako domyślnego
+        // Ustaw pierwszego pracownika jako domyĹ›lnego
         if (servicemen.length > 0 && !currentServiceman) {
           setCurrentServiceman(servicemen[0].id);
-          console.log('✅ Default serviceman set:', servicemen[0].name);
+          logger.success('âś… Default serviceman set:', servicemen[0].name);
         }
         
         return { success: true, servicemen };
       } else {
-        console.error('❌ Invalid response format');
+        console.error('âťŚ Invalid response format');
         return { success: false, error: 'Invalid response format' };
       }
     } catch (error) {
-      console.error('❌ Error loading employees:', error);
-      showNotification('Błąd ładowania pracowników', 'error');
+      console.error('âťŚ Error loading employees:', error);
+      showNotification('BĹ‚Ä…d Ĺ‚adowania pracownikĂłw', 'error');
       return { success: false, error: error.message };
     }
   }, [currentServiceman]);
 
-  // 🆕 NOWA FUNKCJA: Ładowanie rzeczywistych danych z bazy (data/)
+  // đź†• NOWA FUNKCJA: Ĺadowanie rzeczywistych danych z bazy (data/)
   const loadRealDataFromAPI = useCallback(async () => {
-    console.log('📦 Loading real data from data/ folder...');
-    console.log('🔍 Current serviceman:', currentServiceman);
+    logger.success('đź“¦ Loading real data from data/ folder...');
+    logger.success('đź”Ť Current serviceman:', currentServiceman);
     
     try {
       const response = await fetch(`/api/intelligent-planner/get-data?servicemanId=${currentServiceman || 'all'}`);
@@ -386,28 +387,28 @@ const IntelligentWeekPlanner = () => {
       const result = await response.json();
       
       if (result.success) {
-        console.log('✅ Loaded real data:', result.data.metadata);
-        console.log(`   📦 Orders: ${result.data.orders.length}`);
-        console.log(`   👷 Servicemen: ${result.data.servicemen.length}`);
-        console.log(`   📅 Existing visits: ${result.data.visits.length}`);
+        logger.success('âś… Loaded real data:', result.data.metadata);
+        logger.success(`   đź“¦ Orders: ${result.data.orders.length}`);
+        logger.success(`   đź‘· Servicemen: ${result.data.servicemen.length}`);
+        logger.success(`   đź“… Existing visits: ${result.data.visits.length}`);
         
-        // Loguj przykładowe zlecenia
+        // Loguj przykĹ‚adowe zlecenia
         if (result.data.orders.length > 0) {
-          console.log('   📝 Przykładowe zlecenia:');
+          logger.success('   đź“ť PrzykĹ‚adowe zlecenia:');
           result.data.orders.slice(0, 3).forEach(order => {
-            console.log(`      - ${order.id}: ${order.clientName} (status: ${order.status}, scheduledDate: ${order.scheduledDate}, assignedTo: ${order.assignedTo})`);
+            logger.success(`      - ${order.id}: ${order.clientName} (status: ${order.status}, scheduledDate: ${order.scheduledDate}, assignedTo: ${order.assignedTo})`);
           });
         }
         
         // Loguj wizyty
         if (result.data.visits.length > 0) {
-          console.log('   📅 Przykładowe wizyty:');
+          logger.success('   đź“… PrzykĹ‚adowe wizyty:');
           result.data.visits.slice(0, 5).forEach(visit => {
-            console.log(`      - ${visit.id || visit.visitId}: Zlecenie ${visit.orderId}, technik ${visit.technicianId || visit.servicemanId}, data ${visit.scheduledDate}, status ${visit.status}`);
+            logger.success(`      - ${visit.id || visit.visitId}: Zlecenie ${visit.orderId}, technik ${visit.technicianId || visit.servicemanId}, data ${visit.scheduledDate}, status ${visit.status}`);
           });
         }
         
-        // Tutaj możesz zapisać dane do lokalnego stanu jeśli potrzebujesz
+        // Tutaj moĹĽesz zapisaÄ‡ dane do lokalnego stanu jeĹ›li potrzebujesz
         // Na razie API intelligent-route-optimization sam je pobierze
         
         return {
@@ -417,25 +418,25 @@ const IntelligentWeekPlanner = () => {
           visits: result.data.visits
         };
       } else {
-        console.error('❌ Failed to load real data:', result.error);
+        console.error('âťŚ Failed to load real data:', result.error);
         return { success: false, error: result.error };
       }
     } catch (error) {
-      console.error('❌ Error loading real data:', error);
-      showNotification('Błąd ładowania danych z bazy', 'error');
+      console.error('âťŚ Error loading real data:', error);
+      showNotification('BĹ‚Ä…d Ĺ‚adowania danych z bazy', 'error');
       return { success: false, error: error.message };
     }
   }, [currentServiceman]);
 
-  // 🆕 NOWA FUNKCJA: Zapisywanie planu do bazy danych
+  // đź†• NOWA FUNKCJA: Zapisywanie planu do bazy danych
   const savePlanToDatabase = useCallback(async () => {
     const planData = getWeeklyPlanData(weeklyPlan);
     if (!weeklyPlan || !planData) {
-      showNotification('❌ Brak planu do zapisania', 'error');
+      showNotification('âťŚ Brak planu do zapisania', 'error');
       return;
     }
     
-    console.log('💾 Saving plan to database...');
+    logger.success('đź’ľ Saving plan to database...');
     setIsLoading(true);
     
     try {
@@ -461,14 +462,14 @@ const IntelligentWeekPlanner = () => {
       const result = await response.json();
       
       if (result.success) {
-        console.log('✅ Plan saved successfully:', result.data);
+        logger.success('âś… Plan saved successfully:', result.data);
         showNotification(
-          `✅ Plan zapisany! Utworzono ${result.data.createdVisitsCount} wizyt dla ${result.data.updatedOrdersCount} zleceń`,
+          `âś… Plan zapisany! Utworzono ${result.data.createdVisitsCount} wizyt dla ${result.data.updatedOrdersCount} zleceĹ„`,
           'success'
         );
         
-        // 🔔 EMIT EVENT - Powiadom inne komponenty (np. kalendarz technika) o zmianie wizyt
-        console.log('🔔 Emitting visitsChanged event...');
+        // đź”” EMIT EVENT - Powiadom inne komponenty (np. kalendarz technika) o zmianie wizyt
+        logger.success('đź”” Emitting visitsChanged event...');
         if (typeof window !== 'undefined') {
           window.dispatchEvent(new CustomEvent('visitsChanged', {
             detail: {
@@ -481,7 +482,7 @@ const IntelligentWeekPlanner = () => {
           }));
         }
         
-        // Odśwież dane po zapisaniu
+        // OdĹ›wieĹĽ dane po zapisaniu
         setTimeout(() => {
           loadRealDataFromAPI();
         }, 1000);
@@ -491,19 +492,19 @@ const IntelligentWeekPlanner = () => {
         throw new Error(result.message || 'Unknown error');
       }
     } catch (error) {
-      console.error('❌ Error saving plan:', error);
-      showNotification(`❌ Błąd zapisywania planu: ${error.message}`, 'error');
+      console.error('âťŚ Error saving plan:', error);
+      showNotification(`âťŚ BĹ‚Ä…d zapisywania planu: ${error.message}`, 'error');
       return false;
     } finally {
       setIsLoading(false);
     }
   }, [weeklyPlan, currentServiceman, availableServicemen, currentWeekStart, loadRealDataFromAPI]);
 
-  // Helper function: Walidacja i normalizacja współrzędnych
+  // Helper function: Walidacja i normalizacja wspĂłĹ‚rzÄ™dnych
   const validateAndNormalizeCoordinates = useCallback((location) => {
     if (!location) return null;
     
-    // Jeśli to obiekt z coordinates
+    // JeĹ›li to obiekt z coordinates
     if (location.coordinates) {
       const { lat, lng } = location.coordinates;
       if (typeof lat === 'number' && typeof lng === 'number' && 
@@ -518,7 +519,7 @@ const IntelligentWeekPlanner = () => {
       }
     }
     
-    // Jeśli to bezpośrednio współrzędne
+    // JeĹ›li to bezpoĹ›rednio wspĂłĹ‚rzÄ™dne
     if (location.lat && location.lng) {
       const { lat, lng } = location;
       if (typeof lat === 'number' && typeof lng === 'number' && 
@@ -536,43 +537,43 @@ const IntelligentWeekPlanner = () => {
     return null;
   }, []);
 
-  // Ładowanie inteligentnego planu tygodniowego
+  // Ĺadowanie inteligentnego planu tygodniowego
   const loadIntelligentPlan = useCallback(async () => {
-    console.log('🚀 loadIntelligentPlan WYWOŁANE');
+    logger.success('đźš€ loadIntelligentPlan WYWOĹANE');
     
     // Prevent multiple concurrent executions
     if (loadIntelligentPlanMutexRef.current) {
-      console.log('🔒 loadIntelligentPlan already in progress, skipping...');
+      logger.success('đź”’ loadIntelligentPlan already in progress, skipping...');
       return;
     }
     
     loadIntelligentPlanMutexRef.current = true;
-    console.log('🔒 Acquired mutex for loadIntelligentPlan');
+    logger.success('đź”’ Acquired mutex for loadIntelligentPlan');
     
     setIsLoading(true);
     try {
-      // 🆕 KROK 1: Najpierw załaduj rzeczywiste dane z bazy
-      console.log('📊 STEP 1: Loading real data from database...');
+      // đź†• KROK 1: Najpierw zaĹ‚aduj rzeczywiste dane z bazy
+      logger.success('đź“Š STEP 1: Loading real data from database...');
       const realData = await loadRealDataFromAPI();
       
-      // 📅 KROK 1.5: Załaduj harmonogramy serwisantów (dostępność godzinowa)
+      // đź“… KROK 1.5: ZaĹ‚aduj harmonogramy serwisantĂłw (dostÄ™pnoĹ›Ä‡ godzinowa)
       if (currentServiceman) {
         try {
-          // 📅 Załaduj harmonogramy dla wszystkich 7 dni tygodnia
+          // đź“… ZaĹ‚aduj harmonogramy dla wszystkich 7 dni tygodnia
           const allSchedulesMap = {};
           const daysOfWeek = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
           
           for (let i = 0; i < 7; i++) {
             const dayDate = new Date(currentWeekStart);
             dayDate.setDate(dayDate.getDate() + i);
-            // 🔧 FIX: Użyj lokalnej daty zamiast UTC
+            // đź”§ FIX: UĹĽyj lokalnej daty zamiast UTC
             const dateStr = `${dayDate.getFullYear()}-${String(dayDate.getMonth() + 1).padStart(2, '0')}-${String(dayDate.getDate()).padStart(2, '0')}`;
             
             const scheduleResponse = await fetch(`/api/employee-calendar?action=get-all-schedules&date=${dateStr}`);
             const scheduleData = await scheduleResponse.json();
             
             if (scheduleData.success && scheduleData.schedules) {
-              // Dla każdego pracownika, dodaj jego schedule tego dnia
+              // Dla kaĹĽdego pracownika, dodaj jego schedule tego dnia
               Object.keys(scheduleData.schedules).forEach(employeeId => {
                 if (!allSchedulesMap[employeeId]) {
                   allSchedulesMap[employeeId] = {
@@ -582,7 +583,7 @@ const IntelligentWeekPlanner = () => {
                 }
                 
                 const schedule = scheduleData.schedules[employeeId];
-                const dayOfWeek = dayDate.getDay() || 7; // 0=Nd→7, 1=Pon, ..., 6=Sob
+                const dayOfWeek = dayDate.getDay() || 7; // 0=Ndâ†’7, 1=Pon, ..., 6=Sob
                 
                 // Konwertuj timeSlots na workSlots (zakresy czasowe)
                 if (schedule.timeSlots && schedule.timeSlots.length > 0) {
@@ -611,32 +612,32 @@ const IntelligentWeekPlanner = () => {
           }
           
           setServicemanSchedules(allSchedulesMap);
-          console.log('📅 Załadowano harmonogramy dla całego tygodnia:', Object.keys(allSchedulesMap).length, 'serwisantów');
+          logger.success('đź“… ZaĹ‚adowano harmonogramy dla caĹ‚ego tygodnia:', Object.keys(allSchedulesMap).length, 'serwisantĂłw');
           if (allSchedulesMap[currentServiceman]) {
-            console.log(`  ✅ ${currentServiceman}: ${allSchedulesMap[currentServiceman].workSlots.length} workSlots`);
+            logger.success(`  âś… ${currentServiceman}: ${allSchedulesMap[currentServiceman].workSlots.length} workSlots`);
           }
         } catch (error) {
-          console.warn('⚠️ Nie udało się załadować harmonogramów:', error);
+          console.warn('âš ď¸Ź Nie udaĹ‚o siÄ™ zaĹ‚adowaÄ‡ harmonogramĂłw:', error);
         }
       }
       
       if (!realData.success) {
-        showNotification('⚠️ Nie udało się załadować danych. Używam danych testowych.', 'warning');
+        showNotification('âš ď¸Ź Nie udaĹ‚o siÄ™ zaĹ‚adowaÄ‡ danych. UĹĽywam danych testowych.', 'warning');
         // Kontynuuj mimo to - API ma swoje fallbacki
       } else {
-        console.log('✅ Real data loaded successfully');
-        showNotification(`📦 Załadowano ${realData.orders.length} zleceń z bazy danych`, 'success');
+        logger.success('âś… Real data loaded successfully');
+        showNotification(`đź“¦ ZaĹ‚adowano ${realData.orders.length} zleceĹ„ z bazy danych`, 'success');
       }
       const preferences = { ...optimizationPreferences };
       
-      // 🆕 UPROSZCZONE ŁADOWANIE: Pomijamy API optymalizacji (wymaga przypisanych zleceń)
-      // Zamiast tego używamy już załadowanych danych z realData
-      console.log('📦 Pomijam API optymalizacji - używam już załadowanych danych');
+      // đź†• UPROSZCZONE ĹADOWANIE: Pomijamy API optymalizacji (wymaga przypisanych zleceĹ„)
+      // Zamiast tego uĹĽywamy juĹĽ zaĹ‚adowanych danych z realData
+      logger.success('đź“¦ Pomijam API optymalizacji - uĹĽywam juĹĽ zaĹ‚adowanych danych');
       
-      // Sprawdź czy realData ma orders
+      // SprawdĹş czy realData ma orders
       if (!realData || !realData.orders) {
-        console.error('❌ realData.orders jest undefined!', realData);
-        showNotification('⚠️ Nie udało się załadować zleceń', 'error');
+        console.error('âťŚ realData.orders jest undefined!', realData);
+        showNotification('âš ď¸Ź Nie udaĹ‚o siÄ™ zaĹ‚adowaÄ‡ zleceĹ„', 'error');
         setWeeklyPlan({
           monday: { orders: [], stats: {} },
           tuesday: { orders: [], stats: {} },
@@ -652,80 +653,80 @@ const IntelligentWeekPlanner = () => {
         return;
       }
       
-      // ✅ NOWA LOGIKA: Wszystkie zlecenia trafiają do "niezaplanowanych"
-      // scheduledDate w bazie NIE MA ZNACZENIA - administrator przypisuje ręcznie w plannerze
-      console.log('🔍 Ładuję zlecenia do plannera...');
-      console.log(`   Wszystkich zleceń z API: ${realData.orders.length}`);
+      // âś… NOWA LOGIKA: Wszystkie zlecenia trafiajÄ… do "niezaplanowanych"
+      // scheduledDate w bazie NIE MA ZNACZENIA - administrator przypisuje rÄ™cznie w plannerze
+      logger.success('đź”Ť ĹadujÄ™ zlecenia do plannera...');
+      logger.success(`   Wszystkich zleceĹ„ z API: ${realData.orders.length}`);
       
-      // ✅ POPRAWKA: Pokazuj wszystkie zlecenia OPRÓCZ zakończonych/anulowanych
-      // Dzięki temu zmiana statusu nie spowoduje zniknięcia zlecenia z widoku
+      // âś… POPRAWKA: Pokazuj wszystkie zlecenia OPRĂ“CZ zakoĹ„czonych/anulowanych
+      // DziÄ™ki temu zmiana statusu nie spowoduje znikniÄ™cia zlecenia z widoku
       let unscheduledOrders = realData.orders.filter(order => {
-        // Wyklucz tylko zlecenia zakończone, anulowane i te które nie stawili się
+        // Wyklucz tylko zlecenia zakoĹ„czone, anulowane i te ktĂłre nie stawili siÄ™
         const isExcludedStatus = order.status === 'completed' || 
                                  order.status === 'cancelled' || 
                                  order.status === 'no-show';
         
-        // Sprawdź czy zlecenie ma podstawowe dane (eliminuj uszkodzone rekordy)
+        // SprawdĹş czy zlecenie ma podstawowe dane (eliminuj uszkodzone rekordy)
         const hasValidData = order.clientName && (order.address || order.city);
         
         if (!hasValidData) {
-          console.warn(`⚠️ Pomijam zlecenie ${order.id} - brak danych (clientName: ${order.clientName}, address: ${order.address})`);
+          console.warn(`âš ď¸Ź Pomijam zlecenie ${order.id} - brak danych (clientName: ${order.clientName}, address: ${order.address})`);
         }
         
-        // Pokaż zlecenie jeśli NIE jest wykluczone i MA dane
+        // PokaĹĽ zlecenie jeĹ›li NIE jest wykluczone i MA dane
         return !isExcludedStatus && hasValidData;
       });
       
-      // 🆕 AUTOMATYCZNE OBLICZANIE CZASU dla zleceń z przypisanym pracownikiem
+      // đź†• AUTOMATYCZNE OBLICZANIE CZASU dla zleceĹ„ z przypisanym pracownikiem
       unscheduledOrders = unscheduledOrders.map(order => {
         if (order.assignedTo && (!order.estimatedDuration || order.estimatedDuration === 60)) {
-          // 🔒 Używamy TYLKO serwisantów (z filtrowanej listy), nie logistyków
+          // đź”’ UĹĽywamy TYLKO serwisantĂłw (z filtrowanej listy), nie logistykĂłw
           const employee = servicemen.find(emp => emp.id === order.assignedTo);
           if (employee && employee.repairTimes) {
             const calculatedTime = calculateEstimatedDuration(order, employee);
-            console.log(`⏱️ Auto-obliczam czas dla ${order.clientName}: ${calculatedTime}min (${order.deviceType})`);
+            logger.success(`âŹ±ď¸Ź Auto-obliczam czas dla ${order.clientName}: ${calculatedTime}min (${order.deviceType})`);
             return { ...order, estimatedDuration: calculatedTime };
           } else if (!employee && order.assignedTo) {
-            // 🔧 Zlecenie przypisane do pracownika logistyki lub nieaktywnego - resetuj przypisanie
-            console.log(`🔧 Resetuję przypisanie zlecenia ${order.clientName} (był przypisany do nieaktywnego/logistyka: ${order.assignedTo})`);
+            // đź”§ Zlecenie przypisane do pracownika logistyki lub nieaktywnego - resetuj przypisanie
+            logger.success(`đź”§ ResetujÄ™ przypisanie zlecenia ${order.clientName} (byĹ‚ przypisany do nieaktywnego/logistyka: ${order.assignedTo})`);
             return { ...order, assignedTo: null };
           }
         }
         return order;
       });
       
-      // Nie używamy już scheduledOrders z bazy - wszystko idzie do unscheduled
+      // Nie uĹĽywamy juĹĽ scheduledOrders z bazy - wszystko idzie do unscheduled
       const scheduledOrders = [];
       
-      console.log(`📊 Zlecenia do zaplanowania: ${unscheduledOrders.length}`);
-      console.log(`📊 Pominięto zleceń: ${realData.orders.length - unscheduledOrders.length}`);
+      logger.success(`đź“Š Zlecenia do zaplanowania: ${unscheduledOrders.length}`);
+      logger.success(`đź“Š PominiÄ™to zleceĹ„: ${realData.orders.length - unscheduledOrders.length}`);
       
-      // Loguj wszystkie statusy zleceń
+      // Loguj wszystkie statusy zleceĹ„
       const statusCounts = {};
       realData.orders.forEach(order => {
         const status = order.status || 'unknown';
         statusCounts[status] = (statusCounts[status] || 0) + 1;
       });
-      console.log(`📊 Statusy zleceń (wszystkie):`, statusCounts);
-      console.log(`   ✅ Zaakceptowane statusy: pending, unscheduled, new, contacted, scheduled, confirmed, in-progress, waiting-parts, ready`);
-      console.log(`   ❌ Wykluczone statusy: completed, cancelled, no-show`);
+      logger.success(`đź“Š Statusy zleceĹ„ (wszystkie):`, statusCounts);
+      logger.success(`   âś… Zaakceptowane statusy: pending, unscheduled, new, contacted, scheduled, confirmed, in-progress, waiting-parts, ready`);
+      logger.success(`   âťŚ Wykluczone statusy: completed, cancelled, no-show`);
       
-      // Loguj pominięte zlecenia z powodu statusu
+      // Loguj pominiÄ™te zlecenia z powodu statusu
       const excludedOrders = realData.orders.filter(o => 
         o.status === 'completed' || o.status === 'cancelled' || o.status === 'no-show'
       );
       if (excludedOrders.length > 0) {
-        console.log(`🚫 Pominięto ${excludedOrders.length} zleceń (completed/cancelled/no-show):`, 
+        logger.success(`đźš« PominiÄ™to ${excludedOrders.length} zleceĹ„ (completed/cancelled/no-show):`, 
           excludedOrders.map(o => ({ id: o.id, status: o.status, client: o.clientName }))
         );
       }
       
-      // Loguj zlecenia z brakującymi danymi
+      // Loguj zlecenia z brakujÄ…cymi danymi
       const ordersWithMissingData = realData.orders.filter(o => 
         !o.clientName || (!o.address && !o.city)
       );
       if (ordersWithMissingData.length > 0) {
-        console.warn(`⚠️ Znaleziono ${ordersWithMissingData.length} zleceń z brakującymi danymi:`, 
+        console.warn(`âš ď¸Ź Znaleziono ${ordersWithMissingData.length} zleceĹ„ z brakujÄ…cymi danymi:`, 
           ordersWithMissingData.map(o => ({ 
             id: o.id, 
             status: o.status,
@@ -736,9 +737,9 @@ const IntelligentWeekPlanner = () => {
         );
       }
       
-      // Pokaż przykładowe zlecenie
+      // PokaĹĽ przykĹ‚adowe zlecenie
       if (unscheduledOrders.length > 0) {
-        console.log(`  📝 Przykład zlecenia do zaplanowania:`, {
+        logger.success(`  đź“ť PrzykĹ‚ad zlecenia do zaplanowania:`, {
           id: unscheduledOrders[0].id,
           client: unscheduledOrders[0].clientName,
           address: unscheduledOrders[0].address,
@@ -747,7 +748,7 @@ const IntelligentWeekPlanner = () => {
         });
       }
       
-      // ✅ ROZDZIEL ZLECENIA: Zaplanowane trafiają do dni, reszta do unscheduled
+      // âś… ROZDZIEL ZLECENIA: Zaplanowane trafiajÄ… do dni, reszta do unscheduled
       const weekPlan = {
         monday: { orders: [], stats: {} },
         tuesday: { orders: [], stats: {} },
@@ -761,89 +762,89 @@ const IntelligentWeekPlanner = () => {
         costAnalysis: {}
       };
       
-      // Mapowanie dat na dni tygodnia względem currentWeekStart
+      // Mapowanie dat na dni tygodnia wzglÄ™dem currentWeekStart
       const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
       
-      console.log(`📅 currentWeekStart: ${currentWeekStart.toISOString().split('T')[0]}`);
-      console.log(`📅 Dzisiaj: ${new Date().toISOString().split('T')[0]}`);
+      logger.success(`đź“… currentWeekStart: ${currentWeekStart.toISOString().split('T')[0]}`);
+      logger.success(`đź“… Dzisiaj: ${new Date().toISOString().split('T')[0]}`);
       
       unscheduledOrders.forEach(order => {
-        // 📅 Jeśli zlecenie ma assignedTo + scheduledDate → przypisz do dnia
-        // ✅ POPRAWKA: Usunięto warunek order.status === 'scheduled', bo:
-        //    - Zlecenie może mieć status 'unscheduled' (jako zamówienie)
-        //    - ALE mieć wizytę z scheduledDate (zaplanowaną)
-        //    - Sprawdzamy tylko czy MA datę i przypisanie, nie patrzymy na status
+        // đź“… JeĹ›li zlecenie ma assignedTo + scheduledDate â†’ przypisz do dnia
+        // âś… POPRAWKA: UsuniÄ™to warunek order.status === 'scheduled', bo:
+        //    - Zlecenie moĹĽe mieÄ‡ status 'unscheduled' (jako zamĂłwienie)
+        //    - ALE mieÄ‡ wizytÄ™ z scheduledDate (zaplanowanÄ…)
+        //    - Sprawdzamy tylko czy MA datÄ™ i przypisanie, nie patrzymy na status
         if (order.assignedTo && order.scheduledDate) {
           const orderDate = new Date(order.scheduledDate + 'T00:00:00'); // Force local timezone
           const weekStart = new Date(currentWeekStart);
           weekStart.setHours(0, 0, 0, 0);
           
-          // Sprawdź czy data należy do obecnego tygodnia
+          // SprawdĹş czy data naleĹĽy do obecnego tygodnia
           const daysDiff = Math.floor((orderDate - weekStart) / (1000 * 60 * 60 * 24));
           
-          console.log(`🔍 Zlecenie ${order.clientName}: data=${order.scheduledDate}, daysDiff=${daysDiff}, dayOfWeek=${orderDate.getDay()}, status=${order.status}`);
+          logger.success(`đź”Ť Zlecenie ${order.clientName}: data=${order.scheduledDate}, daysDiff=${daysDiff}, dayOfWeek=${orderDate.getDay()}, status=${order.status}`);
           
           if (daysDiff >= 0 && daysDiff < 7) {
             const dayName = dayNames[orderDate.getDay()];
             weekPlan[dayName].orders.push(order);
-            console.log(`  ✅ Przypisano do ${dayName} (status: ${order.status})`);
+            logger.success(`  âś… Przypisano do ${dayName} (status: ${order.status})`);
           } else {
             // Data poza obecnym tygodniem - do unscheduled
             weekPlan.unscheduledOrders.push(order);
-            console.log(`  ⚠️ Poza tygodniem (oczekiwano 0-6, otrzymano ${daysDiff})`);
+            logger.success(`  âš ď¸Ź Poza tygodniem (oczekiwano 0-6, otrzymano ${daysDiff})`);
           }
         } else {
-          // Brak przypisania lub scheduledDate → do unscheduled
+          // Brak przypisania lub scheduledDate â†’ do unscheduled
           weekPlan.unscheduledOrders.push(order);
           if (!order.assignedTo) {
-            console.log(`  ℹ️ ${order.clientName}: Brak assignedTo`);
+            logger.success(`  â„ąď¸Ź ${order.clientName}: Brak assignedTo`);
           } else if (!order.scheduledDate) {
-            console.log(`  ℹ️ ${order.clientName}: Brak scheduledDate`);
+            logger.success(`  â„ąď¸Ź ${order.clientName}: Brak scheduledDate`);
           }
         }
       });
       
-      console.log(`📊 Rozdzielono zlecenia:`);
-      console.log(`   - Nieprzypisane: ${weekPlan.unscheduledOrders.length}`);
+      logger.success(`đź“Š Rozdzielono zlecenia:`);
+      logger.success(`   - Nieprzypisane: ${weekPlan.unscheduledOrders.length}`);
       Object.keys(dayNames).forEach(day => {
         const dayKey = dayNames[day];
         if (weekPlan[dayKey] && weekPlan[dayKey].orders.length > 0) {
-          console.log(`   - ${dayKey}: ${weekPlan[dayKey].orders.length} zleceń`);
+          logger.success(`   - ${dayKey}: ${weekPlan[dayKey].orders.length} zleceĹ„`);
         }
       });
       
       setWeeklyPlan(weekPlan);
       
-      showNotification(`✅ Załadowano ${realData.orders.length} zleceń`, 'success');
+      showNotification(`âś… ZaĹ‚adowano ${realData.orders.length} zleceĹ„`, 'success');
     } catch (error) {
       console.error('Network error:', error);
-      showNotification(`Błąd sieci: ${error.message}`, 'error');
+      showNotification(`BĹ‚Ä…d sieci: ${error.message}`, 'error');
     } finally {
       setIsLoading(false);
       // Release mutex lock
       loadIntelligentPlanMutexRef.current = false;
-      console.log('🔓 Released mutex for loadIntelligentPlan');
+      logger.success('đź”“ Released mutex for loadIntelligentPlan');
     }
-  }, [startLocation, optimizationPreferences, currentServiceman]); // ✅ Dodano currentServiceman!
+  }, [startLocation, optimizationPreferences, currentServiceman]); // âś… Dodano currentServiceman!
 
-  // Ładowanie pracowników przy montowaniu komponentu
+  // Ĺadowanie pracownikĂłw przy montowaniu komponentu
   useEffect(() => {
-    console.log('🔥🔥🔥 useEffect EMPLOYEES FIRED 🔥🔥🔥');
+    logger.success('đź”Ąđź”Ąđź”Ą useEffect EMPLOYEES FIRED đź”Ąđź”Ąđź”Ą');
     
-    // Wywołaj funkcję bezpośrednio
+    // WywoĹ‚aj funkcjÄ™ bezpoĹ›rednio
     const loadEmployees = async () => {
-      console.log('👷👷👷 Loading employees INLINE 👷👷👷');
+      logger.success('đź‘·đź‘·đź‘· Loading employees INLINE đź‘·đź‘·đź‘·');
       try {
         const response = await fetch('/api/employees');
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         
         const result = await response.json();
-        console.log('✅✅✅ GOT EMPLOYEES:', result.employees?.length);
+        logger.success('âś…âś…âś… GOT EMPLOYEES:', result.employees?.length);
         
         if (result.employees && Array.isArray(result.employees)) {
           const colors = ['#3B82F6', '#10B981', '#F59E0B', '#8B5CF6', '#EF4444', '#06B6D4', '#EC4899'];
           
-          // 🔧 TYLKO SERWISANCI - filtrujemy logistics/admin
+          // đź”§ TYLKO SERWISANCI - filtrujemy logistics/admin
           const servicemen = result.employees
             .filter(emp => emp.isActive && emp.role === 'Serwisant')
             .map((emp, index) => ({
@@ -854,68 +855,68 @@ const IntelligentWeekPlanner = () => {
               email: emp.email,
               phone: emp.phone,
               specializations: emp.specializations || [],
-              repairTimes: emp.repairTimes || {}, // 🤖 Czasy naprawy dla auto-kalkulacji
-              builtInWorkTimes: emp.builtInWorkTimes || {}, // 🏗️ Czasy montażu/demontażu zabudowy
-              agdSpecializations: emp.agdSpecializations, // 🔧 Specjalizacje AGD
+              repairTimes: emp.repairTimes || {}, // đź¤– Czasy naprawy dla auto-kalkulacji
+              builtInWorkTimes: emp.builtInWorkTimes || {}, // đźŹ—ď¸Ź Czasy montaĹĽu/demontaĹĽu zabudowy
+              agdSpecializations: emp.agdSpecializations, // đź”§ Specjalizacje AGD
               address: emp.address || null,
               city: emp.city || null
             }));
           
-          console.log('👷 Setting availableServicemen:', servicemen.length);
-          console.log('🔍 Servicemen with repairTimes:', servicemen.map(s => `${s.name}: ${s.repairTimes ? Object.keys(s.repairTimes).length : 0} devices`));
+          logger.success('đź‘· Setting availableServicemen:', servicemen.length);
+          logger.success('đź”Ť Servicemen with repairTimes:', servicemen.map(s => `${s.name}: ${s.repairTimes ? Object.keys(s.repairTimes).length : 0} devices`));
           setAvailableServicemen(servicemen);
           
           if (servicemen.length > 0 && !currentServiceman) {
-            console.log('✅ Setting default serviceman:', servicemen[0].name);
+            logger.success('âś… Setting default serviceman:', servicemen[0].name);
             setCurrentServiceman(servicemen[0].id);
           }
         }
       } catch (error) {
-        console.error('❌❌❌ Error loading employees:', error);
+        console.error('âťŚâťŚâťŚ Error loading employees:', error);
       }
     };
     
     loadEmployees();
   }, []); // Tylko raz przy montowaniu
 
-  // Ustaw lokalizację startu na podstawie wybranego pracownika
+  // Ustaw lokalizacjÄ™ startu na podstawie wybranego pracownika
   useEffect(() => {
     if (!currentServiceman || !availableServicemen.length) return;
 
     const serviceman = availableServicemen.find(s => s.id === currentServiceman);
     if (!serviceman) return;
 
-    // Ustaw domyślną lokalizację startu - Kraków centrum jako fallback
+    // Ustaw domyĹ›lnÄ… lokalizacjÄ™ startu - KrakĂłw centrum jako fallback
     if (!startLocation) {
       setStartLocation({
-        address: serviceman.address || serviceman.city || 'Kraków, Polska',
+        address: serviceman.address || serviceman.city || 'KrakĂłw, Polska',
         coordinates: {
           lat: 50.0647,
           lng: 19.9450
         }
       });
-      console.log('🏠 Ustawiono domyślną lokalizację startu:', serviceman.address || 'Kraków, Polska');
+      logger.success('đźŹ  Ustawiono domyĹ›lnÄ… lokalizacjÄ™ startu:', serviceman.address || 'KrakĂłw, Polska');
     }
   }, [currentServiceman, availableServicemen, startLocation]);
 
-  // Ładowanie danych przy pierwszym renderowaniu - tylko raz!
+  // Ĺadowanie danych przy pierwszym renderowaniu - tylko raz!
   useEffect(() => {
     // Tylko przy pierwszym mount
     if (!isInitialMountRef.current) return;
     
-    // Poczekaj aż lokalizacja będzie gotowa, lub użyj domyślnej po 2 sekundach
+    // Poczekaj aĹĽ lokalizacja bÄ™dzie gotowa, lub uĹĽyj domyĹ›lnej po 2 sekundach
     initialLoadTimerRef.current = setTimeout(() => {
       if (isInitialMountRef.current) {
-        console.log('⏰ Inicjalne ładowanie planu - startLocation:', startLocation);
+        logger.success('âŹ° Inicjalne Ĺ‚adowanie planu - startLocation:', startLocation);
         loadIntelligentPlan();
         isInitialMountRef.current = false;
       }
     }, 2000);
     
-    // Jeśli startLocation się już pojawi wcześniej, załaduj od razu
+    // JeĹ›li startLocation siÄ™ juĹĽ pojawi wczeĹ›niej, zaĹ‚aduj od razu
     if (startLocation?.coordinates && isInitialMountRef.current) {
       clearTimeout(initialLoadTimerRef.current);
-      console.log('🎯 Rychłe ładowanie - startLocation dostępne:', startLocation.coordinates);
+      logger.success('đźŽŻ RychĹ‚e Ĺ‚adowanie - startLocation dostÄ™pne:', startLocation.coordinates);
       loadIntelligentPlan();
       isInitialMountRef.current = false;
     }
@@ -928,14 +929,14 @@ const IntelligentWeekPlanner = () => {
     };
   }, []); // TYLKO przy mount, bez dependencies na functions
 
-  // Przełączanie planów gdy zmieni się serwisant - TYLKO na zmianę serwisanta!
+  // PrzeĹ‚Ä…czanie planĂłw gdy zmieni siÄ™ serwisant - TYLKO na zmianÄ™ serwisanta!
   useEffect(() => {
-    // Sprawdź czy rzeczywiście zmienił się serwisant
+    // SprawdĹş czy rzeczywiĹ›cie zmieniĹ‚ siÄ™ serwisant
     if (prevServicemanRef.current === currentServiceman) {
       return;
     }
     
-    // Zapisz aktualny plan przed przełączeniem
+    // Zapisz aktualny plan przed przeĹ‚Ä…czeniem
     if (weeklyPlan && prevServicemanRef.current) {
       setWeeklyPlans(prev => ({
         ...prev,
@@ -943,14 +944,14 @@ const IntelligentWeekPlanner = () => {
       }));
     }
 
-    // Załaduj plan dla nowego serwisanta
-    // ⚠️ POPRAWKA: Nie używaj weeklyPlans w dependencies! To powoduje nieskończoną pętlę
-    // Zamiast tego użyj functional update w callback
+    // ZaĹ‚aduj plan dla nowego serwisanta
+    // âš ď¸Ź POPRAWKA: Nie uĹĽywaj weeklyPlans w dependencies! To powoduje nieskoĹ„czonÄ… pÄ™tlÄ™
+    // Zamiast tego uĹĽyj functional update w callback
     setWeeklyPlans(prevPlans => {
       if (prevPlans[currentServiceman]) {
         setWeeklyPlan(prevPlans[currentServiceman]);
       } else {
-        // Jeśli nie ma planu dla tego serwisanta, załaduj nowy
+        // JeĹ›li nie ma planu dla tego serwisanta, zaĹ‚aduj nowy
         const loadTimer = setTimeout(() => {
           loadIntelligentPlan();
         }, 100);
@@ -960,28 +961,28 @@ const IntelligentWeekPlanner = () => {
     
     // Zaktualizuj poprzedni serwisant
     prevServicemanRef.current = currentServiceman;
-  }, [currentServiceman]); // ✅ TYLKO currentServiceman - bez weeklyPlans!
+  }, [currentServiceman]); // âś… TYLKO currentServiceman - bez weeklyPlans!
 
-  // Przeładuj plan gdy zmieni się lokalizacja startu - ZAWSZE reaguj na zmiany
+  // PrzeĹ‚aduj plan gdy zmieni siÄ™ lokalizacja startu - ZAWSZE reaguj na zmiany
   useEffect(() => {
-    // Sprawdź czy rzeczywiście zmienił się updatedAt
+    // SprawdĹş czy rzeczywiĹ›cie zmieniĹ‚ siÄ™ updatedAt
     if (!startLocation?.updatedAt || !startLocation?.coordinates) return;
     if (prevUpdatedAtRef.current === startLocation.updatedAt) return;
     
-    console.log('🗺️ Przeładowuję plan z nową lokalizacją startu:', startLocation.address);
-    console.log('📍 Nowa lokalizacja współrzędne:', startLocation.coordinates);
+    logger.success('đź—şď¸Ź PrzeĹ‚adowujÄ™ plan z nowÄ… lokalizacjÄ… startu:', startLocation.address);
+    logger.success('đź“Ť Nowa lokalizacja wspĂłĹ‚rzÄ™dne:', startLocation.coordinates);
     
-    // Wyczyść poprzedni debounce timer
+    // WyczyĹ›Ä‡ poprzedni debounce timer
     if (planReloadDebounceRef.current) {
       clearTimeout(planReloadDebounceRef.current);
     }
     
-    // Debounce żeby uniknąć wielokrotnych wywołań
+    // Debounce ĹĽeby uniknÄ…Ä‡ wielokrotnych wywoĹ‚aĹ„
     planReloadDebounceRef.current = setTimeout(() => {
-      console.log('🔄 Wykonuję przeładowanie planu po zmianie lokalizacji');
+      logger.success('đź”„ WykonujÄ™ przeĹ‚adowanie planu po zmianie lokalizacji');
       loadIntelligentPlan();
       prevUpdatedAtRef.current = startLocation.updatedAt;
-    }, 1000); // Zwiększono do 1 sekundy dla stabilności
+    }, 1000); // ZwiÄ™kszono do 1 sekundy dla stabilnoĹ›ci
     
     return () => {
       if (planReloadDebounceRef.current) {
@@ -1027,11 +1028,11 @@ const IntelligentWeekPlanner = () => {
         loadIntelligentPlanMutexRef.current = false;
       }
       
-      console.log('🧹 Component cleanup completed - all timers cleared');
+      logger.success('đź§ą Component cleanup completed - all timers cleared');
     };
   }, []);
 
-  // Funkcja pomocnicza do pobierania tekstu nagłówka karty
+  // Funkcja pomocnicza do pobierania tekstu nagĹ‚Ăłwka karty
   const getCardHeaderText = (order) => {
     switch (cardHeaderField) {
       case 'clientName':
@@ -1039,7 +1040,7 @@ const IntelligentWeekPlanner = () => {
       case 'address':
         return order.address || 'Brak adresu';
       case 'deviceType':
-        return order.deviceType || order.device?.type || 'Brak urządzenia';
+        return order.deviceType || order.device?.type || 'Brak urzÄ…dzenia';
       case 'description':
         return order.description || 'Brak opisu';
       default:
@@ -1047,16 +1048,16 @@ const IntelligentWeekPlanner = () => {
     }
   };
 
-  // Renderowanie karty zlecenia z obsługą drag & drop
+  // Renderowanie karty zlecenia z obsĹ‚ugÄ… drag & drop
   const renderOrderCard = (order, currentDay, orderIndex) => {
-    // Przygotuj numery do wyświetlenia
+    // Przygotuj numery do wyĹ›wietlenia
     const orderNumber = order.orderNumber || order.visitId || `ORD-${order.id}`;
     const clientId = order.clientId || order.customerId || 'BRAK';
     const visitNumbers = order.visits && order.visits.length > 0 
       ? order.visits.map(v => v.visitId || v.id).join(', ')
       : 'Brak wizyt';
     
-    console.log('📋 Rendering order card:', { 
+    logger.success('đź“‹ Rendering order card:', { 
       orderNumber, 
       clientId, 
       visitCount: order.visits?.length || 0,
@@ -1076,12 +1077,12 @@ const IntelligentWeekPlanner = () => {
         draggable={!isCompleted}
         onDragStart={(e) => handleDragStart(e, order, currentDay)}
         onDragEnd={handleDragEnd}
-        title="Przeciągnij aby przenieść zlecenie do innego dnia"
+        title="PrzeciÄ…gnij aby przenieĹ›Ä‡ zlecenie do innego dnia"
         style={isCompleted ? { cursor: 'default' } : { cursor: 'move' }}
       >
         <div className="flex items-start justify-between">
           <div className="flex-1 min-w-0">
-            {/* Nagłówek z nazwą klienta i statusem */}
+            {/* NagĹ‚Ăłwek z nazwÄ… klienta i statusem */}
             <div className="flex items-center gap-2 flex-wrap mb-1">
               <h4 
                 className={`font-semibold text-sm truncate max-w-[200px] ${isCompleted ? 'line-through text-gray-500' : ''}`}
@@ -1089,21 +1090,21 @@ const IntelligentWeekPlanner = () => {
               >
                 {getCardHeaderText(order)}
               </h4>
-              <span className="text-xs text-gray-500 whitespace-nowrap hidden sm:inline">📋 Przeciągnij</span>
-              {isCompleted && <span className="text-xs text-green-600 whitespace-nowrap">✅ Wykonane</span>}
+              <span className="text-xs text-gray-500 whitespace-nowrap hidden sm:inline">đź“‹ PrzeciÄ…gnij</span>
+              {isCompleted && <span className="text-xs text-green-600 whitespace-nowrap">âś… Wykonane</span>}
             </div>
             
             {/* Numery: Zlecenie, Klient, Wizyty */}
             <div className="flex items-center gap-2 flex-wrap text-xs">
               <span className="text-blue-700 font-mono bg-blue-50 px-2 py-0.5 rounded" title="Numer zlecenia">
-                🔢 {orderNumber}
+                đź”˘ {orderNumber}
               </span>
               <span className="text-purple-700 font-mono bg-purple-50 px-2 py-0.5 rounded" title="ID klienta">
-                � {clientId}
+                ďż˝ {clientId}
               </span>
               {order.visits && order.visits.length > 0 && (
                 <span className="text-green-700 font-mono bg-green-50 px-2 py-0.5 rounded" title={`Wizyty: ${visitNumbers}`}>
-                  📅 {order.visits.length} wiz.
+                  đź“… {order.visits.length} wiz.
                 </span>
               )}
             </div>
@@ -1119,15 +1120,15 @@ const IntelligentWeekPlanner = () => {
               {order.assignedTo && order.estimatedDuration && (
                 <span 
                   className="ml-1 px-1.5 py-0.5 bg-blue-100 text-blue-700 rounded text-[10px] font-medium" 
-                  title="Czas automatycznie obliczony na podstawie typu urządzenia i pracownika"
+                  title="Czas automatycznie obliczony na podstawie typu urzÄ…dzenia i pracownika"
                 >
-                  🤖 Auto
+                  đź¤– Auto
                 </span>
               )}
             </span>
             <span className="flex items-center gap-1">
               <DollarSign className="h-3 w-3" />
-              {order.serviceCost}zł
+              {order.serviceCost}zĹ‚
             </span>
           </div>
           {/* Rzeczywisty czas dojazdu */}
@@ -1153,7 +1154,7 @@ const IntelligentWeekPlanner = () => {
             }`}
             title={isCompleted ? "Oznacz jako niewykonane" : "Oznacz jako wykonane"}
           >
-            {isCompleted ? '✓' : '○'}
+            {isCompleted ? 'âś“' : 'â—‹'}
           </button>
           
           {/* Przycisk do przeniesienia z powrotem do nieprzypisanych */}
@@ -1163,14 +1164,14 @@ const IntelligentWeekPlanner = () => {
               moveOrderToUnscheduled(order, currentDay);
             }}
             className="px-2 py-1 rounded text-xs font-medium bg-gray-200 text-gray-700 hover:bg-red-100 hover:text-red-700 transition-colors"
-            title="Przenieś z powrotem do nieprzypisanych"
+            title="PrzenieĹ› z powrotem do nieprzypisanych"
           >
-            ↩️
+            â†©ď¸Ź
           </button>
           
           {/* Przycisk do zmiany technika */}
           {(() => {
-            console.log('🔍 DEBUG Dropdown:', { 
+            logger.success('đź”Ť DEBUG Dropdown:', { 
               availableServicemen: availableServicemen.length, 
               currentServiceman,
               shouldShow: availableServicemen.length > 1 
@@ -1183,10 +1184,10 @@ const IntelligentWeekPlanner = () => {
                 e.stopPropagation();
                 const newTechnicianId = e.target.value;
                 if (newTechnicianId && newTechnicianId !== currentServiceman) {
-                  // Oblicz datę z currentDay (format: "2025-01-13")
+                  // Oblicz datÄ™ z currentDay (format: "2025-01-13")
                   const scheduledDate = order.scheduledDate || currentDay;
                   
-                  console.log(`🔄 Zmiana technika: ${currentServiceman} → ${newTechnicianId}`, {
+                  logger.success(`đź”„ Zmiana technika: ${currentServiceman} â†’ ${newTechnicianId}`, {
                     orderId: order.id,
                     orderNumber: order.orderNumber,
                     scheduledDate: scheduledDate,
@@ -1194,13 +1195,13 @@ const IntelligentWeekPlanner = () => {
                   });
                   
                   try {
-                    // 🆕 Oblicz nowy estimatedDuration na podstawie pracownika
+                    // đź†• Oblicz nowy estimatedDuration na podstawie pracownika
                     const newEmployee = availableServicemen.find(emp => emp.id === newTechnicianId);
                     let newEstimatedDuration = order.estimatedDuration || 60;
                     
                     if (newEmployee) {
                       newEstimatedDuration = calculateEstimatedDuration(order, newEmployee);
-                      console.log(`⏱️ Obliczony nowy czas: ${newEstimatedDuration} min (poprzednio: ${order.estimatedDuration} min)`);
+                      logger.success(`âŹ±ď¸Ź Obliczony nowy czas: ${newEstimatedDuration} min (poprzednio: ${order.estimatedDuration} min)`);
                     }
                     
                     const response = await fetch(`/api/orders/${order.id}`, {
@@ -1208,36 +1209,36 @@ const IntelligentWeekPlanner = () => {
                       headers: { 'Content-Type': 'application/json' },
                       body: JSON.stringify({ 
                         assignedTo: newTechnicianId,
-                        scheduledDate: scheduledDate, // Zachowaj datę planowania!
-                        estimatedDuration: newEstimatedDuration // 🆕 Zaktualizowany czas
+                        scheduledDate: scheduledDate, // Zachowaj datÄ™ planowania!
+                        estimatedDuration: newEstimatedDuration // đź†• Zaktualizowany czas
                       })
                     });
                     
                     if (response.ok) {
                       const result = await response.json();
-                      console.log('✅ Zmiana technika zapisana:', result);
-                      showNotification(`✅ Zlecenie przypisane do innego technika (czas: ${newEstimatedDuration}min)`, 'success');
+                      logger.success('âś… Zmiana technika zapisana:', result);
+                      showNotification(`âś… Zlecenie przypisane do innego technika (czas: ${newEstimatedDuration}min)`, 'success');
                       
-                      // Przeładuj dane po zapisie
+                      // PrzeĹ‚aduj dane po zapisie
                       setTimeout(() => {
                         loadIntelligentPlan();
                       }, 500);
                     } else {
                       const error = await response.json();
-                      console.error('❌ Błąd odpowiedzi API:', error);
-                      showNotification(`❌ Błąd zmiany technika: ${error.message}`, 'error');
+                      console.error('âťŚ BĹ‚Ä…d odpowiedzi API:', error);
+                      showNotification(`âťŚ BĹ‚Ä…d zmiany technika: ${error.message}`, 'error');
                     }
                   } catch (error) {
-                    console.error('❌ Błąd zmiany technika:', error);
-                    showNotification(`❌ Błąd zmiany technika`, 'error');
+                    console.error('âťŚ BĹ‚Ä…d zmiany technika:', error);
+                    showNotification(`âťŚ BĹ‚Ä…d zmiany technika`, 'error');
                   }
                 }
               }}
               className="px-2 py-1 rounded text-xs font-medium bg-blue-100 text-blue-700 hover:bg-blue-200 transition-colors cursor-pointer"
-              title="Zmień technika"
+              title="ZmieĹ„ technika"
               value={currentServiceman}
             >
-              <option value="">👤 Zmień...</option>
+              <option value="">đź‘¤ ZmieĹ„...</option>
               {availableServicemen.map(tech => (
                 <option key={tech.id} value={tech.id}>
                   {tech.name}
@@ -1252,20 +1253,20 @@ const IntelligentWeekPlanner = () => {
             'bg-green-200 text-green-800'
           }`}>
             {order.priority === 'high' ? 'Pilne' : 
-             order.priority === 'medium' ? 'Średnie' : 'Niskie'}
+             order.priority === 'medium' ? 'Ĺšrednie' : 'Niskie'}
           </span>
         </div>
       </div>
       
-      {/* Dostępność klienta */}
+      {/* DostÄ™pnoĹ›Ä‡ klienta */}
       <div className="mt-2 pt-2 border-t border-gray-200">
         <div className="text-xs text-gray-600">
-          <strong>Dostępny:</strong>
+          <strong>DostÄ™pny:</strong>
           {order.preferredTimeSlots?.map((slot, idx) => (
             <span key={idx} className="ml-1">
               {slot.day === 'monday' ? 'Pon' :
                slot.day === 'tuesday' ? 'Wt' :
-               slot.day === 'wednesday' ? 'Śr' :
+               slot.day === 'wednesday' ? 'Ĺšr' :
                slot.day === 'thursday' ? 'Czw' :
                slot.day === 'friday' ? 'Pt' :
                slot.day === 'saturday' ? 'Sob' :
@@ -1277,14 +1278,14 @@ const IntelligentWeekPlanner = () => {
         </div>
         {order.unavailableDates?.length > 0 && (
           <div className="text-xs text-red-600 mt-1">
-            <strong>Niedostępny:</strong> {order.unavailableDates.join(', ')}
+            <strong>NiedostÄ™pny:</strong> {order.unavailableDates.join(', ')}
           </div>
         )}
         {order.assignedTimeSlot && (
           <div className="text-xs text-blue-600 mt-1 font-medium">
             <strong>Przydzielone:</strong> {order.assignedTimeSlot.start}-{order.assignedTimeSlot.end}
             {order.assignedTimeSlot.autoAssigned && (
-              <span className="ml-1 text-blue-500">⚡ (auto)</span>
+              <span className="ml-1 text-blue-500">âšˇ (auto)</span>
             )}
           </div>
         )}
@@ -1293,49 +1294,49 @@ const IntelligentWeekPlanner = () => {
     );
   };
 
-  // 🆕 Pobierz zlecenia dla konkretnego dnia w aktualnym tygodniu
+  // đź†• Pobierz zlecenia dla konkretnego dnia w aktualnym tygodniu
   const getOrdersForWeekDay = (day) => {
-    // ✅ POPRAWIONA LOGIKA: Filtruj zlecenia po KONKRETNEJ DACIE, nie po dniu tygodnia!
-    // Oblicz datę dla tego dnia w bieżącym tygodniu
+    // âś… POPRAWIONA LOGIKA: Filtruj zlecenia po KONKRETNEJ DACIE, nie po dniu tygodnia!
+    // Oblicz datÄ™ dla tego dnia w bieĹĽÄ…cym tygodniu
     const dayIndex = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].indexOf(day);
     if (dayIndex === -1) {
-      console.warn(`⚠️ Nieprawidłowy dzień: ${day}`);
+      console.warn(`âš ď¸Ź NieprawidĹ‚owy dzieĹ„: ${day}`);
       return [];
     }
     
-    // Oblicz konkretną datę (np. środa 9 października 2025)
+    // Oblicz konkretnÄ… datÄ™ (np. Ĺ›roda 9 paĹşdziernika 2025)
     const targetDate = new Date(currentWeekStart);
     targetDate.setDate(currentWeekStart.getDate() + dayIndex);
-    // 🔧 FIX: Użyj lokalnej daty zamiast UTC
+    // đź”§ FIX: UĹĽyj lokalnej daty zamiast UTC
     const targetDateStr = `${targetDate.getFullYear()}-${String(targetDate.getMonth() + 1).padStart(2, '0')}-${String(targetDate.getDate()).padStart(2, '0')}`; // YYYY-MM-DD
     
-    console.log(`📅 getOrdersForWeekDay(${day}) - szukam zleceń dla daty: ${targetDateStr}`);
+    logger.success(`đź“… getOrdersForWeekDay(${day}) - szukam zleceĹ„ dla daty: ${targetDateStr}`);
     
     // Pobierz wszystkie zlecenia z weeklyPlan[day].orders
     const allDayOrders = (weeklyPlan[day] && weeklyPlan[day].orders) || [];
     
-    // Filtruj tylko te, które mają scheduledDate pasującą do targetDateStr
+    // Filtruj tylko te, ktĂłre majÄ… scheduledDate pasujÄ…cÄ… do targetDateStr
     const filteredOrders = allDayOrders.filter(order => {
       const orderDate = order.scheduledDate;
       if (!orderDate) return false;
       
-      // Porównaj daty (bez czasu)
+      // PorĂłwnaj daty (bez czasu)
       const orderDateStr = orderDate.split('T')[0];
       const matches = orderDateStr === targetDateStr;
       
       if (!matches) {
-        console.log(`  ⏭️ Pomijam zlecenie ${order.id} - ma datę ${orderDateStr}, a szukam ${targetDateStr}`);
+        logger.success(`  âŹ­ď¸Ź Pomijam zlecenie ${order.id} - ma datÄ™ ${orderDateStr}, a szukam ${targetDateStr}`);
       }
       
       return matches;
     });
     
-    console.log(`  ✅ Zwracam ${filteredOrders.length} zleceń dla ${day} (${targetDateStr})`);
+    logger.success(`  âś… Zwracam ${filteredOrders.length} zleceĹ„ dla ${day} (${targetDateStr})`);
     
     return filteredOrders;
   };
 
-  // 📅 Pobierz harmonogram serwisanta dla danego dnia
+  // đź“… Pobierz harmonogram serwisanta dla danego dnia
   const getServicemanScheduleForDay = useCallback((day, servicemanId) => {
     if (!servicemanId) {
       return null;
@@ -1359,26 +1360,26 @@ const IntelligentWeekPlanner = () => {
     const dayOfWeek = dayOfWeekMap[day];
     const schedule = servicemanSchedules[servicemanId];
     
-    // Znajdź workSlots dla tego dnia
+    // ZnajdĹş workSlots dla tego dnia
     const workSlots = (schedule.workSlots || []).filter(slot => slot.dayOfWeek === dayOfWeek);
     const breaks = (schedule.breaks || []).filter(br => br.dayOfWeek === dayOfWeek);
     
-    console.log(`  ✅ Zwracam: ${workSlots.length} workSlots, ${breaks.length} breaks`);
+    logger.success(`  âś… Zwracam: ${workSlots.length} workSlots, ${breaks.length} breaks`);
     
     return { workSlots, breaks };
   }, [servicemanSchedules]);
 
   // Renderowanie harmonogramu dnia z rekomendacjami czasu
   const renderDaySchedule = (day, dayPlan) => {
-    // 🆕 Zamiast używać dayPlan.orders, pobierz rzeczywiste zlecenia z bazy filtrowane po dacie
+    // đź†• Zamiast uĹĽywaÄ‡ dayPlan.orders, pobierz rzeczywiste zlecenia z bazy filtrowane po dacie
     const orders = getOrdersForWeekDay(day);
     
     if (!orders || orders.length === 0) return null;
     
-    // Usunięto kod rzeczywistych harmonogramów (Distance Matrix API)
+    // UsuniÄ™to kod rzeczywistych harmonogramĂłw (Distance Matrix API)
     const realSchedule = null;
     
-    // Jeśli mamy rzeczywisty harmonogram, użyj go
+    // JeĹ›li mamy rzeczywisty harmonogram, uĹĽyj go
     if (realSchedule && realSchedule.schedule) {
       const schedule = realSchedule.schedule;
       const departure = schedule.find(s => s.type === 'departure');
@@ -1391,20 +1392,20 @@ const IntelligentWeekPlanner = () => {
             <Clock className="h-4 w-4" />
             Harmonogram z Rzeczywistymi Czasami
             <span className="ml-2 px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">
-              🌐 Real-time
+              đźŚ Real-time
             </span>
           </h4>
           
           {/* Czas wyjazdu */}
           <div className="mb-3 p-2 bg-green-100 rounded border border-green-300">
             <div className="flex items-center justify-between">
-              <span className="font-medium text-green-800">🚗 Wyjazd z domu:</span>
+              <span className="font-medium text-green-800">đźš— Wyjazd z domu:</span>
               <span className="font-bold text-green-800">
                 {departure.time.toLocaleTimeString('pl-PL', {hour: '2-digit', minute: '2-digit'})}
               </span>
             </div>
             <div className="text-xs text-green-600 mt-1">
-              📍 {startLocation.address}
+              đź“Ť {startLocation.address}
             </div>
           </div>
           
@@ -1412,12 +1413,12 @@ const IntelligentWeekPlanner = () => {
           <div className="space-y-2">
             {visits.map((visit, idx) => {
               const visitTypeLabels = {
-                diagnosis: '🔍 Diagnoza',
-                repair: '🔧 Naprawa',
-                control: '✅ Kontrola',
-                installation: '📦 Montaż'
+                diagnosis: 'đź”Ť Diagnoza',
+                repair: 'đź”§ Naprawa',
+                control: 'âś… Kontrola',
+                installation: 'đź“¦ MontaĹĽ'
               };
-              const visitTypeLabel = visitTypeLabels[visit.order.visitType] || '📋 Wizyta';
+              const visitTypeLabel = visitTypeLabels[visit.order.visitType] || 'đź“‹ Wizyta';
               
               return (
                 <div 
@@ -1447,28 +1448,28 @@ const IntelligentWeekPlanner = () => {
                   {/* Numer zlecenia */}
                   {visit.order.orderNumber && (
                     <div className="text-xs text-gray-500 mb-2">
-                      📋 Zlecenie: <span className="font-mono">{visit.order.orderNumber}</span>
+                      đź“‹ Zlecenie: <span className="font-mono">{visit.order.orderNumber}</span>
                     </div>
                   )}
                   
                   <div className="grid grid-cols-2 gap-2 text-xs">
                     <div>
-                      <span className="text-green-600">📍 Przyjazd:</span>
+                      <span className="text-green-600">đź“Ť Przyjazd:</span>
                       <span className="font-medium ml-1">
                         {visit.arrivalTime.toLocaleTimeString('pl-PL', {hour: '2-digit', minute: '2-digit'})}
                       </span>
                     </div>
                     <div>
-                      <span className="text-red-600">🏁 Wyjazd:</span>
+                      <span className="text-red-600">đźŹ Wyjazd:</span>
                       <span className="font-medium ml-1">
                         {visit.departureTime.toLocaleTimeString('pl-PL', {hour: '2-digit', minute: '2-digit'})}
                       </span>
                     </div>
                     <div className="col-span-2 text-gray-600">
-                    🔧 {visit.order.description || visit.order.issueDescription} ({visit.duration}min, {visit.order.serviceCost}zł)
+                    đź”§ {visit.order.description || visit.order.issueDescription} ({visit.duration}min, {visit.order.serviceCost}zĹ‚)
                   </div>
                   <div className="col-span-2 text-gray-500 text-xs">
-                    📍 {visit.order.address}
+                    đź“Ť {visit.order.address}
                   </div>
                   <div className="col-span-2">
                     <TravelTimeInfo 
@@ -1479,7 +1480,7 @@ const IntelligentWeekPlanner = () => {
                   </div>
                 </div>
                 <div className="mt-2 text-xs text-blue-600 hover:text-blue-800">
-                  👆 Kliknij aby zobaczyć szczegóły
+                  đź‘† Kliknij aby zobaczyÄ‡ szczegĂłĹ‚y
                 </div>
               </div>
               );
@@ -1489,24 +1490,24 @@ const IntelligentWeekPlanner = () => {
           {/* Czas powrotu */}
           <div className="mt-3 p-2 bg-purple-100 rounded border border-purple-300">
             <div className="flex items-center justify-between">
-              <span className="font-medium text-purple-800">🏠 Powrót do domu:</span>
+              <span className="font-medium text-purple-800">đźŹ  PowrĂłt do domu:</span>
               <span className="font-bold text-purple-800">
                 {arrivalHome.time.toLocaleTimeString('pl-PL', {hour: '2-digit', minute: '2-digit'})}
               </span>
             </div>
             <div className="text-xs text-purple-600 mt-1">
-              ⏱️ Całkowity czas pracy: {(realSchedule.totalDuration / (1000 * 60 * 60)).toFixed(1)}h
+              âŹ±ď¸Ź CaĹ‚kowity czas pracy: {(realSchedule.totalDuration / (1000 * 60 * 60)).toFixed(1)}h
             </div>
           </div>
         </div>
       );
     }
     
-    // Fallback do starego systemu jeśli jeszcze nie obliczono rzeczywistego harmonogramu
+    // Fallback do starego systemu jeĹ›li jeszcze nie obliczono rzeczywistego harmonogramu
     const startTime = optimizationPreferences.preferredStartTime;
     const firstOrder = orders[0];
     
-    // Użyj symulowanego czasu jako fallback
+    // UĹĽyj symulowanego czasu jako fallback
     const travelToFirst = 30; // Fallback 30 minut
     const firstVisitTime = new Date(`2025-10-01T${startTime}:00`);
     const departureTime = new Date(firstVisitTime.getTime() - travelToFirst * 60000);
@@ -1525,27 +1526,27 @@ const IntelligentWeekPlanner = () => {
           <Clock className="h-4 w-4" />
           Harmonogram (obliczanie czasu rzeczywistego...)
           <span className="ml-2 px-2 py-1 bg-yellow-100 text-yellow-800 text-xs rounded-full">
-            📡 Loading...
+            đź“ˇ Loading...
           </span>
         </h4>
         
         {/* Czas wyjazdu */}
         <div className="mb-3 p-2 bg-green-100 rounded border border-green-300">
           <div className="flex items-center justify-between">
-            <span className="font-medium text-green-800">🚗 Wyjazd z domu:</span>
+            <span className="font-medium text-green-800">đźš— Wyjazd z domu:</span>
             <span className="font-bold text-green-800">
               {departureTime.toLocaleTimeString('pl-PL', {hour: '2-digit', minute: '2-digit'})}
             </span>
           </div>
           <div className="text-xs text-green-600 mt-1">
-            📍 {startLocation.address}
+            đź“Ť {startLocation.address}
           </div>
         </div>
         
         {/* Harmonogram wizyt */}
         <div className="space-y-2">
           {orders.map((order, idx) => {
-            // Jeśli to nie pierwsza wizyta, dodaj symulowany czas dojazdu
+            // JeĹ›li to nie pierwsza wizyta, dodaj symulowany czas dojazdu
             if (idx > 0) {
               currentTime = new Date(currentTime.getTime() + 20 * 60000); // 20 min fallback
             }
@@ -1566,19 +1567,19 @@ const IntelligentWeekPlanner = () => {
                 </div>
                 <div className="grid grid-cols-2 gap-2 text-xs">
                   <div>
-                    <span className="text-green-600">📍 Przyjazd:</span>
+                    <span className="text-green-600">đź“Ť Przyjazd:</span>
                     <span className="font-medium ml-1">
                       {arrivalTime.toLocaleTimeString('pl-PL', {hour: '2-digit', minute: '2-digit'})}
                     </span>
                   </div>
                   <div>
-                    <span className="text-red-600">🏁 Wyjazd:</span>
+                    <span className="text-red-600">đźŹ Wyjazd:</span>
                     <span className="font-medium ml-1">
                       {orderDepartureTime.toLocaleTimeString('pl-PL', {hour: '2-digit', minute: '2-digit'})}
                     </span>
                   </div>
                   <div className="col-span-2 text-gray-600">
-                    🔧 {order.description} ({order.estimatedDuration}min, {order.serviceCost}zł)
+                    đź”§ {order.description} ({order.estimatedDuration}min, {order.serviceCost}zĹ‚)
                   </div>
                 </div>
               </div>
@@ -1589,13 +1590,13 @@ const IntelligentWeekPlanner = () => {
         {/* Czas powrotu */}
         <div className="mt-3 p-2 bg-purple-100 rounded border border-purple-300">
           <div className="flex items-center justify-between">
-            <span className="font-medium text-purple-800">🏠 Powrót do domu:</span>
+            <span className="font-medium text-purple-800">đźŹ  PowrĂłt do domu:</span>
             <span className="font-bold text-purple-800">
               {new Date(currentTime.getTime() + 30 * 60000).toLocaleTimeString('pl-PL', {hour: '2-digit', minute: '2-digit'})}
             </span>
           </div>
           <div className="text-xs text-purple-600 mt-1">
-            ⏱️ Szacowany czas pracy (dokładne za chwilę)
+            âŹ±ď¸Ź Szacowany czas pracy (dokĹ‚adne za chwilÄ™)
           </div>
         </div>
       </div>
@@ -1636,16 +1637,16 @@ const IntelligentWeekPlanner = () => {
   // Funkcja do zapisywania zlecenia do kalendarza (przypisywanie do konkretnego dnia)
   const saveOrderToSchedule = async (order, targetDay) => {
     try {
-      console.log('📌 Zapisywanie zlecenia', order.id, 'na dzień', targetDay);
+      logger.success('đź“Ś Zapisywanie zlecenia', order.id, 'na dzieĹ„', targetDay);
       
       const updatedPlan = { ...weeklyPlan };
       const unscheduledOrders = [...(updatedPlan.unscheduledOrders || [])];
       
-      // Usuń z unscheduledOrders jeśli tam jest
+      // UsuĹ„ z unscheduledOrders jeĹ›li tam jest
       updatedPlan.unscheduledOrders = unscheduledOrders.filter(o => o.id !== order.id);
       
-      // ✅ NOWA STRUKTURA: Dodaj zlecenie bezpośrednio do weeklyPlan[day].orders
-      // Najpierw sprawdź który dzień tygodnia odpowiada tej dacie
+      // âś… NOWA STRUKTURA: Dodaj zlecenie bezpoĹ›rednio do weeklyPlan[day].orders
+      // Najpierw sprawdĹş ktĂłry dzieĹ„ tygodnia odpowiada tej dacie
       const dayMap = {
         monday: updatedPlan.monday,
         tuesday: updatedPlan.tuesday,
@@ -1656,20 +1657,20 @@ const IntelligentWeekPlanner = () => {
         sunday: updatedPlan.sunday
       };
       
-      // Znajdź dzień który odpowiada targetDay (nazwa dnia, np. 'monday')
+      // ZnajdĹş dzieĹ„ ktĂłry odpowiada targetDay (nazwa dnia, np. 'monday')
       const dayKey = Object.keys(dayMap).find(key => key === targetDay);
       
       if (dayKey && updatedPlan[dayKey]) {
         const updatedOrder = { ...order, scheduledDate: targetDay, assignedTo: currentServiceman };
         const currentOrders = [...(updatedPlan[dayKey].orders || [])];
         
-        // Usuń jeśli już istnieje i dodaj zaktualizowaną wersję
+        // UsuĹ„ jeĹ›li juĹĽ istnieje i dodaj zaktualizowanÄ… wersjÄ™
         const filteredOrders = currentOrders.filter(o => o.id !== order.id);
         updatedPlan[dayKey].orders = [...filteredOrders, updatedOrder];
         
-        console.log(`✅ Dodano zlecenie ${order.id} do weeklyPlan.${dayKey}.orders (${updatedPlan[dayKey].orders.length} zleceń)`);
+        logger.success(`âś… Dodano zlecenie ${order.id} do weeklyPlan.${dayKey}.orders (${updatedPlan[dayKey].orders.length} zleceĹ„)`);
       } else {
-        console.error(`❌ Nie znaleziono dnia: ${targetDay}`);
+        console.error(`âťŚ Nie znaleziono dnia: ${targetDay}`);
       }
       
       setWeeklyPlan(updatedPlan);
@@ -1685,16 +1686,16 @@ const IntelligentWeekPlanner = () => {
       });
       
       if (saveResponse.ok) {
-        console.log(`✅ Zapisano zlecenie ${order.id} na dzień ${targetDay}`);
-        showNotification(`✅ Zlecenie "${getCardHeaderText(order)}" zapisane na ${targetDay}`, 'success');
+        logger.success(`âś… Zapisano zlecenie ${order.id} na dzieĹ„ ${targetDay}`);
+        showNotification(`âś… Zlecenie "${getCardHeaderText(order)}" zapisane na ${targetDay}`, 'success');
       } else {
-        console.warn(`⚠️ Nie udało się zapisać zmian:`, await saveResponse.text());
+        console.warn(`âš ď¸Ź Nie udaĹ‚o siÄ™ zapisaÄ‡ zmian:`, await saveResponse.text());
         loadIntelligentPlan();
-        showNotification(`❌ Błąd zapisywania zmian`, 'error');
+        showNotification(`âťŚ BĹ‚Ä…d zapisywania zmian`, 'error');
       }
     } catch (error) {
-      console.error('❌ Błąd zapisywania zlecenia:', error);
-      showNotification(`❌ Błąd: ${error.message}`, 'error');
+      console.error('âťŚ BĹ‚Ä…d zapisywania zlecenia:', error);
+      showNotification(`âťŚ BĹ‚Ä…d: ${error.message}`, 'error');
       loadIntelligentPlan();
     }
   };
@@ -1702,12 +1703,12 @@ const IntelligentWeekPlanner = () => {
   // Funkcja do usuwania zlecenia z kalendarza (przywracanie do nieprzypisanych)
   const moveOrderToUnscheduled = async (order, sourceDay) => {
     try {
-      console.log(`📤 Przenoszenie zlecenia ${order.id} z ${sourceDay} do nieprzypisanych`);
+      logger.success(`đź“¤ Przenoszenie zlecenia ${order.id} z ${sourceDay} do nieprzypisanych`);
       
       const updatedPlan = { ...weeklyPlan };
       const unscheduledOrders = [...(updatedPlan.unscheduledOrders || [])];
       
-      // ✅ NOWA STRUKTURA: Usuń z weeklyPlan[sourceDay].orders
+      // âś… NOWA STRUKTURA: UsuĹ„ z weeklyPlan[sourceDay].orders
       let orderToMove = null;
       
       if (sourceDay && updatedPlan[sourceDay]) {
@@ -1715,20 +1716,20 @@ const IntelligentWeekPlanner = () => {
         orderToMove = dayOrders.find(o => o.id === order.id);
         
         if (orderToMove) {
-          // Usuń z dnia
+          // UsuĹ„ z dnia
           updatedPlan[sourceDay].orders = dayOrders.filter(o => o.id !== order.id);
-          console.log(`✅ Usunięto zlecenie ${order.id} z weeklyPlan.${sourceDay}.orders`);
+          logger.success(`âś… UsuniÄ™to zlecenie ${order.id} z weeklyPlan.${sourceDay}.orders`);
         }
       }
       
       // Dodaj do unscheduledOrders
       if (orderToMove) {
         updatedPlan.unscheduledOrders = [...unscheduledOrders, { ...orderToMove, scheduledDate: null, assignedTo: null }];
-        console.log(`✅ Dodano zlecenie ${order.id} do unscheduledOrders (${updatedPlan.unscheduledOrders.length} zleceń)`);
+        logger.success(`âś… Dodano zlecenie ${order.id} do unscheduledOrders (${updatedPlan.unscheduledOrders.length} zleceĹ„)`);
         
         setWeeklyPlan(updatedPlan);
         
-        // Zapisz do API - usuń scheduledDate i zmień status na 'unscheduled'
+        // Zapisz do API - usuĹ„ scheduledDate i zmieĹ„ status na 'unscheduled'
         const saveResponse = await fetch(`/api/orders/${order.id}`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
@@ -1736,16 +1737,16 @@ const IntelligentWeekPlanner = () => {
             scheduledDate: null,
             scheduledTime: null,
             assignedTo: null,
-            status: 'unscheduled' // 🔄 Zmień status na 'nieprzypisane'
+            status: 'unscheduled' // đź”„ ZmieĹ„ status na 'nieprzypisane'
           })
         });
         
         if (saveResponse.ok) {
-          console.log(`✅ Przeniesiono zlecenie ${order.id} do nieprzypisanych`);
-          showNotification(`✅ Zlecenie "${getCardHeaderText(order)}" przeniesione do nieprzypisanych`, 'success');
+          logger.success(`âś… Przeniesiono zlecenie ${order.id} do nieprzypisanych`);
+          showNotification(`âś… Zlecenie "${getCardHeaderText(order)}" przeniesione do nieprzypisanych`, 'success');
           
-          // 🔔 EMIT EVENT - Powiadom kalendarz technika o usunięciu wizyty
-          console.log('🔔 Emitting visitsChanged event (visit removed)...');
+          // đź”” EMIT EVENT - Powiadom kalendarz technika o usuniÄ™ciu wizyty
+          logger.success('đź”” Emitting visitsChanged event (visit removed)...');
           if (typeof window !== 'undefined') {
             window.dispatchEvent(new CustomEvent('visitsChanged', {
               detail: {
@@ -1757,38 +1758,38 @@ const IntelligentWeekPlanner = () => {
             }));
           }
         } else {
-          console.warn(`⚠️ Nie udało się zapisać zmian:`, await saveResponse.text());
+          console.warn(`âš ď¸Ź Nie udaĹ‚o siÄ™ zapisaÄ‡ zmian:`, await saveResponse.text());
           // Wycofaj zmiany
           loadIntelligentPlan();
-          showNotification(`❌ Błąd zapisywania zmian`, 'error');
+          showNotification(`âťŚ BĹ‚Ä…d zapisywania zmian`, 'error');
         }
       }
     } catch (error) {
-      console.error('❌ Błąd przenoszenia zlecenia:', error);
-      showNotification(`❌ Błąd: ${error.message}`, 'error');
+      console.error('âťŚ BĹ‚Ä…d przenoszenia zlecenia:', error);
+      showNotification(`âťŚ BĹ‚Ä…d: ${error.message}`, 'error');
       loadIntelligentPlan();
     }
   };
 
-  // Funkcje drag & drop dla zleceń
+  // Funkcje drag & drop dla zleceĹ„
   const handleDragStart = (e, order, sourceDay) => {
-    // Nie pozwalaj przeciągać wykonanych zleceń
+    // Nie pozwalaj przeciÄ…gaÄ‡ wykonanych zleceĹ„
     if (completedOrders.has(order.id)) {
       e.preventDefault();
-      console.log('❌ Cannot drag completed order:', order.clientName);
+      logger.success('âťŚ Cannot drag completed order:', order.clientName);
       return;
     }
     
-    console.log('🔵 Drag start:', order.clientName, 'from', sourceDay);
+    logger.success('đź”µ Drag start:', order.clientName, 'from', sourceDay);
     setDraggedOrder({ order, sourceDay, sourceServiceman: currentServiceman });
     setIsDragging(true);
     e.dataTransfer.effectAllowed = 'move';
-    e.dataTransfer.setData('text/plain', ''); // Potrzebne dla niektórych przeglądarek
+    e.dataTransfer.setData('text/plain', ''); // Potrzebne dla niektĂłrych przeglÄ…darek
     e.target.style.opacity = '0.5';
   };
 
   const handleDragEnd = (e) => {
-    console.log('🔴 Drag end');
+    logger.success('đź”´ Drag end');
     e.target.style.opacity = '1';
     setIsDragging(false);
     setDraggedOrder(null);
@@ -1797,65 +1798,65 @@ const IntelligentWeekPlanner = () => {
   const handleDragOver = (e, targetDay) => {
     e.preventDefault();
     e.dataTransfer.dropEffect = 'move';
-    // console.log('🟡 Drag over:', targetDay); // Zakomentowane żeby nie spamować
+    // logger.success('đźźˇ Drag over:', targetDay); // Zakomentowane ĹĽeby nie spamowaÄ‡
   };
 
   const handleDrop = async (e, targetDay, insertIndex = null, targetServiceman = null) => {
     e.preventDefault();
-    console.log('🟢 Drop:', targetDay, 'insertIndex:', insertIndex, 'targetServiceman:', targetServiceman);
+    logger.success('đźź˘ Drop:', targetDay, 'insertIndex:', insertIndex, 'targetServiceman:', targetServiceman);
     
     if (!draggedOrder) {
-      console.log('❌ No dragged order found');
+      logger.success('âťŚ No dragged order found');
       return;
     }
 
     const { order, sourceDay, sourceServiceman } = draggedOrder;
     const actualTargetServiceman = targetServiceman || currentServiceman;
-    console.log('📦 Moving:', order.clientName, 'from', sourceDay, 'to', targetDay, 
+    logger.success('đź“¦ Moving:', order.clientName, 'from', sourceDay, 'to', targetDay, 
                 'from serviceman', sourceServiceman, 'to serviceman', actualTargetServiceman);
     
-    // Przenoszenie między serwisantami
+    // Przenoszenie miÄ™dzy serwisantami
     if (sourceServiceman !== actualTargetServiceman) {
       await handleServicemanTransfer(order, sourceDay, targetDay, sourceServiceman, actualTargetServiceman);
       return;
     }
     
-    // Jeśli to ten sam dzień i ten sam serwisant - zmiana kolejności
+    // JeĹ›li to ten sam dzieĹ„ i ten sam serwisant - zmiana kolejnoĹ›ci
     if (sourceDay === targetDay) {
       if (insertIndex !== null) {
-        // TODO: Implementacja zmiany kolejności dla nowej struktury
-        // Obecnie nie modyfikujemy scheduledOrders - kolejność będzie sortowana przez getOrdersForWeekDay
-        console.log('ℹ️ Zmiana kolejności w tym samym dniu - pomijam (wymaga osobnej implementacji)');
+        // TODO: Implementacja zmiany kolejnoĹ›ci dla nowej struktury
+        // Obecnie nie modyfikujemy scheduledOrders - kolejnoĹ›Ä‡ bÄ™dzie sortowana przez getOrdersForWeekDay
+        logger.success('â„ąď¸Ź Zmiana kolejnoĹ›ci w tym samym dniu - pomijam (wymaga osobnej implementacji)');
         
-        showNotification(`✅ Zmieniono kolejność zlecenia "${order.clientName}" w ${getDayName(targetDay)}`);
+        showNotification(`âś… Zmieniono kolejnoĹ›Ä‡ zlecenia "${order.clientName}" w ${getDayName(targetDay)}`);
       }
       return;
     }
 
-    // Walidacja przeniesienia między dniami
+    // Walidacja przeniesienia miÄ™dzy dniami
     const validation = validateOrderMove(order, sourceDay, targetDay);
     if (!validation.isValid) {
-      showNotification(`❌ Nie można przenieść zlecenia: ${validation.reason}`, 'error');
+      showNotification(`âťŚ Nie moĹĽna przenieĹ›Ä‡ zlecenia: ${validation.reason}`, 'error');
       return;
     }
 
-    // Sprawdź ostrzeżenia
+    // SprawdĹş ostrzeĹĽenia
     if (validation.warnings && validation.warnings.length > 0) {
       validation.warnings.forEach(warning => {
-        showNotification(`⚠️ ${warning}`, 'warning');
+        showNotification(`âš ď¸Ź ${warning}`, 'warning');
       });
     }
 
-    // ✅ Aktualizuj plan tygodniowy - NOWA STRUKTURA
+    // âś… Aktualizuj plan tygodniowy - NOWA STRUKTURA
     const updatedPlan = { ...weeklyPlan };
     const unscheduledOrders = [...(updatedPlan.unscheduledOrders || [])];
     
-    // Oblicz docelową datę
+    // Oblicz docelowÄ… datÄ™
     const targetDate = getDateForDay(targetDay);
-    // 🔧 FIX: Użyj lokalnej daty zamiast UTC
+    // đź”§ FIX: UĹĽyj lokalnej daty zamiast UTC
     const scheduledDate = targetDate ? `${targetDate.getFullYear()}-${String(targetDate.getMonth() + 1).padStart(2, '0')}-${String(targetDate.getDate()).padStart(2, '0')}` : targetDay;
     
-    // 🤖 AUTO-KALKULACJA: Oblicz czas gdy przypisujemy pracownika
+    // đź¤– AUTO-KALKULACJA: Oblicz czas gdy przypisujemy pracownika
     const assignedEmployee = actualTargetServiceman || currentServiceman;
     let autoCalculatedTime = null;
     
@@ -1864,7 +1865,7 @@ const IntelligentWeekPlanner = () => {
       if (employee) {
         autoCalculatedTime = calculateEstimatedDuration(order, employee);
         if (autoCalculatedTime) {
-          console.log(`⏱️ Auto-obliczono czas dla "${order.clientName}": ${autoCalculatedTime}min (pracownik: ${employee.name})`);
+          logger.success(`âŹ±ď¸Ź Auto-obliczono czas dla "${order.clientName}": ${autoCalculatedTime}min (pracownik: ${employee.name})`);
         }
       }
     }
@@ -1877,40 +1878,40 @@ const IntelligentWeekPlanner = () => {
     };
     
     if (sourceDay === 'unscheduled') {
-      // Przenieś z unscheduled do konkretnego dnia
+      // PrzenieĹ› z unscheduled do konkretnego dnia
       updatedPlan.unscheduledOrders = unscheduledOrders.filter(o => o.id !== order.id);
-      console.log(`📤 Usunięto z unscheduled (pozostało: ${updatedPlan.unscheduledOrders.length})`);
+      logger.success(`đź“¤ UsuniÄ™to z unscheduled (pozostaĹ‚o: ${updatedPlan.unscheduledOrders.length})`);
       
       // Dodaj do weeklyPlan[targetDay].orders
       if (updatedPlan[targetDay]) {
         const dayOrders = [...(updatedPlan[targetDay].orders || [])];
         updatedPlan[targetDay].orders = [...dayOrders, updatedOrder];
-        console.log(`📥 Dodano do weeklyPlan.${targetDay}.orders (teraz: ${updatedPlan[targetDay].orders.length})`);
+        logger.success(`đź“Ą Dodano do weeklyPlan.${targetDay}.orders (teraz: ${updatedPlan[targetDay].orders.length})`);
       }
     } else {
-      // Przenoszenie między dniami
-      // Usuń z dnia źródłowego
+      // Przenoszenie miÄ™dzy dniami
+      // UsuĹ„ z dnia ĹşrĂłdĹ‚owego
       if (updatedPlan[sourceDay]) {
         const sourceOrders = [...(updatedPlan[sourceDay].orders || [])];
         updatedPlan[sourceDay].orders = sourceOrders.filter(o => o.id !== order.id);
-        console.log(`📤 Usunięto z ${sourceDay} (pozostało: ${updatedPlan[sourceDay].orders.length})`);
+        logger.success(`đź“¤ UsuniÄ™to z ${sourceDay} (pozostaĹ‚o: ${updatedPlan[sourceDay].orders.length})`);
       }
       
       // Dodaj do dnia docelowego
       if (updatedPlan[targetDay]) {
         const targetOrders = [...(updatedPlan[targetDay].orders || [])];
         updatedPlan[targetDay].orders = [...targetOrders, updatedOrder];
-        console.log(`📥 Dodano do ${targetDay} (teraz: ${updatedPlan[targetDay].orders.length})`);
+        logger.success(`đź“Ą Dodano do ${targetDay} (teraz: ${updatedPlan[targetDay].orders.length})`);
       }
     }
     
     setWeeklyPlan(updatedPlan);
     
-    // 🆕 Zapisz scheduledDate do bazy danych (w tle)
+    // đź†• Zapisz scheduledDate do bazy danych (w tle)
     try {
-      console.log(`💾 Zapisuję scheduledDate dla zlecenia ${order.id}: ${scheduledDate}`);
+      logger.success(`đź’ľ ZapisujÄ™ scheduledDate dla zlecenia ${order.id}: ${scheduledDate}`);
       
-      // 📋 Loguj dokładnie co zapisujemy
+      // đź“‹ Loguj dokĹ‚adnie co zapisujemy
       const assignmentData = {
         orderId: order.id,
         scheduledDate: scheduledDate,
@@ -1920,7 +1921,7 @@ const IntelligentWeekPlanner = () => {
         estimatedDuration: autoCalculatedTime || order.estimatedDuration,
         status: 'scheduled'
       };
-      console.log('💾 Wysyłam do API /orders/[id] PATCH:', assignmentData);
+      logger.success('đź’ľ WysyĹ‚am do API /orders/[id] PATCH:', assignmentData);
 
       const saveResponse = await fetch(`/api/orders/${order.id}`, {
         method: 'PATCH',
@@ -1928,17 +1929,17 @@ const IntelligentWeekPlanner = () => {
         body: JSON.stringify({ 
           scheduledDate: assignmentData.scheduledDate,
           scheduledTime: assignmentData.scheduledTime,
-          assignedTo: assignmentData.assignedTo, // ✅ Użyj assignedEmployee
+          assignedTo: assignmentData.assignedTo, // âś… UĹĽyj assignedEmployee
           estimatedDuration: assignmentData.estimatedDuration,
-          status: assignmentData.status // ✅ Automatycznie zmień status
+          status: assignmentData.status // âś… Automatycznie zmieĹ„ status
         })
       });
       
       if (saveResponse.ok) {
-        console.log(`✅ Zapisano scheduledDate dla ${order.id}`);
+        logger.success(`âś… Zapisano scheduledDate dla ${order.id}`);
         
-        // 🔔 EMIT EVENT - Powiadom kalendarz technika o zmianie wizyty
-        console.log('🔔 Emitting visitsChanged event (visit moved)...');
+        // đź”” EMIT EVENT - Powiadom kalendarz technika o zmianie wizyty
+        logger.success('đź”” Emitting visitsChanged event (visit moved)...');
         if (typeof window !== 'undefined') {
           window.dispatchEvent(new CustomEvent('visitsChanged', {
             detail: {
@@ -1951,23 +1952,23 @@ const IntelligentWeekPlanner = () => {
           }));
         }
         
-        // 🆕 Zapisz cały plan do bazy, żeby utworzyć wizytę
-        console.log('💾 Zapisywanie całego planu do stworzenia wizyty...');
+        // đź†• Zapisz caĹ‚y plan do bazy, ĹĽeby utworzyÄ‡ wizytÄ™
+        logger.success('đź’ľ Zapisywanie caĹ‚ego planu do stworzenia wizyty...');
         setTimeout(() => {
           savePlanToDatabase();
         }, 500);
       } else {
-        console.warn(`⚠️ Nie udało się zapisać scheduledDate:`, await saveResponse.text());
-        // Wycofaj optymistyczną aktualizację w przypadku błędu
-        loadIntelligentPlan(); // Przeładuj dane z serwera
+        console.warn(`âš ď¸Ź Nie udaĹ‚o siÄ™ zapisaÄ‡ scheduledDate:`, await saveResponse.text());
+        // Wycofaj optymistycznÄ… aktualizacjÄ™ w przypadku bĹ‚Ä™du
+        loadIntelligentPlan(); // PrzeĹ‚aduj dane z serwera
       }
     } catch (error) {
-      console.error('❌ Błąd zapisywania scheduledDate:', error);
+      console.error('âťŚ BĹ‚Ä…d zapisywania scheduledDate:', error);
     }
     
-    // Pokaż powiadomienie o sukcesie
+    // PokaĹĽ powiadomienie o sukcesie
     const sourceLabel = sourceDay === 'unscheduled' ? 'puli niezaplanowanych' : getDayName(sourceDay);
-    showNotification(`✅ Zlecenie "${order.clientName}" przeniesione z ${sourceLabel} na ${getDayName(targetDay)}`);
+    showNotification(`âś… Zlecenie "${order.clientName}" przeniesione z ${sourceLabel} na ${getDayName(targetDay)}`);
   };
 
   // Walidacja przeniesienia zlecenia
@@ -1976,32 +1977,32 @@ const IntelligentWeekPlanner = () => {
     const targetDayOrders = planData[targetDay]?.orders || [];
     const warnings = [];
     
-    // Sprawdź limit zleceń dziennych
+    // SprawdĹş limit zleceĹ„ dziennych
     if (targetDayOrders.length >= optimizationPreferences.maxDailyOrders) {
       return {
         isValid: false,
-        reason: `Dzień ${getDayName(targetDay)} ma już maksymalną liczbę zleceń (${optimizationPreferences.maxDailyOrders})`
+        reason: `DzieĹ„ ${getDayName(targetDay)} ma juĹĽ maksymalnÄ… liczbÄ™ zleceĹ„ (${optimizationPreferences.maxDailyOrders})`
       };
     }
     
-    // Sprawdź dostępność klienta w nowej dacie
+    // SprawdĹş dostÄ™pnoĹ›Ä‡ klienta w nowej dacie
     const targetDate = getDateForDay(targetDay);
     if (order.unavailableDates && order.unavailableDates.some(date => 
       new Date(date).toDateString() === targetDate.toDateString()
     )) {
       return {
         isValid: false,
-        reason: `Klient ${order.clientName} nie jest dostępny w dniu ${targetDate.toLocaleDateString('pl-PL')}`
+        reason: `Klient ${order.clientName} nie jest dostÄ™pny w dniu ${targetDate.toLocaleDateString('pl-PL')}`
       };
     }
     
-    // Sprawdź godziny pracy - oblicz szacowany czas zakończenia dnia
+    // SprawdĹş godziny pracy - oblicz szacowany czas zakoĹ„czenia dnia
     const newOrdersList = [...targetDayOrders, order];
     
-    // Dla walidacji używamy szybkiej symulacji, dokładne obliczenia będą później
+    // Dla walidacji uĹĽywamy szybkiej symulacji, dokĹ‚adne obliczenia bÄ™dÄ… pĂłĹşniej
     let estimatedWorkingTime = 0;
     estimatedWorkingTime += newOrdersList.reduce((sum, ord) => sum + (ord.estimatedDuration || 60), 0);
-    estimatedWorkingTime += (newOrdersList.length - 1) * 15; // Przybliżone dojazdy między
+    estimatedWorkingTime += (newOrdersList.length - 1) * 15; // PrzybliĹĽone dojazdy miÄ™dzy
     estimatedWorkingTime += 60; // Z domu i z powrotem
     
     const workStart = parseTime(optimizationPreferences.workingHours.start);
@@ -2011,22 +2012,22 @@ const IntelligentWeekPlanner = () => {
     if (estimatedWorkingTime > maxWorkingHours * 60) { // Konwersja na minuty
       return {
         isValid: false,
-        reason: `Dzień pracy przekroczyłby maksymalny czas (${maxWorkingHours}h). Szacowany czas: ${Math.round(estimatedWorkingTime/60)}h`
+        reason: `DzieĹ„ pracy przekroczyĹ‚by maksymalny czas (${maxWorkingHours}h). Szacowany czas: ${Math.round(estimatedWorkingTime/60)}h`
       };
     }
     
-    // Sprawdź czy dzień zmieści się w godzinach pracy (6:00-22:00)
+    // SprawdĹş czy dzieĹ„ zmieĹ›ci siÄ™ w godzinach pracy (6:00-22:00)
     const estimatedEndTime = workStart + estimatedWorkingTime;
     if (estimatedEndTime > workEnd) {
       const endHour = Math.floor(estimatedEndTime / 60);
       const endMinute = estimatedEndTime % 60;
       return {
         isValid: false,
-        reason: `Praca zakończyłaby się o ${endHour.toString().padStart(2, '0')}:${endMinute.toString().padStart(2, '0')} (po dozwolonych godzinach pracy)`
+        reason: `Praca zakoĹ„czyĹ‚aby siÄ™ o ${endHour.toString().padStart(2, '0')}:${endMinute.toString().padStart(2, '0')} (po dozwolonych godzinach pracy)`
       };
     }
     
-    // Sprawdź konflikty czasowe - bardziej elastyczne podejście
+    // SprawdĹş konflikty czasowe - bardziej elastyczne podejĹ›cie
     const timeConflicts = [];
     targetDayOrders.forEach(existingOrder => {
       if (order.preferredTimeSlots && existingOrder.preferredTimeSlots) {
@@ -2045,32 +2046,32 @@ const IntelligentWeekPlanner = () => {
     });
     
     if (timeConflicts.length > 0) {
-      // Sprawdź czy można automatycznie rozwiązać konflikty
+      // SprawdĹş czy moĹĽna automatycznie rozwiÄ…zaÄ‡ konflikty
       const canResolveAutomatically = timeConflicts.every(conflict => 
         order.preferredTimeSlots && order.preferredTimeSlots.length > 1
       );
       
       if (canResolveAutomatically) {
-        warnings.push(`Wykryto ${timeConflicts.length} konflikt(ów) czasowych - zostaną automatycznie rozwiązane`);
+        warnings.push(`Wykryto ${timeConflicts.length} konflikt(Ăłw) czasowych - zostanÄ… automatycznie rozwiÄ…zane`);
       } else {
-        // Tylko blokuj jeśli nie można automatycznie rozwiązać
+        // Tylko blokuj jeĹ›li nie moĹĽna automatycznie rozwiÄ…zaÄ‡
         const conflictDetails = timeConflicts.map(c => 
           `${c.conflictingOrder.clientName} (${c.conflictingSlots[0].start}-${c.conflictingSlots[0].end})`
         ).join(', ');
-        warnings.push(`Konflikty czasowe z: ${conflictDetails} - sprawdź harmonogram po przeniesieniu`);
+        warnings.push(`Konflikty czasowe z: ${conflictDetails} - sprawdĹş harmonogram po przeniesieniu`);
       }
     }
     
-    // Sprawdź ostrzeżenia (ale nie blokuj przeniesienia)
+    // SprawdĹş ostrzeĹĽenia (ale nie blokuj przeniesienia)
     
-    // Ostrzeżenie o przekroczeniu optymalnej liczby zleceń
+    // OstrzeĹĽenie o przekroczeniu optymalnej liczby zleceĹ„
     if (targetDayOrders.length >= 10) {
-      warnings.push(`Dzień ${getDayName(targetDay)} będzie miał już ${targetDayOrders.length + 1} zleceń - może być przeciążony`);
+      warnings.push(`DzieĹ„ ${getDayName(targetDay)} bÄ™dzie miaĹ‚ juĹĽ ${targetDayOrders.length + 1} zleceĹ„ - moĹĽe byÄ‡ przeciÄ…ĹĽony`);
     }
     
-    // Ostrzeżenie o priorytecie
+    // OstrzeĹĽenie o priorytecie
     if (order.priority === 'high' && targetDay !== 'monday') {
-      warnings.push(`Pilne zlecenie zostanie przesunięte na ${getDayName(targetDay)} - rozważ obsługę wcześniej`);
+      warnings.push(`Pilne zlecenie zostanie przesuniÄ™te na ${getDayName(targetDay)} - rozwaĹĽ obsĹ‚ugÄ™ wczeĹ›niej`);
     }
     
     return { 
@@ -2079,9 +2080,9 @@ const IntelligentWeekPlanner = () => {
     };
   };
 
-  // Funkcje pomocnicze do obsługi czasu i dat
+  // Funkcje pomocnicze do obsĹ‚ugi czasu i dat
   const parseTime = (timeString) => {
-    // Konwertuje czas "HH:MM" na minuty od północy
+    // Konwertuje czas "HH:MM" na minuty od pĂłĹ‚nocy
     const [hours, minutes] = timeString.split(':').map(Number);
     return hours * 60 + minutes;
   };
@@ -2095,27 +2096,27 @@ const IntelligentWeekPlanner = () => {
 
   const getISODateForDay = (dayName) => {
     const date = getDateForDay(dayName);
-    // 🔧 FIX: Użyj lokalnej daty zamiast UTC
+    // đź”§ FIX: UĹĽyj lokalnej daty zamiast UTC
     return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`; // YYYY-MM-DD
   };
 
   const calculateDayWorkingTime = async (orders, departureTime = null) => {
-    // Szacuje całkowity czas pracy dla listy zleceń (w minutach)
+    // Szacuje caĹ‚kowity czas pracy dla listy zleceĹ„ (w minutach)
     if (!orders || orders.length === 0) return 0;
     
     let totalTime = 0;
     
-    // Czas na każde zlecenie
+    // Czas na kaĹĽde zlecenie
     totalTime += orders.reduce((sum, order) => sum + (order.estimatedDuration || 60), 0);
     
-    // Rzeczywisty czas dojazdów
+    // Rzeczywisty czas dojazdĂłw
     try {
       const travelTime = await calculateTotalTravelTime(orders, departureTime);
       totalTime += travelTime;
     } catch (error) {
-      console.warn('⚠️ Błąd obliczania czasu dojazdu, używam fallback:', error);
-      // Fallback do starych obliczeń
-      totalTime += (orders.length - 1) * 15; // Między zleceniami
+      console.warn('âš ď¸Ź BĹ‚Ä…d obliczania czasu dojazdu, uĹĽywam fallback:', error);
+      // Fallback do starych obliczeĹ„
+      totalTime += (orders.length - 1) * 15; // MiÄ™dzy zleceniami
       totalTime += 60; // Z domu i z powrotem
     }
     
@@ -2123,7 +2124,7 @@ const IntelligentWeekPlanner = () => {
   };
 
   const doTimeSlotsOverlap = (slot1, slot2) => {
-    // Sprawdza czy dwa okna czasowe się pokrywają
+    // Sprawdza czy dwa okna czasowe siÄ™ pokrywajÄ…
     if (!slot1 || !slot2) return false;
     
     const start1 = parseTime(slot1.start);
@@ -2134,14 +2135,14 @@ const IntelligentWeekPlanner = () => {
     return (start1 < end2 && start2 < end1);
   };
 
-  // Obsługa przenoszenia zlecenia między serwisantami
+  // ObsĹ‚uga przenoszenia zlecenia miÄ™dzy serwisantami
   const handleServicemanTransfer = async (order, sourceDay, targetDay, sourceServiceman, targetServiceman) => {
-    // Pobierz plany obu serwisantów
+    // Pobierz plany obu serwisantĂłw
     const sourcePlan = sourceServiceman === currentServiceman ? weeklyPlan : weeklyPlans[sourceServiceman];
     const targetPlan = targetServiceman === currentServiceman ? weeklyPlan : weeklyPlans[targetServiceman];
 
     if (!sourcePlan || !targetPlan) {
-      showNotification('❌ Nie można przenieść zlecenia - brak dostępu do planu serwisanta', 'error');
+      showNotification('âťŚ Nie moĹĽna przenieĹ›Ä‡ zlecenia - brak dostÄ™pu do planu serwisanta', 'error');
       return;
     }
 
@@ -2149,7 +2150,7 @@ const IntelligentWeekPlanner = () => {
     const validation = validateOrderMoveForServiceman(order, targetDay, targetPlan);
     if (!validation.isValid) {
       const targetServicemanName = availableServicemen.find(s => s.id === targetServiceman)?.name;
-      showNotification(`❌ Nie można przenieść do ${targetServicemanName}: ${validation.reason}`, 'error');
+      showNotification(`âťŚ Nie moĹĽna przenieĹ›Ä‡ do ${targetServicemanName}: ${validation.reason}`, 'error');
       return;
     }
 
@@ -2157,19 +2158,19 @@ const IntelligentWeekPlanner = () => {
     const updatedSourcePlan = { ...sourcePlan };
     const updatedTargetPlan = { ...targetPlan };
 
-    // Usuń z planu źródłowego
+    // UsuĹ„ z planu ĹşrĂłdĹ‚owego
     updatedSourcePlan.weeklyPlan[sourceDay].orders = updatedSourcePlan.weeklyPlan[sourceDay].orders.filter(
       o => o.id !== order.id
     );
 
-    // 🤖 AUTO-KALKULACJA: Oblicz czas dla nowego pracownika
+    // đź¤– AUTO-KALKULACJA: Oblicz czas dla nowego pracownika
     let autoCalculatedTime = null;
     if (targetServiceman && order.deviceType) {
       const employee = availableServicemen.find(e => e.id === targetServiceman);
       if (employee) {
         autoCalculatedTime = calculateEstimatedDuration(order, employee);
         if (autoCalculatedTime) {
-          console.log(`⏱️ Auto-obliczono czas dla "${order.clientName}": ${autoCalculatedTime}min (nowy pracownik: ${employee.name})`);
+          logger.success(`âŹ±ď¸Ź Auto-obliczono czas dla "${order.clientName}": ${autoCalculatedTime}min (nowy pracownik: ${employee.name})`);
         }
       }
     }
@@ -2186,10 +2187,10 @@ const IntelligentWeekPlanner = () => {
     }
     updatedTargetPlan.weeklyPlan[targetDay].orders.push(updatedOrder);
 
-    // 💾 Zapisz do bazy danych
+    // đź’ľ Zapisz do bazy danych
     try {
       const scheduledDate = getISODateForDay(targetDay);
-      console.log('💾 Zapisuję transfer do bazy:', {
+      logger.success('đź’ľ ZapisujÄ™ transfer do bazy:', {
         orderId: order.id,
         assignedTo: targetServiceman,
         scheduledDate,
@@ -2202,20 +2203,20 @@ const IntelligentWeekPlanner = () => {
         body: JSON.stringify({ 
           scheduledDate: scheduledDate,
           scheduledTime: updatedOrder.scheduledTime || '09:00',
-          assignedTo: targetServiceman, // ✅ Przypisz do nowego serwisanta
+          assignedTo: targetServiceman, // âś… Przypisz do nowego serwisanta
           estimatedDuration: updatedOrder.estimatedDuration,
           status: 'scheduled'
         })
       });
 
       if (!saveResponse.ok) {
-        throw new Error(`Błąd zapisywania: ${saveResponse.status}`);
+        throw new Error(`BĹ‚Ä…d zapisywania: ${saveResponse.status}`);
       }
 
-      console.log('✅ Transfer zapisany w bazie danych');
+      logger.success('âś… Transfer zapisany w bazie danych');
     } catch (error) {
-      console.error('❌ Błąd podczas zapisywania transferu:', error);
-      showNotification('⚠️ Zlecenie przeniesione lokalnie, ale wystąpił problem z zapisem do bazy', 'warning');
+      console.error('âťŚ BĹ‚Ä…d podczas zapisywania transferu:', error);
+      showNotification('âš ď¸Ź Zlecenie przeniesione lokalnie, ale wystÄ…piĹ‚ problem z zapisem do bazy', 'warning');
     }
 
     // Przelicz statystyki
@@ -2239,7 +2240,7 @@ const IntelligentWeekPlanner = () => {
     const sourceServicemanName = availableServicemen.find(s => s.id === sourceServiceman)?.name;
     const targetServicemanName = availableServicemen.find(s => s.id === targetServiceman)?.name;
     showNotification(
-      `✅ Zlecenie "${order.clientName}" przeniesione z ${sourceServicemanName} (${getDayName(sourceDay)}) do ${targetServicemanName} (${getDayName(targetDay)})`,
+      `âś… Zlecenie "${order.clientName}" przeniesione z ${sourceServicemanName} (${getDayName(sourceDay)}) do ${targetServicemanName} (${getDayName(targetDay)})`,
       'success'
     );
   };
@@ -2248,19 +2249,19 @@ const IntelligentWeekPlanner = () => {
   const validateOrderMoveForServiceman = (order, targetDay, targetPlan) => {
     const targetDayOrders = targetPlan.weeklyPlan[targetDay]?.orders || [];
     
-    // Sprawdź limit zleceń dziennych
+    // SprawdĹş limit zleceĹ„ dziennych
     if (targetDayOrders.length >= optimizationPreferences.maxDailyOrders) {
       return {
         isValid: false,
-        reason: `Dzień ${getDayName(targetDay)} ma już maksymalną liczbę zleceń (${optimizationPreferences.maxDailyOrders})`
+        reason: `DzieĹ„ ${getDayName(targetDay)} ma juĹĽ maksymalnÄ… liczbÄ™ zleceĹ„ (${optimizationPreferences.maxDailyOrders})`
       };
     }
 
-    // Sprawdź godziny pracy - szybka walidacja
+    // SprawdĹş godziny pracy - szybka walidacja
     const newOrdersList = [...targetDayOrders, order];
     let estimatedWorkingTime = 0;
     estimatedWorkingTime += newOrdersList.reduce((sum, ord) => sum + (ord.estimatedDuration || 60), 0);
-    estimatedWorkingTime += (newOrdersList.length - 1) * 15; // Przybliżone dojazdy
+    estimatedWorkingTime += (newOrdersList.length - 1) * 15; // PrzybliĹĽone dojazdy
     estimatedWorkingTime += 60; // Z domu i z powrotem
     
     const maxWorkingHours = optimizationPreferences.workingHours.maxWorkingHours;
@@ -2268,20 +2269,20 @@ const IntelligentWeekPlanner = () => {
     if (estimatedWorkingTime > maxWorkingHours * 60) {
       return {
         isValid: false,
-        reason: `Dzień pracy przekroczyłby maksymalny czas (${maxWorkingHours}h)`
+        reason: `DzieĹ„ pracy przekroczyĹ‚by maksymalny czas (${maxWorkingHours}h)`
       };
     }
 
     return { isValid: true };
   };
 
-  // Automatyczne rozwiązywanie konfliktów czasowych
+  // Automatyczne rozwiÄ…zywanie konfliktĂłw czasowych
   const resolveTimeConflicts = (dayOrders) => {
     const resolvedOrders = [...dayOrders];
     const workStart = parseTime(optimizationPreferences.workingHours.start);
     const workEnd = parseTime(optimizationPreferences.workingHours.end);
     
-    // Sortuj zlecenia według priorytetu: pilne -> średnie -> niskie
+    // Sortuj zlecenia wedĹ‚ug priorytetu: pilne -> Ĺ›rednie -> niskie
     resolvedOrders.sort((a, b) => {
       const priorityOrder = { high: 3, medium: 2, low: 1 };
       return priorityOrder[b.priority] - priorityOrder[a.priority];
@@ -2293,11 +2294,11 @@ const IntelligentWeekPlanner = () => {
     
     resolvedOrders.forEach(order => {
       if (currentTime + slotDuration > workEnd) {
-        // Jeśli nie mieści się w dniu pracy, przydziel na początek następnego dostępnego czasu
+        // JeĹ›li nie mieĹ›ci siÄ™ w dniu pracy, przydziel na poczÄ…tek nastÄ™pnego dostÄ™pnego czasu
         currentTime = workStart;
       }
       
-      // Stwórz nowy slot czasowy
+      // StwĂłrz nowy slot czasowy
       const startHour = Math.floor(currentTime / 60);
       const startMinute = currentTime % 60;
       const endTime = currentTime + slotDuration;
@@ -2318,40 +2319,40 @@ const IntelligentWeekPlanner = () => {
 
   // Przelicz statystyki dnia po zmianie
   const recalculateDayStats = async (plan, day) => {
-    // 🔥 OPTYMALIZACJA: Debounce 2s - nie przeliczaj przy każdym drag!
+    // đź”Ą OPTYMALIZACJA: Debounce 2s - nie przeliczaj przy kaĹĽdym drag!
     if (recalculateTimerRef.current[day]) {
       clearTimeout(recalculateTimerRef.current[day]);
     }
     
     return new Promise((resolve) => {
       recalculateTimerRef.current[day] = setTimeout(async () => {
-        console.log(`💰 Recalculating stats for ${day} (debounced)...`);
+        logger.success(`đź’° Recalculating stats for ${day} (debounced)...`);
         
-        // ✅ NOWA STRUKTURA: Pobierz zlecenia bezpośrednio z plan[day].orders
+        // âś… NOWA STRUKTURA: Pobierz zlecenia bezpoĹ›rednio z plan[day].orders
         let dayOrders = [];
         
         if (plan[day] && plan[day].orders) {
           dayOrders = [...plan[day].orders];
-          console.log(`📦 Znaleziono ${dayOrders.length} zleceń w plan.${day}.orders`);
+          logger.success(`đź“¦ Znaleziono ${dayOrders.length} zleceĹ„ w plan.${day}.orders`);
         } else {
-          console.warn(`⚠️ Brak zleceń dla ${day}`);
+          console.warn(`âš ď¸Ź Brak zleceĹ„ dla ${day}`);
           resolve();
           return;
         }
         
-        // Automatycznie rozwiąż konflikty czasowe
+        // Automatycznie rozwiÄ…ĹĽ konflikty czasowe
         if (dayOrders.length > 1) {
           dayOrders = resolveTimeConflicts(dayOrders);
           // Zaktualizuj orders w dniu
           plan[day].orders = dayOrders;
         }
         
-        // Obsługa obu struktur dla zapisania stats
+        // ObsĹ‚uga obu struktur dla zapisania stats
         const isOldStructure = plan.weeklyPlan !== undefined;
         const dayData = isOldStructure ? plan.weeklyPlan[day] : plan[day];
         
         if (!dayData) {
-          console.warn(`⚠️ recalculateDayStats: brak struktury dnia dla ${day}`);
+          console.warn(`âš ď¸Ź recalculateDayStats: brak struktury dnia dla ${day}`);
           resolve();
           return;
         }
@@ -2374,38 +2375,38 @@ const IntelligentWeekPlanner = () => {
         try {
           totalTravelTime = await calculateTotalTravelTime(dayOrders);
         } catch (error) {
-          console.warn('⚠️ Błąd obliczania dojazdu w recalculateDayStats:', error);
+          console.warn('âš ď¸Ź BĹ‚Ä…d obliczania dojazdu w recalculateDayStats:', error);
           // Fallback
           totalTravelTime = dayOrders.length > 0 ? (dayOrders.length - 1) * 15 + 60 : 0;
         }
         
         const totalTime = totalTravelTime + totalWorkTime;
         
-        // Zapisz statystyki do właściwej struktury
+        // Zapisz statystyki do wĹ‚aĹ›ciwej struktury
         dayData.stats = {
           totalRevenue,
           totalTime,
-          efficiency: totalRevenue / (totalTime / 60) // zł/godzinę
+          efficiency: totalRevenue / (totalTime / 60) // zĹ‚/godzinÄ™
         };
         
         resolve();
-      }, 2000); // 2 sekundy debounce - czekaj aż użytkownik skończy przeciągać
+      }, 2000); // 2 sekundy debounce - czekaj aĹĽ uĹĽytkownik skoĹ„czy przeciÄ…gaÄ‡
     });
   };
 
   // Pomocnicza funkcja do nazw dni
   const getDayName = (day) => {
     const dayNames = {
-      monday: 'Poniedziałek',
+      monday: 'PoniedziaĹ‚ek',
       tuesday: 'Wtorek',
-      wednesday: 'Środa',
+      wednesday: 'Ĺšroda',
       thursday: 'Czwartek',
-      friday: 'Piątek',
+      friday: 'PiÄ…tek',
       saturday: 'Sobota',
       sunday: 'Niedziela'
     };
     
-    // Jeśli mamy dostęp do currentWeekStart, pokazuj datę
+    // JeĹ›li mamy dostÄ™p do currentWeekStart, pokazuj datÄ™
     if (currentWeekStart) {
       const dayInfo = formatDayWithDate(day, currentWeekStart);
       return `${dayNames[day] || day} (${dayInfo.date})`;
@@ -2414,18 +2415,18 @@ const IntelligentWeekPlanner = () => {
     return dayNames[day] || day;
   };
 
-  // System powiadomień
+  // System powiadomieĹ„
   const [notifications, setNotifications] = useState([]);
   const notificationTimeouts = useRef(new Map()); // Track timeout IDs to prevent memory leaks
   // Nowe funkcje UI - rozwijanie, sortowanie, filtrowanie (z localStorage)
-  const [expandedDay, setExpandedDay] = useState(null); // Rozwinięty dzień na pełny ekran
-  const [viewMode, setViewMode] = useState(() => loadFromLocalStorage('viewMode', 7)); // 1-7 kolumn (cały tydzień)
+  const [expandedDay, setExpandedDay] = useState(null); // RozwiniÄ™ty dzieĹ„ na peĹ‚ny ekran
+  const [viewMode, setViewMode] = useState(() => loadFromLocalStorage('viewMode', 7)); // 1-7 kolumn (caĹ‚y tydzieĹ„)
   const [sortBy, setSortBy] = useState(() => loadFromLocalStorage('sortBy', 'default')); // default, priority, time, revenue, client
   const [filterBy, setFilterBy] = useState(() => loadFromLocalStorage('filterBy', 'all')); // all, pending, contacted, unscheduled, scheduled, confirmed, in_progress, waiting_parts
   const [ordersPerPage, setOrdersPerPage] = useState(10); // Paginacja
   const [currentPage, setCurrentPage] = useState(1);
 
-  // Reset paginacji gdy zmienia się dzień, sortowanie lub filtrowanie
+  // Reset paginacji gdy zmienia siÄ™ dzieĹ„, sortowanie lub filtrowanie
   useEffect(() => {
     setCurrentPage(1);
   }, [expandedDay, sortBy, filterBy]);
@@ -2443,7 +2444,7 @@ const IntelligentWeekPlanner = () => {
     saveToLocalStorage('filterBy', filterBy);
   }, [filterBy]);
 
-  // Funkcje sortowania i filtrowania zleceń
+  // Funkcje sortowania i filtrowania zleceĹ„
   const sortOrders = (orders, sortType) => {
     if (!orders || orders.length === 0) return orders;
     
@@ -2466,7 +2467,7 @@ const IntelligentWeekPlanner = () => {
   const filterOrders = (orders, filterType) => {
     if (!orders || orders.length === 0) return orders;
     
-    // 🔄 Filtruj po statusie zlecenia (zamiast priorytetu)
+    // đź”„ Filtruj po statusie zlecenia (zamiast priorytetu)
     switch (filterType) {
       case 'pending':
         return orders.filter(order => order.status === 'pending');
@@ -2501,10 +2502,10 @@ const IntelligentWeekPlanner = () => {
       const newSet = new Set(prev);
       if (newSet.has(orderId)) {
         newSet.delete(orderId);
-        showNotification('📝 Zlecenie oznaczone jako niewykonane', 'info');
+        showNotification('đź“ť Zlecenie oznaczone jako niewykonane', 'info');
       } else {
         newSet.add(orderId);
-        showNotification('✅ Zlecenie oznaczone jako wykonane!', 'success');
+        showNotification('âś… Zlecenie oznaczone jako wykonane!', 'success');
       }
       return newSet;
     });
@@ -2520,7 +2521,7 @@ const IntelligentWeekPlanner = () => {
     
     setNotifications(prev => [...prev, notification]);
     
-    // Automatycznie usuń powiadomienie po 5 sekundach z proper cleanup
+    // Automatycznie usuĹ„ powiadomienie po 5 sekundach z proper cleanup
     const timeoutId = setTimeout(() => {
       setNotifications(prev => prev.filter(n => n.id !== notification.id));
       notificationTimeouts.current.delete(notification.id);
@@ -2563,11 +2564,11 @@ const IntelligentWeekPlanner = () => {
         }
         
         setWeeklyPlan(updatedPlan);
-        showNotification(`✅ Wszystkie dni zostały zoptymalizowane przy użyciu strategii: ${optimizationStrategies[selectedOptimizationStrategy].name}`, 'success');
+        showNotification(`âś… Wszystkie dni zostaĹ‚y zoptymalizowane przy uĹĽyciu strategii: ${optimizationStrategies[selectedOptimizationStrategy].name}`, 'success');
         return;
       }
 
-      // Optymalizuj pojedynczy dzień
+      // Optymalizuj pojedynczy dzieĹ„
       const planData = getWeeklyPlanData(weeklyPlan);
       if (!planData || !planData[day] || !planData[day].orders) {
         return;
@@ -2590,17 +2591,17 @@ const IntelligentWeekPlanner = () => {
       await recalculateDayStats(updatedPlan, day);
       
       setWeeklyPlan(updatedPlan);
-      showNotification(`✅ ${getDayName(day)} został zoptymalizowany przy użyciu strategii: ${optimizationStrategies[selectedOptimizationStrategy].name}`, 'success');
+      showNotification(`âś… ${getDayName(day)} zostaĹ‚ zoptymalizowany przy uĹĽyciu strategii: ${optimizationStrategies[selectedOptimizationStrategy].name}`, 'success');
       
     } catch (error) {
-      console.error('Błąd optymalizacji dnia:', error);
-      showNotification(`❌ Nie udało się zoptymalizować dnia ${getDayName(day)}`, 'error');
+      console.error('BĹ‚Ä…d optymalizacji dnia:', error);
+      showNotification(`âťŚ Nie udaĹ‚o siÄ™ zoptymalizowaÄ‡ dnia ${getDayName(day)}`, 'error');
     } finally {
       setIsLoading(false);
     }
   };
 
-  // Zastosuj wybraną strategię optymalizacji
+  // Zastosuj wybranÄ… strategiÄ™ optymalizacji
   const applyOptimizationStrategy = (dayOrders) => {
     switch (selectedOptimizationStrategy) {
       case 'time':
@@ -2620,12 +2621,12 @@ const IntelligentWeekPlanner = () => {
 
   // Strategie optymalizacji pojedynczego dnia
   const optimizeByTime = (orders) => {
-    // Sortuj po czasie realizacji (najkrótsze najpierw)
+    // Sortuj po czasie realizacji (najkrĂłtsze najpierw)
     return orders.sort((a, b) => (a.estimatedDuration || 60) - (b.estimatedDuration || 60));
   };
 
   const optimizeByRevenue = (orders) => {
-    // Sortuj po przychodzie (najdroższe najpierw)
+    // Sortuj po przychodzie (najdroĹĽsze najpierw)
     return orders.sort((a, b) => (b.serviceCost || 0) - (a.serviceCost || 0));
   };
 
@@ -2636,7 +2637,7 @@ const IntelligentWeekPlanner = () => {
   };
 
   const optimizeByVIP = (orders) => {
-    // Priorytet dla klientów VIP/premium
+    // Priorytet dla klientĂłw VIP/premium
     return orders.sort((a, b) => {
       const isVipA = a.clientType === 'premium' || a.priority === 'high';
       const isVipB = b.clientType === 'premium' || b.priority === 'high';
@@ -2647,7 +2648,7 @@ const IntelligentWeekPlanner = () => {
   };
 
   const optimizeByTimeWindows = (orders) => {
-    // Sortuj po preferowanych oknach czasowych klientów
+    // Sortuj po preferowanych oknach czasowych klientĂłw
     return orders.sort((a, b) => {
       const timeA = a.preferredTimeSlots?.[0]?.start || '08:00';
       const timeB = b.preferredTimeSlots?.[0]?.start || '08:00';
@@ -2656,7 +2657,7 @@ const IntelligentWeekPlanner = () => {
   };
 
   const optimizeBalanced = (orders) => {
-    // Strategia zbalansowana - kombinacja wszystkich czynników (priorytet + przychód)
+    // Strategia zbalansowana - kombinacja wszystkich czynnikĂłw (priorytet + przychĂłd)
     return orders.sort((a, b) => {
       const priorityOrder = { 'high': 3, 'medium': 2, 'low': 1 };
       
@@ -2668,7 +2669,7 @@ const IntelligentWeekPlanner = () => {
     });
   };
 
-  // Renderowanie szczegółowych statystyk dnia z zarobkami
+  // Renderowanie szczegĂłĹ‚owych statystyk dnia z zarobkami
   const renderDayStats = (day, stats) => {
     if (!stats) return null;
     
@@ -2679,16 +2680,16 @@ const IntelligentWeekPlanner = () => {
       <div className="mt-3 p-3 bg-gray-50 rounded-lg">
         <h4 className="font-semibold text-sm mb-2 flex items-center gap-2">
           <TrendingUp className="h-4 w-4" />
-          Szczegółowe statystyki dnia
+          SzczegĂłĹ‚owe statystyki dnia
         </h4>
         
-        {/* Główne statystyki */}
+        {/* GĹ‚Ăłwne statystyki */}
         <div className="grid grid-cols-2 gap-3 text-xs mb-3">
           <div>
             <span className="font-medium">Zlecenia:</span> {stats.totalOrders}
           </div>
           <div className="font-semibold text-green-600">
-            <span className="font-medium">Łącznie zarobię:</span> {stats.totalRevenue}zł
+            <span className="font-medium">ĹÄ…cznie zarobiÄ™:</span> {stats.totalRevenue}zĹ‚
           </div>
           <div>
             <span className="font-medium">Czas serwisu:</span> {Math.round(stats.totalServiceTime/60)}h
@@ -2700,33 +2701,33 @@ const IntelligentWeekPlanner = () => {
             <span className="font-medium">Regiony:</span> {stats.regions?.join(', ')}
           </div>
           <div className="col-span-2">
-            <span className="font-medium">Efektywność:</span> 
+            <span className="font-medium">EfektywnoĹ›Ä‡:</span> 
             <span className={`ml-1 ${stats.efficiency > 15 ? 'text-green-600' : 
                              stats.efficiency > 10 ? 'text-yellow-600' : 'text-red-600'}`}>
-              {stats.efficiency?.toFixed(1)}zł/min
+              {stats.efficiency?.toFixed(1)}zĹ‚/min
             </span>
           </div>
         </div>
 
-        {/* Szczegółowy breakdown zarobków */}
+        {/* SzczegĂłĹ‚owy breakdown zarobkĂłw */}
         {dayOrders.length > 0 && (
           <div className="border-t border-gray-200 pt-3">
-            <h5 className="font-medium text-xs mb-2 text-gray-700">💰 Detale zarobków:</h5>
+            <h5 className="font-medium text-xs mb-2 text-gray-700">đź’° Detale zarobkĂłw:</h5>
             <div className="space-y-1">
               {dayOrders.map((order, index) => (
                 <div key={`earnings-${order.id}-${index}`} className="flex justify-between items-center text-xs">
                   <span className="text-gray-600">
                     {index + 1}. {order.clientName}
                   </span>
-                  <span className="font-medium text-green-600">{order.serviceCost}zł</span>
+                  <span className="font-medium text-green-600">{order.serviceCost}zĹ‚</span>
                 </div>
               ))}
               <div className="border-t border-gray-300 pt-1 flex justify-between items-center text-xs font-bold">
                 <span>Razem dziennie:</span>
-                <span className="text-green-600 text-sm">{dayOrders.reduce((sum, order) => sum + order.serviceCost, 0)}zł</span>
+                <span className="text-green-600 text-sm">{dayOrders.reduce((sum, order) => sum + order.serviceCost, 0)}zĹ‚</span>
               </div>
               <div className="text-xs text-gray-500 mt-1">
-                Średnio na zlecenie: {dayOrders.length > 0 ? Math.round(dayOrders.reduce((sum, order) => sum + order.serviceCost, 0) / dayOrders.length) : 0}zł
+                Ĺšrednio na zlecenie: {dayOrders.length > 0 ? Math.round(dayOrders.reduce((sum, order) => sum + order.serviceCost, 0) / dayOrders.length) : 0}zĹ‚
               </div>
             </div>
           </div>
@@ -2735,7 +2736,7 @@ const IntelligentWeekPlanner = () => {
     );
   };
 
-  // Komponent do wyświetlania informacji o czasie dojazdu
+  // Komponent do wyĹ›wietlania informacji o czasie dojazdu
   const TravelTimeInfo = ({ order, previousLocation = null, className = "" }) => {
     const fromLocation = previousLocation || startLocation?.coordinates;
     if (!fromLocation || !order.coordinates) return null;
@@ -2769,7 +2770,7 @@ const IntelligentWeekPlanner = () => {
           {travelInfo.distance}km, {travelInfo.duration}min
         </span>
         {travelInfo.trafficDelay > 0 && (
-          <span className="text-red-500" title={`Opóźnienie z powodu ruchu: +${travelInfo.trafficDelay}min`}>
+          <span className="text-red-500" title={`OpĂłĹşnienie z powodu ruchu: +${travelInfo.trafficDelay}min`}>
             (+{travelInfo.trafficDelay})
           </span>
         )}
@@ -2782,8 +2783,8 @@ const IntelligentWeekPlanner = () => {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <RefreshCw className="h-8 w-8 animate-spin mx-auto mb-4 text-blue-600" />
-          <p className="text-lg font-semibold">Optymalizuję trasy tygodniowe...</p>
-          <p className="text-sm text-gray-600 mt-2">Analizuję dostępność klientów i grupuję geograficznie</p>
+          <p className="text-lg font-semibold">OptymalizujÄ™ trasy tygodniowe...</p>
+          <p className="text-sm text-gray-600 mt-2">AnalizujÄ™ dostÄ™pnoĹ›Ä‡ klientĂłw i grupujÄ™ geograficznie</p>
         </div>
       </div>
     );
@@ -2795,19 +2796,19 @@ const IntelligentWeekPlanner = () => {
         <div className="text-center max-w-md">
           <AlertTriangle className="h-12 w-12 mx-auto mb-4 text-yellow-600" />
           <h2 className="text-xl font-bold mb-2">Brak danych do optymalizacji</h2>
-          <p className="text-gray-600 mb-4">Nie udało się załadować planu tygodniowego.</p>
+          <p className="text-gray-600 mb-4">Nie udaĹ‚o siÄ™ zaĹ‚adowaÄ‡ planu tygodniowego.</p>
           <button 
             onClick={loadIntelligentPlan}
             className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
           >
-            Spróbuj ponownie
+            SprĂłbuj ponownie
           </button>
         </div>
       </div>
     );
   }
 
-  // 🆕 Komponent modalu ze szczegółami zlecenia
+  // đź†• Komponent modalu ze szczegĂłĹ‚ami zlecenia
   const OrderDetailsModal = () => {
     if (!showOrderDetailsModal || !selectedOrderModal) return null;
 
@@ -2831,7 +2832,7 @@ const IntelligentWeekPlanner = () => {
                 onClick={() => setShowOrderDetailsModal(false)}
                 className="text-white hover:bg-white hover:bg-opacity-20 rounded-full p-2 transition-colors"
               >
-                ✕
+                âś•
               </button>
             </div>
           </div>
@@ -2848,7 +2849,7 @@ const IntelligentWeekPlanner = () => {
                 <p className="text-gray-800">{order.address || 'Brak adresu'}</p>
                 {order.coordinates && (
                   <p className="text-xs text-gray-500 mt-1">
-                    📍 {order.coordinates.lat?.toFixed(4)}, {order.coordinates.lng?.toFixed(4)}
+                    đź“Ť {order.coordinates.lat?.toFixed(4)}, {order.coordinates.lng?.toFixed(4)}
                   </p>
                 )}
               </div>
@@ -2865,14 +2866,14 @@ const IntelligentWeekPlanner = () => {
             {/* Opis problemu */}
             <div>
               <h4 className="text-sm font-semibold text-gray-600 mb-2">
-                🔧 Opis problemu
+                đź”§ Opis problemu
               </h4>
               <p className="text-gray-800 bg-gray-50 p-3 rounded-lg">
                 {order.description || order.issueDescription || 'Brak opisu'}
               </p>
             </div>
 
-            {/* Szczegóły serwisowe */}
+            {/* SzczegĂłĹ‚y serwisowe */}
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
               <div className="bg-blue-50 p-4 rounded-lg">
                 <p className="text-sm text-gray-600 mb-1">Priorytet</p>
@@ -2881,23 +2882,23 @@ const IntelligentWeekPlanner = () => {
                   order.priority === 'medium' ? 'text-yellow-600' :
                   'text-green-600'
                 }`}>
-                  {order.priority === 'high' ? '🔴 Wysoki' :
-                   order.priority === 'medium' ? '🟡 Średni' :
-                   '🟢 Niski'}
+                  {order.priority === 'high' ? 'đź”´ Wysoki' :
+                   order.priority === 'medium' ? 'đźźˇ Ĺšredni' :
+                   'đźź˘ Niski'}
                 </p>
               </div>
 
               <div className="bg-green-50 p-4 rounded-lg">
                 <p className="text-sm text-gray-600 mb-1">Szacowany czas</p>
                 <p className="font-bold text-lg text-gray-800">
-                  ⏱️ {order.estimatedDuration || 60} min
+                  âŹ±ď¸Ź {order.estimatedDuration || 60} min
                 </p>
               </div>
 
               <div className="bg-purple-50 p-4 rounded-lg">
-                <p className="text-sm text-gray-600 mb-1">Koszt usługi</p>
+                <p className="text-sm text-gray-600 mb-1">Koszt usĹ‚ugi</p>
                 <p className="font-bold text-lg text-gray-800">
-                  💰 {order.serviceCost || 0} zł
+                  đź’° {order.serviceCost || 0} zĹ‚
                 </p>
               </div>
             </div>
@@ -2906,17 +2907,17 @@ const IntelligentWeekPlanner = () => {
             {order.preferredTimeSlots && order.preferredTimeSlots.length > 0 && (
               <div>
                 <h4 className="text-sm font-semibold text-gray-600 mb-3">
-                  📅 Dostępność klienta
+                  đź“… DostÄ™pnoĹ›Ä‡ klienta
                 </h4>
                 <div className="space-y-2">
                   {order.preferredTimeSlots.map((slot, idx) => (
                     <div key={idx} className="bg-blue-50 p-3 rounded-lg flex items-center justify-between">
                       <span className="font-medium capitalize">
-                        {slot.day === 'monday' ? 'Poniedziałek' :
+                        {slot.day === 'monday' ? 'PoniedziaĹ‚ek' :
                          slot.day === 'tuesday' ? 'Wtorek' :
-                         slot.day === 'wednesday' ? 'Środa' :
+                         slot.day === 'wednesday' ? 'Ĺšroda' :
                          slot.day === 'thursday' ? 'Czwartek' :
-                         slot.day === 'friday' ? 'Piątek' :
+                         slot.day === 'friday' ? 'PiÄ…tek' :
                          slot.day === 'saturday' ? 'Sobota' :
                          'Niedziela'}
                       </span>
@@ -2929,11 +2930,11 @@ const IntelligentWeekPlanner = () => {
               </div>
             )}
 
-            {/* Niedostępne daty */}
+            {/* NiedostÄ™pne daty */}
             {order.unavailableDates && order.unavailableDates.length > 0 && (
               <div>
                 <h4 className="text-sm font-semibold text-gray-600 mb-2">
-                  ❌ Niedostępne daty
+                  âťŚ NiedostÄ™pne daty
                 </h4>
                 <div className="flex flex-wrap gap-2">
                   {order.unavailableDates.map((date, idx) => (
@@ -2945,55 +2946,55 @@ const IntelligentWeekPlanner = () => {
               </div>
             )}
 
-            {/* Czy można przełożyć */}
+            {/* Czy moĹĽna przeĹ‚oĹĽyÄ‡ */}
             <div className="flex items-center gap-3 bg-gray-50 p-4 rounded-lg">
               <div className={`w-3 h-3 rounded-full ${order.canReschedule ? 'bg-green-500' : 'bg-red-500'}`} />
               <span className="text-gray-700">
                 {order.canReschedule ? 
-                  '✅ Zlecenie można przełożyć na inny termin' : 
-                  '🔒 Zlecenie ma sztywny termin'}
+                  'âś… Zlecenie moĹĽna przeĹ‚oĹĽyÄ‡ na inny termin' : 
+                  'đź”’ Zlecenie ma sztywny termin'}
               </span>
             </div>
 
-            {/* 🆕 SEKCJA WIZYT - Timeline wizyt w zleceniu */}
+            {/* đź†• SEKCJA WIZYT - Timeline wizyt w zleceniu */}
             {order.orderNumber && (
               <div className="border-t-2 border-blue-200 pt-6">
                 <h4 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-                  📋 Historia wizyt w zleceniu {order.orderNumber}
+                  đź“‹ Historia wizyt w zleceniu {order.orderNumber}
                 </h4>
                 
                 {/* Informacja o aktualnej wizycie */}
                 {order.visitNumber && (
                   <div className="mb-4 p-3 bg-blue-100 border-l-4 border-blue-500 rounded">
                     <p className="text-sm text-blue-800">
-                      <strong>Obecnie wyświetlasz:</strong> Wizyta #{order.visitNumber} 
+                      <strong>Obecnie wyĹ›wietlasz:</strong> Wizyta #{order.visitNumber} 
                       {order.visitType && ` - ${
-                        order.visitType === 'diagnosis' ? '🔍 Diagnoza' :
-                        order.visitType === 'repair' ? '🔧 Naprawa' :
-                        order.visitType === 'control' ? '✅ Kontrola' :
-                        order.visitType === 'installation' ? '📦 Montaż' :
+                        order.visitType === 'diagnosis' ? 'đź”Ť Diagnoza' :
+                        order.visitType === 'repair' ? 'đź”§ Naprawa' :
+                        order.visitType === 'control' ? 'âś… Kontrola' :
+                        order.visitType === 'installation' ? 'đź“¦ MontaĹĽ' :
                         order.visitType
                       }`}
                     </p>
                   </div>
                 )}
 
-                {/* Przykładowa timeline - w prawdziwej implementacji pobierzesz to z API */}
+                {/* PrzykĹ‚adowa timeline - w prawdziwej implementacji pobierzesz to z API */}
                 <div className="space-y-3">
                   <div className="text-sm text-gray-600 italic mb-3">
-                    💡 Poniżej zobaczysz wszystkie wizyty powiązane z tym zleceniem
+                    đź’ˇ PoniĹĽej zobaczysz wszystkie wizyty powiÄ…zane z tym zleceniem
                   </div>
                   
-                  {/* Wizyta obecna (przykład) */}
+                  {/* Wizyta obecna (przykĹ‚ad) */}
                   <div className={`p-4 rounded-lg border-2 ${
                     order.visitNumber === 1 ? 'border-blue-500 bg-blue-50' : 'border-gray-200 bg-white'
                   }`}>
                     <div className="flex items-center justify-between mb-2">
                       <span className="font-bold text-gray-800">
-                        {order.visitType === 'diagnosis' ? '🔍 Diagnoza' : 
-                         order.visitType === 'repair' ? '🔧 Naprawa' :
-                         order.visitType === 'control' ? '✅ Kontrola' :
-                         '📋 Wizyta'} #{order.visitNumber || 1}
+                        {order.visitType === 'diagnosis' ? 'đź”Ť Diagnoza' : 
+                         order.visitType === 'repair' ? 'đź”§ Naprawa' :
+                         order.visitType === 'control' ? 'âś… Kontrola' :
+                         'đź“‹ Wizyta'} #{order.visitNumber || 1}
                       </span>
                       <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
                         order.status === 'completed' ? 'bg-green-100 text-green-800' :
@@ -3001,35 +3002,35 @@ const IntelligentWeekPlanner = () => {
                         order.status === 'in_progress' ? 'bg-yellow-100 text-yellow-800' :
                         'bg-gray-100 text-gray-800'
                       }`}>
-                        {order.status === 'completed' ? '✅ Zakończona' :
-                         order.status === 'scheduled' ? '📅 Zaplanowana' :
-                         order.status === 'in_progress' ? '🔄 W trakcie' :
+                        {order.status === 'completed' ? 'âś… ZakoĹ„czona' :
+                         order.status === 'scheduled' ? 'đź“… Zaplanowana' :
+                         order.status === 'in_progress' ? 'đź”„ W trakcie' :
                          order.status}
                       </span>
                     </div>
                     
                     {order.scheduledDate && (
                       <p className="text-sm text-gray-600 mb-1">
-                        📅 {new Date(order.scheduledDate).toLocaleDateString('pl-PL')}
+                        đź“… {new Date(order.scheduledDate).toLocaleDateString('pl-PL')}
                         {order.scheduledTime && ` o ${order.scheduledTime}`}
                       </p>
                     )}
                     
                     {order.technicianName && (
                       <p className="text-sm text-gray-600">
-                        👤 Technik: {order.technicianName}
+                        đź‘¤ Technik: {order.technicianName}
                       </p>
                     )}
 
                     {order.visitNumber === 1 && (
                       <div className="mt-2 pt-2 border-t border-blue-200">
                         <p className="text-xs text-blue-700">
-                          🎯 <strong>To jest wizyta, którą obecnie przeglądasz</strong>
+                          đźŽŻ <strong>To jest wizyta, ktĂłrÄ… obecnie przeglÄ…dasz</strong>
                         </p>
                       </div>
                     )}
 
-                    {/* Szybka akcja - Edytuj wizytę */}
+                    {/* Szybka akcja - Edytuj wizytÄ™ */}
                     <div className="mt-3 flex gap-2">
                       <button
                         onClick={() => {
@@ -3046,29 +3047,29 @@ const IntelligentWeekPlanner = () => {
                       {order.status !== 'completed' && (
                         <button
                           onClick={() => {
-                            alert('Funkcja oznaczania wizyty jako zakończonej - wkrótce!');
+                            alert('Funkcja oznaczania wizyty jako zakoĹ„czonej - wkrĂłtce!');
                           }}
                           className="flex-1 px-3 py-1.5 bg-green-100 text-green-700 text-xs rounded hover:bg-green-200 transition-colors flex items-center justify-center gap-1"
                         >
                           <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                           </svg>
-                          Zakończ
+                          ZakoĹ„cz
                         </button>
                       )}
                     </div>
                   </div>
 
-                  {/* Placeholder dla przyszłych wizyt */}
+                  {/* Placeholder dla przyszĹ‚ych wizyt */}
                   <div className="p-4 rounded-lg border-2 border-dashed border-gray-300 bg-gray-50">
                     <div className="flex items-center justify-between mb-2">
                       <span className="font-medium text-gray-600">
-                        ➕ Dodaj kolejną wizytę
+                        âž• Dodaj kolejnÄ… wizytÄ™
                       </span>
                       <button 
                         className="px-3 py-1 bg-blue-500 text-white text-xs rounded hover:bg-blue-600 transition-colors flex items-center gap-1"
                         onClick={() => {
-                          // Otwórz stronę edycji zlecenia, gdzie można dodać wizytę
+                          // OtwĂłrz stronÄ™ edycji zlecenia, gdzie moĹĽna dodaÄ‡ wizytÄ™
                           const orderId = order.orderId || order.id;
                           router.push(`/zlecenie-szczegoly?id=${orderId}&action=add-visit`);
                         }}
@@ -3076,11 +3077,11 @@ const IntelligentWeekPlanner = () => {
                         <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                         </svg>
-                        Dodaj wizytę
+                        Dodaj wizytÄ™
                       </button>
                     </div>
                     <p className="text-xs text-gray-500">
-                      Możesz zaplanować np. naprawę po diagnozie lub wizytę kontrolną
+                      MoĹĽesz zaplanowaÄ‡ np. naprawÄ™ po diagnozie lub wizytÄ™ kontrolnÄ…
                     </p>
                   </div>
                 </div>
@@ -3088,8 +3089,8 @@ const IntelligentWeekPlanner = () => {
                 {/* Info box */}
                 <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
                   <p className="text-xs text-yellow-800">
-                    <strong>ℹ️ Jak to działa:</strong> Jedno zlecenie może mieć wiele wizyt. 
-                    Klient dzwoni → tworzymy zlecenie → planujemy wizyty (diagnoza, naprawa, kontrola). 
+                    <strong>â„ąď¸Ź Jak to dziaĹ‚a:</strong> Jedno zlecenie moĹĽe mieÄ‡ wiele wizyt. 
+                    Klient dzwoni â†’ tworzymy zlecenie â†’ planujemy wizyty (diagnoza, naprawa, kontrola). 
                     Inteligentny planer optymalizuje WIZYTY, nie zlecenia.
                   </p>
                 </div>
@@ -3107,8 +3108,8 @@ const IntelligentWeekPlanner = () => {
             </button>
             <button
               onClick={() => {
-                console.log('🔧 Przekierowanie do edycji zlecenia:', order.orderId || order.id);
-                // Przekieruj do strony szczegółów/edycji zlecenia
+                logger.success('đź”§ Przekierowanie do edycji zlecenia:', order.orderId || order.id);
+                // Przekieruj do strony szczegĂłĹ‚Ăłw/edycji zlecenia
                 const orderId = order.orderId || order.id;
                 router.push(`/zlecenie-szczegoly?id=${orderId}`);
               }}
@@ -3127,7 +3128,7 @@ const IntelligentWeekPlanner = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* 🆕 Modal ze szczegółami zlecenia */}
+      {/* đź†• Modal ze szczegĂłĹ‚ami zlecenia */}
       <OrderDetailsModal />
       {/* Powiadomienia */}
       {notifications.length > 0 && (
@@ -3156,7 +3157,7 @@ const IntelligentWeekPlanner = () => {
                   onClick={() => removeNotification(notification.id)}
                   className="ml-2 text-gray-400 hover:text-gray-600"
                 >
-                  ✕
+                  âś•
                 </button>
               </div>
             </div>
@@ -3174,11 +3175,11 @@ const IntelligentWeekPlanner = () => {
                 Inteligentny Planer Tygodniowy
               </h1>
               <p className="text-gray-600 mt-1">
-                Planowanie wizyt z uwzględnieniem dostępności klientów i priorytetów
+                Planowanie wizyt z uwzglÄ™dnieniem dostÄ™pnoĹ›ci klientĂłw i priorytetĂłw
               </p>
             </div>
             <div className="flex items-center gap-3">
-              {/* Przycisk wyboru serwisanta przeniesiony do sekcji nieprzypisanych zleceń */}
+              {/* Przycisk wyboru serwisanta przeniesiony do sekcji nieprzypisanych zleceĹ„ */}
             </div>
           </div>
           
@@ -3191,14 +3192,14 @@ const IntelligentWeekPlanner = () => {
                 <span className="text-sm text-gray-900">{startLocation.address}</span>
                 {startLocation.isDetected && (
                   <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">
-                    📍 Wykryto automatycznie
+                    đź“Ť Wykryto automatycznie
                   </span>
                 )}
               </div>
             </div>
           </div>
           
-          {/* Panel ustawień godzin pracy */}
+          {/* Panel ustawieĹ„ godzin pracy */}
           <div className="mt-3 p-4 bg-orange-50 rounded-lg border border-orange-200">
             <h3 className="font-semibold text-orange-800 mb-3 flex items-center gap-2">
               <Clock className="h-4 w-4" />
@@ -3207,7 +3208,7 @@ const IntelligentWeekPlanner = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Rozpoczęcie pracy
+                  RozpoczÄ™cie pracy
                 </label>
                 <input
                   type="time"
@@ -3221,7 +3222,7 @@ const IntelligentWeekPlanner = () => {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Zakończenie pracy
+                  ZakoĹ„czenie pracy
                 </label>
                 <input
                   type="time"
@@ -3253,26 +3254,26 @@ const IntelligentWeekPlanner = () => {
               </div>
             </div>
             <div className="mt-3 text-xs text-orange-600">
-              ⚠️ System zapewni, że harmonogram nie przekroczy tych limitów podczas przenoszenia zleceń
+              âš ď¸Ź System zapewni, ĹĽe harmonogram nie przekroczy tych limitĂłw podczas przenoszenia zleceĹ„
             </div>
           </div>
         </div>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 py-6">
-        {/* Analiza kosztów */}
+        {/* Analiza kosztĂłw */}
         {weeklyPlan.costAnalysis && weeklyPlan.costAnalysis.optimized && (
           <div className="mb-6 bg-white rounded-lg shadow-sm p-6">
             <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
               <DollarSign className="h-5 w-5 text-green-600" />
-              Analiza Kosztów i Oszczędności
+              Analiza KosztĂłw i OszczÄ™dnoĹ›ci
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <div className="text-center p-4 bg-green-50 rounded-lg">
                 <div className="text-2xl font-bold text-green-600">
-                  {weeklyPlan.costAnalysis.savings}zł
+                  {weeklyPlan.costAnalysis.savings}zĹ‚
                 </div>
-                <div className="text-sm text-gray-600">Oszczędności</div>
+                <div className="text-sm text-gray-600">OszczÄ™dnoĹ›ci</div>
                 <div className="text-xs text-green-600 font-medium">
                   {weeklyPlan.costAnalysis.savingsPercentage}% taniej
                 </div>
@@ -3281,27 +3282,27 @@ const IntelligentWeekPlanner = () => {
                 <div className="text-2xl font-bold text-blue-600">
                   {weeklyPlan.costAnalysis.optimized.totalDistance}km
                 </div>
-                <div className="text-sm text-gray-600">Całkowity dystans</div>
+                <div className="text-sm text-gray-600">CaĹ‚kowity dystans</div>
                 <div className="text-xs text-blue-600 font-medium">
-                  {weeklyPlan.costAnalysis.optimized.totalFuelCost}zł paliwa
+                  {weeklyPlan.costAnalysis.optimized.totalFuelCost}zĹ‚ paliwa
                 </div>
               </div>
               <div className="text-center p-4 bg-purple-50 rounded-lg">
                 <div className="text-2xl font-bold text-purple-600">
-                  {weeklyPlan.costAnalysis.optimized.totalRevenue}zł
+                  {weeklyPlan.costAnalysis.optimized.totalRevenue}zĹ‚
                 </div>
-                <div className="text-sm text-gray-600">Przychód</div>
+                <div className="text-sm text-gray-600">PrzychĂłd</div>
                 <div className="text-xs text-purple-600 font-medium">
-                  {weeklyPlan.costAnalysis.optimized.profit}zł zysku
+                  {weeklyPlan.costAnalysis.optimized.profit}zĹ‚ zysku
                 </div>
               </div>
               <div className="text-center p-4 bg-orange-50 rounded-lg">
                 <div className="text-2xl font-bold text-orange-600">
                   {weeklyPlan.costAnalysis.efficiency}%
                 </div>
-                <div className="text-sm text-gray-600">Efektywność</div>
+                <div className="text-sm text-gray-600">EfektywnoĹ›Ä‡</div>
                 <div className="text-xs text-orange-600 font-medium">
-                  Marża zysku
+                  MarĹĽa zysku
                 </div>
               </div>
             </div>
@@ -3352,12 +3353,12 @@ const IntelligentWeekPlanner = () => {
               className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
             >
               <ChevronLeft className="h-4 w-4" />
-              Poprzedni tydzień
+              Poprzedni tydzieĹ„
             </button>
             
             <div className="text-center">
               <h2 className="text-lg font-semibold">
-                Tydzień {currentWeekStart.toLocaleDateString('pl-PL', { 
+                TydzieĹ„ {currentWeekStart.toLocaleDateString('pl-PL', { 
                   day: '2-digit', 
                   month: '2-digit',
                   year: 'numeric'
@@ -3379,11 +3380,11 @@ const IntelligentWeekPlanner = () => {
                   today.setHours(0, 0, 0, 0);
                   
                   if (weekStart.getTime() === today.getTime() - (today.getDay() === 0 ? 6 : today.getDay() - 1) * 24 * 60 * 60 * 1000) {
-                    return "Obecny tydzień";
+                    return "Obecny tydzieĹ„";
                   } else if (weekStart.getTime() > today.getTime()) {
-                    return "Przyszły tydzień";
+                    return "PrzyszĹ‚y tydzieĹ„";
                   } else {
-                    return "Miniony tydzień";
+                    return "Miniony tydzieĹ„";
                   }
                 })()}
               </p>
@@ -3397,7 +3398,7 @@ const IntelligentWeekPlanner = () => {
               }}
               className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
             >
-              Następny tydzień
+              NastÄ™pny tydzieĹ„
               <ChevronRight className="h-4 w-4" />
             </button>
           </div>
@@ -3438,10 +3439,10 @@ const IntelligentWeekPlanner = () => {
                     setTimeRange({ start, end });
                   }}
                   className="text-xs border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  title="Wybierz zakres godzin wyświetlanych na osi czasu"
+                  title="Wybierz zakres godzin wyĹ›wietlanych na osi czasu"
                 >
-                  <option value="0-24">00:00 - 24:00 (całą dobę)</option>
-                  <option value="6-23">06:00 - 23:00 (domyślnie)</option>
+                  <option value="0-24">00:00 - 24:00 (caĹ‚Ä… dobÄ™)</option>
+                  <option value="6-23">06:00 - 23:00 (domyĹ›lnie)</option>
                   <option value="7-22">07:00 - 22:00 (godziny pracy)</option>
                   <option value="8-20">08:00 - 20:00 (standard)</option>
                   <option value="8-18">08:00 - 18:00 (biznesowe)</option>
@@ -3453,23 +3454,23 @@ const IntelligentWeekPlanner = () => {
                     checked={hideUnusedHours}
                     onChange={(e) => setHideUnusedHours(e.target.checked)}
                     className="w-4 h-4 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
-                    title="Ukryj godziny poza wybranym zakresem (zwiń timeline)"
+                    title="Ukryj godziny poza wybranym zakresem (zwiĹ„ timeline)"
                   />
                   <span className="whitespace-nowrap">Ukryj niewykorzystane</span>
                 </label>
               </div>
             </div>
 
-            {/* 🔍 DRUGA LINIA: Zoom Timeline - bardziej widoczny */}
+            {/* đź”Ť DRUGA LINIA: Zoom Timeline - bardziej widoczny */}
             <div className="flex items-center gap-4 p-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200">
               <div className="flex items-center gap-3">
-                <span className="text-sm font-bold text-blue-900">🔍 Powiększenie osi czasu:</span>
+                <span className="text-sm font-bold text-blue-900">đź”Ť PowiÄ™kszenie osi czasu:</span>
                 <button
                   onClick={() => setTimelineZoom(Math.max(0.5, timelineZoom - 0.25))}
                   className="px-3 py-2 text-sm font-medium bg-white hover:bg-blue-100 border border-blue-300 rounded-lg transition-colors shadow-sm"
-                  title="Zmniejsz zoom (pokaż więcej)"
+                  title="Zmniejsz zoom (pokaĹĽ wiÄ™cej)"
                 >
-                  − Zmniejsz
+                  â’ Zmniejsz
                 </button>
                 <input
                   type="range"
@@ -3479,14 +3480,14 @@ const IntelligentWeekPlanner = () => {
                   value={timelineZoom}
                   onChange={(e) => setTimelineZoom(parseFloat(e.target.value))}
                   className="w-32 h-3 bg-blue-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
-                  title="Dostosuj skalę timeline"
+                  title="Dostosuj skalÄ™ timeline"
                 />
                 <button
                   onClick={() => setTimelineZoom(Math.min(3, timelineZoom + 0.25))}
                   className="px-3 py-2 text-sm font-medium bg-white hover:bg-blue-100 border border-blue-300 rounded-lg transition-colors shadow-sm"
-                  title="Zwiększ zoom (pokaż szczegóły)"
+                  title="ZwiÄ™ksz zoom (pokaĹĽ szczegĂłĹ‚y)"
                 >
-                  + Powiększ
+                  + PowiÄ™ksz
                 </button>
                 <span className="text-sm font-bold text-blue-900 min-w-[60px] text-center bg-white px-3 py-2 rounded-lg border border-blue-300 shadow-sm">
                   {timelineZoom.toFixed(2)}x
@@ -3497,26 +3498,26 @@ const IntelligentWeekPlanner = () => {
                     className="px-3 py-2 text-sm font-medium text-blue-700 hover:text-blue-900 hover:bg-blue-100 transition-colors rounded-lg border border-blue-300 bg-white shadow-sm"
                     title="Resetuj zoom do 1x"
                   >
-                    ↺ Reset
+                    â†ş Reset
                   </button>
                 )}
               </div>
             </div>
 
-            {/* TRZECIA LINIA: Pozostałe opcje */}
+            {/* TRZECIA LINIA: PozostaĹ‚e opcje */}
             <div className="flex flex-wrap items-center gap-4">
-              {/* Nagłówek karty */}
+              {/* NagĹ‚Ăłwek karty */}
               <div className="flex items-center gap-2">
-                <span className="text-sm font-medium text-gray-700">Nagłówek:</span>
+                <span className="text-sm font-medium text-gray-700">NagĹ‚Ăłwek:</span>
                 <select
                   value={cardHeaderField}
                   onChange={(e) => setCardHeaderField(e.target.value)}
                   className="text-xs border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  title="Wybierz, co ma być wyświetlane jako nagłówek karty zlecenia"
+                  title="Wybierz, co ma byÄ‡ wyĹ›wietlane jako nagĹ‚Ăłwek karty zlecenia"
                 >
-                  <option value="clientName">Imię i nazwisko</option>
+                  <option value="clientName">ImiÄ™ i nazwisko</option>
                   <option value="address">Adres</option>
-                  <option value="deviceType">Typ sprzętu</option>
+                  <option value="deviceType">Typ sprzÄ™tu</option>
                   <option value="description">Problem/Opis</option>
                 </select>
               </div>
@@ -3529,10 +3530,10 @@ const IntelligentWeekPlanner = () => {
                   onChange={(e) => setSortBy(e.target.value)}
                   className="text-xs border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
-                  <option value="default">Domyślnie</option>
+                  <option value="default">DomyĹ›lnie</option>
                   <option value="priority">Priorytet</option>
                   <option value="time">Czas realizacji</option>
-                  <option value="revenue">Wartość zlecenia</option>
+                  <option value="revenue">WartoĹ›Ä‡ zlecenia</option>
                   <option value="client">Nazwa klienta</option>
                 </select>
               </div>
@@ -3546,13 +3547,13 @@ const IntelligentWeekPlanner = () => {
                   className="text-xs border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="all">Wszystkie statusy</option>
-                  <option value="pending">⏳ Oczekuje na kontakt</option>
-                  <option value="contacted">📞 Skontaktowano się</option>
-                  <option value="unscheduled">📦 Nieprzypisane</option>
-                  <option value="scheduled">📅 Umówiona wizyta</option>
-                  <option value="confirmed">✅ Potwierdzona</option>
-                  <option value="in_progress">🔧 W trakcie</option>
-                  <option value="waiting_parts">🔩 Oczekuje na części</option>
+                  <option value="pending">âŹł Oczekuje na kontakt</option>
+                  <option value="contacted">đź“ž Skontaktowano siÄ™</option>
+                  <option value="unscheduled">đź“¦ Nieprzypisane</option>
+                  <option value="scheduled">đź“… UmĂłwiona wizyta</option>
+                  <option value="confirmed">âś… Potwierdzona</option>
+                  <option value="in_progress">đź”§ W trakcie</option>
+                  <option value="waiting_parts">đź”© Oczekuje na czÄ™Ĺ›ci</option>
                 </select>
               </div>
             </div>
@@ -3560,12 +3561,12 @@ const IntelligentWeekPlanner = () => {
             {/* Statystyki i dodatkowe opcje */}
             <div className="flex flex-wrap items-center gap-4 text-xs text-gray-600">
               <span className="flex items-center gap-1">
-                📊 {Object.values(getWeeklyPlanData(weeklyPlan) || {}).reduce((sum, day) => sum + (day?.orders?.length || 0), 0)} zleceń
+                đź“Š {Object.values(getWeeklyPlanData(weeklyPlan) || {}).reduce((sum, day) => sum + (day?.orders?.length || 0), 0)} zleceĹ„
               </span>
               <span className="flex items-center gap-1">
-                💰 {Object.values(getWeeklyPlanData(weeklyPlan) || {}).reduce((sum, day) => 
+                đź’° {Object.values(getWeeklyPlanData(weeklyPlan) || {}).reduce((sum, day) => 
                   sum + (day?.orders?.reduce((daySum, order) => daySum + (order.serviceCost || 0), 0) || 0), 0
-                )} zł
+                )} zĹ‚
               </span>
               {expandedDay && (
                 <div className="flex items-center gap-2 ml-4">
@@ -3575,10 +3576,10 @@ const IntelligentWeekPlanner = () => {
                     onChange={(e) => setOrdersPerPage(Number(e.target.value))}
                     className="text-xs border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
-                    <option value={5}>5 na stronę</option>
-                    <option value={10}>10 na stronę</option>
-                    <option value={20}>20 na stronę</option>
-                    <option value={50}>50 na stronę</option>
+                    <option value={5}>5 na stronÄ™</option>
+                    <option value={10}>10 na stronÄ™</option>
+                    <option value={20}>20 na stronÄ™</option>
+                    <option value={50}>50 na stronÄ™</option>
                   </select>
                 </div>
               )}
@@ -3586,7 +3587,7 @@ const IntelligentWeekPlanner = () => {
                 <button
                   onClick={() => setExpandedDay(null)}
                   className="flex items-center gap-1 px-2 py-1 bg-red-100 text-red-700 rounded text-xs hover:bg-red-200"
-                  title="Zamknij rozwinięty widok"
+                  title="Zamknij rozwiniÄ™ty widok"
                 >
                   <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -3598,7 +3599,7 @@ const IntelligentWeekPlanner = () => {
           </div>
         </div>
 
-        {/* Backdrop dla rozwiniętego widoku */}
+        {/* Backdrop dla rozwiniÄ™tego widoku */}
         {expandedDay && (
           <div 
             className="fixed inset-0 bg-black bg-opacity-50 z-40"
@@ -3606,12 +3607,12 @@ const IntelligentWeekPlanner = () => {
           />
         )}
 
-        {/* Pula niezapisanych zleceń */}
+        {/* Pula niezapisanych zleceĹ„ */}
         {(() => {
-          // Znajdź wszystkie zlecenia bez przypisanego dnia (scheduledDate === null)
+          // ZnajdĹş wszystkie zlecenia bez przypisanego dnia (scheduledDate === null)
           const unscheduledOrders = weeklyPlan.unscheduledOrders || [];
           
-          // ✅ ZAWSZE POKAZUJ SEKCJĘ - nawet gdy pusta (żeby można było przeciągać zlecenia z powrotem)
+          // âś… ZAWSZE POKAZUJ SEKCJÄ - nawet gdy pusta (ĹĽeby moĹĽna byĹ‚o przeciÄ…gaÄ‡ zlecenia z powrotem)
           return (
             <div 
               className="mb-6 bg-gradient-to-r from-orange-50 to-yellow-50 rounded-lg shadow-sm border-2 border-orange-200 h-[300px] flex flex-col"
@@ -3633,10 +3634,10 @@ const IntelligentWeekPlanner = () => {
                   </div>
                   <div>
                     <h2 className="text-lg font-semibold text-orange-900">
-                      📦 Niezaplanowane zlecenia ({unscheduledOrders.length})
+                      đź“¦ Niezaplanowane zlecenia ({unscheduledOrders.length})
                     </h2>
                     <p className="text-sm text-orange-700">
-                      Przeciągnij zlecenie na wybrany dzień tygodnia, aby je zaplanować
+                      PrzeciÄ…gnij zlecenie na wybrany dzieĹ„ tygodnia, aby je zaplanowaÄ‡
                     </p>
                   </div>
                 </div>
@@ -3655,14 +3656,14 @@ const IntelligentWeekPlanner = () => {
                     <div className="absolute top-full left-0 mt-2 w-64 bg-white rounded-lg shadow-lg border z-50">
                       <div className="p-3 border-b">
                         <h3 className="font-semibold text-gray-900">Wybierz serwisanta</h3>
-                        <p className="text-xs text-gray-600 mt-1">Każdy serwisant ma osobny planner</p>
+                        <p className="text-xs text-gray-600 mt-1">KaĹĽdy serwisant ma osobny planner</p>
                       </div>
                       <div className="p-2">
                         {availableServicemen.map(serviceman => (
                           <button
                             key={serviceman.id}
                             onClick={() => {
-                              console.log('🔄 Zmieniono serwisanta na:', serviceman.id, serviceman.name);
+                              logger.success('đź”„ Zmieniono serwisanta na:', serviceman.id, serviceman.name);
                               setCurrentServiceman(serviceman.id);
                               setShowServicemanSelector(false);
                               // Oznacz serwisanta jako aktywnego
@@ -3670,7 +3671,7 @@ const IntelligentWeekPlanner = () => {
                                 ...s,
                                 isActive: s.id === serviceman.id
                               })));
-                              // ✅ Przeładuj plan dla nowego serwisanta
+                              // âś… PrzeĹ‚aduj plan dla nowego serwisanta
                               setTimeout(() => loadIntelligentPlan(), 100);
                             }}
                             className={`w-full flex items-center gap-3 p-3 rounded-lg text-left hover:bg-gray-50 ${
@@ -3684,7 +3685,7 @@ const IntelligentWeekPlanner = () => {
                             <div className="flex-1">
                               <div className="font-medium text-gray-900">{serviceman.name}</div>
                               <div className="text-xs text-gray-500">
-                                {serviceman.isActive ? 'Aktywny' : 'Dostępny'}
+                                {serviceman.isActive ? 'Aktywny' : 'DostÄ™pny'}
                               </div>
                             </div>
                             {currentServiceman === serviceman.id && (
@@ -3700,7 +3701,7 @@ const IntelligentWeekPlanner = () => {
                 <button
                   onClick={() => {
                     // Automatycznie zaplanuj wszystkie zlecenia
-                    showNotification('🤖 Automatyczne planowanie...', 'info');
+                    showNotification('đź¤– Automatyczne planowanie...', 'info');
                     loadIntelligentPlan();
                   }}
                   className="flex items-center gap-2 px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors"
@@ -3715,8 +3716,8 @@ const IntelligentWeekPlanner = () => {
                 {unscheduledOrders.length === 0 ? (
                   <div className="col-span-full flex flex-col items-center justify-center h-full text-gray-500">
                     <Calendar className="h-16 w-16 mb-4 opacity-30" />
-                    <p className="text-lg font-medium">Wszystkie zlecenia zostały zaplanowane! 🎉</p>
-                    <p className="text-sm mt-2">Przeciągnij zlecenie tutaj aby cofnąć planowanie</p>
+                    <p className="text-lg font-medium">Wszystkie zlecenia zostaĹ‚y zaplanowane! đźŽ‰</p>
+                    <p className="text-sm mt-2">PrzeciÄ…gnij zlecenie tutaj aby cofnÄ…Ä‡ planowanie</p>
                   </div>
                 ) : (
                   unscheduledOrders.map((order, idx) => (
@@ -3728,7 +3729,7 @@ const IntelligentWeekPlanner = () => {
                     draggable={true}
                     onDragStart={(e) => handleDragStart(e, order, 'unscheduled')}
                     onDragEnd={handleDragEnd}
-                    title="Przeciągnij to zlecenie na wybrany dzień"
+                    title="PrzeciÄ…gnij to zlecenie na wybrany dzieĹ„"
                   >
                     <div className="flex items-start justify-between mb-2 gap-2">
                       <div className="flex-1 min-w-0">
@@ -3748,10 +3749,10 @@ const IntelligentWeekPlanner = () => {
                         order.priority === 'medium' ? 'bg-yellow-100 text-yellow-800' :
                         'bg-green-100 text-green-800'
                       }`}>
-                        {order.priority === 'urgent' ? '🔥 Pilne' :
-                         order.priority === 'high' ? '⚡ Wysokie' :
-                         order.priority === 'medium' ? '📌 Średnie' :
-                         '✅ Niskie'}
+                        {order.priority === 'urgent' ? 'đź”Ą Pilne' :
+                         order.priority === 'high' ? 'âšˇ Wysokie' :
+                         order.priority === 'medium' ? 'đź“Ś Ĺšrednie' :
+                         'âś… Niskie'}
                       </span>
                     </div>
                     
@@ -3766,14 +3767,14 @@ const IntelligentWeekPlanner = () => {
                       </span>
                       <span className="flex items-center gap-1">
                         <DollarSign className="h-3 w-3" />
-                        {order.serviceCost || 150} zł
+                        {order.serviceCost || 150} zĹ‚
                       </span>
                     </div>
                     
                     {order.address && (
                       <div className="mt-2 pt-2 border-t border-gray-200">
                         <p className="text-xs text-gray-600 truncate" title={order.address}>
-                          📍 {order.address}
+                          đź“Ť {order.address}
                         </p>
                       </div>
                     )}
@@ -3803,7 +3804,7 @@ const IntelligentWeekPlanner = () => {
         }`}>
           {Object.keys(dayNames).map(day => {
             const dayPlan = weeklyPlan[day] || { orders: [], stats: {} };
-            const dayOrders = getOrdersForWeekDay(day); // 🆕 Użyj funkcji filtrującej zamiast dayPlan.orders
+            const dayOrders = getOrdersForWeekDay(day); // đź†• UĹĽyj funkcji filtrujÄ…cej zamiast dayPlan.orders
             const dayInfo = formatDayWithDate(day, currentWeekStart);
             
             return (
@@ -3819,12 +3820,12 @@ const IntelligentWeekPlanner = () => {
                       </h3>
                       <p className={`text-sm ${dayInfo.isToday ? 'text-blue-600 font-medium' : 'text-gray-500'}`}>
                         {dayInfo.date}
-                        {dayInfo.isToday && <span className="ml-2 px-2 py-1 bg-blue-200 text-blue-800 text-xs rounded-full">Dziś</span>}
-                        {dayInfo.isPast && <span className="ml-2 px-2 py-1 bg-gray-200 text-gray-600 text-xs rounded-full">Przeszłość</span>}
+                        {dayInfo.isToday && <span className="ml-2 px-2 py-1 bg-blue-200 text-blue-800 text-xs rounded-full">DziĹ›</span>}
+                        {dayInfo.isPast && <span className="ml-2 px-2 py-1 bg-gray-200 text-gray-600 text-xs rounded-full">PrzeszĹ‚oĹ›Ä‡</span>}
                       </p>
                     </div>
                     <span className="text-sm text-gray-500">
-                      {dayOrders.length} {dayOrders.length === 1 ? 'zlecenie' : 'zleceń'}
+                      {dayOrders.length} {dayOrders.length === 1 ? 'zlecenie' : 'zleceĹ„'}
                     </span>
                   </div>
                   
@@ -3833,7 +3834,7 @@ const IntelligentWeekPlanner = () => {
                       <button
                         onClick={() => optimizeSingleDay(day)}
                         className="flex items-center gap-1 px-2 py-1 bg-purple-600 text-white text-[10px] rounded hover:bg-purple-700 transition-colors whitespace-nowrap"
-                        title="Optymalizuj tylko ten dzień"
+                        title="Optymalizuj tylko ten dzieĹ„"
                       >
                         <TrendingUp className="h-3 w-3" />
                         <span className="hidden lg:inline">Opt.</span>
@@ -3849,32 +3850,32 @@ const IntelligentWeekPlanner = () => {
                   )}
                 </div>
                 
-                {/* 📅 Timeline z osią czasu i zleceniami */}
+                {/* đź“… Timeline z osiÄ… czasu i zleceniami */}
                 {(() => {
                   const schedule = getServicemanScheduleForDay(day, currentServiceman);
                   
-                  // Konwersja czasu na procent wysokości (0-100%)
+                  // Konwersja czasu na procent wysokoĹ›ci (0-100%)
                   const timeToPixels = (time) => {
                     const [h, m] = time.split(':').map(Number);
                     const totalMinutes = h * 60 + m;
                     
                     if (hideUnusedHours) {
-                      // Tryb zwinięty - mapuj tylko zakres timeRange.start do timeRange.end na 0-100%
+                      // Tryb zwiniÄ™ty - mapuj tylko zakres timeRange.start do timeRange.end na 0-100%
                       const rangeMinutes = (timeRange.end - timeRange.start) * 60;
                       const offsetMinutes = totalMinutes - (timeRange.start * 60);
                       return (offsetMinutes / rangeMinutes) * 100;
                     } else {
-                      // Tryb pełny - mapuj 0-24h na 0-100%
+                      // Tryb peĹ‚ny - mapuj 0-24h na 0-100%
                       return (totalMinutes / (24 * 60)) * 100;
                     }
                   };
                   
-                  // Pobierz czas rozpoczęcia wizyty z zlecenia
+                  // Pobierz czas rozpoczÄ™cia wizyty z zlecenia
                   const getOrderStartTime = (order) => {
-                    // Sprawdź czy zlecenie ma zapisany czas wizyty
+                    // SprawdĹş czy zlecenie ma zapisany czas wizyty
                     if (order.scheduledTime) return order.scheduledTime;
                     if (order.preferredTime) return order.preferredTime;
-                    // Jeśli brak - użyj domyślnego (8:00)
+                    // JeĹ›li brak - uĹĽyj domyĹ›lnego (8:00)
                     return '08:00';
                   };
                   
@@ -3882,7 +3883,7 @@ const IntelligentWeekPlanner = () => {
                     return order.estimatedDuration || 60; // minuty
                   };
                   
-                  // Oblicz czas zakończenia
+                  // Oblicz czas zakoĹ„czenia
                   const getOrderEndTime = (order) => {
                     const startTime = getOrderStartTime(order);
                     const duration = getOrderDuration(order);
@@ -3893,62 +3894,62 @@ const IntelligentWeekPlanner = () => {
                     return `${endH.toString().padStart(2, '0')}:${endM.toString().padStart(2, '0')}`;
                   };
                   
-                  // Funkcja do obsługi upuszczenia zlecenia na timeline (zmiana godziny/dnia)
+                  // Funkcja do obsĹ‚ugi upuszczenia zlecenia na timeline (zmiana godziny/dnia)
                   const handleTimelineDrop = async (e, targetDay, mouseY) => {
                     e.preventDefault();
                     e.stopPropagation();
                     
                     if (!draggedOrder) return;
                     
-                    // Oblicz godzinę na podstawie pozycji Y myszy
+                    // Oblicz godzinÄ™ na podstawie pozycji Y myszy
                     const rect = e.currentTarget.getBoundingClientRect();
                     const relativeY = mouseY - rect.top;
                     const percentY = (relativeY / rect.height) * 100;
                     
                     let totalMinutes;
                     if (hideUnusedHours) {
-                      // Tryb zwinięty - mapuj 0-100% na zakres timeRange
+                      // Tryb zwiniÄ™ty - mapuj 0-100% na zakres timeRange
                       const rangeMinutes = (timeRange.end - timeRange.start) * 60;
                       totalMinutes = (timeRange.start * 60) + (percentY / 100) * rangeMinutes;
                     } else {
-                      // Tryb pełny - mapuj 0-100% na 0-24h
+                      // Tryb peĹ‚ny - mapuj 0-100% na 0-24h
                       totalMinutes = (percentY / 100) * 24 * 60;
                     }
                     
                     const hour = Math.floor(totalMinutes / 60);
-                    const minute = Math.floor((totalMinutes % 60) / 15) * 15; // Zaokrąglij do 15 min
+                    const minute = Math.floor((totalMinutes % 60) / 15) * 15; // ZaokrÄ…glij do 15 min
                     const newTime = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
                     
-                    console.log(`📍 Upuszczono zlecenie na ${targetDay} o godzinie ${newTime}`);
+                    logger.success(`đź“Ť Upuszczono zlecenie na ${targetDay} o godzinie ${newTime}`);
                     
-                    // Aktualizuj zlecenie z nową datą i godziną
+                    // Aktualizuj zlecenie z nowÄ… datÄ… i godzinÄ…
                     const targetDate = getDateForDay(targetDay);
-                    // 🔧 FIX: Użyj lokalnej daty zamiast UTC
+                    // đź”§ FIX: UĹĽyj lokalnej daty zamiast UTC
                     const dateStr = `${targetDate.getFullYear()}-${String(targetDate.getMonth() + 1).padStart(2, '0')}-${String(targetDate.getDate()).padStart(2, '0')}`;
                     
-                    // 🤖 AUTO-KALKULACJA: Oblicz czas gdy upuszczamy zlecenie na timeline
+                    // đź¤– AUTO-KALKULACJA: Oblicz czas gdy upuszczamy zlecenie na timeline
                     let autoCalculatedTime = null;
-                    let employee = null; // 👷 Deklaracja na wyższym poziomie żeby była dostępna w try-catch
+                    let employee = null; // đź‘· Deklaracja na wyĹĽszym poziomie ĹĽeby byĹ‚a dostÄ™pna w try-catch
                     
                     if (currentServiceman && draggedOrder.order.deviceType) {
-                      console.log('🔍 DEBUG availableServicemen count:', availableServicemen.length);
-                      console.log('🔍 DEBUG currentServiceman ID:', currentServiceman);
+                      logger.success('đź”Ť DEBUG availableServicemen count:', availableServicemen.length);
+                      logger.success('đź”Ť DEBUG currentServiceman ID:', currentServiceman);
                       employee = availableServicemen.find(e => e.id === currentServiceman);
-                      console.log('🔍 DEBUG znaleziony employee (JSON):', JSON.stringify(employee, null, 2));
+                      logger.success('đź”Ť DEBUG znaleziony employee (JSON):', JSON.stringify(employee, null, 2));
                       if (employee) {
-                        console.log('🔍 DEBUG employee.repairTimes:', employee.repairTimes);
-                        console.log('🔍 DEBUG typeof repairTimes:', typeof employee.repairTimes);
-                        console.log('🔍 DEBUG keys repairTimes:', employee.repairTimes ? Object.keys(employee.repairTimes) : 'BRAK');
+                        logger.success('đź”Ť DEBUG employee.repairTimes:', employee.repairTimes);
+                        logger.success('đź”Ť DEBUG typeof repairTimes:', typeof employee.repairTimes);
+                        logger.success('đź”Ť DEBUG keys repairTimes:', employee.repairTimes ? Object.keys(employee.repairTimes) : 'BRAK');
                         autoCalculatedTime = calculateEstimatedDuration(draggedOrder.order, employee);
                         if (autoCalculatedTime) {
-                          console.log(`⏱️ Auto-obliczono czas dla "${draggedOrder.order.clientName}": ${autoCalculatedTime}min (pracownik: ${employee.name})`);
+                          logger.success(`âŹ±ď¸Ź Auto-obliczono czas dla "${draggedOrder.order.clientName}": ${autoCalculatedTime}min (pracownik: ${employee.name})`);
                         }
                       } else {
-                        console.warn(`⚠️ NIE ZNALEZIONO pracownika o ID: ${currentServiceman}`);
+                        console.warn(`âš ď¸Ź NIE ZNALEZIONO pracownika o ID: ${currentServiceman}`);
                       }
                     }
                     
-                    // ✅ OPTYMISTYCZNA AKTUALIZACJA STANU (przed zapisem do API)
+                    // âś… OPTYMISTYCZNA AKTUALIZACJA STANU (przed zapisem do API)
                     const updatedOrder = {
                       ...draggedOrder.order,
                       scheduledDate: dateStr,
@@ -3957,15 +3958,15 @@ const IntelligentWeekPlanner = () => {
                       estimatedDuration: autoCalculatedTime || draggedOrder.order.estimatedDuration
                     };
                     
-                    // ✅ Aktualizuj stan lokalny natychmiast - NOWA STRUKTURA
+                    // âś… Aktualizuj stan lokalny natychmiast - NOWA STRUKTURA
                     setWeeklyPlan(prevPlan => {
                       const newPlan = { ...prevPlan };
                       
-                      // Usuń ze starego miejsca
+                      // UsuĹ„ ze starego miejsca
                       if (draggedOrder.sourceDay === 'unscheduled') {
                         newPlan.unscheduledOrders = newPlan.unscheduledOrders.filter(o => o.id !== draggedOrder.order.id);
                       } else if (draggedOrder.sourceDay && newPlan[draggedOrder.sourceDay]) {
-                        // Usuń z dnia źródłowego
+                        // UsuĹ„ z dnia ĹşrĂłdĹ‚owego
                         const sourceOrders = [...(newPlan[draggedOrder.sourceDay].orders || [])];
                         newPlan[draggedOrder.sourceDay].orders = sourceOrders.filter(o => o.id !== draggedOrder.order.id);
                       }
@@ -3980,7 +3981,7 @@ const IntelligentWeekPlanner = () => {
                     });
                     
                     try {
-                      console.log(`💾 Zapisuję zlecenie do bazy:`, {
+                      logger.success(`đź’ľ ZapisujÄ™ zlecenie do bazy:`, {
                         orderId: draggedOrder.order.id,
                         scheduledDate: dateStr,
                         scheduledTime: newTime,
@@ -3994,28 +3995,28 @@ const IntelligentWeekPlanner = () => {
                         body: JSON.stringify({
                           scheduledDate: dateStr,
                           scheduledTime: newTime,
-                          assignedTo: currentServiceman, // 👷 Przypisz do serwisanta
-                          estimatedDuration: autoCalculatedTime || draggedOrder.order.estimatedDuration, // ⏱️ Zapisz obliczony czas
-                          status: 'scheduled' // 📅 Ustaw status na "zaplanowane"
+                          assignedTo: currentServiceman, // đź‘· Przypisz do serwisanta
+                          estimatedDuration: autoCalculatedTime || draggedOrder.order.estimatedDuration, // âŹ±ď¸Ź Zapisz obliczony czas
+                          status: 'scheduled' // đź“… Ustaw status na "zaplanowane"
                         })
                       });
                       
                       if (response.ok) {
                         const result = await response.json();
-                        console.log(`✅ Zlecenie zapisane w bazie:`, result);
-                        showNotification(`✅ Zlecenie przypisane do ${employee?.name || 'serwisanta'} na ${targetDay} o ${newTime}`, 'success');
-                        // Nie ładuj ponownie całego planu - już zaktualizowaliśmy lokalnie
+                        logger.success(`âś… Zlecenie zapisane w bazie:`, result);
+                        showNotification(`âś… Zlecenie przypisane do ${employee?.name || 'serwisanta'} na ${targetDay} o ${newTime}`, 'success');
+                        // Nie Ĺ‚aduj ponownie caĹ‚ego planu - juĹĽ zaktualizowaliĹ›my lokalnie
                       } else {
                         const errorText = await response.text();
-                        console.error(`❌ Błąd API (${response.status}):`, errorText);
-                        // Jeśli API zwróciło błąd, cofnij zmiany
-                        showNotification('❌ Nie udało się zapisać zmian', 'error');
-                        await loadIntelligentPlan(); // Przywróć z API
+                        console.error(`âťŚ BĹ‚Ä…d API (${response.status}):`, errorText);
+                        // JeĹ›li API zwrĂłciĹ‚o bĹ‚Ä…d, cofnij zmiany
+                        showNotification('âťŚ Nie udaĹ‚o siÄ™ zapisaÄ‡ zmian', 'error');
+                        await loadIntelligentPlan(); // PrzywrĂłÄ‡ z API
                       }
                     } catch (error) {
-                      console.error('❌ Błąd aktualizacji zlecenia:', error);
-                      showNotification('❌ Nie udało się przenieść zlecenia', 'error');
-                      await loadIntelligentPlan(); // Przywróć z API
+                      console.error('âťŚ BĹ‚Ä…d aktualizacji zlecenia:', error);
+                      showNotification('âťŚ Nie udaĹ‚o siÄ™ przenieĹ›Ä‡ zlecenia', 'error');
+                      await loadIntelligentPlan(); // PrzywrĂłÄ‡ z API
                     }
                     
                     setDraggedOrder(null);
@@ -4030,7 +4031,7 @@ const IntelligentWeekPlanner = () => {
                         e.preventDefault();
                         e.stopPropagation();
                         
-                        // Pokaż podgląd gdzie zlecenie zostanie upuszczone
+                        // PokaĹĽ podglÄ…d gdzie zlecenie zostanie upuszczone
                         if (isDragging) {
                           const rect = e.currentTarget.getBoundingClientRect();
                           const relativeY = e.clientY - rect.top;
@@ -4038,11 +4039,11 @@ const IntelligentWeekPlanner = () => {
                           
                           let totalMinutes;
                           if (hideUnusedHours) {
-                            // Tryb zwinięty
+                            // Tryb zwiniÄ™ty
                             const rangeMinutes = (timeRange.end - timeRange.start) * 60;
                             totalMinutes = (timeRange.start * 60) + (percentY / 100) * rangeMinutes;
                           } else {
-                            // Tryb pełny
+                            // Tryb peĹ‚ny
                             totalMinutes = (percentY / 100) * 24 * 60;
                           }
                           
@@ -4059,19 +4060,19 @@ const IntelligentWeekPlanner = () => {
                         setDragOverInfo(null);
                       }}
                     >
-                      {/* Wewnętrzny kontener z pełną wysokością dla pozycjonowania absolute */}
+                      {/* WewnÄ™trzny kontener z peĹ‚nÄ… wysokoĹ›ciÄ… dla pozycjonowania absolute */}
                       <div 
                         className="relative w-full"
                         style={{ height: `${1600 * timelineZoom}px` }}
                       >
-                      {/* Linia podglądu podczas przeciągania */}
+                      {/* Linia podglÄ…du podczas przeciÄ…gania */}
                       {dragOverInfo && dragOverInfo.day === day && (
                         <div
                           className="absolute w-full border-t-2 border-dashed border-purple-500 z-30 pointer-events-none"
                           style={{ top: `${dragOverInfo.y}%` }}
                         >
                           <span className="absolute right-2 -top-3 text-xs font-bold text-purple-600 bg-purple-100 px-2 py-0.5 rounded shadow-sm">
-                            📍 {dragOverInfo.time}
+                            đź“Ť {dragOverInfo.time}
                           </span>
                         </div>
                       )}
@@ -4082,13 +4083,13 @@ const IntelligentWeekPlanner = () => {
                         const m = totalMinutes % 60;
                         const isFullHour = m === 0;
                         
-                        // Oblicz pozycję - w trybie zwiniętym mapuj na 0-100%, w pełnym na pozycję w dobie
+                        // Oblicz pozycjÄ™ - w trybie zwiniÄ™tym mapuj na 0-100%, w peĹ‚nym na pozycjÄ™ w dobie
                         let positionPercent;
                         if (hideUnusedHours) {
-                          // Tryb zwinięty - linie równomiernie rozłożone 0-100%
+                          // Tryb zwiniÄ™ty - linie rĂłwnomiernie rozĹ‚oĹĽone 0-100%
                           positionPercent = (i / ((timeRange.end - timeRange.start) * 2)) * 100;
                         } else {
-                          // Tryb pełny - pozycja względem całej doby (0-24h)
+                          // Tryb peĹ‚ny - pozycja wzglÄ™dem caĹ‚ej doby (0-24h)
                           positionPercent = (totalMinutes / (24 * 60)) * 100;
                         }
                         
@@ -4114,7 +4115,7 @@ const IntelligentWeekPlanner = () => {
                         );
                       })}
                       
-                      {/* Przyciemnienie godzin poza zakresem - tylko w trybie pełnym */}
+                      {/* Przyciemnienie godzin poza zakresem - tylko w trybie peĹ‚nym */}
                       {!hideUnusedHours && timeRange.start > 0 && (
                         <div 
                           className="absolute w-full bg-gray-900 opacity-10 pointer-events-none z-10"
@@ -4136,7 +4137,7 @@ const IntelligentWeekPlanner = () => {
                         />
                       )}
                       
-                      {/* Tło dostępności serwisanta (półprzezroczyste zielone) */}
+                      {/* TĹ‚o dostÄ™pnoĹ›ci serwisanta (pĂłĹ‚przezroczyste zielone) */}
                       {schedule && schedule.workSlots && schedule.workSlots.map((slot, idx) => (
                         <div
                           key={`work-${day}-${idx}`}
@@ -4148,7 +4149,7 @@ const IntelligentWeekPlanner = () => {
                         />
                       ))}
                       
-                      {/* Przerwy serwisanta (półprzezroczyste pomarańczowe) */}
+                      {/* Przerwy serwisanta (pĂłĹ‚przezroczyste pomaraĹ„czowe) */}
                       {schedule && schedule.breaks && schedule.breaks.map((breakSlot, idx) => (
                         <div
                           key={`break-${day}-${idx}`}
@@ -4160,18 +4161,18 @@ const IntelligentWeekPlanner = () => {
                         />
                       ))}
                       
-                      {/* 🕐 LINIA AKTUALNEJ GODZINY */}
+                      {/* đź• LINIA AKTUALNEJ GODZINY */}
                       {(() => {
                         const now = currentTime;
                         const currentHour = now.getHours();
                         const currentMinute = now.getMinutes();
                         const currentTimeString = `${currentHour.toString().padStart(2, '0')}:${currentMinute.toString().padStart(2, '0')}`;
                         
-                        // Sprawdź czy aktualna godzina jest w zakresie wyświetlanym
+                        // SprawdĹş czy aktualna godzina jest w zakresie wyĹ›wietlanym
                         const isInRange = currentHour >= timeRange.start && currentHour < timeRange.end;
                         
                         if (!isInRange && hideUnusedHours) {
-                          return null; // Nie pokazuj linii jeśli jest poza zakresem w trybie zwiniętym
+                          return null; // Nie pokazuj linii jeĹ›li jest poza zakresem w trybie zwiniÄ™tym
                         }
                         
                         const currentPosition = timeToPixels(currentTimeString);
@@ -4184,7 +4185,7 @@ const IntelligentWeekPlanner = () => {
                           >
                             {/* Czerwona linia */}
                             <div className="absolute w-full h-0.5 bg-red-500 shadow-lg"></div>
-                            {/* Czerwony kółko po lewej */}
+                            {/* Czerwony kĂłĹ‚ko po lewej */}
                             <div className="absolute -left-1 -top-1.5 w-3 h-3 bg-red-500 rounded-full shadow-lg"></div>
                             {/* Etykieta z czasem */}
                             <div className="absolute left-4 -top-2.5 bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded shadow-lg">
@@ -4194,15 +4195,15 @@ const IntelligentWeekPlanner = () => {
                         );
                       })()}
                       
-                      {/* ZLECENIA na timeline - PRZECIĄGALNE */}
+                      {/* ZLECENIA na timeline - PRZECIÄ„GALNE */}
                       {dayOrders.map((order) => {
                         const startTime = getOrderStartTime(order);
                         const endTime = getOrderEndTime(order);
                         const duration = getOrderDuration(order);
                         const heightPercent = timeToPixels(endTime) - timeToPixels(startTime);
                         
-                        // 🔧 FIX: Użyj pikseli zamiast procentów, żeby przewijały się razem z siatką
-                        const containerHeight = 1600 * timelineZoom; // Całkowita wysokość kontenera
+                        // đź”§ FIX: UĹĽyj pikseli zamiast procentĂłw, ĹĽeby przewijaĹ‚y siÄ™ razem z siatkÄ…
+                        const containerHeight = 1600 * timelineZoom; // CaĹ‚kowita wysokoĹ›Ä‡ kontenera
                         const topPx = (timeToPixels(startTime) / 100) * containerHeight;
                         const heightPx = Math.max(50, (heightPercent / 100) * containerHeight);
                         
@@ -4213,9 +4214,9 @@ const IntelligentWeekPlanner = () => {
                             style={{
                               top: `${topPx}px`,
                               height: `${heightPx}px`,
-                              minHeight: '50px' // Minimum dla czytelności
+                              minHeight: '50px' // Minimum dla czytelnoĹ›ci
                             }}
-                            title={`${startTime} - ${endTime} (${duration} min)\nPrzeciągnij aby zmienić godzinę lub dzień`}
+                            title={`${startTime} - ${endTime} (${duration} min)\nPrzeciÄ…gnij aby zmieniÄ‡ godzinÄ™ lub dzieĹ„`}
                             draggable={true}
                             onDragStart={(e) => {
                               handleDragStart(e, order, day);
@@ -4232,9 +4233,9 @@ const IntelligentWeekPlanner = () => {
                               order.priority === 'medium' ? 'border-yellow-500 bg-yellow-200' :
                               'border-blue-500 bg-blue-200'
                             }`}>
-                              {/* Ikona przeciągania */}
+                              {/* Ikona przeciÄ…gania */}
                               <div className="absolute top-1 right-1 text-gray-400 text-xs opacity-0 group-hover:opacity-100 transition-opacity">
-                                ⋮⋮
+                                â‹®â‹®
                               </div>
                               
                               <div className="flex items-start justify-between mb-1">
@@ -4249,14 +4250,14 @@ const IntelligentWeekPlanner = () => {
                                   {/* Badge'y z numerami */}
                                   <div className="flex items-center gap-1 flex-wrap mt-0.5">
                                     <span className="text-[8px] font-mono bg-blue-100 text-blue-700 px-1 rounded" title="Numer zlecenia">
-                                      🔢 {order.orderNumber || order.visitId || `ORD-${order.id}`}
+                                      đź”˘ {order.orderNumber || order.visitId || `ORD-${order.id}`}
                                     </span>
                                     <span className="text-[8px] font-mono bg-purple-100 text-purple-700 px-1 rounded" title="ID klienta">
-                                      👤 {order.clientId || order.customerId || 'BRAK'}
+                                      đź‘¤ {order.clientId || order.customerId || 'BRAK'}
                                     </span>
                                     {order.visits && order.visits.length > 0 && (
                                       <span className="text-[8px] font-mono bg-green-100 text-green-700 px-1 rounded" title={`Wizyty: ${order.visits.map(v => v.visitId || v.id).join(', ')}`}>
-                                        📅 {order.visits.length}
+                                        đź“… {order.visits.length}
                                       </span>
                                     )}
                                   </div>
@@ -4283,19 +4284,19 @@ const IntelligentWeekPlanner = () => {
                                                   })
                                                 });
                                                 if (response.ok) {
-                                                  showNotification(`✅ Przeniesiono do innego technika`, 'success');
+                                                  showNotification(`âś… Przeniesiono do innego technika`, 'success');
                                                   setTimeout(() => loadIntelligentPlan(), 500);
                                                 }
                                               } catch (error) {
-                                                console.error('Błąd:', error);
-                                                showNotification(`❌ Błąd zmiany technika`, 'error');
+                                                console.error('BĹ‚Ä…d:', error);
+                                                showNotification(`âťŚ BĹ‚Ä…d zmiany technika`, 'error');
                                               }
                                             }
                                           }}
                                           className="text-[8px] px-1 py-0.5 rounded bg-blue-100 text-blue-700 hover:bg-blue-200 cursor-pointer border-0"
                                           value={currentServiceman}
                                         >
-                                          <option value="">👤 Zmień...</option>
+                                          <option value="">đź‘¤ ZmieĹ„...</option>
                                           {availableServicemen.map(tech => (
                                             <option key={tech.id} value={tech.id}>{tech.name}</option>
                                           ))}
@@ -4309,9 +4310,9 @@ const IntelligentWeekPlanner = () => {
                                           moveOrderToUnscheduled(order, day);
                                         }}
                                         className="text-[8px] px-1 py-0.5 rounded bg-gray-100 text-gray-700 hover:bg-red-100 hover:text-red-700"
-                                        title="Przenieś do nieprzypisanych"
+                                        title="PrzenieĹ› do nieprzypisanych"
                                       >
-                                        ↩️
+                                        â†©ď¸Ź
                                       </button>
                                     </div>
                                   )}
@@ -4324,36 +4325,36 @@ const IntelligentWeekPlanner = () => {
                                   </p>
                                 </div>
                                 <span className="text-sm font-bold ml-1">
-                                  {order.priority === 'urgent' ? '🔥' :
-                                   order.priority === 'high' ? '⚡' :
-                                   order.priority === 'medium' ? '📌' : '✅'}
+                                  {order.priority === 'urgent' ? 'đź”Ą' :
+                                   order.priority === 'high' ? 'âšˇ' :
+                                   order.priority === 'medium' ? 'đź“Ś' : 'âś…'}
                                 </span>
                               </div>
                               
                               <div className="text-[10px] text-gray-700 font-bold bg-white/50 rounded px-1 py-0.5 inline-block">
-                                🕒 {startTime} - {endTime}
+                                đź•’ {startTime} - {endTime}
                               </div>
                               
                               <div className="text-[9px] text-gray-600 mt-1">
-                                ⏱️ {duration} min
+                                âŹ±ď¸Ź {duration} min
                               </div>
                               
                               {order.address && heightPercent > 4 && (
                                 <div className="text-[8px] text-gray-500 mt-1 truncate" title={order.address}>
-                                  📍 {order.address}
+                                  đź“Ť {order.address}
                                 </div>
                               )}
                               
-                              {/* Wskazówka przy hover */}
+                              {/* WskazĂłwka przy hover */}
                               <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2 text-[8px] text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap bg-white/80 px-1 rounded">
-                                Przeciągnij ↕️ lub ↔️
+                                PrzeciÄ…gnij â†•ď¸Ź lub â†”ď¸Ź
                               </div>
                             </div>
                           </div>
                         );
                       })}
                       </div>
-                      {/* Zamknięcie wewnętrznego kontenera z relative */}
+                      {/* ZamkniÄ™cie wewnÄ™trznego kontenera z relative */}
                     </div>
                   );
                 })()}
@@ -4363,15 +4364,15 @@ const IntelligentWeekPlanner = () => {
                   {dayOrders.length === 0 ? (
                     <div className="text-center text-xs text-gray-500">
                       {isDragging 
-                        ? `📦 Przeciągnij "${draggedOrder?.order?.clientName}" na timeline` 
-                        : 'Brak zleceń - przeciągnij zlecenie z puli nieprzypisanych'
+                        ? `đź“¦ PrzeciÄ…gnij "${draggedOrder?.order?.clientName}" na timeline` 
+                        : 'Brak zleceĹ„ - przeciÄ…gnij zlecenie z puli nieprzypisanych'
                       }
                     </div>
                   ) : (
                     <div className="text-xs text-gray-600 space-y-1">
-                      <div>📦 Zlecenia: <strong>{dayOrders.length}</strong></div>
-                      <div>⏱️ Łączny czas: <strong>{dayOrders.reduce((sum, o) => sum + (o.estimatedDuration || 60), 0)} min</strong></div>
-                      <div>💰 Przychód: <strong>{dayOrders.reduce((sum, o) => sum + (o.serviceCost || 150), 0)} zł</strong></div>
+                      <div>đź“¦ Zlecenia: <strong>{dayOrders.length}</strong></div>
+                      <div>âŹ±ď¸Ź ĹÄ…czny czas: <strong>{dayOrders.reduce((sum, o) => sum + (o.estimatedDuration || 60), 0)} min</strong></div>
+                      <div>đź’° PrzychĂłd: <strong>{dayOrders.reduce((sum, o) => sum + (o.serviceCost || 150), 0)} zĹ‚</strong></div>
                     </div>
                   )}
                 </div>
@@ -4385,3 +4386,4 @@ const IntelligentWeekPlanner = () => {
 };
 
 export default IntelligentWeekPlanner;
+

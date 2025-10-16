@@ -1,360 +1,1444 @@
-[
-  {
-    "requestId": "ZC-2510051412-001",
-    "requestedBy": "EMPA252780002",
-    "requestedByName": "Mariusz Bielaszka",
-    "requestedFor": "EMPA252780002",
-    "requestedForName": "Mariusz Bielaszka",
-    "createdBy": "EMPA252780002",
-    "isAdminOrder": false,
-    "deviceInfo": null,
-    "ocrId": null,
-    "parts": [
-      {
-        "partId": "PART001",
-        "quantity": 1,
-        "preferredSupplierId": null
-      }
-    ],
-    "urgency": "standard",
-    "afterDeadline": false,
-    "expressCharge": 0,
-    "preferredDelivery": "paczkomat",
-    "paczkomatId": "KRA01M",
-    "deliveryAddress": null,
-    "finalDelivery": "paczkomat",
-    "status": "delivered",
-    "createdAt": "2025-10-05T12:12:17.048Z",
-    "updatedAt": "2025-10-05T19:55:55.657Z",
-    "approvedAt": "2025-10-05T15:27:24.143Z",
-    "approvedBy": "EMP25189001",
-    "consolidatedWith": [],
-    "notes": "Test nowego formatu ID",
-    "logisticianNotes": "Zatwierdzone",
-    "approvedByName": "Oliwia Kowalczyk",
-    "estimatedDelivery": null,
-    "orderedAt": "2025-10-05T15:42:35.614Z",
-    "orderedBy": "admin",
-    "trackingNumber": null,
-    "orderNotes": null,
-    "deliveredAt": "2025-10-05T19:55:55.657Z",
-    "confirmedBy": "admin",
-    "deliveryNotes": null,
-    "actualDeliveryDate": "2025-10-05T19:55:55.657Z"
-  },
-  {
-    "requestId": "ZC-2510052204-002",
-    "requestedBy": "EMPA252780002",
-    "requestedByName": "Mariusz Bielaszka",
-    "requestedFor": "EMPA252780002",
-    "requestedForName": "Mariusz Bielaszka",
-    "createdBy": "EMPA252780002",
-    "isAdminOrder": false,
-    "deviceInfo": null,
-    "ocrId": null,
-    "parts": [
-      {
-        "partId": "PART-LOD-004",
-        "quantity": 1,
-        "preferredSupplierId": null
-      }
-    ],
-    "urgency": "standard",
-    "afterDeadline": true,
-    "expressCharge": 0,
-    "preferredDelivery": "paczkomat",
-    "paczkomatId": "KRA01M",
-    "deliveryAddress": null,
-    "finalDelivery": "paczkomat",
-    "status": "ordered",
-    "createdAt": "2025-10-05T20:04:39.877Z",
-    "updatedAt": "2025-10-05T21:03:21.293Z",
-    "approvedAt": "2025-10-05T20:17:32.759Z",
-    "approvedBy": "EMP25189001",
-    "consolidatedWith": [],
-    "notes": null,
-    "logisticianNotes": "Zatwierdzone",
-    "approvedByName": "Oliwia Kowalczyk",
-    "estimatedDelivery": null,
-    "orderedAt": "2025-10-05T21:03:21.293Z",
-    "orderedBy": "admin",
-    "trackingNumber": null,
-    "orderNotes": null
-  },
-  {
-    "requestId": "ZC-2510052213-003",
-    "requestedBy": "EMPA252780002",
-    "requestedByName": "Mariusz Bielaszka",
-    "requestedFor": "EMPA252780002",
-    "requestedForName": "Mariusz Bielaszka",
-    "createdBy": "EMPA252780002",
-    "isAdminOrder": false,
-    "deviceInfo": null,
-    "ocrId": null,
-    "parts": [
-      {
-        "partId": "PART-LOD-002",
-        "quantity": 1,
-        "preferredSupplierId": null
-      }
-    ],
-    "urgency": "standard",
-    "afterDeadline": true,
-    "expressCharge": 0,
-    "preferredDelivery": "paczkomat",
-    "paczkomatId": "KRA01M",
-    "deliveryAddress": null,
-    "finalDelivery": "paczkomat",
-    "status": "ordered",
-    "createdAt": "2025-10-05T20:13:30.413Z",
-    "updatedAt": "2025-10-05T20:26:02.675Z",
-    "approvedAt": "2025-10-05T20:17:27.846Z",
-    "approvedBy": "EMP25189001",
-    "consolidatedWith": [],
-    "notes": null,
-    "logisticianNotes": "Zatwierdzone",
-    "attachedPhotos": [
-      {
-        "url": "/uploads/parts/ZC-2510052213-003/photo-1759695210766.jpg",
-        "filename": "photo-1759695210766.jpg",
-        "originalName": "IMG_20250410_152309.jpg",
-        "size": 3474644,
-        "mimeType": "image/jpeg",
-        "uploadedAt": "2025-10-05T20:13:30.768Z"
-      }
-    ],
-    "approvedByName": "Oliwia Kowalczyk",
-    "estimatedDelivery": null,
-    "orderedAt": "2025-10-05T20:26:02.675Z",
-    "orderedBy": "admin",
-    "trackingNumber": null,
-    "orderNotes": null
-  },
-  {
-    "requestId": "ZC-2510052216-004",
-    "requestedBy": "EMPA252780002",
-    "requestedByName": "Mariusz Bielaszka",
-    "requestedFor": "EMPA252780002",
-    "requestedForName": "Mariusz Bielaszka",
-    "createdBy": "EMPA252780002",
-    "isAdminOrder": false,
-    "deviceInfo": null,
-    "ocrId": null,
-    "parts": [
-      {
-        "partId": "PART-LOD-004",
-        "quantity": 1,
-        "preferredSupplierId": null
-      }
-    ],
-    "urgency": "express",
-    "afterDeadline": true,
-    "expressCharge": 0,
-    "preferredDelivery": "paczkomat",
-    "paczkomatId": "KRA01M",
-    "deliveryAddress": null,
-    "finalDelivery": "paczkomat",
-    "status": "ordered",
-    "createdAt": "2025-10-05T20:16:59.014Z",
-    "updatedAt": "2025-10-05T20:57:37.870Z",
-    "approvedAt": "2025-10-05T20:17:23.628Z",
-    "approvedBy": "EMP25189001",
-    "consolidatedWith": [],
-    "notes": null,
-    "logisticianNotes": "Zatwierdzone",
-    "attachedPhotos": [
-      {
-        "url": "/uploads/parts/ZC-2510052216-004/photo-1759695419283.png",
-        "filename": "photo-1759695419283.png",
-        "originalName": "Zrzut ekranu 2025-09-28 234155.png",
-        "size": 56236,
-        "mimeType": "image/png",
-        "uploadedAt": "2025-10-05T20:16:59.287Z"
-      }
-    ],
-    "approvedByName": "Oliwia Kowalczyk",
-    "estimatedDelivery": null,
-    "orderedAt": "2025-10-05T20:57:37.870Z",
-    "orderedBy": "admin",
-    "trackingNumber": null,
-    "orderNotes": null
-  },
-  {
-    "requestId": "ZC-2510052224-005",
-    "requestedBy": "EMPA252780002",
-    "requestedByName": "Mariusz Bielaszka",
-    "requestedFor": "EMPA252780002",
-    "requestedForName": "Mariusz Bielaszka",
-    "createdBy": "EMPA252780002",
-    "isAdminOrder": false,
-    "deviceInfo": null,
-    "ocrId": null,
-    "parts": [
-      {
-        "partId": "PART-PIE-005",
-        "quantity": 1,
-        "preferredSupplierId": null
-      }
-    ],
-    "urgency": "urgent",
-    "afterDeadline": true,
-    "expressCharge": 25,
-    "preferredDelivery": "paczkomat",
-    "paczkomatId": "sdvsdd",
-    "deliveryAddress": null,
-    "finalDelivery": "paczkomat",
-    "status": "ordered",
-    "createdAt": "2025-10-05T20:24:17.426Z",
-    "updatedAt": "2025-10-05T20:37:14.720Z",
-    "approvedAt": "2025-10-05T20:24:29.414Z",
-    "approvedBy": "EMP25189001",
-    "consolidatedWith": [],
-    "notes": null,
-    "logisticianNotes": "Zatwierdzone przez administratora",
-    "approvedByName": "Oliwia Kowalczyk",
-    "estimatedDelivery": null,
-    "orderedAt": "2025-10-05T20:37:14.720Z",
-    "orderedBy": "admin",
-    "trackingNumber": null,
-    "orderNotes": null
-  },
-  {
-    "requestId": "ZC-2510052241-006",
-    "requestedBy": "EMPA252780002",
-    "requestedByName": "Mariusz Bielaszka",
-    "requestedFor": "EMPA252780002",
-    "requestedForName": "Mariusz Bielaszka",
-    "createdBy": "EMPA252780002",
-    "isAdminOrder": false,
-    "deviceInfo": {
-      "issueDescription": "wef"
+{
+  "requests": [
+    {
+      "requestId": "ZC-2510152300-001",
+      "requestedBy": "EMPA252780002",
+      "requestedByName": "Mariusz Bielaszka",
+      "requestedFor": "EMPA252780002",
+      "requestedForName": "Mariusz Bielaszka",
+      "createdBy": "EMPA252780002",
+      "isAdminOrder": false,
+      "visitId": "VIS251015150",
+      "orderNumber": "VIS251015150",
+      "clientName": "S/0001/10/25",
+      "deviceInfo": {
+        "brand": "WHIRLPOOL",
+        "model": "AWE 7236P"
+      },
+      "ocrId": null,
+      "parts": [
+        {
+          "partId": "",
+          "quantity": 1,
+          "preferredSupplierId": null,
+          "northData": null
+        },
+        {
+          "partId": "NORTH-1760562031671",
+          "quantity": 1,
+          "preferredSupplierId": null,
+          "northData": {
+            "partId": "NORTH-1760562031671",
+            "name": "Bezpiecznik 0.7A 5kV do mikrofalówki Siemens 00606327",
+            "partNumber": "735-VL-3808",
+            "quantity": 1,
+            "price": 49.9,
+            "source": "north.pl",
+            "sourceUrl": "https://north.pl/karta/00606327-bezpiecznik-do-mikrofalowki,735-VL-3808.html",
+            "images": [
+              {
+                "url": "/uploads/parts/north_1760562030574_4djef.jpg",
+                "type": "product",
+                "id": "north-1760562030243-0",
+                "isFromNorth": true
+              },
+              {
+                "url": "/uploads/parts/north_1760562030661_nq3sn.jpg",
+                "type": "product",
+                "id": "north-1760562030243-1",
+                "isFromNorth": true
+              },
+              {
+                "url": "/uploads/parts/north_1760562030732_thar5s.jpg",
+                "type": "product",
+                "id": "north-1760562030243-2",
+                "isFromNorth": true
+              },
+              {
+                "url": "/uploads/parts/north_1760562030807_fxrgy.jpg",
+                "type": "product",
+                "id": "north-1760562030243-3",
+                "isFromNorth": true
+              },
+              {
+                "url": "/uploads/parts/north_1760562030885_bhsi4k.jpg",
+                "type": "product",
+                "id": "north-1760562030243-4",
+                "isFromNorth": true
+              }
+            ],
+            "notes": ""
+          }
+        }
+      ],
+      "urgency": "standard",
+      "afterDeadline": true,
+      "expressCharge": 0,
+      "preferredDelivery": "office",
+      "paczkomatId": null,
+      "deliveryAddress": null,
+      "alternativeAddress": null,
+      "paymentMethod": "prepaid",
+      "finalDelivery": null,
+      "pricing": {
+        "partsTotal": 0,
+        "laborCost": 0,
+        "totalCost": 0,
+        "paymentMethod": null,
+        "paymentStatus": "unpaid",
+        "paidAmount": 0,
+        "clientCharged": false
+      },
+      "status": "pending",
+      "createdAt": "2025-10-15T21:00:34.975Z",
+      "updatedAt": "2025-10-15T21:00:34.975Z",
+      "approvedAt": null,
+      "approvedBy": null,
+      "consolidatedWith": [],
+      "notes": null,
+      "logisticianNotes": null
     },
-    "ocrId": null,
-    "parts": [
-      {
-        "partId": "PART-PIE-005",
-        "quantity": 1,
-        "preferredSupplierId": null
-      }
-    ],
-    "urgency": "standard",
-    "afterDeadline": true,
-    "expressCharge": 0,
-    "preferredDelivery": "paczkomat",
-    "paczkomatId": "ewfeea",
-    "deliveryAddress": null,
-    "finalDelivery": "paczkomat",
-    "status": "ordered",
-    "createdAt": "2025-10-05T20:41:44.471Z",
-    "updatedAt": "2025-10-05T20:42:18.664Z",
-    "approvedAt": "2025-10-05T20:42:09.360Z",
-    "approvedBy": "EMP25189001",
-    "consolidatedWith": [],
-    "notes": null,
-    "logisticianNotes": "Zatwierdzone przez administratora",
-    "attachedPhotos": [
-      {
-        "url": "/uploads/parts/ZC-2510052241-006/photo-1759696904732.jpg",
-        "filename": "photo-1759696904732.jpg",
-        "originalName": "IMG_20250410_152309.jpg",
-        "size": 3474644,
-        "mimeType": "image/jpeg",
-        "uploadedAt": "2025-10-05T20:41:44.734Z"
-      }
-    ],
-    "approvedByName": "Oliwia Kowalczyk",
-    "estimatedDelivery": null,
-    "orderedAt": "2025-10-05T20:42:18.664Z",
-    "orderedBy": "admin",
-    "trackingNumber": null,
-    "orderNotes": null
-  },
-  {
-    "requestId": "ZC-2510052249-007",
-    "requestedBy": "EMPA252780002",
-    "requestedByName": "Mariusz Bielaszka",
-    "requestedFor": "EMPA252780002",
-    "requestedForName": "Mariusz Bielaszka",
-    "createdBy": "EMPA252780002",
-    "isAdminOrder": false,
-    "deviceInfo": null,
-    "ocrId": null,
-    "parts": [
-      {
-        "partId": "PART-LOD-004",
-        "quantity": 1,
-        "preferredSupplierId": null
-      }
-    ],
-    "urgency": "standard",
-    "afterDeadline": true,
-    "expressCharge": 0,
-    "preferredDelivery": "paczkomat",
-    "paczkomatId": "asf",
-    "deliveryAddress": null,
-    "finalDelivery": "paczkomat",
-    "status": "ordered",
-    "createdAt": "2025-10-05T20:49:43.679Z",
-    "updatedAt": "2025-10-05T21:03:05.849Z",
-    "approvedAt": "2025-10-05T20:57:16.535Z",
-    "approvedBy": "EMP25189001",
-    "consolidatedWith": [],
-    "notes": null,
-    "logisticianNotes": "Zatwierdzone przez administratora",
-    "approvedByName": "Oliwia Kowalczyk",
-    "estimatedDelivery": null,
-    "orderedAt": "2025-10-05T21:03:05.849Z",
-    "orderedBy": "admin",
-    "trackingNumber": null,
-    "orderNotes": null
-  },
-  {
-    "requestId": "ZC-2510052249-008",
-    "requestedBy": "EMPA252780002",
-    "requestedByName": "Mariusz Bielaszka",
-    "requestedFor": "EMPA252780002",
-    "requestedForName": "Mariusz Bielaszka",
-    "createdBy": "EMPA252780002",
-    "isAdminOrder": false,
-    "deviceInfo": null,
-    "ocrId": null,
-    "parts": [
-      {
-        "partId": "PART-LOD-002",
-        "quantity": 1,
-        "preferredSupplierId": null
-      }
-    ],
-    "urgency": "standard",
-    "afterDeadline": true,
-    "expressCharge": 0,
-    "preferredDelivery": "paczkomat",
-    "paczkomatId": "asfasfa",
-    "deliveryAddress": null,
-    "finalDelivery": "paczkomat",
-    "status": "ordered",
-    "createdAt": "2025-10-05T20:49:58.468Z",
-    "updatedAt": "2025-10-05T21:02:51.093Z",
-    "approvedAt": "2025-10-05T20:57:12.292Z",
-    "approvedBy": "EMP25189001",
-    "consolidatedWith": [],
-    "notes": null,
-    "logisticianNotes": "Zatwierdzone przez administratora",
-    "attachedPhotos": [
-      {
-        "url": "/uploads/parts/ZC-2510052249-008/photo-1759697398855.jpg",
-        "filename": "photo-1759697398855.jpg",
-        "originalName": "IMG_20250410_152309.jpg",
-        "size": 3474644,
-        "mimeType": "image/jpeg",
-        "uploadedAt": "2025-10-05T20:49:58.857Z"
-      }
-    ],
-    "approvedByName": "Oliwia Kowalczyk",
-    "estimatedDelivery": null,
-    "orderedAt": "2025-10-05T21:02:51.093Z",
-    "orderedBy": "admin",
-    "trackingNumber": null,
-    "orderNotes": null
-  }
-]
+    {
+      "requestId": "ZC-2510152300-002",
+      "requestedBy": "EMPA252780002",
+      "requestedByName": "Mariusz Bielaszka",
+      "requestedFor": "EMPA252780002",
+      "requestedForName": "Mariusz Bielaszka",
+      "createdBy": "EMPA252780002",
+      "isAdminOrder": false,
+      "visitId": "VIS251015150",
+      "orderNumber": "VIS251015150",
+      "clientName": "S/0001/10/25",
+      "deviceInfo": {
+        "brand": "WHIRLPOOL",
+        "model": "AWE 7236P"
+      },
+      "ocrId": null,
+      "parts": [
+        {
+          "partId": "",
+          "quantity": 1,
+          "preferredSupplierId": null,
+          "northData": null
+        },
+        {
+          "partId": "NORTH-1760562031671",
+          "quantity": 1,
+          "preferredSupplierId": null,
+          "northData": {
+            "partId": "NORTH-1760562031671",
+            "name": "Bezpiecznik 0.7A 5kV do mikrofalówki Siemens 00606327",
+            "partNumber": "735-VL-3808",
+            "quantity": 1,
+            "price": 49.9,
+            "source": "north.pl",
+            "sourceUrl": "https://north.pl/karta/00606327-bezpiecznik-do-mikrofalowki,735-VL-3808.html",
+            "images": [
+              {
+                "url": "/uploads/parts/north_1760562030574_4djef.jpg",
+                "type": "product",
+                "id": "north-1760562030243-0",
+                "isFromNorth": true
+              },
+              {
+                "url": "/uploads/parts/north_1760562030661_nq3sn.jpg",
+                "type": "product",
+                "id": "north-1760562030243-1",
+                "isFromNorth": true
+              },
+              {
+                "url": "/uploads/parts/north_1760562030732_thar5s.jpg",
+                "type": "product",
+                "id": "north-1760562030243-2",
+                "isFromNorth": true
+              },
+              {
+                "url": "/uploads/parts/north_1760562030807_fxrgy.jpg",
+                "type": "product",
+                "id": "north-1760562030243-3",
+                "isFromNorth": true
+              },
+              {
+                "url": "/uploads/parts/north_1760562030885_bhsi4k.jpg",
+                "type": "product",
+                "id": "north-1760562030243-4",
+                "isFromNorth": true
+              }
+            ],
+            "notes": ""
+          }
+        }
+      ],
+      "urgency": "standard",
+      "afterDeadline": true,
+      "expressCharge": 0,
+      "preferredDelivery": "office",
+      "paczkomatId": null,
+      "deliveryAddress": null,
+      "alternativeAddress": null,
+      "paymentMethod": "prepaid",
+      "finalDelivery": null,
+      "pricing": {
+        "partsTotal": 0,
+        "laborCost": 0,
+        "totalCost": 0,
+        "paymentMethod": null,
+        "paymentStatus": "unpaid",
+        "paidAmount": 0,
+        "clientCharged": false
+      },
+      "status": "pending",
+      "createdAt": "2025-10-15T21:00:36.541Z",
+      "updatedAt": "2025-10-15T21:00:36.541Z",
+      "approvedAt": null,
+      "approvedBy": null,
+      "consolidatedWith": [],
+      "notes": null,
+      "logisticianNotes": null
+    },
+    {
+      "requestId": "ZC-2510152300-003",
+      "requestedBy": "EMPA252780002",
+      "requestedByName": "Mariusz Bielaszka",
+      "requestedFor": "EMPA252780002",
+      "requestedForName": "Mariusz Bielaszka",
+      "createdBy": "EMPA252780002",
+      "isAdminOrder": false,
+      "visitId": "VIS251015150",
+      "orderNumber": "VIS251015150",
+      "clientName": "S/0001/10/25",
+      "deviceInfo": {
+        "brand": "WHIRLPOOL",
+        "model": "AWE 7236P"
+      },
+      "ocrId": null,
+      "parts": [
+        {
+          "partId": "",
+          "quantity": 1,
+          "preferredSupplierId": null,
+          "northData": null
+        },
+        {
+          "partId": "NORTH-1760562031671",
+          "quantity": 1,
+          "preferredSupplierId": null,
+          "northData": {
+            "partId": "NORTH-1760562031671",
+            "name": "Bezpiecznik 0.7A 5kV do mikrofalówki Siemens 00606327",
+            "partNumber": "735-VL-3808",
+            "quantity": 1,
+            "price": 49.9,
+            "source": "north.pl",
+            "sourceUrl": "https://north.pl/karta/00606327-bezpiecznik-do-mikrofalowki,735-VL-3808.html",
+            "images": [
+              {
+                "url": "/uploads/parts/north_1760562030574_4djef.jpg",
+                "type": "product",
+                "id": "north-1760562030243-0",
+                "isFromNorth": true
+              },
+              {
+                "url": "/uploads/parts/north_1760562030661_nq3sn.jpg",
+                "type": "product",
+                "id": "north-1760562030243-1",
+                "isFromNorth": true
+              },
+              {
+                "url": "/uploads/parts/north_1760562030732_thar5s.jpg",
+                "type": "product",
+                "id": "north-1760562030243-2",
+                "isFromNorth": true
+              },
+              {
+                "url": "/uploads/parts/north_1760562030807_fxrgy.jpg",
+                "type": "product",
+                "id": "north-1760562030243-3",
+                "isFromNorth": true
+              },
+              {
+                "url": "/uploads/parts/north_1760562030885_bhsi4k.jpg",
+                "type": "product",
+                "id": "north-1760562030243-4",
+                "isFromNorth": true
+              }
+            ],
+            "notes": ""
+          }
+        }
+      ],
+      "urgency": "standard",
+      "afterDeadline": true,
+      "expressCharge": 0,
+      "preferredDelivery": "office",
+      "paczkomatId": null,
+      "deliveryAddress": null,
+      "alternativeAddress": null,
+      "paymentMethod": "prepaid",
+      "finalDelivery": null,
+      "pricing": {
+        "partsTotal": 0,
+        "laborCost": 0,
+        "totalCost": 0,
+        "paymentMethod": null,
+        "paymentStatus": "unpaid",
+        "paidAmount": 0,
+        "clientCharged": false
+      },
+      "status": "pending",
+      "createdAt": "2025-10-15T21:00:47.679Z",
+      "updatedAt": "2025-10-15T21:00:47.679Z",
+      "approvedAt": null,
+      "approvedBy": null,
+      "consolidatedWith": [],
+      "notes": null,
+      "logisticianNotes": null
+    },
+    {
+      "requestId": "ZC-2510152301-004",
+      "requestedBy": "EMPA252780002",
+      "requestedByName": "Mariusz Bielaszka",
+      "requestedFor": "EMPA252780002",
+      "requestedForName": "Mariusz Bielaszka",
+      "createdBy": "EMPA252780002",
+      "isAdminOrder": false,
+      "visitId": "VIS251015150",
+      "orderNumber": "VIS251015150",
+      "clientName": "S/0001/10/25",
+      "deviceInfo": {
+        "brand": "WHIRLPOOL",
+        "model": "AWE 7236P"
+      },
+      "ocrId": null,
+      "parts": [
+        {
+          "partId": "",
+          "quantity": 1,
+          "preferredSupplierId": null,
+          "northData": null
+        },
+        {
+          "partId": "NORTH-1760562031671",
+          "quantity": 1,
+          "preferredSupplierId": null,
+          "northData": {
+            "partId": "NORTH-1760562031671",
+            "name": "Bezpiecznik 0.7A 5kV do mikrofalówki Siemens 00606327",
+            "partNumber": "735-VL-3808",
+            "quantity": 1,
+            "price": 49.9,
+            "source": "north.pl",
+            "sourceUrl": "https://north.pl/karta/00606327-bezpiecznik-do-mikrofalowki,735-VL-3808.html",
+            "images": [
+              {
+                "url": "/uploads/parts/north_1760562030574_4djef.jpg",
+                "type": "product",
+                "id": "north-1760562030243-0",
+                "isFromNorth": true
+              },
+              {
+                "url": "/uploads/parts/north_1760562030661_nq3sn.jpg",
+                "type": "product",
+                "id": "north-1760562030243-1",
+                "isFromNorth": true
+              },
+              {
+                "url": "/uploads/parts/north_1760562030732_thar5s.jpg",
+                "type": "product",
+                "id": "north-1760562030243-2",
+                "isFromNorth": true
+              },
+              {
+                "url": "/uploads/parts/north_1760562030807_fxrgy.jpg",
+                "type": "product",
+                "id": "north-1760562030243-3",
+                "isFromNorth": true
+              },
+              {
+                "url": "/uploads/parts/north_1760562030885_bhsi4k.jpg",
+                "type": "product",
+                "id": "north-1760562030243-4",
+                "isFromNorth": true
+              }
+            ],
+            "notes": ""
+          }
+        }
+      ],
+      "urgency": "standard",
+      "afterDeadline": true,
+      "expressCharge": 0,
+      "preferredDelivery": "office",
+      "paczkomatId": null,
+      "deliveryAddress": null,
+      "alternativeAddress": null,
+      "paymentMethod": "prepaid",
+      "finalDelivery": null,
+      "pricing": {
+        "partsTotal": 0,
+        "laborCost": 0,
+        "totalCost": 0,
+        "paymentMethod": null,
+        "paymentStatus": "unpaid",
+        "paidAmount": 0,
+        "clientCharged": false
+      },
+      "status": "pending",
+      "createdAt": "2025-10-15T21:01:16.353Z",
+      "updatedAt": "2025-10-15T21:01:16.353Z",
+      "approvedAt": null,
+      "approvedBy": null,
+      "consolidatedWith": [],
+      "notes": null,
+      "logisticianNotes": null
+    },
+    {
+      "requestId": "ZC-2510152306-005",
+      "requestedBy": "EMPA252780002",
+      "requestedByName": "Mariusz Bielaszka",
+      "requestedFor": "EMPA252780002",
+      "requestedForName": "Mariusz Bielaszka",
+      "createdBy": "EMPA252780002",
+      "isAdminOrder": false,
+      "visitId": "VIS251015150",
+      "orderNumber": "VIS251015150",
+      "clientName": "S/0001/10/25",
+      "deviceInfo": {
+        "brand": "WHIRLPOOL",
+        "model": "AWE 7236P"
+      },
+      "ocrId": null,
+      "parts": [
+        {
+          "partId": "",
+          "quantity": 1,
+          "preferredSupplierId": null,
+          "northData": null
+        },
+        {
+          "partId": "NORTH-1760562383815",
+          "quantity": 1,
+          "preferredSupplierId": null,
+          "northData": {
+            "partId": "NORTH-1760562383815",
+            "name": "Bezpiecznik 0.7A 5kV do mikrofalówki Siemens 00606327",
+            "partNumber": "735-VL-3808",
+            "quantity": 1,
+            "price": 49.9,
+            "source": "north.pl",
+            "sourceUrl": "https://north.pl/karta/00606327-bezpiecznik-do-mikrofalowki,735-VL-3808.html",
+            "images": [
+              {
+                "url": "/uploads/parts/north_1760562381287_hsw3b5h.jpg",
+                "type": "product",
+                "id": "north-1760562381701-0",
+                "isFromNorth": true
+              },
+              {
+                "url": "/uploads/parts/north_1760562381388_ryfdho.jpg",
+                "type": "product",
+                "id": "north-1760562381701-1",
+                "isFromNorth": true
+              },
+              {
+                "url": "/uploads/parts/north_1760562381498_lzoba2.jpg",
+                "type": "product",
+                "id": "north-1760562381701-2",
+                "isFromNorth": true
+              },
+              {
+                "url": "/uploads/parts/north_1760562381628_4tqh.jpg",
+                "type": "product",
+                "id": "north-1760562381701-3",
+                "isFromNorth": true
+              },
+              {
+                "url": "/uploads/parts/north_1760562381738_dg13cq.jpg",
+                "type": "product",
+                "id": "north-1760562381702-4",
+                "isFromNorth": true
+              }
+            ],
+            "notes": ""
+          }
+        }
+      ],
+      "urgency": "standard",
+      "afterDeadline": true,
+      "expressCharge": 0,
+      "preferredDelivery": "office",
+      "paczkomatId": null,
+      "deliveryAddress": null,
+      "alternativeAddress": null,
+      "paymentMethod": "prepaid",
+      "finalDelivery": null,
+      "pricing": {
+        "partsTotal": 0,
+        "laborCost": 0,
+        "totalCost": 0,
+        "paymentMethod": null,
+        "paymentStatus": "unpaid",
+        "paidAmount": 0,
+        "clientCharged": false
+      },
+      "status": "pending",
+      "createdAt": "2025-10-15T21:06:28.136Z",
+      "updatedAt": "2025-10-15T21:06:28.136Z",
+      "approvedAt": null,
+      "approvedBy": null,
+      "consolidatedWith": [],
+      "notes": null,
+      "logisticianNotes": null
+    },
+    {
+      "requestId": "ZC-2510152309-006",
+      "requestedBy": "EMPA252780002",
+      "requestedByName": "Mariusz Bielaszka",
+      "requestedFor": "EMPA252780002",
+      "requestedForName": "Mariusz Bielaszka",
+      "createdBy": "EMPA252780002",
+      "isAdminOrder": false,
+      "visitId": "VIS251012001",
+      "orderNumber": "VIS251012001",
+      "clientName": "Mariusz Bielaszka",
+      "deviceInfo": null,
+      "ocrId": null,
+      "parts": [
+        {
+          "partId": "",
+          "quantity": 1,
+          "preferredSupplierId": null,
+          "northData": null
+        },
+        {
+          "partId": "NORTH-1760562561663",
+          "quantity": 1,
+          "preferredSupplierId": null,
+          "northData": {
+            "partId": "NORTH-1760562561663",
+            "name": "Bezpiecznik 0.8A 5000V do mikrofalówki LG EAF36358310",
+            "partNumber": "704-WT-2721",
+            "quantity": 1,
+            "price": 24.9,
+            "source": "north.pl",
+            "sourceUrl": "https://north.pl/karta/eaf36358310-bezpiecznik-do-mikrofalowki,704-WT-2721.html",
+            "images": [
+              {
+                "url": "/uploads/parts/north_1760562558998_aemd6m.jpg",
+                "type": "product",
+                "id": "north-1760562560285-0",
+                "isFromNorth": true
+              },
+              {
+                "url": "/uploads/parts/north_1760562559438_vwi0k.jpg",
+                "type": "product",
+                "id": "north-1760562560285-1",
+                "isFromNorth": true
+              },
+              {
+                "url": "/uploads/parts/north_1760562560025_8ih8l.jpg",
+                "type": "product",
+                "id": "north-1760562560285-2",
+                "isFromNorth": true
+              },
+              {
+                "url": "/uploads/parts/north_1760562560530_ey71w7.jpg",
+                "type": "product",
+                "id": "north-1760562560285-3",
+                "isFromNorth": true
+              },
+              {
+                "url": "/uploads/parts/north_1760562560928_5tj738d.jpg",
+                "type": "product",
+                "id": "north-1760562560285-4",
+                "isFromNorth": true
+              }
+            ],
+            "notes": ""
+          }
+        }
+      ],
+      "urgency": "standard",
+      "afterDeadline": true,
+      "expressCharge": 0,
+      "preferredDelivery": "office",
+      "paczkomatId": null,
+      "deliveryAddress": null,
+      "alternativeAddress": null,
+      "paymentMethod": "prepaid",
+      "finalDelivery": null,
+      "pricing": {
+        "partsTotal": 0,
+        "laborCost": 0,
+        "totalCost": 0,
+        "paymentMethod": null,
+        "paymentStatus": "unpaid",
+        "paidAmount": 0,
+        "clientCharged": false
+      },
+      "status": "pending",
+      "createdAt": "2025-10-15T21:09:25.633Z",
+      "updatedAt": "2025-10-15T21:09:25.633Z",
+      "approvedAt": null,
+      "approvedBy": null,
+      "consolidatedWith": [],
+      "notes": null,
+      "logisticianNotes": null
+    },
+    {
+      "requestId": "ZC-2510152309-007",
+      "requestedBy": "EMPA252780002",
+      "requestedByName": "Mariusz Bielaszka",
+      "requestedFor": "EMPA252780002",
+      "requestedForName": "Mariusz Bielaszka",
+      "createdBy": "EMPA252780002",
+      "isAdminOrder": false,
+      "visitId": "VIS251012001",
+      "orderNumber": "VIS251012001",
+      "clientName": "Mariusz Bielaszka",
+      "deviceInfo": null,
+      "ocrId": null,
+      "parts": [
+        {
+          "partId": "",
+          "quantity": 1,
+          "preferredSupplierId": null,
+          "northData": null
+        },
+        {
+          "partId": "NORTH-1760562561663",
+          "quantity": 1,
+          "preferredSupplierId": null,
+          "northData": {
+            "partId": "NORTH-1760562561663",
+            "name": "Bezpiecznik 0.8A 5000V do mikrofalówki LG EAF36358310",
+            "partNumber": "704-WT-2721",
+            "quantity": 1,
+            "price": 24.9,
+            "source": "north.pl",
+            "sourceUrl": "https://north.pl/karta/eaf36358310-bezpiecznik-do-mikrofalowki,704-WT-2721.html",
+            "images": [
+              {
+                "url": "/uploads/parts/north_1760562558998_aemd6m.jpg",
+                "type": "product",
+                "id": "north-1760562560285-0",
+                "isFromNorth": true
+              },
+              {
+                "url": "/uploads/parts/north_1760562559438_vwi0k.jpg",
+                "type": "product",
+                "id": "north-1760562560285-1",
+                "isFromNorth": true
+              },
+              {
+                "url": "/uploads/parts/north_1760562560025_8ih8l.jpg",
+                "type": "product",
+                "id": "north-1760562560285-2",
+                "isFromNorth": true
+              },
+              {
+                "url": "/uploads/parts/north_1760562560530_ey71w7.jpg",
+                "type": "product",
+                "id": "north-1760562560285-3",
+                "isFromNorth": true
+              },
+              {
+                "url": "/uploads/parts/north_1760562560928_5tj738d.jpg",
+                "type": "product",
+                "id": "north-1760562560285-4",
+                "isFromNorth": true
+              }
+            ],
+            "notes": ""
+          }
+        }
+      ],
+      "urgency": "standard",
+      "afterDeadline": true,
+      "expressCharge": 0,
+      "preferredDelivery": "office",
+      "paczkomatId": null,
+      "deliveryAddress": null,
+      "alternativeAddress": null,
+      "paymentMethod": "prepaid",
+      "finalDelivery": null,
+      "pricing": {
+        "partsTotal": 0,
+        "laborCost": 0,
+        "totalCost": 0,
+        "paymentMethod": null,
+        "paymentStatus": "unpaid",
+        "paidAmount": 0,
+        "clientCharged": false
+      },
+      "status": "pending",
+      "createdAt": "2025-10-15T21:09:30.380Z",
+      "updatedAt": "2025-10-15T21:09:30.380Z",
+      "approvedAt": null,
+      "approvedBy": null,
+      "consolidatedWith": [],
+      "notes": null,
+      "logisticianNotes": null
+    },
+    {
+      "requestId": "ZC-2510152314-008",
+      "requestedBy": "EMPA252780002",
+      "requestedByName": "Mariusz Bielaszka",
+      "requestedFor": "EMPA252780002",
+      "requestedForName": "Mariusz Bielaszka",
+      "createdBy": "EMPA252780002",
+      "isAdminOrder": false,
+      "visitId": "VIS251012001",
+      "orderNumber": "VIS251012001",
+      "clientName": "Mariusz Bielaszka",
+      "deviceInfo": null,
+      "ocrId": null,
+      "parts": [
+        {
+          "partId": "",
+          "quantity": 1,
+          "preferredSupplierId": null,
+          "northData": null
+        },
+        {
+          "partId": "NORTH-1760562887370",
+          "quantity": 1,
+          "preferredSupplierId": null,
+          "northData": {
+            "partId": "NORTH-1760562887370",
+            "name": "Bezpiecznik termiczny do ekspresu DeLonghi 5013257151",
+            "partNumber": "718-LX-3388",
+            "quantity": 1,
+            "price": 26.9,
+            "source": "north.pl",
+            "sourceUrl": "https://north.pl/karta/5013257151-bezpiecznik-do-ekspresu,718-LX-3388.html",
+            "images": [
+              {
+                "url": "/uploads/parts/north_1760562884175_s9lb6di.jpg",
+                "type": "product",
+                "id": "north-1760562885409-0",
+                "isFromNorth": true
+              },
+              {
+                "url": "/uploads/parts/north_1760562884820_yj4eu.jpg",
+                "type": "product",
+                "id": "north-1760562885409-1",
+                "isFromNorth": true
+              },
+              {
+                "url": "/uploads/parts/north_1760562885262_4793gn.jpg",
+                "type": "product",
+                "id": "north-1760562885409-2",
+                "isFromNorth": true
+              },
+              {
+                "url": "/uploads/parts/north_1760562885684_b0hfi9.jpg",
+                "type": "product",
+                "id": "north-1760562885409-3",
+                "isFromNorth": true
+              },
+              {
+                "url": "/uploads/parts/north_1760562886099_dx9s3k.jpg",
+                "type": "product",
+                "id": "north-1760562885409-4",
+                "isFromNorth": true
+              }
+            ],
+            "notes": ""
+          }
+        }
+      ],
+      "urgency": "standard",
+      "afterDeadline": true,
+      "expressCharge": 0,
+      "preferredDelivery": "office",
+      "paczkomatId": null,
+      "deliveryAddress": null,
+      "alternativeAddress": null,
+      "paymentMethod": "prepaid",
+      "finalDelivery": null,
+      "pricing": {
+        "partsTotal": 0,
+        "laborCost": 0,
+        "totalCost": 0,
+        "paymentMethod": null,
+        "paymentStatus": "unpaid",
+        "paidAmount": 0,
+        "clientCharged": false
+      },
+      "status": "pending",
+      "createdAt": "2025-10-15T21:14:51.896Z",
+      "updatedAt": "2025-10-15T21:14:51.896Z",
+      "approvedAt": null,
+      "approvedBy": null,
+      "consolidatedWith": [],
+      "notes": null,
+      "logisticianNotes": null
+    },
+    {
+      "requestId": "ZC-2510152314-009",
+      "requestedBy": "EMPA252780002",
+      "requestedByName": "Mariusz Bielaszka",
+      "requestedFor": "EMPA252780002",
+      "requestedForName": "Mariusz Bielaszka",
+      "createdBy": "EMPA252780002",
+      "isAdminOrder": false,
+      "visitId": "VIS251012001",
+      "orderNumber": "VIS251012001",
+      "clientName": "Mariusz Bielaszka",
+      "deviceInfo": null,
+      "ocrId": null,
+      "parts": [
+        {
+          "partId": "",
+          "quantity": 1,
+          "preferredSupplierId": null,
+          "northData": null
+        },
+        {
+          "partId": "NORTH-1760562887370",
+          "quantity": 1,
+          "preferredSupplierId": null,
+          "northData": {
+            "partId": "NORTH-1760562887370",
+            "name": "Bezpiecznik termiczny do ekspresu DeLonghi 5013257151",
+            "partNumber": "718-LX-3388",
+            "quantity": 1,
+            "price": 26.9,
+            "source": "north.pl",
+            "sourceUrl": "https://north.pl/karta/5013257151-bezpiecznik-do-ekspresu,718-LX-3388.html",
+            "images": [
+              {
+                "url": "/uploads/parts/north_1760562884175_s9lb6di.jpg",
+                "type": "product",
+                "id": "north-1760562885409-0",
+                "isFromNorth": true
+              },
+              {
+                "url": "/uploads/parts/north_1760562884820_yj4eu.jpg",
+                "type": "product",
+                "id": "north-1760562885409-1",
+                "isFromNorth": true
+              },
+              {
+                "url": "/uploads/parts/north_1760562885262_4793gn.jpg",
+                "type": "product",
+                "id": "north-1760562885409-2",
+                "isFromNorth": true
+              },
+              {
+                "url": "/uploads/parts/north_1760562885684_b0hfi9.jpg",
+                "type": "product",
+                "id": "north-1760562885409-3",
+                "isFromNorth": true
+              },
+              {
+                "url": "/uploads/parts/north_1760562886099_dx9s3k.jpg",
+                "type": "product",
+                "id": "north-1760562885409-4",
+                "isFromNorth": true
+              }
+            ],
+            "notes": ""
+          }
+        }
+      ],
+      "urgency": "standard",
+      "afterDeadline": true,
+      "expressCharge": 0,
+      "preferredDelivery": "office",
+      "paczkomatId": null,
+      "deliveryAddress": null,
+      "alternativeAddress": null,
+      "paymentMethod": "prepaid",
+      "finalDelivery": null,
+      "pricing": {
+        "partsTotal": 0,
+        "laborCost": 0,
+        "totalCost": 0,
+        "paymentMethod": null,
+        "paymentStatus": "unpaid",
+        "paidAmount": 0,
+        "clientCharged": false
+      },
+      "status": "pending",
+      "createdAt": "2025-10-15T21:14:52.815Z",
+      "updatedAt": "2025-10-15T21:14:52.815Z",
+      "approvedAt": null,
+      "approvedBy": null,
+      "consolidatedWith": [],
+      "notes": null,
+      "logisticianNotes": null
+    },
+    {
+      "requestId": "ZC-2510152314-010",
+      "requestedBy": "EMPA252780002",
+      "requestedByName": "Mariusz Bielaszka",
+      "requestedFor": "EMPA252780002",
+      "requestedForName": "Mariusz Bielaszka",
+      "createdBy": "EMPA252780002",
+      "isAdminOrder": false,
+      "visitId": "VIS251012001",
+      "orderNumber": "VIS251012001",
+      "clientName": "Mariusz Bielaszka",
+      "deviceInfo": null,
+      "ocrId": null,
+      "parts": [
+        {
+          "partId": "",
+          "quantity": 1,
+          "preferredSupplierId": null,
+          "northData": null
+        },
+        {
+          "partId": "NORTH-1760562887370",
+          "quantity": 1,
+          "preferredSupplierId": null,
+          "northData": {
+            "partId": "NORTH-1760562887370",
+            "name": "Bezpiecznik termiczny do ekspresu DeLonghi 5013257151",
+            "partNumber": "718-LX-3388",
+            "quantity": 1,
+            "price": 26.9,
+            "source": "north.pl",
+            "sourceUrl": "https://north.pl/karta/5013257151-bezpiecznik-do-ekspresu,718-LX-3388.html",
+            "images": [
+              {
+                "url": "/uploads/parts/north_1760562884175_s9lb6di.jpg",
+                "type": "product",
+                "id": "north-1760562885409-0",
+                "isFromNorth": true
+              },
+              {
+                "url": "/uploads/parts/north_1760562884820_yj4eu.jpg",
+                "type": "product",
+                "id": "north-1760562885409-1",
+                "isFromNorth": true
+              },
+              {
+                "url": "/uploads/parts/north_1760562885262_4793gn.jpg",
+                "type": "product",
+                "id": "north-1760562885409-2",
+                "isFromNorth": true
+              },
+              {
+                "url": "/uploads/parts/north_1760562885684_b0hfi9.jpg",
+                "type": "product",
+                "id": "north-1760562885409-3",
+                "isFromNorth": true
+              },
+              {
+                "url": "/uploads/parts/north_1760562886099_dx9s3k.jpg",
+                "type": "product",
+                "id": "north-1760562885409-4",
+                "isFromNorth": true
+              }
+            ],
+            "notes": ""
+          }
+        }
+      ],
+      "urgency": "standard",
+      "afterDeadline": true,
+      "expressCharge": 0,
+      "preferredDelivery": "office",
+      "paczkomatId": null,
+      "deliveryAddress": null,
+      "alternativeAddress": null,
+      "paymentMethod": "prepaid",
+      "finalDelivery": null,
+      "pricing": {
+        "partsTotal": 0,
+        "laborCost": 0,
+        "totalCost": 0,
+        "paymentMethod": null,
+        "paymentStatus": "unpaid",
+        "paidAmount": 0,
+        "clientCharged": false
+      },
+      "status": "pending",
+      "createdAt": "2025-10-15T21:14:53.287Z",
+      "updatedAt": "2025-10-15T21:14:53.287Z",
+      "approvedAt": null,
+      "approvedBy": null,
+      "consolidatedWith": [],
+      "notes": null,
+      "logisticianNotes": null
+    },
+    {
+      "requestId": "ZC-2510152314-011",
+      "requestedBy": "EMPA252780002",
+      "requestedByName": "Mariusz Bielaszka",
+      "requestedFor": "EMPA252780002",
+      "requestedForName": "Mariusz Bielaszka",
+      "createdBy": "EMPA252780002",
+      "isAdminOrder": false,
+      "visitId": "VIS251012001",
+      "orderNumber": "VIS251012001",
+      "clientName": "Mariusz Bielaszka",
+      "deviceInfo": null,
+      "ocrId": null,
+      "parts": [
+        {
+          "partId": "",
+          "quantity": 1,
+          "preferredSupplierId": null,
+          "northData": null
+        },
+        {
+          "partId": "NORTH-1760562887370",
+          "quantity": 1,
+          "preferredSupplierId": null,
+          "northData": {
+            "partId": "NORTH-1760562887370",
+            "name": "Bezpiecznik termiczny do ekspresu DeLonghi 5013257151",
+            "partNumber": "718-LX-3388",
+            "quantity": 1,
+            "price": 26.9,
+            "source": "north.pl",
+            "sourceUrl": "https://north.pl/karta/5013257151-bezpiecznik-do-ekspresu,718-LX-3388.html",
+            "images": [
+              {
+                "url": "/uploads/parts/north_1760562884175_s9lb6di.jpg",
+                "type": "product",
+                "id": "north-1760562885409-0",
+                "isFromNorth": true
+              },
+              {
+                "url": "/uploads/parts/north_1760562884820_yj4eu.jpg",
+                "type": "product",
+                "id": "north-1760562885409-1",
+                "isFromNorth": true
+              },
+              {
+                "url": "/uploads/parts/north_1760562885262_4793gn.jpg",
+                "type": "product",
+                "id": "north-1760562885409-2",
+                "isFromNorth": true
+              },
+              {
+                "url": "/uploads/parts/north_1760562885684_b0hfi9.jpg",
+                "type": "product",
+                "id": "north-1760562885409-3",
+                "isFromNorth": true
+              },
+              {
+                "url": "/uploads/parts/north_1760562886099_dx9s3k.jpg",
+                "type": "product",
+                "id": "north-1760562885409-4",
+                "isFromNorth": true
+              }
+            ],
+            "notes": ""
+          }
+        }
+      ],
+      "urgency": "standard",
+      "afterDeadline": true,
+      "expressCharge": 0,
+      "preferredDelivery": "office",
+      "paczkomatId": null,
+      "deliveryAddress": null,
+      "alternativeAddress": null,
+      "paymentMethod": "prepaid",
+      "finalDelivery": null,
+      "pricing": {
+        "partsTotal": 0,
+        "laborCost": 0,
+        "totalCost": 0,
+        "paymentMethod": null,
+        "paymentStatus": "unpaid",
+        "paidAmount": 0,
+        "clientCharged": false
+      },
+      "status": "pending",
+      "createdAt": "2025-10-15T21:14:53.476Z",
+      "updatedAt": "2025-10-15T21:14:53.476Z",
+      "approvedAt": null,
+      "approvedBy": null,
+      "consolidatedWith": [],
+      "notes": null,
+      "logisticianNotes": null
+    },
+    {
+      "requestId": "ZC-2510152314-012",
+      "requestedBy": "EMPA252780002",
+      "requestedByName": "Mariusz Bielaszka",
+      "requestedFor": "EMPA252780002",
+      "requestedForName": "Mariusz Bielaszka",
+      "createdBy": "EMPA252780002",
+      "isAdminOrder": false,
+      "visitId": "VIS251012001",
+      "orderNumber": "VIS251012001",
+      "clientName": "Mariusz Bielaszka",
+      "deviceInfo": null,
+      "ocrId": null,
+      "parts": [
+        {
+          "partId": "",
+          "quantity": 1,
+          "preferredSupplierId": null,
+          "northData": null
+        },
+        {
+          "partId": "NORTH-1760562887370",
+          "quantity": 1,
+          "preferredSupplierId": null,
+          "northData": {
+            "partId": "NORTH-1760562887370",
+            "name": "Bezpiecznik termiczny do ekspresu DeLonghi 5013257151",
+            "partNumber": "718-LX-3388",
+            "quantity": 1,
+            "price": 26.9,
+            "source": "north.pl",
+            "sourceUrl": "https://north.pl/karta/5013257151-bezpiecznik-do-ekspresu,718-LX-3388.html",
+            "images": [
+              {
+                "url": "/uploads/parts/north_1760562884175_s9lb6di.jpg",
+                "type": "product",
+                "id": "north-1760562885409-0",
+                "isFromNorth": true
+              },
+              {
+                "url": "/uploads/parts/north_1760562884820_yj4eu.jpg",
+                "type": "product",
+                "id": "north-1760562885409-1",
+                "isFromNorth": true
+              },
+              {
+                "url": "/uploads/parts/north_1760562885262_4793gn.jpg",
+                "type": "product",
+                "id": "north-1760562885409-2",
+                "isFromNorth": true
+              },
+              {
+                "url": "/uploads/parts/north_1760562885684_b0hfi9.jpg",
+                "type": "product",
+                "id": "north-1760562885409-3",
+                "isFromNorth": true
+              },
+              {
+                "url": "/uploads/parts/north_1760562886099_dx9s3k.jpg",
+                "type": "product",
+                "id": "north-1760562885409-4",
+                "isFromNorth": true
+              }
+            ],
+            "notes": ""
+          }
+        }
+      ],
+      "urgency": "standard",
+      "afterDeadline": true,
+      "expressCharge": 0,
+      "preferredDelivery": "office",
+      "paczkomatId": null,
+      "deliveryAddress": null,
+      "alternativeAddress": null,
+      "paymentMethod": "prepaid",
+      "finalDelivery": null,
+      "pricing": {
+        "partsTotal": 0,
+        "laborCost": 0,
+        "totalCost": 0,
+        "paymentMethod": null,
+        "paymentStatus": "unpaid",
+        "paidAmount": 0,
+        "clientCharged": false
+      },
+      "status": "pending",
+      "createdAt": "2025-10-15T21:14:53.654Z",
+      "updatedAt": "2025-10-15T21:14:53.654Z",
+      "approvedAt": null,
+      "approvedBy": null,
+      "consolidatedWith": [],
+      "notes": null,
+      "logisticianNotes": null
+    },
+    {
+      "requestId": "ZC-2510152314-013",
+      "requestedBy": "EMPA252780002",
+      "requestedByName": "Mariusz Bielaszka",
+      "requestedFor": "EMPA252780002",
+      "requestedForName": "Mariusz Bielaszka",
+      "createdBy": "EMPA252780002",
+      "isAdminOrder": false,
+      "visitId": "VIS251012001",
+      "orderNumber": "VIS251012001",
+      "clientName": "Mariusz Bielaszka",
+      "deviceInfo": null,
+      "ocrId": null,
+      "parts": [
+        {
+          "partId": "",
+          "quantity": 1,
+          "preferredSupplierId": null,
+          "northData": null
+        },
+        {
+          "partId": "NORTH-1760562887370",
+          "quantity": 1,
+          "preferredSupplierId": null,
+          "northData": {
+            "partId": "NORTH-1760562887370",
+            "name": "Bezpiecznik termiczny do ekspresu DeLonghi 5013257151",
+            "partNumber": "718-LX-3388",
+            "quantity": 1,
+            "price": 26.9,
+            "source": "north.pl",
+            "sourceUrl": "https://north.pl/karta/5013257151-bezpiecznik-do-ekspresu,718-LX-3388.html",
+            "images": [
+              {
+                "url": "/uploads/parts/north_1760562884175_s9lb6di.jpg",
+                "type": "product",
+                "id": "north-1760562885409-0",
+                "isFromNorth": true
+              },
+              {
+                "url": "/uploads/parts/north_1760562884820_yj4eu.jpg",
+                "type": "product",
+                "id": "north-1760562885409-1",
+                "isFromNorth": true
+              },
+              {
+                "url": "/uploads/parts/north_1760562885262_4793gn.jpg",
+                "type": "product",
+                "id": "north-1760562885409-2",
+                "isFromNorth": true
+              },
+              {
+                "url": "/uploads/parts/north_1760562885684_b0hfi9.jpg",
+                "type": "product",
+                "id": "north-1760562885409-3",
+                "isFromNorth": true
+              },
+              {
+                "url": "/uploads/parts/north_1760562886099_dx9s3k.jpg",
+                "type": "product",
+                "id": "north-1760562885409-4",
+                "isFromNorth": true
+              }
+            ],
+            "notes": ""
+          }
+        }
+      ],
+      "urgency": "standard",
+      "afterDeadline": true,
+      "expressCharge": 0,
+      "preferredDelivery": "office",
+      "paczkomatId": null,
+      "deliveryAddress": null,
+      "alternativeAddress": null,
+      "paymentMethod": "prepaid",
+      "finalDelivery": null,
+      "pricing": {
+        "partsTotal": 0,
+        "laborCost": 0,
+        "totalCost": 0,
+        "paymentMethod": null,
+        "paymentStatus": "unpaid",
+        "paidAmount": 0,
+        "clientCharged": false
+      },
+      "status": "pending",
+      "createdAt": "2025-10-15T21:14:53.848Z",
+      "updatedAt": "2025-10-15T21:14:53.848Z",
+      "approvedAt": null,
+      "approvedBy": null,
+      "consolidatedWith": [],
+      "notes": null,
+      "logisticianNotes": null
+    },
+    {
+      "requestId": "ZC-2510152314-014",
+      "requestedBy": "EMPA252780002",
+      "requestedByName": "Mariusz Bielaszka",
+      "requestedFor": "EMPA252780002",
+      "requestedForName": "Mariusz Bielaszka",
+      "createdBy": "EMPA252780002",
+      "isAdminOrder": false,
+      "visitId": "VIS251012001",
+      "orderNumber": "VIS251012001",
+      "clientName": "Mariusz Bielaszka",
+      "deviceInfo": null,
+      "ocrId": null,
+      "parts": [
+        {
+          "partId": "",
+          "quantity": 1,
+          "preferredSupplierId": null,
+          "northData": null
+        },
+        {
+          "partId": "NORTH-1760562887370",
+          "quantity": 1,
+          "preferredSupplierId": null,
+          "northData": {
+            "partId": "NORTH-1760562887370",
+            "name": "Bezpiecznik termiczny do ekspresu DeLonghi 5013257151",
+            "partNumber": "718-LX-3388",
+            "quantity": 1,
+            "price": 26.9,
+            "source": "north.pl",
+            "sourceUrl": "https://north.pl/karta/5013257151-bezpiecznik-do-ekspresu,718-LX-3388.html",
+            "images": [
+              {
+                "url": "/uploads/parts/north_1760562884175_s9lb6di.jpg",
+                "type": "product",
+                "id": "north-1760562885409-0",
+                "isFromNorth": true
+              },
+              {
+                "url": "/uploads/parts/north_1760562884820_yj4eu.jpg",
+                "type": "product",
+                "id": "north-1760562885409-1",
+                "isFromNorth": true
+              },
+              {
+                "url": "/uploads/parts/north_1760562885262_4793gn.jpg",
+                "type": "product",
+                "id": "north-1760562885409-2",
+                "isFromNorth": true
+              },
+              {
+                "url": "/uploads/parts/north_1760562885684_b0hfi9.jpg",
+                "type": "product",
+                "id": "north-1760562885409-3",
+                "isFromNorth": true
+              },
+              {
+                "url": "/uploads/parts/north_1760562886099_dx9s3k.jpg",
+                "type": "product",
+                "id": "north-1760562885409-4",
+                "isFromNorth": true
+              }
+            ],
+            "notes": ""
+          }
+        }
+      ],
+      "urgency": "standard",
+      "afterDeadline": true,
+      "expressCharge": 0,
+      "preferredDelivery": "office",
+      "paczkomatId": null,
+      "deliveryAddress": null,
+      "alternativeAddress": null,
+      "paymentMethod": "prepaid",
+      "finalDelivery": null,
+      "pricing": {
+        "partsTotal": 0,
+        "laborCost": 0,
+        "totalCost": 0,
+        "paymentMethod": null,
+        "paymentStatus": "unpaid",
+        "paidAmount": 0,
+        "clientCharged": false
+      },
+      "status": "pending",
+      "createdAt": "2025-10-15T21:14:54.034Z",
+      "updatedAt": "2025-10-15T21:14:54.034Z",
+      "approvedAt": null,
+      "approvedBy": null,
+      "consolidatedWith": [],
+      "notes": null,
+      "logisticianNotes": null
+    },
+    {
+      "requestId": "ZC-2510152314-015",
+      "requestedBy": "EMPA252780002",
+      "requestedByName": "Mariusz Bielaszka",
+      "requestedFor": "EMPA252780002",
+      "requestedForName": "Mariusz Bielaszka",
+      "createdBy": "EMPA252780002",
+      "isAdminOrder": false,
+      "visitId": "VIS251012001",
+      "orderNumber": "VIS251012001",
+      "clientName": "Mariusz Bielaszka",
+      "deviceInfo": null,
+      "ocrId": null,
+      "parts": [
+        {
+          "partId": "",
+          "quantity": 1,
+          "preferredSupplierId": null,
+          "northData": null
+        },
+        {
+          "partId": "NORTH-1760562887370",
+          "quantity": 1,
+          "preferredSupplierId": null,
+          "northData": {
+            "partId": "NORTH-1760562887370",
+            "name": "Bezpiecznik termiczny do ekspresu DeLonghi 5013257151",
+            "partNumber": "718-LX-3388",
+            "quantity": 1,
+            "price": 26.9,
+            "source": "north.pl",
+            "sourceUrl": "https://north.pl/karta/5013257151-bezpiecznik-do-ekspresu,718-LX-3388.html",
+            "images": [
+              {
+                "url": "/uploads/parts/north_1760562884175_s9lb6di.jpg",
+                "type": "product",
+                "id": "north-1760562885409-0",
+                "isFromNorth": true
+              },
+              {
+                "url": "/uploads/parts/north_1760562884820_yj4eu.jpg",
+                "type": "product",
+                "id": "north-1760562885409-1",
+                "isFromNorth": true
+              },
+              {
+                "url": "/uploads/parts/north_1760562885262_4793gn.jpg",
+                "type": "product",
+                "id": "north-1760562885409-2",
+                "isFromNorth": true
+              },
+              {
+                "url": "/uploads/parts/north_1760562885684_b0hfi9.jpg",
+                "type": "product",
+                "id": "north-1760562885409-3",
+                "isFromNorth": true
+              },
+              {
+                "url": "/uploads/parts/north_1760562886099_dx9s3k.jpg",
+                "type": "product",
+                "id": "north-1760562885409-4",
+                "isFromNorth": true
+              }
+            ],
+            "notes": ""
+          }
+        }
+      ],
+      "urgency": "standard",
+      "afterDeadline": true,
+      "expressCharge": 0,
+      "preferredDelivery": "office",
+      "paczkomatId": null,
+      "deliveryAddress": null,
+      "alternativeAddress": null,
+      "paymentMethod": "prepaid",
+      "finalDelivery": null,
+      "pricing": {
+        "partsTotal": 0,
+        "laborCost": 0,
+        "totalCost": 0,
+        "paymentMethod": null,
+        "paymentStatus": "unpaid",
+        "paidAmount": 0,
+        "clientCharged": false
+      },
+      "status": "pending",
+      "createdAt": "2025-10-15T21:14:54.241Z",
+      "updatedAt": "2025-10-15T21:14:54.241Z",
+      "approvedAt": null,
+      "approvedBy": null,
+      "consolidatedWith": [],
+      "notes": null,
+      "logisticianNotes": null
+    }
+  ]
+}

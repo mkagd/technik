@@ -30,6 +30,9 @@ export default function RezerwacjaNowa() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [message, setMessage] = useState('');
     const [showSummary, setShowSummary] = useState(false);
+    const [showSuccessModal, setShowSuccessModal] = useState(false);
+    const [submittedOrderNumber, setSubmittedOrderNumber] = useState('');
+    const [emailSentStatus, setEmailSentStatus] = useState(null);
     const [showBrandSuggestions, setShowBrandSuggestions] = useState(null);
     const [showProblemSuggestions, setShowProblemSuggestions] = useState(null);
     const [showAIScanner, setShowAIScanner] = useState(false);
@@ -859,27 +862,9 @@ export default function RezerwacjaNowa() {
                 const deviceText = deviceCount === 1 ? 'urządzenie' : deviceCount < 5 ? 'urządzenia' : 'urządzeń';
                 const orderNumber = result.order?.orderNumber || 'będzie przydzielony wkrótce';
                 
-                // Dodaj informację o emailu na podstawie rzeczywistego statusu
-                let emailInfo = '';
-                console.log('📧 Email status check:', { 
-                    hasEmail: !!formData.email, 
-                    emailSent: result.emailSent, 
-                    emailError: result.emailError 
-                });
-                
-                if (formData.email) {
-                    if (result.emailSent === true) {
-                        emailInfo = `\n\n📧 ✅ Potwierdzenie wysłane na: ${formData.email}\n(Sprawdź także folder SPAM)`;
-                    } else {
-                        emailInfo = `\n\n⚠️ Email nie został wysłany\nPowód: ${result.emailError || 'Nieznany błąd'}`;
-                    }
-                } else {
-                    emailInfo = '\n\n💡 Nie podałeś/aś emaila - potwierdzenie nie zostanie wysłane';
-                }
-                
-                const successMessage = `✅ Zgłoszenie na ${deviceCount} ${deviceText} zostało wysłane!\n\n📋 Numer zlecenia: ${orderNumber}${emailInfo}\n\nSkontaktujemy się z Tobą wkrótce!`;
-                console.log('✅ Sukces! Ustawiam komunikat:', successMessage);
-                setMessage(successMessage);
+                // Zapisz dane do modalu
+                setSubmittedOrderNumber(orderNumber);
+                setEmailSentStatus(result.emailSent ? 'sent' : 'not-sent');
                 
                 // Usuń draft z localStorage i serwera
                 if (currentDraftId) {
@@ -896,14 +881,12 @@ export default function RezerwacjaNowa() {
                         setCurrentDraftId(null);
                     } catch (error) {
                         console.error('❌ Błąd usuwania draftu:', error);
-                        // Nie przerywaj - zgłoszenie zostało wysłane pomyślnie
                     }
                 }
                 
-                // Scroll do komunikatu
-                setTimeout(() => {
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                }, 100);
+                // Pokaż modal sukcesu
+                console.log('✅ Sukces! Pokazuję modal');
+                setShowSuccessModal(true);
             } else {
                 const errorMessage = `❌ Błąd: ${result.message || 'Nie udało się wysłać zgłoszenia'}`;
                 console.log('❌ Błąd! Ustawiam komunikat:', errorMessage);
@@ -1004,12 +987,12 @@ export default function RezerwacjaNowa() {
                     <p className="text-gray-600">Szybko i profesjonalnie</p>
                 </div>
 
-                {/* Progress Bar */}
-                <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-                    <div className="flex justify-between items-center mb-4">
+                {/* Progress Bar - RESPONSIVE */}
+                <div className="bg-white rounded-lg shadow-md p-3 md:p-6 mb-6">
+                    <div className="flex justify-between items-center mb-2 md:mb-4">
                         {[1, 2, 3, 4, 5].map((step) => (
                             <div key={step} className="flex items-center">
-                                <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold ${
+                                <div className={`w-7 h-7 md:w-10 md:h-10 rounded-full flex items-center justify-center font-bold text-xs md:text-base ${
                                     currentStep === step 
                                         ? 'bg-blue-600 text-white' 
                                         : currentStep > step 
@@ -1019,17 +1002,26 @@ export default function RezerwacjaNowa() {
                                     {currentStep > step ? '✓' : step}
                                 </div>
                                 {step < 5 && (
-                                    <div className={`w-12 h-1 ${currentStep > step ? 'bg-green-500' : 'bg-gray-200'}`} />
+                                    <div className={`w-6 md:w-12 h-1 ${currentStep > step ? 'bg-green-500' : 'bg-gray-200'}`} />
                                 )}
                             </div>
                         ))}
                     </div>
-                    <div className="flex justify-between text-xs text-gray-600">
+                    {/* Tekst kroków - ukryty na mobile, widoczny na tablet+ */}
+                    <div className="hidden sm:flex justify-between text-xs text-gray-600">
                         <span>Lokalizacja</span>
                         <span>Kontakt</span>
                         <span>Urządzenie</span>
                         <span>Termin</span>
                         <span>Podsumowanie</span>
+                    </div>
+                    {/* Mobilna wersja - tylko aktualny krok */}
+                    <div className="sm:hidden text-center text-xs text-gray-600 font-medium mt-2">
+                        {currentStep === 1 && 'Lokalizacja'}
+                        {currentStep === 2 && 'Kontakt'}
+                        {currentStep === 3 && 'Urządzenie'}
+                        {currentStep === 4 && 'Termin'}
+                        {currentStep === 5 && 'Podsumowanie'}
                     </div>
                 </div>
 
@@ -2048,16 +2040,17 @@ export default function RezerwacjaNowa() {
                                     disabled={isSubmitting || isSubmittingRef.current}
                                     onClick={(e) => {
                                         console.log('🖱️ KLIKNIĘTO przycisk Submit - isSubmittingRef:', isSubmittingRef.current);
-                                        if (isSubmittingRef.current) {
+                                        if (isSubmittingRef.current || isSubmitting) {
                                             e.preventDefault();
                                             e.stopPropagation();
-                                            console.log('🚫 Kliknięcie zablokowane przez isSubmittingRef');
+                                            console.log('🚫 Kliknięcie zablokowane - już wysyłam!');
+                                            return false;
                                         }
                                     }}
-                                    className={`flex items-center justify-center w-full px-6 py-4 rounded-lg font-semibold text-lg ${
+                                    className={`flex items-center justify-center w-full px-6 py-4 rounded-lg font-semibold text-lg transition-all ${
                                         !isSubmitting && !isSubmittingRef.current
-                                            ? 'bg-green-600 text-white hover:bg-green-700'
-                                            : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                                            ? 'bg-green-600 text-white hover:bg-green-700 active:scale-95'
+                                            : 'bg-gray-400 text-gray-200 cursor-not-allowed opacity-60 pointer-events-none'
                                     }`}
                                 >
                                     {isSubmitting ? (
@@ -2123,6 +2116,125 @@ export default function RezerwacjaNowa() {
                     }}
                     onModelDetected={handleAIModelDetected}
                 />
+            )}
+
+            {/* Modal sukcesu - po wysłaniu zgłoszenia */}
+            {showSuccessModal && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50 animate-fade-in">
+                    <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 md:p-8 transform transition-all">
+                        {/* Ikona sukcesu */}
+                        <div className="flex justify-center mb-6">
+                            <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center">
+                                <FiCheck className="w-12 h-12 text-green-600" />
+                            </div>
+                        </div>
+
+                        {/* Tytuł */}
+                        <h2 className="text-2xl md:text-3xl font-bold text-gray-900 text-center mb-4">
+                            🎉 Zgłoszenie wysłane!
+                        </h2>
+
+                        {/* Numer zlecenia */}
+                        <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-4 mb-6">
+                            <p className="text-sm text-gray-600 text-center mb-2">
+                                Twój numer zlecenia:
+                            </p>
+                            <p className="text-3xl font-bold text-blue-600 text-center tracking-wider">
+                                {submittedOrderNumber}
+                            </p>
+                        </div>
+
+                        {/* Podsumowanie */}
+                        <div className="space-y-3 mb-6 text-sm">
+                            <div className="flex items-start">
+                                <span className="text-2xl mr-3">📱</span>
+                                <div>
+                                    <p className="font-semibold text-gray-900">Skontaktujemy się z Tobą wkrótce</p>
+                                    <p className="text-gray-600">Telefon: {formData.phone}</p>
+                                </div>
+                            </div>
+
+                            <div className="flex items-start">
+                                <span className="text-2xl mr-3">📍</span>
+                                <div>
+                                    <p className="font-semibold text-gray-900">Adres wizyty</p>
+                                    <p className="text-gray-600">{formData.street}, {formData.city}</p>
+                                </div>
+                            </div>
+
+                            <div className="flex items-start">
+                                <span className="text-2xl mr-3">🔧</span>
+                                <div>
+                                    <p className="font-semibold text-gray-900">Urządzenia</p>
+                                    <p className="text-gray-600">{formData.categories.join(', ')}</p>
+                                </div>
+                            </div>
+
+                            {/* Status emaila */}
+                            {formData.email && (
+                                <div className="flex items-start">
+                                    <span className="text-2xl mr-3">
+                                        {emailSentStatus === 'sent' ? '✅' : '⚠️'}
+                                    </span>
+                                    <div>
+                                        <p className="font-semibold text-gray-900">
+                                            {emailSentStatus === 'sent' ? 'Potwierdzenie wysłane' : 'Email nie wysłany'}
+                                        </p>
+                                        <p className="text-gray-600">
+                                            {emailSentStatus === 'sent' 
+                                                ? `Sprawdź ${formData.email} (także SPAM)`
+                                                : 'Skontaktujemy się telefonicznie'}
+                                        </p>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Przyciski */}
+                        <div className="space-y-3">
+                            <button
+                                onClick={() => window.location.href = '/'}
+                                className="w-full px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold"
+                            >
+                                🏠 Wróć na stronę główną
+                            </button>
+                            <button
+                                onClick={() => {
+                                    setShowSuccessModal(false);
+                                    // Reset formularza
+                                    setFormData({
+                                        categories: [],
+                                        devices: [],
+                                        brands: [],
+                                        problems: [],
+                                        hasBuiltIn: [],
+                                        hasDemontaz: [],
+                                        hasMontaz: [],
+                                        hasTrudnaZabudowa: [],
+                                        postalCode: '',
+                                        city: '',
+                                        street: '',
+                                        name: '',
+                                        phone: '',
+                                        email: '',
+                                        timeSlot: '',
+                                        additionalNotes: ''
+                                    });
+                                    setCurrentStep(1);
+                                    setShowSummary(false);
+                                }}
+                                className="w-full px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors font-medium"
+                            >
+                                ➕ Dodaj kolejne zgłoszenie
+                            </button>
+                        </div>
+
+                        {/* Informacja dodatkowa */}
+                        <p className="text-xs text-gray-500 text-center mt-4">
+                            💡 Zapisz numer zlecenia: <strong>{submittedOrderNumber}</strong>
+                        </p>
+                    </div>
+                </div>
             )}
 
             {/* Custom animations */}

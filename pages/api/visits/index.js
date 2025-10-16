@@ -59,8 +59,9 @@ function extractVisits(orders, employees) {
           // Visit core data
           ...visit,
           
-          // Order reference
-          orderId: order.id,
+          // Order reference - USE orderNumber as primary ID
+          orderId: visit.orderId || order.orderNumber || order.id,
+          orderNumber: order.orderNumber,
           
           // Client information
           clientId: order.clientId,
@@ -90,6 +91,9 @@ function extractVisits(orders, employees) {
           technicianPhone: technician?.phone || null,
           technicianEmail: technician?.email || null,
           technicianAvatar: technician?.avatar || null,
+          
+          // 🔧 Parts - Przypisane części z zamówienia
+          parts: visit.parts || order.parts || [],
           
           // Parts used (calculate total if exists)
           partsUsed: visit.partsUsed || [],

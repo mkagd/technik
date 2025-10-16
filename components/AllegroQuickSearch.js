@@ -58,32 +58,32 @@ export default function AllegroQuickSearch({ partName, partNumber = null, compac
           {loading ? '⏳' : '🛒'}
         </button>
         {showModal && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4" style={{zIndex:9999}} onClick={() => setShowModal(false)}>
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-2 sm:p-4" style={{zIndex:9999}} onClick={() => setShowModal(false)}>
             <div className="bg-white dark:bg-gray-800 rounded-xl max-w-4xl w-full max-h-[90vh] flex flex-col" onClick={e => e.stopPropagation()}>
-              <div className="p-6 border-b flex justify-between bg-purple-600 text-white">
-                <h2 className="text-xl font-bold">🛒 Wyniki z Allegro</h2>
-                <button onClick={() => setShowModal(false)} className="hover:bg-white/20 p-2 rounded text-2xl">✕</button>
+              <div className="p-3 sm:p-6 border-b flex justify-between items-center bg-purple-600 text-white">
+                <h2 className="text-base sm:text-xl font-bold">🛒 Wyniki z Allegro</h2>
+                <button onClick={() => setShowModal(false)} className="hover:bg-white/20 p-1.5 sm:p-2 rounded text-xl sm:text-2xl">✕</button>
               </div>
-              <div className="flex-1 overflow-y-auto p-6">
+              <div className="flex-1 overflow-y-auto p-3 sm:p-6">
                 {error ? (
-                  <div className="text-center py-8 text-red-600">{error}</div>
+                  <div className="text-center py-8 text-red-600 text-sm sm:text-base">{error}</div>
                 ) : results.length === 0 ? (
-                  <div className="text-center py-8 text-gray-500">Brak wyników</div>
+                  <div className="text-center py-8 text-gray-500 text-sm sm:text-base">Brak wyników</div>
                 ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
                     {results.map((item, i) => (
-                      <a key={i} href={item.url} target="_blank" rel="noopener noreferrer" className="block bg-gray-50 dark:bg-gray-700 rounded-lg p-4 hover:shadow-lg border hover:border-purple-500">
-                        {item.image && <img src={item.image} alt={item.name} className="w-full h-40 object-contain mb-3 bg-white rounded"/>}
-                        <h3 className="font-medium text-sm mb-2 line-clamp-2">{item.name}</h3>
-                        <span className="text-lg font-bold text-purple-600">{item.price} zł</span>
+                      <a key={i} href={item.url} target="_blank" rel="noopener noreferrer" className="block bg-gray-50 dark:bg-gray-700 rounded-lg p-3 sm:p-4 hover:shadow-lg border hover:border-purple-500">
+                        {item.image && <img src={item.image} alt={item.name} className="w-full h-32 sm:h-40 object-contain mb-2 sm:mb-3 bg-white rounded"/>}
+                        <h3 className="font-medium text-xs sm:text-sm mb-1 sm:mb-2 line-clamp-2">{item.name}</h3>
+                        <span className="text-base sm:text-lg font-bold text-purple-600">{item.price} zł</span>
                       </a>
                     ))}
                   </div>
                 )}
               </div>
-              <div className="p-4 border-t flex justify-between">
-                <span className="text-sm">Znaleziono {results.length} ofert</span>
-                <button onClick={openAllegro} className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700">Otwórz Allegro </button>
+              <div className="p-3 sm:p-4 border-t flex flex-col sm:flex-row justify-between items-center gap-2 sm:gap-0">
+                <span className="text-xs sm:text-sm">Znaleziono {results.length} ofert</span>
+                <button onClick={openAllegro} className="w-full sm:w-auto px-3 sm:px-4 py-2 bg-purple-600 text-white text-sm rounded hover:bg-purple-700">Otwórz Allegro</button>
               </div>
             </div>
           </div>

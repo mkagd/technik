@@ -4,6 +4,7 @@
 import fs from 'fs';
 import path from 'path';
 import { getTechnicianId, statusToUI } from '../../../utils/fieldMapping';
+import { logger } from '../../../utils/logger';
 
 const ORDERS_FILE = path.join(process.cwd(), 'data', 'orders.json');
 const SESSIONS_FILE = path.join(process.cwd(), 'data', 'technician-sessions.json');
@@ -17,7 +18,7 @@ const readOrders = () => {
     const data = fs.readFileSync(ORDERS_FILE, 'utf8');
     return JSON.parse(data);
   } catch (error) {
-    console.error('❌ Error reading orders.json:', error);
+    logger.error('❌ Error reading orders.json:', error);
     return [];
   }
 };
@@ -30,27 +31,39 @@ const readSessions = () => {
     }
     return [];
   } catch (error) {
-    console.error('❌ Error reading sessions:', error);
+    logger.error('❌ Error reading sessions:', error);
     return [];
   }
 };
 
-// Waliduj token i zwróć employeeId
+// Waliduj token i zwróć employeeId (multi-auth: technician-sessions + employee-sessions)
 const validateToken = (token) => {
+  // Try technician-sessions.json (primary)
   const sessions = readSessions();
   const session = sessions.find(s => s.token === token && s.isValid);
   
-  if (!session) return null;
-  
-  // Sprawdź wygaśnięcie (7 dni)
-  const expirationTime = 7 * 24 * 60 * 60 * 1000;
-  const sessionAge = Date.now() - new Date(session.createdAt).getTime();
-  
-  if (sessionAge > expirationTime) {
-    return null;
+  if (session) {
+    // ✅ Jeśli jest isValid: true, to token jest aktywny (nie sprawdzamy daty)
+    logger.debug(`✅ Valid technician token for ${session.employeeId}`);
+    return session.employeeId;
   }
   
-  return session.employeeId;
+  // Try employee-sessions.json (fallback for pracownik-logowanie)
+  const employeeSessionsPath = path.join(process.cwd(), 'data', 'employee-sessions.json');
+  if (fs.existsSync(employeeSessionsPath)) {
+    try {
+      const empSessions = JSON.parse(fs.readFileSync(employeeSessionsPath, 'utf-8'));
+      const empSession = empSessions.find(s => s.token === token && s.isValid);
+      if (empSession) {
+        logger.debug(`✅ Valid employee token for ${empSession.employeeId}`);
+        return empSession.employeeId;
+      }
+    } catch (error) {
+      logger.error('Error reading employee-sessions:', error);
+    }
+  }
+  
+  return null;
 };
 
 // Wyciągnij wszystkie wizyty ze zlecenia
@@ -347,11 +360,20 @@ export default function handler(req, res) {
 
     // Filtruj wizyty przypisane do tego pracownika
     let employeeVisits = allVisits.filter(visit => {
-      return visit.assignedTo === employeeId || 
-             visit.technicianId === employeeId;
+      const isAssigned = visit.technicianId === employeeId;
+      
+      if (isAssigned) {
+        logger.debug(`✅ Wizyta ${visit.visitId} przypisana do ${employeeId}:`, {
+          technicianId: visit.technicianId,
+          date: visit.date,
+          status: visit.status
+        });
+      }
+      
+      return isAssigned;
     });
 
-    console.log(`📊 Znaleziono ${employeeVisits.length} wizyt dla pracownika ${employeeId}`);
+    logger.debug(`📊 Znaleziono ${employeeVisits.length} wizyt dla pracownika ${employeeId} z ${allVisits.length} wszystkich wizyt`);
 
     // Filtrowanie po dacie/okresie
     if (date) {
@@ -415,7 +437,7 @@ export default function handler(req, res) {
       }
     };
 
-    console.log(`✅ Zwracam ${employeeVisits.length} wizyt dla pracownika ${employeeId}`);
+    logger.success(`✅ Zwracam ${employeeVisits.length} wizyt dla pracownika ${employeeId}`);
 
     return res.status(200).json({
       success: true,
@@ -433,7 +455,7 @@ export default function handler(req, res) {
     });
 
   } catch (error) {
-    console.error('❌ Error fetching visits:', error);
+    logger.error('❌ Error fetching visits:', error);
     return res.status(500).json({
       success: false,
       message: 'Server error',

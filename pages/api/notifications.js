@@ -18,7 +18,9 @@ export default async function handler(req, res) {
         return [];
       }
       const data = fs.readFileSync(filePath, 'utf8');
-      return JSON.parse(data);
+      const parsed = JSON.parse(data);
+      // ✅ FIX: Obsłuż zarówno tablicę jak i obiekt { notifications: [...] }
+      return Array.isArray(parsed) ? parsed : (parsed.notifications || []);
     } catch (error) {
       console.error('Error reading notifications:', error);
       return [];

@@ -6,6 +6,8 @@ const partUsagePath = path.join(process.cwd(), 'data', 'part-usage.json');
 const employeesPath = path.join(process.cwd(), 'data', 'employees.json');
 const partsInventoryPath = path.join(process.cwd(), 'data', 'parts-inventory.json');
 const notificationsPath = path.join(process.cwd(), 'data', 'notifications.json');
+const technicianSessionsPath = path.join(process.cwd(), 'data', 'technician-sessions.json');
+const employeeSessionsPath = path.join(process.cwd(), 'data', 'employee-sessions.json');
 
 function readJSON(filePath) {
   try {
@@ -56,28 +58,95 @@ function findEmployee(employeeId) {
 }
 
 function findPart(partId) {
-  const parts = readJSON(partsInventoryPath);
-  if (!parts) return null;
+  const data = readJSON(partsInventoryPath);
+  if (!data) return null;
+  
+  // Support both old and new structure
+  const parts = data.inventory || data;
+  if (!Array.isArray(parts)) {
+    console.error('❌ parts-inventory.json is not an array:', typeof parts);
+    return null;
+  }
+  
   return parts.find(p => p.id === partId);
 }
 
-export default function handler(req, res) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ success: false, error: 'Metoda niedozwolona' });
+// Walidacja tokenu (multi-auth: technician + employee)
+function validateToken(token) {
+  if (!token) return null;
+
+  // Try technician-sessions.json
+  const techSessions = readJSON(technicianSessionsPath);
+  if (techSessions) {
+    const session = techSessions.find(s => s.token === token && s.isValid);
+    if (session) {
+      console.log(`✅ Valid technician token for ${session.employeeId}`);
+      return session.employeeId;
+    }
   }
-  
-  const {
-    employeeId,
-    orderId,          // ID zlecenia serwisowego
-    parts,            // Array: [{ partId, quantity, installationNotes }]
-    addToInvoice,     // Czy dodać do faktury (default: true)
-    invoiceId,        // Opcjonalnie: ID faktury
-    customerInfo,     // Opcjonalnie: dane klienta
-    warranty          // Opcjonalnie: okres gwarancji (miesiące)
-  } = req.body;
-  
-  // Walidacja
-  if (!employeeId || !orderId || !parts || !Array.isArray(parts) || parts.length === 0) {
+
+  // Try employee-sessions.json (fallback)
+  const empSessions = readJSON(employeeSessionsPath);
+  if (empSessions) {
+    const session = empSessions.find(s => s.token === token && s.isValid);
+    if (session) {
+      console.log(`✅ Valid employee token for ${session.employeeId}`);
+      return session.employeeId;
+    }
+  }
+
+  return null;
+}
+
+export default function handler(req, res) {
+  console.log('📥 POST /api/inventory/personal/use - START');
+
+  try {
+    if (req.method !== 'POST') {
+      return res.status(405).json({ success: false, error: 'Metoda niedozwolona' });
+    }
+
+    // ============================================
+    // 🔐 WALIDACJA TOKENU
+    // ============================================
+    const token = req.headers.authorization?.replace('Bearer ', '');
+    console.log('🔑 Token received:', token ? token.substring(0, 20) + '...' : 'NONE');
+
+    const authenticatedEmployeeId = validateToken(token);
+
+    if (!authenticatedEmployeeId) {
+      console.error('❌ Invalid or missing token');
+      return res.status(401).json({ 
+        success: false, 
+        error: 'Brak autoryzacji - zaloguj się ponownie' 
+      });
+    }
+
+    console.log(`🔐 Authenticated as: ${authenticatedEmployeeId}`);
+    
+    const {
+      employeeId,
+      orderId,          // ID zlecenia serwisowego
+      parts,            // Array: [{ partId, quantity, installationNotes }]
+      addToInvoice,     // Czy dodać do faktury (default: true)
+      invoiceId,        // Opcjonalnie: ID faktury
+      customerInfo,     // Opcjonalnie: dane klienta
+      warranty          // Opcjonalnie: okres gwarancji (miesiące)
+    } = req.body;
+
+    console.log(`📦 Request: employeeId=${employeeId}, orderId=${orderId}, parts=${parts?.length || 0}`);
+
+    // Sprawdź czy authenticated user = employeeId z request (bezpieczeństwo)
+    if (authenticatedEmployeeId !== employeeId) {
+      console.error(`❌ Token mismatch: ${authenticatedEmployeeId} vs ${employeeId}`);
+      return res.status(403).json({ 
+        success: false, 
+        error: 'Nie masz uprawnień do użycia części z tego magazynu' 
+      });
+    }
+    
+    // Walidacja
+    if (!employeeId || !orderId || !parts || !Array.isArray(parts) || parts.length === 0) {
     return res.status(400).json({ 
       success: false, 
       error: 'Brak wymaganych pól: employeeId, orderId, parts' 
@@ -157,7 +226,9 @@ export default function handler(req, res) {
     }
     
     // Dodaj do historii użycia
-    const partValue = (partDetails?.price || 0) * usedPart.quantity;
+    // Support both pricing structures: pricing.retailPrice or price
+    const unitPrice = partDetails?.pricing?.retailPrice || partDetails?.price || 0;
+    const partValue = unitPrice * usedPart.quantity;
     totalValue += partValue;
     
     usedPartsDetails.push({
@@ -165,7 +236,7 @@ export default function handler(req, res) {
       partName: partDetails?.name || 'Nieznana część',
       partNumber: partDetails?.partNumber || '',
       quantity: usedPart.quantity,
-      unitPrice: partDetails?.price || 0,
+      unitPrice: unitPrice,
       totalPrice: partValue,
       installationNotes: usedPart.installationNotes || null,
       warranty: warranty || partDetails?.warranty || 12
@@ -176,7 +247,8 @@ export default function handler(req, res) {
   const totalParts = inventory.parts.reduce((sum, p) => sum + p.quantity, 0);
   const totalInventoryValue = inventory.parts.reduce((sum, p) => {
     const partDetails = findPart(p.partId);
-    return sum + (partDetails?.price || 0) * p.quantity;
+    const price = partDetails?.pricing?.retailPrice || partDetails?.price || 0;
+    return sum + price * p.quantity;
   }, 0);
   
   inventory.statistics = {
@@ -230,22 +302,31 @@ export default function handler(req, res) {
     }
   }
   
-  if (outOfStockParts.length > 0) {
-    sendNotification(
-      '⚠️ Low stock alert!',
-      `${employee.name} zużył ostatnie: ${outOfStockParts.join(', ')}. Stan magazynu: 0`,
-      'warning',
-      `/admin/logistyk/magazyny?employeeId=${employeeId}`,
-      null // Dla logistyka
-    );
+    if (outOfStockParts.length > 0) {
+      sendNotification(
+        '⚠️ Low stock alert!',
+        `${employee.name} zużył ostatnie: ${outOfStockParts.join(', ')}. Stan magazynu: 0`,
+        'warning',
+        `/admin/logistyk/magazyny?employeeId=${employeeId}`,
+        null // Dla logistyka
+      );
+    }
+    
+    console.log('✅ Use parts completed successfully');
+    
+    return res.status(201).json({ 
+      success: true, 
+      usage: usageRecord,
+      inventory: inventory,
+      lowStockAlert: outOfStockParts.length > 0,
+      outOfStockParts,
+      message: `Użyto ${parts.length} części z magazynu (${totalValue}zł)`
+    });
+  } catch (error) {
+    console.error('💥 CRASH in handler:', error);
+    return res.status(500).json({ 
+      success: false, 
+      error: 'Błąd serwera: ' + error.message 
+    });
   }
-  
-  return res.status(201).json({ 
-    success: true, 
-    usage: usageRecord,
-    inventory: inventory,
-    lowStockAlert: outOfStockParts.length > 0,
-    outOfStockParts,
-    message: `Użyto ${parts.length} części z magazynu (${totalValue}zł)`
-  });
 }

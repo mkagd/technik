@@ -19,17 +19,29 @@ export default async function handler(req, res) {
   }
 
   if (method === 'POST') {
-    // Dodawanie komentarza (placeholder)
-    const { text, author } = req.body;
+    // Dodawanie komentarza
+    const { comment, text, author } = req.body;
+    
+    // Obsłuż zarówno 'comment' jak i 'text' dla kompatybilności
+    const commentText = comment || text;
+    
+    if (!commentText || !commentText.trim()) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Treść komentarza jest wymagana' 
+      });
+    }
     
     const newComment = {
       id: Date.now(),
       type,
       entityId: id,
-      text,
+      comment: commentText.trim(),
       author: author || 'Admin',
       createdAt: new Date().toISOString()
     };
+
+    console.log('✅ Utworzono komentarz:', newComment);
 
     return res.status(201).json({
       success: true,

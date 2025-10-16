@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import AdminLayout from '../../../components/AdminLayout';
 import CommentsSection from '../../../components/CommentsSection';
+import { STATUS_LABELS, STATUS_COLORS, STATUS_ICONS } from '../../../utils/orderStatusConstants';
 import { 
   FiEdit, FiChevronLeft, FiCalendar, FiClock, 
   FiUser, FiPhone, FiMail, FiMapPin, FiFileText
@@ -32,18 +33,12 @@ export default function RezerwacjaDetale() {
     createdAt: ''
   });
 
-  const bookingStatuses = [
-    { value: 'pending', label: 'Oczekuje na kontakt', color: 'bg-yellow-100 text-yellow-800' },
-    { value: 'contacted', label: 'Skontaktowano się', color: 'bg-blue-100 text-blue-800' },
-    { value: 'scheduled', label: 'Umówiona wizyta', color: 'bg-purple-100 text-purple-800' },
-    { value: 'confirmed', label: 'Potwierdzona', color: 'bg-green-100 text-green-800' },
-    { value: 'in-progress', label: 'W trakcie realizacji', color: 'bg-indigo-100 text-indigo-800' },
-    { value: 'waiting-parts', label: 'Oczekuje na części', color: 'bg-orange-100 text-orange-800' },
-    { value: 'ready', label: 'Gotowe do odbioru', color: 'bg-teal-100 text-teal-800' },
-    { value: 'completed', label: 'Zakończone', color: 'bg-green-100 text-green-800' },
-    { value: 'cancelled', label: 'Anulowane', color: 'bg-red-100 text-red-800' },
-    { value: 'no-show', label: 'Nie stawił się', color: 'bg-gray-100 text-gray-800' }
-  ];
+  const bookingStatuses = Object.keys(STATUS_LABELS).map(statusKey => ({
+    value: statusKey,
+    label: STATUS_LABELS[statusKey],
+    color: STATUS_COLORS[statusKey] || 'bg-gray-100 text-gray-800',
+    icon: STATUS_ICONS[statusKey] || '📋'
+  }));
 
   const categories = [
     'Pralki', 'Lodówki', 'Zmywarki', 'Piekarniki', 'Kuchenki', 
@@ -296,6 +291,56 @@ export default function RezerwacjaDetale() {
                 </div>
               )}
             </div>
+
+            {/* 🌍 GPS Coordinates */}
+            {(rezerwacja.latitude || rezerwacja.clientLocation) && (
+              <div className="mt-4">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  📍 Współrzędne GPS
+                </label>
+                <div className="p-3 bg-green-50 rounded-lg border border-green-200">
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <div className="text-sm text-gray-700 space-y-1">
+                        <div className="flex items-center">
+                          <span className="font-medium text-gray-900 mr-2">Szerokość:</span>
+                          <span className="text-green-700 font-mono">
+                            {rezerwacja.latitude || rezerwacja.clientLocation?.coordinates?.lat || 'N/A'}°
+                          </span>
+                        </div>
+                        <div className="flex items-center">
+                          <span className="font-medium text-gray-900 mr-2">Długość:</span>
+                          <span className="text-green-700 font-mono">
+                            {rezerwacja.longitude || rezerwacja.clientLocation?.coordinates?.lng || 'N/A'}°
+                          </span>
+                        </div>
+                        {rezerwacja.clientLocation?.accuracy && (
+                          <div className="flex items-center text-xs text-gray-600 mt-1">
+                            <span className="mr-2">Dokładność:</span>
+                            <span className={`px-2 py-0.5 rounded ${
+                              rezerwacja.clientLocation.accuracy === 'ROOFTOP' ? 'bg-green-100 text-green-700' :
+                              rezerwacja.clientLocation.accuracy === 'RANGE_INTERPOLATED' ? 'bg-yellow-100 text-yellow-700' :
+                              'bg-gray-100 text-gray-700'
+                            }`}>
+                              {rezerwacja.clientLocation.accuracy}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                    <a
+                      href={`https://www.google.com/maps?q=${rezerwacja.latitude || rezerwacja.clientLocation?.coordinates?.lat},${rezerwacja.longitude || rezerwacja.clientLocation?.coordinates?.lng}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="ml-3 px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white text-sm rounded-lg transition-colors inline-flex items-center"
+                    >
+                      <FiMapPin className="mr-1 h-4 w-4" />
+                      Otwórz w mapach
+                    </a>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Urządzenia */}

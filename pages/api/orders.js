@@ -22,10 +22,9 @@ import {
 
 import { ENHANCED_ORDER_STRUCTURE_V4 } from '../../shared/enhanced-order-structure-v4';
 import { AGDMobileToV4Converter } from '../../shared/agd-mobile-to-v4-converter';
+import { apiLogger, logger } from '../../utils/logger';
 
 export default async function handler(req, res) {
-    console.log(`📞 API ${req.method} /api/orders`);
-
     if (req.method === 'GET') {
         try {
             const { id, clientId } = req.query;
@@ -35,10 +34,8 @@ export default async function handler(req, res) {
             if (id) {
                 const order = orders.find(o => o.id == id || o.orderNumber == id);
                 if (order) {
-                    console.log(`✅ Returning order: ${order.orderNumber}`);
                     return res.status(200).json(order);
                 } else {
-                    console.log(`❌ Order not found: ${id}`);
                     return res.status(404).json({ message: 'Zamówienie nie znalezione' });
                 }
             }
@@ -46,7 +43,6 @@ export default async function handler(req, res) {
             // ✅ FIXED: Filtruj po clientId (dla dashboardu klienta)
             if (clientId) {
                 const clientOrders = orders.filter(o => o.clientId === clientId);
-                console.log(`✅ Returning ${clientOrders.length} orders for client: ${clientId}`);
                 return res.status(200).json({ 
                     success: true,
                     orders: clientOrders 
@@ -54,13 +50,8 @@ export default async function handler(req, res) {
             }
             
             // Zwróć wszystkie zamówienia
-            console.log(`✅ Returning ${orders.length} orders`);
-            return res.status(200).json({ 
-                success: true,
-                orders 
-            });
+            return res.status(200).json(orders);
         } catch (error) {
-            console.error('❌ Error reading orders:', error);
             return res.status(500).json({ 
                 success: false,
                 message: 'Błąd odczytu zamówień' 
@@ -78,10 +69,8 @@ export default async function handler(req, res) {
             let processedOrderData;
             
             if (isAGDMobile) {
-                console.log('📱 Detected AGD Mobile order, converting to Enhanced v4.0...');
                 processedOrderData = converter.convertSingleOrder(orderData);
             } else {
-                console.log('🌐 Processing web/API order as Enhanced v4.0...');
                 processedOrderData = processWebOrder(orderData);
             }
             
@@ -116,14 +105,11 @@ export default async function handler(req, res) {
 
             const newOrder = addOrder(finalOrderData);
             if (newOrder) {
-                console.log(`✅ Enhanced v4.0 order added: ${newOrder.orderNumber} for client: ${newOrder.clientName}`);
                 
                 if (newOrder.source === 'agd_mobile') {
-                    console.log(`📱 AGD Mobile features preserved: builtInParams=${!!newOrder.builtInParams}, detectedCall=${!!newOrder.detectedCall}`);
                 }
                 
                 if (newOrder.visitId) {
-                    console.log(`📅 Visit assigned: ${newOrder.visitId} on ${newOrder.appointmentDate}`);
                 }
                 
                 return res.status(201).json({ 
@@ -139,7 +125,6 @@ export default async function handler(req, res) {
                 return res.status(500).json({ message: 'Błąd dodawania zamówienia Enhanced v4.0' });
             }
         } catch (error) {
-            console.error('❌ Error adding Enhanced v4.0 order:', error);
             return res.status(500).json({ 
                 message: 'Błąd serwera Enhanced v4.0',
                 error: error.message 
@@ -150,23 +135,19 @@ export default async function handler(req, res) {
     if (req.method === 'PUT') {
         try {
             const updatedOrder = req.body;
-            console.log('🔧 PUT Request body:', JSON.stringify(updatedOrder, null, 2));
 
             if (!updatedOrder.id) {
-                console.log('❌ Missing ID in order:', updatedOrder);
                 return res.status(400).json({ message: 'Brak ID zamówienia' });
             }
 
             // 🔄 REVERSE WORKFLOW: Jeśli status zmieniony na 'pending', przenieś z powrotem do rezerwacji
             if (updatedOrder.status === 'pending' && updatedOrder.reservationId) {
-                console.log('🔄 Status changed to pending - reverting to reservation');
                 
                 const { readReservations, updateReservation } = require('../../utils/dataStorage');
                 const reservations = readReservations();
                 const reservation = reservations.find(r => r.id === updatedOrder.reservationId);
                 
                 if (reservation) {
-                    console.log('📋 Found original reservation:', reservation.id);
                     
                     // Usuń powiązanie z zamówieniem w rezerwacji
                     updateReservation(reservation.id, {
@@ -179,13 +160,10 @@ export default async function handler(req, res) {
                         revertedBy: 'admin'
                     });
                     
-                    console.log('✅ Reservation reverted to pending');
-                    
                     // Usuń zamówienie (już nie jest potrzebne)
                     const deleteSuccess = await deleteOrder(updatedOrder.id);
                     
                     if (deleteSuccess) {
-                        console.log('✅ Order deleted after reverting to reservation');
                         return res.status(200).json({ 
                             message: 'Zlecenie przeniesione z powrotem do rezerwacji',
                             revertedToReservation: true,
@@ -197,14 +175,27 @@ export default async function handler(req, res) {
 
             const result = updateOrder(updatedOrder);
             if (result) {
-                console.log(`✅ Order updated: ${result.id}`);
+                
+                // ✅ NOWE: Synchronizuj status z rezerwacją (jeśli istnieje)
+                if (updatedOrder.status && updatedOrder.reservationId) {
+                    const { readReservations, updateReservation } = require('../../utils/dataStorage');
+                    const reservations = readReservations();
+                    const reservation = reservations.find(r => r.id === updatedOrder.reservationId);
+                    
+                    if (reservation) {
+                        updateReservation(reservation.id, {
+                            status: updatedOrder.status,
+                            updatedAt: new Date().toISOString(),
+                            updatedBy: 'admin_order'
+                        });
+                    }
+                }
+                
                 return res.status(200).json({ order: result });
             } else {
-                console.log('❌ Order not found for update:', updatedOrder.id);
                 return res.status(404).json({ message: 'Zamówienie nie znalezione' });
             }
         } catch (error) {
-            console.error('❌ Error updating order:', error);
             return res.status(500).json({ message: 'Błąd aktualizacji zamówienia', error: error.message });
         }
     }
@@ -219,13 +210,11 @@ export default async function handler(req, res) {
 
             const result = patchOrder(id, patch);
             if (result) {
-                console.log(`✅ Order patched: ${result.id}`);
                 return res.status(200).json({ order: result });
             } else {
                 return res.status(404).json({ message: 'Zamówienie nie znalezione' });
             }
         } catch (error) {
-            console.error('❌ Error patching order:', error);
             return res.status(500).json({ message: 'Błąd aktualizacji zamówienia' });
         }
     }
@@ -233,33 +222,25 @@ export default async function handler(req, res) {
     if (req.method === 'DELETE') {
         try {
             const { id } = req.query;
-            console.log(`🗑️ DELETE request received for order:`, { id, type: typeof id });
 
             if (!id) {
-                console.log('❌ No ID provided in query');
                 return res.status(400).json({ message: 'Brak ID zamówienia' });
             }
-
-            console.log(`🔄 Calling deleteOrder(${id})...`);
             const success = await deleteOrder(id);
-            console.log(`📊 deleteOrder result:`, success);
             
             if (success) {
-                console.log(`✅ Order deleted successfully: ${id}`);
                 return res.status(200).json({ 
                     message: 'Zamówienie usunięte',
                     deletedId: id,
                     success: true
                 });
             } else {
-                console.log(`❌ deleteOrder returned false for: ${id}`);
                 return res.status(500).json({ 
                     message: 'Błąd usuwania zamówienia - funkcja zwróciła false',
                     success: false 
                 });
             }
         } catch (error) {
-            console.error('❌ Error deleting order:', error);
             return res.status(500).json({ 
                 message: 'Błąd serwera',
                 error: error.message 
@@ -399,7 +380,7 @@ function validateEnhancedV4Order(orderData) {
         const client = getClientById(orderData.clientId);
         if (!client) {
             // Warning, nie error - może być nowy klient
-            console.warn(`⚠️ Client ${orderData.clientId} not found in database`);
+            logger.warn(`⚠️ Client ${orderData.clientId} not found in database`);
         }
     }
     
@@ -530,7 +511,7 @@ function getClientById(clientId) {
         const clients = readClients();
         return clients.find(c => c.id === clientId);
     } catch (error) {
-        console.error('❌ Error reading clients:', error);
         return null;
     }
 }
+

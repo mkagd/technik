@@ -32,8 +32,18 @@ export default class OSRMProvider {
       const originCoords = this.formatCoordinates(origin);
       const destCoords = this.formatCoordinates(destination);
       
+      // 🎯 Parametry OSRM dla lepszej dokładności
+      const params = new URLSearchParams({
+        overview: 'false',
+        steps: 'false',
+        alternatives: 'true', // Pokaż alternatywne trasy
+        continue_straight: 'false', // Pozwól na zawracanie
+        geometries: 'geojson',
+        annotations: 'false'
+      });
+      
       // URL: /route/v1/{profile}/{coordinates}
-      const url = `${this.endpoint}/route/v1/${this.profile}/${originCoords};${destCoords}?overview=false&steps=false`;
+      const url = `${this.endpoint}/route/v1/${this.profile}/${originCoords};${destCoords}?${params}`;
       
       console.log('🚗 OSRM request:', url);
       
@@ -44,7 +54,23 @@ export default class OSRMProvider {
         throw new Error(`OSRM error: ${data.code || 'No route found'}`);
       }
       
-      const route = data.routes[0];
+      // 🎯 Jeśli OSRM zwrócił alternatywne trasy, wybierz najkrótszą
+      let route = data.routes[0];
+      
+      if (data.routes.length > 1) {
+        console.log(`📊 OSRM zwrócił ${data.routes.length} tras alternatywnych`);
+        
+        // Sortuj po odległości (najkrótsza pierwsza)
+        const sortedRoutes = data.routes.sort((a, b) => a.distance - b.distance);
+        route = sortedRoutes[0];
+        
+        // Loguj porównanie
+        sortedRoutes.forEach((r, i) => {
+          const km = (r.distance / 1000).toFixed(1);
+          const min = Math.round(r.duration / 60);
+          console.log(`  ${i === 0 ? '✅' : '  '} Trasa ${i + 1}: ${km} km, ${min} min`);
+        });
+      }
       
       // Normalizuj wynik do formatu Google Distance Matrix
       const result = {
@@ -59,12 +85,14 @@ export default class OSRMProvider {
           minutes: Math.round(route.duration / 60)
         },
         status: 'OK',
-        provider: 'osrm'
+        provider: 'osrm',
+        alternatives: data.routes.length // Ile tras alternatywnych znaleziono
       };
       
-      console.log('✅ OSRM result:', {
+      console.log('✅ OSRM result (najkrótsza trasa):', {
         distance: result.distance.text,
-        duration: result.duration.text
+        duration: result.duration.text,
+        alternatives: result.alternatives
       });
       
       return result;

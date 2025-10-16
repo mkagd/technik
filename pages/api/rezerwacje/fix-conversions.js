@@ -21,7 +21,12 @@ export default async function handler(req, res) {
     
     const reservations = readReservations();
     const orders = await readOrders();
-    const clients = await readClients();
+    let clientsData = await readClients();
+    
+    // Fix: jeśli clients.json ma strukturę { clients: [] }, wyciągnij tablicę
+    const clients = Array.isArray(clientsData) ? clientsData : (clientsData.clients || []);
+    
+    console.log('🔍 DEBUG: clients.length:', clients.length);
     
     // Znajdź rezerwacje ze statusem "contacted" bez orderId
     const brokenReservations = reservations.filter(r => 

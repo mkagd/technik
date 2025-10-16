@@ -2,6 +2,8 @@ import fs from 'fs';
 import path from 'path';
 
 const partUsagePath = path.join(process.cwd(), 'data', 'part-usage.json');
+const technicianSessionsPath = path.join(process.cwd(), 'data', 'technician-sessions.json');
+const employeeSessionsPath = path.join(process.cwd(), 'data', 'employee-sessions.json');
 
 function readJSON(filePath) {
   try {
@@ -12,9 +14,41 @@ function readJSON(filePath) {
   }
 }
 
+// Walidacja tokenu (multi-auth: technician + employee)
+function validateToken(token) {
+  if (!token) return null;
+
+  // Try technician-sessions.json
+  const techSessions = readJSON(technicianSessionsPath);
+  if (techSessions) {
+    const session = techSessions.find(s => s.token === token && s.isValid);
+    if (session) return session.employeeId;
+  }
+
+  // Try employee-sessions.json (fallback)
+  const empSessions = readJSON(employeeSessionsPath);
+  if (empSessions) {
+    const session = empSessions.find(s => s.token === token && s.isValid);
+    if (session) return session.employeeId;
+  }
+
+  return null;
+}
+
 export default function handler(req, res) {
   if (req.method !== 'GET') {
     return res.status(405).json({ success: false, error: 'Metoda niedozwolona' });
+  }
+
+  // Walidacja tokenu
+  const token = req.headers.authorization?.replace('Bearer ', '');
+  const authenticatedEmployeeId = validateToken(token);
+
+  if (!authenticatedEmployeeId) {
+    return res.status(401).json({ 
+      success: false, 
+      error: 'Brak autoryzacji - zaloguj się ponownie' 
+    });
   }
   
   const { 

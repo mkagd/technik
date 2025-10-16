@@ -50,7 +50,8 @@ const SOURCE_CODES = {
   N: 'auto-notification',  // Auto notyfikacja
   S: 'system-auto',        // System ogólny
   I: 'import',             // Import danych
-  X: 'external-api'        // Zewnętrzne API
+  X: 'external-api',       // Zewnętrzne API
+  Z: 'reservation_conversion' // Konwersja z rezerwacji
 };
 
 /**
@@ -72,7 +73,8 @@ const SOURCE_TO_CODE = {
   'auto-notification': 'N',
   'system-auto': 'S',
   'import': 'I',
-  'external-api': 'X'
+  'external-api': 'X',
+  'reservation_conversion': 'Z'
 };
 
 /**

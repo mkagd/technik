@@ -4,6 +4,7 @@
 import fs from 'fs';
 import path from 'path';
 import { statusToBackend, getTechnicianId } from '../../../utils/fieldMapping';
+import { logger } from '../../../utils/logger';
 
 const ORDERS_FILE = path.join(process.cwd(), 'data', 'orders.json');
 const SESSIONS_FILE = path.join(process.cwd(), 'data', 'technician-sessions.json');
@@ -17,7 +18,7 @@ const readOrders = () => {
     const data = fs.readFileSync(ORDERS_FILE, 'utf8');
     return JSON.parse(data);
   } catch (error) {
-    console.error('❌ Error reading orders.json:', error);
+    logger.error('❌ Error reading orders.json:', error);
     return [];
   }
 };
@@ -27,7 +28,7 @@ const writeOrders = (orders) => {
     fs.writeFileSync(ORDERS_FILE, JSON.stringify(orders, null, 2), 'utf8');
     return true;
   } catch (error) {
-    console.error('❌ Error writing orders.json:', error);
+    logger.error('❌ Error writing orders.json:', error);
     return false;
   }
 };
@@ -40,7 +41,7 @@ const readSessions = () => {
     }
     return [];
   } catch (error) {
-    console.error('❌ Error reading sessions:', error);
+    logger.error('❌ Error reading sessions:', error);
     return [];
   }
 };
@@ -361,25 +362,25 @@ export default function handler(req, res) {
       });
     }
 
-    console.log(`🔄 Aktualizacja statusu wizyty ${visitId} -> ${status} (pracownik: ${employee.employeeId})`);
+    logger.debug(`🔄 Aktualizacja statusu wizyty ${visitId} -> ${status} (pracownik: ${employee.employeeId})`);
 
     // Aktualizuj status
     const result = updateVisitStatus(visitId, status, employee.employeeId, notes);
 
     if (result.success) {
-      console.log(`✅ Status wizyty ${visitId} zaktualizowany: ${result.visit.previousStatus} -> ${result.visit.newStatus}`);
+      logger.success(`✅ Status wizyty ${visitId} zaktualizowany: ${result.visit.previousStatus} -> ${result.visit.newStatus}`);
       return res.status(200).json(result);
     } else {
       const statusCode = result.error === 'NOT_FOUND' ? 404 : 
                          result.error === 'NOT_ASSIGNED' ? 403 : 
                          result.error === 'INVALID_TRANSITION' ? 400 : 500;
       
-      console.log(`❌ Błąd aktualizacji: ${result.message}`);
+      logger.warn(`❌ Błąd aktualizacji: ${result.message}`);
       return res.status(statusCode).json(result);
     }
 
   } catch (error) {
-    console.error('❌ Error updating status:', error);
+    logger.error('❌ Error updating status:', error);
     return res.status(500).json({
       success: false,
       message: 'Server error',

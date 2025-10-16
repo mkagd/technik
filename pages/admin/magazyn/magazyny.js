@@ -9,6 +9,7 @@ export default function AdminMagazynMagazyny() {
   const { darkMode } = useDarkMode();
   const [employees, setEmployees] = useState([]);
   const [parts, setParts] = useState([]);
+  const [personalInventories, setPersonalInventories] = useState([]); // ✅ Dodane
   const [loading, setLoading] = useState(true);
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [showAddModal, setShowAddModal] = useState(false);
@@ -35,13 +36,15 @@ export default function AdminMagazynMagazyny() {
   const loadData = async () => {
     setLoading(true);
     try {
-      const [employeesRes, partsRes] = await Promise.all([
+      const [employeesRes, partsRes, inventoriesRes] = await Promise.all([
         fetch('/api/employees'),
-        fetch('/api/inventory/parts')
+        fetch('/api/inventory/parts'),
+        fetch('/api/inventory/personal') // ✅ Pobierz wszystkie magazyny osobiste
       ]);
 
       const employeesData = await employeesRes.json();
       const partsData = await partsRes.json();
+      const inventoriesData = await inventoriesRes.json();
 
       // All employees in employees.json are technicians
       // Filter active employees only
@@ -51,6 +54,13 @@ export default function AdminMagazynMagazyny() {
 
       setEmployees(technicians);
       setParts(partsData.parts || []);
+      setPersonalInventories(inventoriesData.inventories || []); // ✅ Zapisz magazyny
+      
+      console.log('✅ Loaded data:', {
+        employees: technicians.length,
+        parts: (partsData.parts || []).length,
+        inventories: (inventoriesData.inventories || []).length
+      });
     } catch (error) {
       console.error('Error loading data:', error);
     } finally {
@@ -59,10 +69,9 @@ export default function AdminMagazynMagazyny() {
   };
 
   const getEmployeeInventory = (employeeId) => {
-    // ⚠️ DEPRECATED: To będzie używać async API call zamiast emp.inventory
-    // Zostawiamy dla kompatybilności, ale docelowo użyj getEmployeeInventoryAsync
-    const emp = employees.find(e => e.id === employeeId || e.userId === employeeId);
-    return emp?.inventory || [];
+    // ✅ Używamy personal-inventories.json
+    const inventory = personalInventories.find(inv => inv.employeeId === employeeId);
+    return inventory?.parts || [];
   };
 
   const getEmployeeInventoryAsync = async (employeeId) => {
@@ -82,8 +91,12 @@ export default function AdminMagazynMagazyny() {
   const getEmployeeInventoryValue = (employeeId) => {
     const inventory = getEmployeeInventory(employeeId);
     return inventory.reduce((sum, item) => {
-      const part = parts.find(p => p.partId === item.partId);
-      return sum + ((part?.unitPrice || 0) * (item.quantity || 0));
+      // Użyj unitPrice z części lub znajdź w parts
+      const itemPrice = item.unitPrice || 0;
+      const part = parts.find(p => (p.id || p.partId) === item.partId);
+      const partPrice = part?.pricing?.retailPrice || part?.unitPrice || 0;
+      const price = itemPrice || partPrice;
+      return sum + (price * (item.quantity || 0));
     }, 0);
   };
 
@@ -128,6 +141,21 @@ export default function AdminMagazynMagazyny() {
       const results = await Promise.all(promises);
       console.log('Results:', results);
       
+      // Log detailed response info
+      for (let i = 0; i < results.length; i++) {
+        const res = results[i];
+        console.log(`Response ${i}:`, {
+          ok: res.ok,
+          status: res.status,
+          statusText: res.statusText,
+          url: res.url
+        });
+        if (!res.ok) {
+          const errorData = await res.clone().json().catch(() => null);
+          console.error(`Error response ${i}:`, errorData);
+        }
+      }
+      
       const allSucceeded = results.every(res => res.ok);
 
       if (allSucceeded) {
@@ -143,13 +171,21 @@ export default function AdminMagazynMagazyny() {
           results.map(async (res, idx) => {
             if (!res.ok) {
               const data = await res.json().catch(() => ({}));
-              return { part: selectedParts[idx], error: data.message || 'Unknown error' };
+              console.error(`❌ Failed to add part ${selectedParts[idx].partId}:`, {
+                status: res.status,
+                statusText: res.statusText,
+                error: data.message || 'Unknown error',
+                fullData: data
+              });
+              return { part: selectedParts[idx], status: res.status, error: data.message || 'Unknown error', data };
             }
             return null;
           })
         );
-        console.error('Failed parts:', failed.filter(Boolean));
-        alert('❌ Błąd podczas dodawania niektórych części. Sprawdź konsolę.');
+        const failedParts = failed.filter(Boolean);
+        console.error('Failed parts summary:', failedParts);
+        const errorMsg = failedParts.map(f => `${f.part.partId}: ${f.error}`).join('\n');
+        alert(`❌ Błąd podczas dodawania części:\n\n${errorMsg}\n\nSprawdź konsolę przeglądarki dla więcej szczegółów.`);
       }
     } catch (error) {
       console.error('Error adding parts:', error);
@@ -255,8 +291,9 @@ export default function AdminMagazynMagazyny() {
   };
 
   const getEmployeeInventoryForTransfer = (employeeId) => {
-    const emp = employees.find(e => e.id === employeeId);
-    return emp?.inventory || [];
+    // ✅ Używamy personal-inventories.json
+    const inventory = personalInventories.find(inv => inv.employeeId === employeeId);
+    return inventory?.parts || [];
   };
 
   const getPartName = (partId) => {

@@ -1,11 +1,13 @@
 // pages/admin/rezerwacje/nowa.js
 // Formularz dodawania nowej rezerwacji
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/router';
 import AdminLayout from '../../../components/AdminLayout';
 import AvailabilityScheduler from '../../../components/AvailabilityScheduler';
 import DateRangePicker from '../../../components/DateRangePicker';
+import GoogleGeocoder from '../../../geocoding/simple/GoogleGeocoder.js';
+import { STATUS_LABELS, STATUS_COLORS, STATUS_ICONS } from '../../../utils/orderStatusConstants';
 import { 
   FiSave, FiArrowLeft, FiUser, FiPhone, FiMail, FiMapPin, 
   FiCalendar, FiTool, FiFileText, FiAlertCircle, FiPlus, FiTrash2, FiHome
@@ -15,6 +17,33 @@ export default function NowaRezerwacja() {
   const router = useRouter();
   const [saving, setSaving] = useState(false);
   const [errors, setErrors] = useState({});
+  
+  // 🌍 Geocoder reference
+  const geocoder = useRef(null);
+
+  // 📅 Funkcja obliczająca 5 dni roboczych od dziś
+  const getDefaultDateRange = () => {
+    const today = new Date();
+    const fromDate = new Date(today);
+    
+    // Dodaj 5 dni roboczych (pomijając weekendy)
+    let workingDaysAdded = 0;
+    const toDate = new Date(today);
+    
+    while (workingDaysAdded < 5) {
+      toDate.setDate(toDate.getDate() + 1);
+      const dayOfWeek = toDate.getDay();
+      // 0 = Niedziela, 6 = Sobota - pomijamy
+      if (dayOfWeek !== 0 && dayOfWeek !== 6) {
+        workingDaysAdded++;
+      }
+    }
+    
+    return {
+      from: fromDate.toISOString().split('T')[0],
+      to: toDate.toISOString().split('T')[0]
+    };
+  };
 
   const [formData, setFormData] = useState({
     name: '',
@@ -23,8 +52,8 @@ export default function NowaRezerwacja() {
     street: '',
     address: '',
     date: '',
-    dateRange: { from: '', to: '' },
-    dateMode: 'single', // 'single' lub 'range'
+    dateRange: getDefaultDateRange(), // 📅 Domyślnie od dziś + 5 dni roboczych
+    dateMode: 'range', // 📅 Domyślnie elastyczny zakres
     time: '',
     availability: '',
     status: 'pending',
@@ -67,6 +96,19 @@ export default function NowaRezerwacja() {
   useEffect(() => {
     fetchPopularCities();
   }, []);
+  
+  // 🌍 Inicjalizacja geocodera (Nominatim - nie wymaga API key!)
+  useEffect(() => {
+    const initGeocoder = async () => {
+      try {
+        geocoder.current = new GoogleGeocoder(); // Nominatim nie wymaga API key! 🎉
+        console.log('🌍 Nominatim Geocoder zainicjalizowany (100% DARMOWY)');
+      } catch (error) {
+        console.error('❌ Błąd inicjalizacji geocodera:', error);
+      }
+    };
+    initGeocoder();
+  }, []);
 
   const fetchPopularCities = async () => {
     try {
@@ -92,6 +134,9 @@ export default function NowaRezerwacja() {
   const [showModelSuggestions, setShowModelSuggestions] = useState(null); // index urządzenia
   const [loadingModels, setLoadingModels] = useState(false);
 
+  // Problem suggestions dla autocomplete
+  const [showProblemSuggestions, setShowProblemSuggestions] = useState(null); // index urządzenia
+
   const categories = [
     'Pralki', 
     'Lodówki', 
@@ -103,6 +148,29 @@ export default function NowaRezerwacja() {
     'Inne'
   ];
 
+  // 🎨 Ikony i kolory dla kategorii
+  const categoryIcons = {
+    'Pralki': '🧺',
+    'Lodówki': '❄️',
+    'Zmywarki': '🍽️',
+    'Piekarniki': '🔥',
+    'Kuchenki': '🍳',
+    'Płyty indukcyjne': '⚡',
+    'Suszarki': '💨',
+    'Inne': '🔧'
+  };
+
+  const categoryColors = {
+    'Pralki': 'bg-blue-50 border-blue-200 hover:bg-blue-100 text-blue-700',
+    'Lodówki': 'bg-cyan-50 border-cyan-200 hover:bg-cyan-100 text-cyan-700',
+    'Zmywarki': 'bg-green-50 border-green-200 hover:bg-green-100 text-green-700',
+    'Piekarniki': 'bg-orange-50 border-orange-200 hover:bg-orange-100 text-orange-700',
+    'Kuchenki': 'bg-red-50 border-red-200 hover:bg-red-100 text-red-700',
+    'Płyty indukcyjne': 'bg-purple-50 border-purple-200 hover:bg-purple-100 text-purple-700',
+    'Suszarki': 'bg-indigo-50 border-indigo-200 hover:bg-indigo-100 text-indigo-700',
+    'Inne': 'bg-gray-50 border-gray-200 hover:bg-gray-100 text-gray-700'
+  };
+
   // Lista popularnych marek AGD
   const brands = [
     'Amica', 'AEG', 'Beko', 'Bosch', 'Candy', 'Electrolux', 'Gorenje', 
@@ -110,12 +178,12 @@ export default function NowaRezerwacja() {
     'Sharp', 'Siemens', 'Whirlpool', 'Zanussi', 'Inne'
   ];
 
-  const bookingStatuses = [
-    { value: 'pending', label: 'Oczekuje na kontakt' },
-    { value: 'contacted', label: 'Skontaktowano się' },
-    { value: 'scheduled', label: 'Umówiona wizyta' },
-    { value: 'confirmed', label: 'Potwierdzona' }
-  ];
+  const bookingStatuses = Object.keys(STATUS_LABELS).map(statusKey => ({
+    value: statusKey,
+    label: STATUS_LABELS[statusKey],
+    color: STATUS_COLORS[statusKey] || 'bg-gray-100 text-gray-800',
+    icon: STATUS_ICONS[statusKey] || '📋'
+  }));
 
   const handleChange = (field, value) => {
     setFormData({ ...formData, [field]: value });
@@ -123,6 +191,37 @@ export default function NowaRezerwacja() {
     if (errors[field]) {
       setErrors({ ...errors, [field]: null });
     }
+  };
+
+  // ========== PROBLEMY - AUTOCOMPLETE ==========
+  const getCommonProblems = (category) => {
+    const problems = {
+      'Pralki': ['Nie włącza się', 'Nie pobiera wody', 'Nie odpompowuje wody', 'Nie wiruje', 'Wycieka woda', 'Głośno pracuje/wibruje', 'Nie grzeje wody', 'Nie kończy programu', 'Błąd na wyświetlaczu'],
+      'Zmywarki': ['Nie włącza się', 'Nie pobiera wody', 'Nie odpompowuje wody', 'Nie myje naczyń', 'Wycieka woda', 'Nie grzeje wody', 'Głośno pracuje', 'Nie kończy programu', 'Błąd na wyświetlaczu'],
+      'Lodówki': ['Nie chłodzi', 'Za głośno pracuje', 'Wycieka woda', 'Nie świeci oświetlenie', 'Lód w zamrażalniku', 'Nie włącza się', 'Nieprzyjemny zapach'],
+      'Piekarniki': ['Nie włącza się', 'Nie grzeje', 'Nierównomiernie piecze', 'Nie działa termostat', 'Wyświetlacz pokazuje błąd', 'Nie świeci oświetlenie'],
+      'Suszarki': ['Nie włącza się', 'Nie suszy', 'Za długo suszy', 'Głośno pracuje', 'Nie grzeje', 'Zablokowany bęben', 'Błąd na wyświetlaczu'],
+      'Kuchenki': ['Nie włącza się', 'Palniki nie zapalają się', 'Nierównomierne płomienie', 'Zapach gazu', 'Piekarnik nie grzeje', 'Nie działa timer'],
+      'Płyty indukcyjne': ['Nie włącza się', 'Nie reaguje na dotyk', 'Jedna strefa nie grzeje', 'Wyświetlacz pokazuje błąd', 'Głośno pracuje'],
+      'Inne': ['Nie włącza się', 'Dziwne dźwięki', 'Przegrzewa się', 'Nie działa zgodnie z przeznaczeniem', 'Wyświetlacz pokazuje błąd']
+    };
+    return problems[category] || problems['Inne'];
+  };
+
+  const getFilteredProblems = (category, searchTerm = '') => {
+    const commonProblems = getCommonProblems(category);
+    if (!searchTerm.trim()) {
+      return commonProblems.slice(0, 12);
+    }
+    
+    return commonProblems.filter(problem => 
+      problem.toLowerCase().includes(searchTerm.toLowerCase())
+    ).slice(0, 10);
+  };
+
+  const handleProblemSelect = (problem, index) => {
+    updateDevice(index, 'problem', problem);
+    setShowProblemSuggestions(null);
   };
 
   // ========== TELEFONY ==========
@@ -424,6 +523,35 @@ export default function NowaRezerwacja() {
       // Auto-generuj nazwę jeśli nie podano
       const finalName = formData.name?.trim() || `Klient #${Date.now().toString().slice(-6)}`;
 
+      // 🌍 GEOCODING - Pobierz współrzędne GPS dla adresu
+      let clientLocation = null;
+      const fullAddress = `${primaryAddress.street}, ${primaryAddress.postalCode || ''} ${primaryAddress.city}`.trim();
+      
+      if (geocoder.current) {
+        try {
+          console.log('📍 Geocoding adresu (admin):', fullAddress);
+          const geocodeResult = await geocoder.current.geocode(fullAddress);
+          
+          if (geocodeResult.success) {
+            clientLocation = {
+              address: geocodeResult.data.address,
+              coordinates: {
+                lat: geocodeResult.data.lat,
+                lng: geocodeResult.data.lng
+              },
+              accuracy: geocodeResult.data.accuracy,
+              confidence: geocodeResult.data.confidence
+            };
+            console.log('✅ Geocoding sukces (admin):', clientLocation);
+          } else {
+            console.warn('⚠️ Geocoding nie powiódł się, kontynuuję bez współrzędnych');
+          }
+        } catch (geocodeError) {
+          console.error('❌ Błąd geocodingu:', geocodeError);
+          // Nie przerywamy - kontynuujemy bez współrzędnych
+        }
+      }
+
       // Przygotuj dane do wysłania
       const submitData = {
         ...formData,
@@ -433,7 +561,9 @@ export default function NowaRezerwacja() {
         // Główny adres (dla kompatybilności)
         city: primaryAddress.city,
         street: primaryAddress.street,
-        fullAddress: `${primaryAddress.street}, ${primaryAddress.postalCode || ''} ${primaryAddress.city}`.trim(),
+        fullAddress: fullAddress,
+        // 🌍 WSPÓŁRZĘDNE GPS
+        clientLocation: clientLocation,
         // Główne urządzenie (dla kompatybilności)
         category: primaryDevice.category,
         device: primaryDevice.model || primaryDevice.brand || primaryDevice.category,
@@ -571,7 +701,7 @@ export default function NowaRezerwacja() {
                       <label className="block text-sm font-medium text-gray-700 mb-1">
                         NIP *
                       </label>
-                      <div className="flex gap-2">
+                      <div className="flex flex-col sm:flex-row gap-2">
                         <input
                           type="text"
                           value={companyData.nip}
@@ -584,7 +714,7 @@ export default function NowaRezerwacja() {
                           type="button"
                           onClick={fetchCompanyFromGUS}
                           disabled={fetchingGUS || !companyData.nip || companyData.nip.length < 10}
-                          className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+                          className="px-3 sm:px-4 py-2 bg-purple-600 text-white text-sm rounded-lg hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
                         >
                           {fetchingGUS ? '⏳ Pobieranie...' : '🔍 Pobierz z GUS'}
                         </button>
@@ -655,7 +785,7 @@ export default function NowaRezerwacja() {
                   
                   <div className="space-y-2">
                     {phones.map((phone, index) => (
-                      <div key={index} className="flex gap-2">
+                      <div key={index} className="flex flex-col sm:flex-row gap-2">
                         <input
                           type="tel"
                           value={phone.number}
@@ -665,22 +795,24 @@ export default function NowaRezerwacja() {
                           }`}
                           placeholder="123456789"
                         />
-                        <input
-                          type="text"
-                          value={phone.label}
-                          onChange={(e) => updatePhone(index, 'label', e.target.value)}
-                          className="w-32 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                          placeholder="np. Służbowy"
-                        />
-                        {phones.length > 1 && (
-                          <button
-                            type="button"
-                            onClick={() => removePhone(index)}
-                            className="px-3 py-2 text-red-600 hover:bg-red-50 rounded-lg"
-                          >
-                            <FiTrash2 className="h-4 w-4" />
-                          </button>
-                        )}
+                        <div className="flex gap-2">
+                          <input
+                            type="text"
+                            value={phone.label}
+                            onChange={(e) => updatePhone(index, 'label', e.target.value)}
+                            className="flex-1 sm:w-32 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm"
+                            placeholder="np. Służbowy"
+                          />
+                          {phones.length > 1 && (
+                            <button
+                              type="button"
+                              onClick={() => removePhone(index)}
+                              className="px-3 py-2 text-red-600 hover:bg-red-50 rounded-lg flex-shrink-0"
+                            >
+                              <FiTrash2 className="h-4 w-4" />
+                            </button>
+                          )}
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -950,22 +1082,26 @@ export default function NowaRezerwacja() {
                     </div>
                     
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                      <div>
-                        <label className="block text-xs font-medium text-gray-700 mb-1">
+                      <div className="md:col-span-2">
+                        <label className="block text-xs font-medium text-gray-700 mb-2">
                           Kategoria *
                         </label>
-                        <select
-                          value={device.category}
-                          onChange={(e) => updateDevice(index, 'category', e.target.value)}
-                          className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 text-sm ${
-                            errors.device && index === 0 ? 'border-red-500' : 'border-gray-300'
-                          }`}
-                        >
-                          <option value="">Wybierz kategorię</option>
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                           {categories.map(cat => (
-                            <option key={cat} value={cat}>{cat}</option>
+                            <button
+                              key={cat}
+                              type="button"
+                              onClick={() => updateDevice(index, 'category', cat)}
+                              className={`px-2 py-1.5 border-2 rounded-lg transition-all text-xs font-medium ${
+                                device.category === cat
+                                  ? 'ring-2 ring-blue-500 border-blue-500 bg-blue-50 text-blue-700'
+                                  : 'border-gray-300 hover:border-gray-400 bg-white text-gray-700 hover:bg-gray-50'
+                              } ${errors.device && index === 0 && !device.category ? 'border-red-300' : ''}`}
+                            >
+                              {cat}
+                            </button>
                           ))}
-                        </select>
+                        </div>
                       </div>
 
                       <div>
@@ -1079,15 +1215,44 @@ export default function NowaRezerwacja() {
 
                       <div className="md:col-span-2">
                         <label className="block text-xs font-medium text-gray-700 mb-1">
-                          Opis problemu
+                          Opis problemu *
                         </label>
-                        <textarea
-                          value={device.problem}
-                          onChange={(e) => updateDevice(index, 'problem', e.target.value)}
-                          rows={2}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm"
-                          placeholder="Opisz problem z tym urządzeniem..."
-                        />
+                        <div className="relative">
+                          <input
+                            type="text"
+                            value={device.problem}
+                            onChange={(e) => updateDevice(index, 'problem', e.target.value)}
+                            onFocus={() => setShowProblemSuggestions(index)}
+                            onBlur={() => setTimeout(() => setShowProblemSuggestions(null), 200)}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm"
+                            placeholder="Wpisz problem lub wybierz z listy..."
+                          />
+                          {showProblemSuggestions === index && device.category && (
+                            <div className="absolute z-20 w-full bg-white border border-gray-200 rounded-lg shadow-lg mt-1 max-h-48 overflow-y-auto">
+                              {getFilteredProblems(device.category, device.problem).length > 0 ? (
+                                <>
+                                  {getFilteredProblems(device.category, device.problem).map((problem, problemIndex) => (
+                                    <button
+                                      key={problemIndex}
+                                      type="button"
+                                      onClick={() => handleProblemSelect(problem, index)}
+                                      className="w-full text-left px-3 py-2 hover:bg-blue-50 text-sm border-b border-gray-100 last:border-b-0 transition-colors"
+                                    >
+                                      {problem}
+                                    </button>
+                                  ))}
+                                </>
+                              ) : (
+                                <div className="px-3 py-2 text-sm text-gray-500">
+                                  Brak dopasowań. Wpisz własny opis problemu.
+                                </div>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                        <p className="text-xs text-gray-500 mt-1">
+                          💡 Zacznij pisać, a pokażemy typowe usterki dla kategorii {device.category || 'wybranej'}
+                        </p>
                       </div>
 
                       <div className="md:col-span-2">
@@ -1190,13 +1355,18 @@ export default function NowaRezerwacja() {
                 <button
                   type="button"
                   onClick={() => setShowAdvancedAvailability(!showAdvancedAvailability)}
-                  className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                  className={`px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-colors whitespace-nowrap ${
                     showAdvancedAvailability 
                       ? 'bg-green-600 text-white hover:bg-green-700' 
                       : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                   }`}
                 >
-                  {showAdvancedAvailability ? '✓ Zaawansowane' : '+ Dodaj szczegółową dostępność'}
+                  <span className="hidden sm:inline">
+                    {showAdvancedAvailability ? '✓ Zaawansowane' : '+ Dodaj szczegółową dostępność'}
+                  </span>
+                  <span className="sm:hidden">
+                    {showAdvancedAvailability ? '✓ Szczegóły' : '+ Szczegóły'}
+                  </span>
                 </button>
               </div>
 

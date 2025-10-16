@@ -1,7 +1,7 @@
 // components/technician/PhotoUploader.js
 // 📸 Komponent do uploadowania i zarządzania zdjęciami wizyty
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { FiUpload, FiX, FiImage, FiTrash2, FiDownload, FiMaximize2, FiCamera } from 'react-icons/fi';
 
 export default function PhotoUploader({ visitId, existingPhotos = [], onPhotosUpdate }) {
@@ -16,6 +16,12 @@ export default function PhotoUploader({ visitId, existingPhotos = [], onPhotosUp
   const [photoDescription, setPhotoDescription] = useState('');
   const fileInputRef = useRef(null);
   const cameraInputRef = useRef(null);
+
+  // 🔄 Synchronizuj photos state z existingPhotos prop gdy się zmieni
+  useEffect(() => {
+    console.log('📸 PhotoUploader: existingPhotos updated, count:', existingPhotos.length);
+    setPhotos(existingPhotos);
+  }, [existingPhotos]);
 
   const PHOTO_TYPES = {
     before: { label: 'Przed pracą', icon: '📷', color: 'blue' },
@@ -115,14 +121,45 @@ export default function PhotoUploader({ visitId, existingPhotos = [], onPhotosUp
       });
 
       const uploadedPhotos = await Promise.all(uploadPromises);
-      const newPhotos = [...photos, ...uploadedPhotos];
-      setPhotos(newPhotos);
+      const newPhotos = [...existingPhotos, ...uploadedPhotos]; // ✅ Use existingPhotos (source of truth)
       
+      // Aktualizuj przez callback (parent zarządza stanem)
       if (onPhotosUpdate) {
-        onPhotosUpdate(newPhotos);
+        onPhotosUpdate(newPhotos, uploadedPhotos.length); // ✅ Przekaż też liczbę nowych zdjęć
       }
 
-      alert(`Pomyślnie dodano ${uploadedPhotos.length} zdjęć`);
+      // Lokalny state zostanie zaktualizowany przez useEffect gdy existingPhotos się zmieni
+      console.log(`✅ Pomyślnie dodano ${uploadedPhotos.length} zdjęć (ciche działanie)`);
+      
+      // 🤖 Jeśli to tabliczka znamionowa, uruchom analizę AI w tle
+      if (photoType === 'serial' && uploadedPhotos.length > 0) {
+        console.log('🤖 Uruchamiam analizę tabliczki w tle...');
+        
+        uploadedPhotos.forEach(async (photo) => {
+          try {
+            const response = await fetch('/api/ai/analyze-nameplate-background', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+              },
+              body: JSON.stringify({
+                photoPath: photo.url || photo.path,
+                visitId: visitId,
+                deviceIndex: 0 // TODO: Pobierz z kontekstu jeśli multi-device
+              })
+            });
+            
+            if (response.ok) {
+              console.log('✅ Analiza tabliczki rozpoczęta w tle (działa cicho - bez komunikatów)');
+            }
+          } catch (error) {
+            console.error('❌ Błąd uruchamiania analizy w tle:', error);
+            // Nie pokazuj błędu użytkownikowi - to tylko dodatkowa funkcja
+          }
+        });
+      }
+      
       setPendingFiles([]);
     } catch (error) {
       console.error('Upload error:', error);
@@ -148,12 +185,13 @@ export default function PhotoUploader({ visitId, existingPhotos = [], onPhotosUp
       });
 
       if (response.ok) {
-        const newPhotos = photos.filter(p => p.id !== photoId);
-        setPhotos(newPhotos);
+        const newPhotos = existingPhotos.filter(p => p.id !== photoId); // ✅ Use existingPhotos
         
         if (onPhotosUpdate) {
           onPhotosUpdate(newPhotos);
         }
+        
+        // Lokalny state zostanie zaktualizowany przez useEffect
 
         alert('Zdjęcie zostało usunięte');
       } else {

@@ -169,8 +169,8 @@
     "employeeId": "EMPA252780002",
     "email": "mariusz.bielaszka@techserwis.pl",
     "createdAt": "2025-10-05T19:58:21.034Z",
-    "lastActivity": "2025-10-06T08:12:37.769Z",
-    "isValid": true,
+    "lastActivity": "2025-10-12T19:49:58.969Z",
+    "isValid": false,
     "rememberMe": false,
     "ip": "127.0.0.1",
     "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36"
@@ -180,10 +180,43 @@
     "employeeId": "EMPA252780002",
     "email": "mariusz.bielaszka@techserwis.pl",
     "createdAt": "2025-10-05T20:12:51.792Z",
-    "lastActivity": "2025-10-11T07:01:52.222Z",
-    "isValid": true,
+    "lastActivity": "2025-10-11T10:55:16.829Z",
+    "isValid": false,
     "rememberMe": false,
     "ip": "127.0.0.1",
     "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36"
+  },
+  {
+    "token": "1c87427de82718d9f4169fb96080b5f45733cc8851ca43a09bd3972440c16e46",
+    "employeeId": "EMPA252780002",
+    "email": "mariusz.bielaszka@techserwis.pl",
+    "createdAt": "2025-10-12T20:30:38.125Z",
+    "lastActivity": "2025-10-15T19:57:51.706Z",
+    "isValid": true,
+    "rememberMe": false,
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36"
+  },
+  {
+    "token": "d33066a481a17677b4dbb3eec51a667b2c33b5f4c96392dc3e9abd09a058e217",
+    "employeeId": "EMPA252780002",
+    "email": "mariusz.bielaszka@techserwis.pl",
+    "createdAt": "2025-10-13T18:30:46.377Z",
+    "lastActivity": "2025-10-15T20:59:41.203Z",
+    "isValid": true,
+    "rememberMe": false,
+    "ip": "192.168.0.9",
+    "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Mobile Safari/537.36"
+  },
+  {
+    "token": "3aeb86e9844f4d134070075a344a29d165ddfe21b88fb27cffc2934d3df4be1b",
+    "employeeId": "EMPA252780002",
+    "email": "mariusz.bielaszka@techserwis.pl",
+    "createdAt": "2025-10-13T20:13:01.773Z",
+    "lastActivity": "2025-10-13T20:37:14.267Z",
+    "isValid": true,
+    "rememberMe": false,
+    "ip": "127.0.0.1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36"
   }
 ]

@@ -9,6 +9,7 @@ import fs from 'fs';
 import path from 'path';
 import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
+import { areAddressesSimilar } from '../../../utils/addressNormalizer';
 
 const CLIENTS_FILE = path.join(process.cwd(), 'data', 'clients.json');
 const ORDERS_FILE = path.join(process.cwd(), 'data', 'orders.json');
@@ -35,6 +36,16 @@ const readOrders = () => {
   } catch (error) {
     console.error('❌ Error reading orders.json:', error);
     return [];
+  }
+};
+
+const saveOrders = (orders) => {
+  try {
+    fs.writeFileSync(ORDERS_FILE, JSON.stringify(orders, null, 2));
+    return true;
+  } catch (error) {
+    console.error('❌ Error saving orders:', error);
+    return false;
   }
 };
 
@@ -310,6 +321,48 @@ async function handleRegister(req, res) {
     });
   }
 
+  // 🔗 AUTOMATYCZNE LINKOWANIE ZLECEŃ
+  // Znajdź zlecenia z tym samym telefonem i podobnym adresem
+  let linkedOrdersCount = 0;
+  const orders = readOrders();
+  const normalizedPhoneForLinking = phone.replace(/\s+/g, '').replace(/^(\+48)?/, '+48');
+  
+  // Buduj pełny adres do porównania
+  const fullAddress = `${address.street} ${address.buildingNumber}${address.apartmentNumber ? '/' + address.apartmentNumber : ''}, ${address.city}`;
+  
+  const updatedOrders = orders.map(order => {
+    // Sprawdź czy zlecenie już ma clientId (pomiń)
+    if (order.clientId) {
+      return order;
+    }
+    
+    // Normalizuj telefon ze zlecenia
+    const orderPhone = order.phone?.replace(/\s+/g, '').replace(/^(\+48)?/, '+48');
+    
+    // Sprawdź czy telefony się zgadzają
+    if (orderPhone === normalizedPhoneForLinking) {
+      // Sprawdź czy adresy są podobne (90% threshold)
+      if (areAddressesSimilar(fullAddress, order.address, 90)) {
+        linkedOrdersCount++;
+        console.log(`🔗 Linking order ${order.orderNumber} to client ${newClient.id}`);
+        return {
+          ...order,
+          clientId: newClient.id,
+          linkedAt: new Date().toISOString(),
+          linkedBy: 'auto-registration'
+        };
+      }
+    }
+    
+    return order;
+  });
+  
+  // Zapisz zaktualizowane zlecenia jeśli coś zlinkowano
+  if (linkedOrdersCount > 0) {
+    saveOrders(updatedOrders);
+    console.log(`✅ Successfully linked ${linkedOrdersCount} orders to client ${newClient.id}`);
+  }
+
   // Utwórz sesję (automatyczne logowanie po rejestracji)
   const token = generateToken();
   const sessions = readSessions();
@@ -442,11 +495,15 @@ async function handleRegister(req, res) {
 
   return res.status(201).json({
     success: true,
-    message: '✅ Konto zostało utworzone pomyślnie' + (emailSent ? ' - email powitalny wysłany' : ''),
+    message: '✅ Konto zostało utworzone pomyślnie' + 
+             (emailSent ? ' - email powitalny wysłany' : '') +
+             (linkedOrdersCount > 0 ? ` - zlinkowano ${linkedOrdersCount} ${linkedOrdersCount === 1 ? 'zlecenie' : linkedOrdersCount < 5 ? 'zlecenia' : 'zleceń'}` : ''),
     client: clientData,
     token,
     emailSent,
-    emailError
+    emailError,
+    linkedOrdersCount,
+    linkedOrders: linkedOrdersCount > 0
   });
 }
 

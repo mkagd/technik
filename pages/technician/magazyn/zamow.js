@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import DarkModeToggle from '../../../components/DarkModeToggle';
+import NorthPartsBrowserPopup from '../../../components/NorthPartsBrowserPopup';
+import { showToast } from '../../../utils/toast';
 
 export default function TechnicianZamow() {
   const router = useRouter();
@@ -30,23 +32,29 @@ export default function TechnicianZamow() {
       setEmployeeId(employeeData.id);
       console.log('✅ Załadowano pracownika:', employeeData.fullName || employeeData.name, '(ID:', employeeData.id + ')');
     } else {
-      alert('❌ Nie znaleziono danych pracownika. Zaloguj się ponownie.');
+      showToast.error('Nie znaleziono danych pracownika. Zaloguj się ponownie.');
       router.push('/pracownik-logowanie');
     }
   }, [router]);
   const [parts, setParts] = useState([]);
   const [selectedParts, setSelectedParts] = useState([{ partId: '', quantity: 1 }]);
   const [urgency, setUrgency] = useState('standard');
-  const [delivery, setDelivery] = useState('paczkomat');
+  const [delivery, setDelivery] = useState('office'); // domyślnie biuro
   const [paczkomatId, setPaczkomatId] = useState('');
+  const [useAlternativeAddress, setUseAlternativeAddress] = useState(false);
+  const [alternativeAddress, setAlternativeAddress] = useState('');
   const [notes, setNotes] = useState('');
   const [loading, setLoading] = useState(false);
-  const [suggestions, setSuggestions] = useState([]);
-  const [showSuggestions, setShowSuggestions] = useState(false);
+  
+  // 💳 Forma płatności za przesyłkę
+  const [paymentMethod, setPaymentMethod] = useState('prepaid'); // 'prepaid' lub 'cod' (pobranie)
+  const [allowCOD, setAllowCOD] = useState(true); // Czy pracownik może używać pobrania
   
   // 🆕 Kontekst naprawy
+  const [visitId, setVisitId] = useState(''); // ✅ visitId dla powiązania z wizytą
   const [orderNumber, setOrderNumber] = useState('');
   const [clientName, setClientName] = useState('');
+  const [deviceType, setDeviceType] = useState('');
   const [deviceBrand, setDeviceBrand] = useState('');
   const [deviceModel, setDeviceModel] = useState('');
   const [issueDescription, setIssueDescription] = useState('');
@@ -59,12 +67,20 @@ export default function TechnicianZamow() {
   
   // 🆕 Prawdziwe dane
   const [recentOrders, setRecentOrders] = useState([]);
-  const [frequentParts, setFrequentParts] = useState([]);
+
+  // 💰 Zaliczka - czy klient opłacił część z góry
+  const [partPrepaid, setPartPrepaid] = useState(false);
+  const [prepaidAmount, setPrepaidAmount] = useState('');
+
+  // 🛒 North.pl Browser
+  const [showNorthBrowser, setShowNorthBrowser] = useState(false);
 
   // 🆕 Automatyczne wypełnianie z query params
   useEffect(() => {
+    if (router.query.visitId) setVisitId(router.query.visitId); // ✅
     if (router.query.orderNumber) setOrderNumber(router.query.orderNumber);
     if (router.query.clientName) setClientName(router.query.clientName);
+    if (router.query.deviceType) setDeviceType(router.query.deviceType);
     if (router.query.deviceBrand) setDeviceBrand(router.query.deviceBrand);
     if (router.query.deviceModel) setDeviceModel(router.query.deviceModel);
     if (router.query.issueDescription) setIssueDescription(router.query.issueDescription);
@@ -74,7 +90,7 @@ export default function TechnicianZamow() {
     loadParts();
     if (employeeId) {
       loadRecentOrders();
-      loadFrequentParts();
+      loadEmployeePreferences(); // ✅ Załaduj preferencje pracownika
     }
   }, [employeeId]);
 
@@ -90,29 +106,44 @@ export default function TechnicianZamow() {
     }
   };
 
-  const loadFrequentParts = async () => {
+  // 🚚 Załaduj preferencje dostaw pracownika
+  const loadEmployeePreferences = async () => {
     try {
-      const res = await fetch(`/api/part-requests?requestedFor=${employeeId}`);
+      const res = await fetch('/api/employees');
       const data = await res.json();
-      if (data.requests) {
-        // Policz częstotliwość części
-        const partCount = {};
-        data.requests.forEach(req => {
-          req.parts.forEach(p => {
-            partCount[p.partId] = (partCount[p.partId] || 0) + 1;
+      if (data.employees) {
+        const employee = data.employees.find(e => e.id === employeeId);
+        if (employee?.deliveryPreferences) {
+          const prefs = employee.deliveryPreferences;
+          
+          // Ustaw domyślną metodę dostawy
+          if (prefs.preferredDeliveryMethod && prefs.preferredDeliveryMethod !== 'custom') {
+            setDelivery(prefs.preferredDeliveryMethod);
+          }
+          
+          // Ustaw domyślny paczkomat
+          if (prefs.defaultPaczkomatId && prefs.preferredDeliveryMethod === 'paczkomat') {
+            setPaczkomatId(prefs.defaultPaczkomatId);
+          }
+          
+          // Ustaw domyślną formę płatności
+          if (prefs.preferredPaymentMethod) {
+            setPaymentMethod(prefs.preferredPaymentMethod);
+          }
+          
+          // Ustaw czy dozwolone jest pobranie
+          setAllowCOD(prefs.allowCOD !== false); // Domyślnie true
+          
+          console.log('✅ Załadowano preferencje pracownika:', {
+            delivery: prefs.preferredDeliveryMethod,
+            paczkomat: prefs.defaultPaczkomatId,
+            payment: prefs.preferredPaymentMethod,
+            allowCOD: prefs.allowCOD !== false
           });
-        });
-        
-        // Posortuj i weź top 4
-        const sorted = Object.entries(partCount)
-          .sort((a, b) => b[1] - a[1])
-          .slice(0, 4)
-          .map(([partId, count]) => ({ partId, count }));
-        
-        setFrequentParts(sorted);
+        }
       }
     } catch (error) {
-      console.error('Error loading frequent parts:', error);
+      console.error('❌ Błąd ładowania preferencji pracownika:', error);
     }
   };
 
@@ -130,25 +161,6 @@ export default function TechnicianZamow() {
     }
   };
 
-  const loadSuggestions = async (brand, model) => {
-    try {
-      const res = await fetch('/api/inventory/suggest-parts', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          brand,
-          model,
-          employeeId
-        })
-      });
-      const data = await res.json();
-      setSuggestions(data.suggestions || []);
-      setShowSuggestions(true);
-    } catch (error) {
-      console.error('Error loading suggestions:', error);
-    }
-  };
-
   const addPartRow = () => {
     setSelectedParts([...selectedParts, { partId: '', quantity: 1 }]);
   };
@@ -163,14 +175,19 @@ export default function TechnicianZamow() {
     setSelectedParts(updated);
   };
 
-  const addSuggestedPart = (partId) => {
-    const exists = selectedParts.find(p => p.partId === partId);
-    if (exists) {
-      alert('Ta część jest już dodana!');
-      return;
-    }
-    setSelectedParts([...selectedParts, { partId, quantity: 1 }]);
-    setShowSuggestions(false);
+  // 🛒 Obsługa dodania części z North.pl
+  const handleAddPartFromNorth = (northPart) => {
+    console.log('🛒 Dodaję część z North.pl:', northPart);
+    
+    // Dodaj do listy wybranych części
+    setSelectedParts([...selectedParts, {
+      partId: northPart.partId,
+      quantity: northPart.quantity,
+      northData: northPart // Zachowaj dane z North
+    }]);
+    
+    setShowNorthBrowser(false);
+    showToast.success(`Dodano: ${northPart.name}\nCena: ${northPart.price} zł × ${northPart.quantity} szt.`);
   };
 
   // 🆕 Załaduj poprzednie zamówienie
@@ -210,7 +227,7 @@ export default function TechnicianZamow() {
 
   const addPhotos = (files) => {
     if (photos.length + files.length > 5) {
-      alert('Maksymalnie 5 zdjęć!');
+      showToast.warning('Maksymalnie 5 zdjęć!');
       return;
     }
 
@@ -235,12 +252,29 @@ export default function TechnicianZamow() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    if (selectedParts.some(p => !p.partId)) {
-      alert('Wybierz wszystkie części!');
+    // Sprawdź czy są jakieś części z North.pl
+    const hasNorthParts = selectedParts.some(p => p.northData);
+    
+    if (!hasNorthParts || selectedParts.length === 0) {
+      showToast.warning('Dodaj przynajmniej jedną część z North.pl!');
       return;
     }
-    if (delivery === 'paczkomat' && !paczkomatId) {
-      alert('Podaj ID Paczkomatu!');
+    
+    // Walidacja - paczkomat wymaga numeru
+    if (delivery === 'paczkomat' && !paczkomatId.trim()) {
+      showToast.warning('Podaj numer paczkomatu!');
+      return;
+    }
+    
+    // Walidacja - custom wymaga adresu
+    if (delivery === 'custom' && !alternativeAddress.trim()) {
+      showToast.warning('Podaj alternatywny adres dostawy!');
+      return;
+    }
+
+    // Walidacja - pobranie musi być dozwolone
+    if (paymentMethod === 'cod' && !allowCOD) {
+      showToast.error('Nie masz uprawnień do używania płatności pobraniowej. Skontaktuj się z administratorem.');
       return;
     }
 
@@ -253,25 +287,48 @@ export default function TechnicianZamow() {
         body: JSON.stringify({
           requestedBy: employeeId,
           requestedFor: employeeId,
-          parts: selectedParts.map(p => ({ partId: p.partId, quantity: parseInt(p.quantity) })),
+          parts: selectedParts.map(p => {
+            // Jeśli część z North.pl, dodaj pełne dane
+            if (p.northData) {
+              return {
+                partId: p.partId,
+                quantity: parseInt(p.quantity),
+                northData: p.northData // Zachowaj wszystkie dane w tym zdjęcia
+              };
+            }
+            // Standardowa część z magazynu
+            return { 
+              partId: p.partId, 
+              quantity: parseInt(p.quantity) 
+            };
+          }),
           urgency,
           preferredDelivery: delivery,
           paczkomatId: delivery === 'paczkomat' ? paczkomatId : undefined,
+          alternativeAddress: delivery === 'custom' ? alternativeAddress : undefined,
+          paymentMethod, // 💳 Forma płatności (prepaid/cod)
           notes,
           // 🆕 Kontekst naprawy
+          visitId: visitId || undefined, // ✅ Powiązanie z wizytą
           orderNumber: orderNumber || undefined,
           clientName: clientName || undefined,
           deviceInfo: (deviceBrand || deviceModel || issueDescription) ? {
             brand: deviceBrand || undefined,
             model: deviceModel || undefined,
             issueDescription: issueDescription || undefined
+          } : undefined,
+          // 💰 Zaliczka - czy klient opłacił część z góry
+          prepayment: partPrepaid ? {
+            isPrepaid: true,
+            amount: parseFloat(prepaidAmount) || 0,
+            note: 'Klient opłacił część z góry podczas diagnozy'
           } : undefined
         })
       });
 
       if (!res.ok) {
         const error = await res.json();
-        alert('❌ Błąd: ' + error.error);
+        showToast.error('Błąd: ' + error.error);
         return;
       }
 
@@ -317,34 +374,36 @@ export default function TechnicianZamow() {
           } else {
             const errorData = await uploadRes.json();
             console.error('❌ Upload failed:', errorData);
-            alert('⚠️ Nie udało się przesłać zdjęć: ' + (errorData.error || errorData.details || 'Unknown error'));
+            showToast.error('Nie udało się przesłać zdjęć: ' + (errorData.error || errorData.details || 'Unknown error'));
           }
         } catch (uploadError) {
           console.error('❌ Upload exception:', uploadError);
-          alert('⚠️ Błąd podczas przesyłania zdjęć: ' + uploadError.message);
+          showToast.error('Błąd podczas przesyłania zdjęć: ' + uploadError.message);
         } finally {
           setUploadingPhotos(false);
         }
       }
 
-      // Pokaż potwierdzenie
-      const shouldViewOrders = confirm(`✅ Zamówienie utworzone pomyślnie!\n\nNumer: ${requestId}\nStatus: Oczekuje na zatwierdzenie\n${photos.length > 0 ? `📸 Dodano ${photos.length} zdjęć\n` : ''}${urgency === 'urgent' ? '🔴 PILNE\n' : ''}${urgency === 'tomorrow' ? '⚠️ NA JUTRO\n' : ''}\nZostaniesz powiadomiony o statusie.\n\n👉 Kliknij OK aby zobaczyć listę zamówień\n👉 Kliknij Anuluj aby utworzyć kolejne zamówienie`);
-      
-      if (shouldViewOrders) {
-        // Przekieruj do listy zamówień
-        router.push('/serwis/magazyn/zamowienia');
-      } else {
-        // Reset form dla kolejnego zamówienia
+      // Pokaż potwierdzenie z opcją przejścia do listy
+      const resetForm = () => {
         setSelectedParts([{ partId: '', quantity: 1 }]);
         setNotes('');
-        setPaczkomatId('');
+        setUseAlternativeAddress(false);
+        setAlternativeAddress('');
         setPhotos([]);
         setPhotoUrls([]);
-      }
+      };
+
+      // Sukces z pytaniem o kolejną akcję
+      showToast.confirm(
+        `Zamówienie ${requestId} utworzone!\n${photos.length > 0 ? `📸 ${photos.length} zdjęć\n` : ''}${urgency === 'urgent' ? '🔴 PILNE\n' : ''}${urgency === 'tomorrow' ? '⚠️ NA JUTRO\n' : ''}\n\nCzy chcesz zobaczyć listę zamówień?`,
+        () => router.push('/serwis/magazyn/zamowienia'), // OK - idź do listy
+        () => resetForm() // Anuluj - reset formularza
+      );
 
     } catch (error) {
       console.error('Error creating request:', error);
-      alert('❌ Błąd: ' + error.message);
+      showToast.error('Błąd: ' + error.message);
     } finally {
       setLoading(false);
       setUploadingPhotos(false);
@@ -373,119 +432,10 @@ export default function TechnicianZamow() {
 
       {/* Main Content */}
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* 🆕 Quick Actions - Najczęściej zamawiane */}
-        {frequentParts.length > 0 && (
-          <div className="mb-6 bg-gray-50 border border-gray-200 rounded-lg p-4">
-            <h3 className="text-sm font-semibold text-gray-700 mb-3 flex items-center">
-              <span className="mr-2">⚡</span>
-              Twoje najczęściej zamawiane
-            </h3>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-              {frequentParts.map(item => {
-                const part = parts.find(p => p.id === item.partId);
-                if (!part) return null;
-                
-                return (
-                  <button
-                    key={part.id}
-                    type="button"
-                    onClick={() => {
-                      const newParts = [...selectedParts];
-                      newParts[0] = { partId: part.id, quantity: 1 };
-                      setSelectedParts(newParts);
-                    }}
-                    className="flex flex-col items-center p-3 bg-white rounded-lg border border-gray-200 hover:border-gray-400 hover:shadow transition-all"
-                  >
-                    <div className="text-2xl mb-1">
-                      {part.category === 'Łożyska' ? '⚙️' : 
-                       part.category === 'Pompy' ? '💧' : 
-                       part.category === 'Grzałki' ? '🔥' : '📦'}
-                    </div>
-                    <div className="text-xs font-medium text-gray-900 truncate w-full text-center">
-                      {part.name.split(' ')[0]}
-                    </div>
-                    <div className="text-xs text-gray-500">×{item.count}</div>
-                  </button>
-                );
-              })}
-            </div>
-            <p className="text-xs text-gray-500 mt-3">
-              💡 Kliknij aby dodać do zamówienia
-            </p>
-          </div>
-        )}
-
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Form */}
           <div className="lg:col-span-2">
             <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow p-6">
-              {/* Quick Suggestions */}
-              <div className="mb-6 p-4 bg-gray-50 border border-gray-200 rounded-lg">
-                <h3 className="text-sm font-semibold text-gray-700 mb-2">💡 Szybkie sugestie</h3>
-                <p className="text-xs text-gray-600 mb-3">Wpisz markę i model urządzenia, aby otrzymać sugestie części:</p>
-                <div className="flex space-x-2">
-                  <input
-                    type="text"
-                    placeholder="Marka (np. Samsung)"
-                    id="brand"
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded text-sm"
-                  />
-                  <input
-                    type="text"
-                    placeholder="Model (np. WW90T4540AE)"
-                    id="model"
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded text-sm"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const brand = document.getElementById('brand').value;
-                      const model = document.getElementById('model').value;
-                      if (brand && model) loadSuggestions(brand, model);
-                    }}
-                    className="px-4 py-2 bg-gray-700 text-white rounded text-sm hover:bg-gray-800"
-                  >
-                    Szukaj
-                  </button>
-                </div>
-              </div>
-
-              {/* Suggestions Results */}
-              {showSuggestions && suggestions.length > 0 && (
-                <div className="mb-6 p-4 bg-gray-50 border border-gray-300 rounded-lg">
-                  <div className="flex items-center justify-between mb-3">
-                    <h3 className="text-sm font-semibold text-gray-700">✨ Sugerowane części ({suggestions.length})</h3>
-                    <button
-                      type="button"
-                      onClick={() => setShowSuggestions(false)}
-                      className="text-gray-500 hover:text-gray-700"
-                    >
-                      ✕
-                    </button>
-                  </div>
-                  <div className="space-y-2">
-                    {suggestions.slice(0, 5).map((sugg, idx) => (
-                      <div key={idx} className="flex items-center justify-between bg-white p-3 rounded">
-                        <div className="flex-1">
-                          <p className="font-medium text-gray-900">{sugg.partName}</p>
-                          <p className="text-xs text-gray-500">{sugg.partId} • {sugg.compatibility}% dopasowanie</p>
-                          {sugg.inPersonalInventory && (
-                            <span className="text-xs text-green-600 font-medium">✓ Masz w aucie!</span>
-                          )}
-                        </div>
-                        <button
-                          type="button"
-                          onClick={() => addSuggestedPart(sugg.partId)}
-                          className="ml-4 px-3 py-1 bg-green-600 text-white rounded text-sm hover:bg-green-700"
-                        >
-                          Dodaj
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
               {/* 🆕 Kontekst naprawy */}
               <div className="mb-6 p-4 bg-gray-50 border border-gray-200 rounded-lg">
                 <h3 className="text-sm font-semibold text-gray-700 mb-3 flex items-center">
@@ -549,59 +499,93 @@ export default function TechnicianZamow() {
                 </p>
               </div>
 
-              {/* Parts Selection */}
+              {/* Parts Selection - tylko North.pl */}
               <div className="mb-6">
-                <div className="flex items-center justify-between mb-2">
-                  <label className="block text-sm font-medium text-gray-700">
-                    Części *
-                  </label>
+                <div className="flex items-center justify-center">
                   <button
                     type="button"
-                    onClick={addPartRow}
-                    className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+                    onClick={() => setShowNorthBrowser(true)}
+                    className="w-full px-6 py-4 bg-orange-600 text-white rounded-lg hover:bg-orange-700 font-medium flex items-center justify-center gap-2 text-base shadow-lg hover:shadow-xl transition-all"
                   >
-                    + Dodaj część
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                    🛒 Szukaj i zamów części na North.pl
                   </button>
                 </div>
-                <div className="space-y-3">
-                  {selectedParts.map((part, index) => (
-                    <div key={index} className="flex items-center space-x-3">
-                      <select
-                        value={part.partId}
-                        onChange={(e) => updatePart(index, 'partId', e.target.value)}
-                        className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        required
-                      >
-                        <option value="">Wybierz część...</option>
-                        {parts.map(p => (
-                          <option key={p.id} value={p.id}>
-                            {p.name} ({p.partNumber}) - {p.price} zł
-                          </option>
-                        ))}
-                      </select>
-                      <input
-                        type="number"
-                        min="1"
-                        value={part.quantity}
-                        onChange={(e) => updatePart(index, 'quantity', e.target.value)}
-                        className="w-24 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        placeholder="Ilość"
-                        required
-                      />
-                      {selectedParts.length > 1 && (
-                        <button
-                          type="button"
-                          onClick={() => removePartRow(index)}
-                          className="p-2 text-red-600 hover:bg-red-50 rounded"
-                        >
-                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                          </svg>
-                        </button>
-                      )}
-                    </div>
-                  ))}
-                </div>
+                
+                {/* Wyświetlanie dodanych części z North.pl */}
+                {selectedParts.length > 0 && selectedParts.some(p => p.northData) && (
+                  <div className="mt-4 space-y-3">
+                    <h3 className="text-sm font-semibold text-gray-700">📦 Dodane części:</h3>
+                    {selectedParts.map((part, index) => (
+                      part.northData && (
+                        <div key={index} className="p-3 bg-orange-50 border border-orange-200 rounded-lg">
+                          <div className="flex items-start gap-3">
+                            {/* Miniaturki zdjęć */}
+                            {part.northData.images && part.northData.images.length > 0 && (
+                              <div className="flex-shrink-0">
+                                <img 
+                                  src={part.northData.images[0]} 
+                                  alt={part.northData.name}
+                                  className="w-20 h-20 object-cover rounded border border-orange-300"
+                                  onError={(e) => e.target.style.display = 'none'}
+                                />
+                              </div>
+                            )}
+                            
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2 mb-1">
+                                <span className="text-xs font-semibold text-orange-700 px-2 py-0.5 bg-orange-100 rounded">
+                                  North.pl
+                                </span>
+                                <span className="text-sm font-medium text-gray-900">
+                                  {part.northData.name}
+                                </span>
+                              </div>
+                              <div className="text-xs text-gray-600">
+                                {part.northData.partNumber && (
+                                  <span>Nr: {part.northData.partNumber} • </span>
+                                )}
+                                Cena: {part.northData.price} zł × {part.northData.quantity} szt. = {(part.northData.price * part.northData.quantity).toFixed(2)} zł
+                              </div>
+                              {part.northData.images && part.northData.images.length > 1 && (
+                                <div className="text-xs text-gray-500 mt-1">
+                                  � {part.northData.images.length} zdjęć
+                                </div>
+                              )}
+                              {part.northData.notes && (
+                                <div className="text-xs text-gray-500 mt-1">
+                                  �💬 {part.northData.notes}
+                                </div>
+                              )}
+                            </div>
+                            
+                            <div className="flex items-center gap-2">
+                              <input
+                                type="number"
+                                min="1"
+                                value={part.quantity}
+                                onChange={(e) => updatePart(index, 'quantity', e.target.value)}
+                                className="w-20 px-3 py-2 border border-orange-300 rounded-lg text-sm"
+                                placeholder="Ilość"
+                              />
+                              <button
+                                type="button"
+                                onClick={() => removePartRow(index)}
+                                className="p-2 text-red-600 hover:bg-red-50 rounded"
+                              >
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      )
+                    ))}
+                  </div>
+                )}
               </div>
 
               {/* Urgency - Ulepszone wizualizacje */}
@@ -668,51 +652,240 @@ export default function TechnicianZamow() {
                 </div>
               </div>
 
-              {/* Delivery */}
-              <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Dostawa
-                </label>
-                <div className="flex space-x-4 mb-3">
-                  <label className="flex items-center flex-1 border-2 rounded-lg p-3 cursor-pointer transition-all hover:border-gray-300">
-                    <input
-                      type="radio"
-                      name="delivery"
-                      value="paczkomat"
-                      checked={delivery === 'paczkomat'}
-                      onChange={(e) => setDelivery(e.target.value)}
-                      className="mr-2"
-                    />
-                    <div>
-                      <p className="font-medium text-gray-900">📦 Paczkomat</p>
-                      <p className="text-xs text-gray-500">InPost lub podobny</p>
-                    </div>
-                  </label>
-                  <label className="flex items-center flex-1 border-2 rounded-lg p-3 cursor-pointer transition-all hover:border-gray-300">
+              {/* Alternatywny adres dostawy (opcjonalny) */}
+              {/* Opcje dostawy */}
+              <div className="mb-6 border-2 border-blue-200 rounded-lg p-4 bg-blue-50">
+                <h3 className="text-md font-semibold text-blue-900 mb-4 flex items-center gap-2">
+                  📦 Miejsce dostawy
+                </h3>
+                
+                <div className="space-y-3">
+                  {/* Biuro firmowe */}
+                  <label className="flex items-start gap-3 cursor-pointer p-3 bg-white rounded-lg border-2 hover:border-blue-300 transition-colors">
                     <input
                       type="radio"
                       name="delivery"
                       value="office"
                       checked={delivery === 'office'}
                       onChange={(e) => setDelivery(e.target.value)}
-                      className="mr-2"
+                      className="w-5 h-5 text-blue-600 border-gray-300 mt-0.5"
                     />
-                    <div>
-                      <p className="font-medium text-gray-900">🏢 Biuro</p>
-                      <p className="text-xs text-gray-500">Dostawa do firmy</p>
+                    <div className="flex-1">
+                      <span className="text-sm font-semibold text-gray-900">
+                        🏢 Biuro firmowe
+                      </span>
+                      <p className="text-xs text-gray-600 mt-0.5">
+                        Dostawa na adres firmy (domyślny adres z profilu pracownika)
+                      </p>
+                    </div>
+                  </label>
+
+                  {/* Paczkomat */}
+                  <label className="flex items-start gap-3 cursor-pointer p-3 bg-white rounded-lg border-2 hover:border-blue-300 transition-colors">
+                    <input
+                      type="radio"
+                      name="delivery"
+                      value="paczkomat"
+                      checked={delivery === 'paczkomat'}
+                      onChange={(e) => setDelivery(e.target.value)}
+                      className="w-5 h-5 text-blue-600 border-gray-300 mt-0.5"
+                    />
+                    <div className="flex-1">
+                      <span className="text-sm font-semibold text-gray-900">
+                        📮 Paczkomat InPost
+                      </span>
+                      <p className="text-xs text-gray-600 mt-0.5">
+                        Odbiór z paczkomatu (wpisz numer poniżej)
+                      </p>
+                    </div>
+                  </label>
+
+                  {/* Pole na numer paczkomatu */}
+                  {delivery === 'paczkomat' && (
+                    <div className="ml-8 mt-2">
+                      <input
+                        type="text"
+                        value={paczkomatId}
+                        onChange={(e) => setPaczkomatId(e.target.value)}
+                        placeholder="np. KRA01M"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        required={delivery === 'paczkomat'}
+                      />
+                      <p className="mt-1 text-xs text-gray-500">
+                        💡 Znajdź najbliższy paczkomat na <a href="https://inpost.pl/znajdz-paczkomat" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">inpost.pl/znajdz-paczkomat</a>
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Inny adres */}
+                  <label className="flex items-start gap-3 cursor-pointer p-3 bg-white rounded-lg border-2 hover:border-blue-300 transition-colors">
+                    <input
+                      type="radio"
+                      name="delivery"
+                      value="custom"
+                      checked={delivery === 'custom'}
+                      onChange={(e) => setDelivery(e.target.value)}
+                      className="w-5 h-5 text-blue-600 border-gray-300 mt-0.5"
+                    />
+                    <div className="flex-1">
+                      <span className="text-sm font-semibold text-gray-900">
+                        📍 Inny adres
+                      </span>
+                      <p className="text-xs text-gray-600 mt-0.5">
+                        Dostawa na niestandardowy adres
+                      </p>
+                    </div>
+                  </label>
+
+                  {/* Pole na alternatywny adres */}
+                  {delivery === 'custom' && (
+                    <div className="ml-8 mt-2">
+                      <textarea
+                        value={alternativeAddress}
+                        onChange={(e) => setAlternativeAddress(e.target.value)}
+                        placeholder="Podaj pełny adres dostawy&#10;np. ul. Przykładowa 12, 00-001 Warszawa"
+                        rows={3}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                        required={delivery === 'custom'}
+                      />
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Forma płatności za przesyłkę */}
+              <div className="mb-6 border-2 border-green-200 rounded-lg p-4 bg-green-50">
+                <h3 className="text-md font-semibold text-green-900 mb-4 flex items-center gap-2">
+                  💳 Forma płatności za przesyłkę
+                </h3>
+                
+                <div className="space-y-3">
+                  {/* Przedpłata */}
+                  <label className="flex items-start gap-3 cursor-pointer p-3 bg-white rounded-lg border-2 hover:border-green-300 transition-colors">
+                    <input
+                      type="radio"
+                      name="paymentMethod"
+                      value="prepaid"
+                      checked={paymentMethod === 'prepaid'}
+                      onChange={(e) => setPaymentMethod(e.target.value)}
+                      className="w-5 h-5 text-green-600 border-gray-300 mt-0.5"
+                    />
+                    <div className="flex-1">
+                      <span className="text-sm font-semibold text-gray-900">
+                        ✅ Przedpłata (przelew)
+                      </span>
+                      <p className="text-xs text-gray-600 mt-0.5">
+                        Firma opłaca przesyłkę z góry - szybsze zamówienie
+                      </p>
+                    </div>
+                  </label>
+
+                  {/* Pobranie */}
+                  <label className={`flex items-start gap-3 p-3 bg-white rounded-lg border-2 transition-colors ${
+                    allowCOD 
+                      ? 'cursor-pointer hover:border-green-300' 
+                      : 'opacity-50 cursor-not-allowed bg-gray-50'
+                  }`}>
+                    <input
+                      type="radio"
+                      name="paymentMethod"
+                      value="cod"
+                      checked={paymentMethod === 'cod'}
+                      onChange={(e) => setPaymentMethod(e.target.value)}
+                      disabled={!allowCOD}
+                      className="w-5 h-5 text-green-600 border-gray-300 mt-0.5"
+                    />
+                    <div className="flex-1">
+                      <span className={`text-sm font-semibold ${allowCOD ? 'text-gray-900' : 'text-gray-500'}`}>
+                        📦 Pobranie (płatność przy odbiorze)
+                        {!allowCOD && <span className="ml-2 text-xs text-red-600 font-normal">⛔ Niedostępne</span>}
+                      </span>
+                      <p className="text-xs text-gray-600 mt-0.5">
+                        {allowCOD 
+                          ? 'Płatność gotówką lub kartą przy odbiorze przesyłki (dodatkowa opłata ~5 zł)'
+                          : 'Administrator wyłączył możliwość pobrania dla Twojego konta'
+                        }
+                      </p>
                     </div>
                   </label>
                 </div>
-                {delivery === 'paczkomat' && (
-                  <input
-                    type="text"
-                    value={paczkomatId}
-                    onChange={(e) => setPaczkomatId(e.target.value)}
-                    placeholder="ID Paczkomatu (np. KRA01M)"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    required={delivery === 'paczkomat'}
-                  />
+
+                {/* Informacja o preferencjach */}
+                {(delivery !== 'office' || paymentMethod !== 'prepaid') && (
+                  <div className="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                    <p className="text-xs text-blue-900 flex items-center gap-2">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      Używasz niestandardowych ustawień dostawy. Możesz zmienić swoje preferencje w panelu pracownika.
+                    </p>
+                  </div>
                 )}
+              </div>
+              
+              {/* Informacja o dostawie North.pl */}
+              {selectedParts.every(p => p.northData) && selectedParts.length > 0 && (
+                <div className="mb-6 p-4 bg-orange-50 border border-orange-200 rounded-lg">
+                  <div className="flex items-start gap-3">
+                    <svg className="w-5 h-5 text-orange-600 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <div>
+                      <p className="text-sm font-semibold text-orange-900">
+                        🚚 Dostawa przez North.pl
+                      </p>
+                      <p className="text-xs text-gray-600 mt-1">
+                        Części zamawiane bezpośrednio z North.pl - dostawa według ich warunków
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* 💰 Zaliczka - czy klient opłacił część z góry */}
+              <div className="mb-6 border-2 border-blue-200 rounded-lg p-4 bg-blue-50">
+                <h3 className="text-md font-semibold text-blue-900 mb-2 flex items-center gap-2">
+                  � Zaliczka od klienta (opcjonalne)
+                </h3>
+                <p className="text-xs text-gray-600 mb-3">
+                  Zaznacz jeśli klient opłacił część z góry podczas diagnozy
+                </p>
+                
+                <div className="space-y-3">
+                  {/* Checkbox - część opłacona z góry */}
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={partPrepaid}
+                      onChange={(e) => setPartPrepaid(e.target.checked)}
+                      className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                    />
+                    <span className="text-sm font-medium text-gray-700">
+                      ✅ Klient opłacił część z góry
+                    </span>
+                  </label>
+
+                  {/* Kwota zaliczki */}
+                  {partPrepaid && (
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        � Kwota zaliczki (PLN)
+                      </label>
+                      <input
+                        type="number"
+                        step="0.01"
+                        min="0"
+                        value={prepaidAmount}
+                        onChange={(e) => setPrepaidAmount(e.target.value)}
+                        placeholder="np. 50.00"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      />
+                      <p className="text-xs text-gray-500 mt-1">
+                        💡 Ta kwota zostanie odjęta od końcowego rozliczenia przy zakończeniu wizyty
+                      </p>
+                    </div>
+                  )}
+                </div>
               </div>
 
               {/* Notes */}
@@ -986,6 +1159,17 @@ export default function TechnicianZamow() {
           </div>
         </div>
       </main>
+
+      {/* 🪟 North.pl Browser - popup window */}
+      {showNorthBrowser && (
+        <NorthPartsBrowserPopup
+          deviceType={deviceType || 'Pralka'}
+          deviceBrand={deviceBrand || ''}
+          deviceModel={deviceModel || ''}
+          onAddPart={handleAddPartFromNorth}
+          onClose={() => setShowNorthBrowser(false)}
+        />
+      )}
     </div>
   );
 }

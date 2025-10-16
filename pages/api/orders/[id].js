@@ -63,101 +63,84 @@ export default async function handler(req, res) {
             
             // 🔥 AUTO-TWORZENIE WIZYTY: Jeśli przypisujemy technika + datę + czas, stwórz wizytę
             if (updateData.assignedTo && updateData.scheduledDate && updateData.scheduledTime) {
-                const hasExistingVisit = existingOrder.visits && existingOrder.visits.length > 0;
+                console.log(`📅 Dodaję nową wizytę dla zlecenia ${id}`);
                 
-                // Jeśli nie ma jeszcze wizyty, utwórz ją
-                if (!hasExistingVisit) {
-                    console.log(`📅 Tworzę nową wizytę dla zlecenia ${id}`);
-                    
-                    // Pobierz dane pracownika
-                    const employeesPath = path.join(process.cwd(), 'data', 'employees.json');
-                    let technicianName = 'Nieprzydzielony';
-                    try {
-                        const employeesData = fs.readFileSync(employeesPath, 'utf8');
-                        const employees = JSON.parse(employeesData);
-                        const technician = employees.find(emp => emp.id === updateData.assignedTo);
-                        if (technician) {
-                            technicianName = technician.name;
-                        }
-                    } catch (err) {
-                        console.warn('⚠️ Nie udało się pobrać danych pracownika');
+                // Pobierz dane pracownika
+                const employeesPath = path.join(process.cwd(), 'data', 'employees.json');
+                let technicianName = 'Nieprzydzielony';
+                try {
+                    const employeesData = fs.readFileSync(employeesPath, 'utf8');
+                    const employees = JSON.parse(employeesData);
+                    const technician = employees.find(emp => emp.id === updateData.assignedTo);
+                    if (technician) {
+                        technicianName = technician.name;
                     }
-                    
-                    // Generuj visitId - GLOBALNIE UNIKALNY
-                    const now = new Date();
-                    const year = now.getFullYear().toString().slice(-2);
-                    const month = (now.getMonth() + 1).toString().padStart(2, '0');
-                    const day = now.getDate().toString().padStart(2, '0');
-                    
-                    // Pobierz wszystkie zlecenia aby znaleźć najwyższy numer wizyty
-                    const allOrders = await readOrders();
-                    const allVisits = allOrders.flatMap(o => o.visits || []);
-                    const todayVisits = allVisits.filter(v => {
-                        if (!v.visitId) return false;
-                        // Sprawdź czy visitId ma format VIS + data dzisiejsza
-                        const visitDatePart = v.visitId.substring(3, 9); // YYMMDD
-                        const todayDatePart = `${year}${month}${day}`;
-                        return visitDatePart === todayDatePart;
-                    });
-                    
-                    const visitCounter = todayVisits.length + 1;
-                    const visitId = `VIS${year}${month}${day}${visitCounter.toString().padStart(3, '0')}`;
-                    
-                    // Utwórz obiekt wizyty
-                    const newVisit = {
-                        visitId,
-                        visitNumber: visitCounter,
-                        type: updateData.visitType || 'repair', // diagnosis, repair, installation, control
-                        status: 'scheduled',
-                        scheduledDate: updateData.scheduledDate,
-                        scheduledTime: updateData.scheduledTime,
-                        date: updateData.scheduledDate,
-                        time: updateData.scheduledTime,
-                        assignedTo: updateData.assignedTo,
-                        technicianId: updateData.assignedTo,
-                        technicianName,
-                        estimatedDuration: updateData.estimatedDuration || 60,
-                        notes: [],
-                        createdAt: now.toISOString(),
-                        createdBy: 'planner-system',
-                        updatedAt: now.toISOString(),
-                        statusHistory: [],
-                        partPhotos: [],
-                        allPhotos: []
-                    };
-                    
-                    console.log(`🏗️ Tworzę obiekt wizyty:`, JSON.stringify(newVisit, null, 2));
-                    
-                    // Dodaj wizytę do updateData
-                    updateData.visits = [newVisit];
-                    
-                    console.log(`📦 updateData.visits ustawione na:`, JSON.stringify(updateData.visits, null, 2));
-                    
-                    // 📋 AUTO-ZMIANA STATUSU: Zmień status na 'scheduled' gdy dodajemy wizytę
-                    updateData.status = 'scheduled';
-                    console.log(`✅ Utworzono wizytę ${visitId} dla technika ${technicianName}`);
-                    console.log(`📌 Zmieniono status zlecenia na: scheduled`);
-                } else {
-                    // 🔄 Aktualizacja istniejącej wizyty - zaktualizuj datę i czas
-                    if (existingOrder.visits && existingOrder.visits.length > 0) {
-                        const updatedVisits = existingOrder.visits.map(visit => ({
-                            ...visit,
-                            scheduledDate: updateData.scheduledDate || visit.scheduledDate,
-                            scheduledTime: updateData.scheduledTime || visit.scheduledTime,
-                            date: updateData.scheduledDate || visit.date, // ⚡ KLUCZOWE!
-                            time: updateData.scheduledTime || visit.time,
-                            estimatedDuration: updateData.estimatedDuration || visit.estimatedDuration,
-                            updatedAt: new Date().toISOString()
-                        }));
-                        updateData.visits = updatedVisits;
-                        console.log(`🔄 Zaktualizowano wizytę: date=${updateData.scheduledDate}, time=${updateData.scheduledTime}`);
-                    }
-                    
-                    if (!updateData.status) {
-                        updateData.status = 'scheduled';
-                        console.log(`📌 Zlecenie ma już wizytę, status ustawiony na: scheduled`);
-                    }
+                } catch (err) {
+                    console.warn('⚠️ Nie udało się pobrać danych pracownika');
                 }
+                
+                // Generuj visitId - GLOBALNIE UNIKALNY
+                const now = new Date();
+                const year = now.getFullYear().toString().slice(-2);
+                const month = (now.getMonth() + 1).toString().padStart(2, '0');
+                const day = now.getDate().toString().padStart(2, '0');
+                
+                // Pobierz wszystkie zlecenia aby znaleźć najwyższy numer wizyty
+                const allOrders = await readOrders();
+                const allVisits = allOrders.flatMap(o => o.visits || []);
+                const todayVisits = allVisits.filter(v => {
+                    if (!v.visitId) return false;
+                    // Sprawdź czy visitId ma format VIS + data dzisiejsza
+                    const visitDatePart = v.visitId.substring(3, 9); // YYMMDD
+                    const todayDatePart = `${year}${month}${day}`;
+                    return visitDatePart === todayDatePart;
+                });
+                
+                const visitCounter = todayVisits.length + 1;
+                const visitId = `VIS${year}${month}${day}${visitCounter.toString().padStart(3, '0')}`;
+                
+                // Oblicz visitNumber dla tego zlecenia
+                const existingVisitsCount = (existingOrder.visits || []).length;
+                const visitNumber = existingVisitsCount + 1;
+                
+                // Utwórz obiekt wizyty
+                const newVisit = {
+                    visitId,
+                    visitNumber,
+                    type: updateData.visitType || 'repair', // diagnosis, repair, installation, control
+                    status: 'scheduled',
+                    scheduledDate: updateData.scheduledDate,
+                    scheduledTime: updateData.scheduledTime,
+                    date: updateData.scheduledDate,
+                    time: updateData.scheduledTime,
+                    assignedTo: updateData.assignedTo,
+                    technicianId: updateData.assignedTo,
+                    technicianName,
+                    estimatedDuration: updateData.estimatedDuration || 60,
+                    notes: [],
+                    createdAt: now.toISOString(),
+                    createdBy: 'planner-system',
+                    updatedAt: now.toISOString(),
+                    statusHistory: [],
+                    partPhotos: [],
+                    allPhotos: [],
+                    // 🔧 KOPIUJ CZĘŚCI Z ZAMÓWIENIA DO WIZYTY
+                    parts: existingOrder.parts ? [...existingOrder.parts] : [],
+                    partsUsed: []
+                };
+                
+                console.log(`🏗️ Tworzę wizytę #${visitNumber}:`, JSON.stringify(newVisit, null, 2));
+                
+                // Dodaj wizytę do istniejącej tablicy wizyt
+                const existingVisits = existingOrder.visits || [];
+                updateData.visits = [...existingVisits, newVisit];
+                
+                console.log(`📦 Dodano wizytę do tablicy. Łącznie wizyt: ${updateData.visits.length}`);
+                
+                // 📋 AUTO-ZMIANA STATUSU: Zmień status na 'scheduled' gdy dodajemy wizytę
+                updateData.status = 'scheduled';
+                console.log(`✅ Utworzono wizytę ${visitId} (wizyta #${visitNumber}) dla technika ${technicianName}`);
+                console.log(`� Zmieniono status zlecenia na: scheduled`);
             }
             
             // 🔄 COFNIĘCIE Z KALENDARZA: Jeśli usuwamy przypisanie, zmień status na 'unscheduled'

@@ -6,6 +6,7 @@ import { useRouter } from 'next/router';
 import AdminLayout from '../../../../components/AdminLayout';
 import AvailabilityScheduler from '../../../../components/AvailabilityScheduler';
 import DateRangePicker from '../../../../components/DateRangePicker';
+import { STATUS_LABELS, STATUS_COLORS, STATUS_ICONS } from '../../../../utils/orderStatusConstants';
 import { 
   FiSave, FiArrowLeft, FiUser, FiPhone, FiMail, FiMapPin, 
   FiCalendar, FiTool, FiFileText, FiAlertCircle, FiPlus, FiTrash2, FiHome
@@ -87,18 +88,12 @@ export default function EdytujRezerwacje() {
     'Sharp', 'Siemens', 'Whirlpool', 'Zanussi', 'Inne'
   ];
 
-  const bookingStatuses = [
-    { value: 'pending', label: 'Oczekuje na kontakt' },
-    { value: 'contacted', label: 'Skontaktowano się' },
-    { value: 'scheduled', label: 'Umówiona wizyta' },
-    { value: 'confirmed', label: 'Potwierdzona' },
-    { value: 'in-progress', label: 'W trakcie realizacji' },
-    { value: 'waiting-parts', label: 'Oczekuje na części' },
-    { value: 'ready', label: 'Gotowe do odbioru' },
-    { value: 'completed', label: 'Zakończone' },
-    { value: 'cancelled', label: 'Anulowane' },
-    { value: 'no-show', label: 'Nie stawił się' }
-  ];
+  const bookingStatuses = Object.keys(STATUS_LABELS).map(statusKey => ({
+    value: statusKey,
+    label: STATUS_LABELS[statusKey],
+    color: STATUS_COLORS[statusKey] || 'bg-gray-100 text-gray-800',
+    icon: STATUS_ICONS[statusKey] || '📋'
+  }));
 
   // Ładowanie danych rezerwacji
   useEffect(() => {

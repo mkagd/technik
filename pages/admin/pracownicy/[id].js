@@ -80,6 +80,24 @@ export default function PracownikEdycja() {
       travelTimePreference: 'minimize'
     },
 
+    // 📦 Adres dostawy części (NOWY)
+    deliveryAddress: {
+      street: '',
+      city: '',
+      postalCode: '',
+      fullAddress: '',
+      notes: ''
+    },
+
+    // 🚚 Preferencje dostaw i płatności dla zamówień części
+    deliveryPreferences: {
+      preferredDeliveryMethod: 'office', // 'office', 'paczkomat', 'custom'
+      defaultPaczkomatId: '', // Domyślny paczkomat
+      preferredPaymentMethod: 'prepaid', // 'prepaid' (przedpłata), 'cod' (pobranie)
+      allowCOD: true, // Czy dozwolone jest pobranie
+      notes: '' // Dodatkowe uwagi do dostaw
+    },
+
     // Wynagrodzenia
     compensation: {
       baseRate: {
@@ -530,6 +548,252 @@ export default function PracownikEdycja() {
                     <p className="mt-1 text-xs text-gray-500">
                       Ogólne specjalizacje. Szczegółowe ustawienia AGD są w zakładce "Specjalizacje"
                     </p>
+                  </div>
+                </div>
+
+                {/* Adres dostawy części */}
+                <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-6 border-2 border-blue-100">
+                  <div className="flex items-center gap-2 mb-4">
+                    <FiTruck className="text-blue-600 text-xl" />
+                    <h3 className="text-lg font-semibold text-gray-900">📦 Adres dostawy części</h3>
+                  </div>
+                  <p className="text-sm text-gray-600 mb-4">
+                    Domyślny adres, na który będą wysyłane zamówione części dla tego pracownika
+                  </p>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="md:col-span-2">
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Ulica i numer
+                      </label>
+                      <input
+                        type="text"
+                        value={employeeData.deliveryAddress?.street || ''}
+                        onChange={(e) => updateNestedField('deliveryAddress', 'street', e.target.value)}
+                        placeholder="ul. Przykładowa 123"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Miasto
+                      </label>
+                      <input
+                        type="text"
+                        value={employeeData.deliveryAddress?.city || ''}
+                        onChange={(e) => updateNestedField('deliveryAddress', 'city', e.target.value)}
+                        placeholder="Warszawa"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Kod pocztowy
+                      </label>
+                      <input
+                        type="text"
+                        value={employeeData.deliveryAddress?.postalCode || ''}
+                        onChange={(e) => updateNestedField('deliveryAddress', 'postalCode', e.target.value)}
+                        placeholder="00-001"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      />
+                    </div>
+
+                    <div className="md:col-span-2">
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Pełny adres (automatycznie generowany)
+                      </label>
+                      <input
+                        type="text"
+                        value={
+                          employeeData.deliveryAddress?.street && employeeData.deliveryAddress?.city && employeeData.deliveryAddress?.postalCode
+                            ? `${employeeData.deliveryAddress.street}, ${employeeData.deliveryAddress.postalCode} ${employeeData.deliveryAddress.city}`
+                            : ''
+                        }
+                        disabled
+                        placeholder="Zostanie wygenerowany automatycznie"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-600"
+                      />
+                    </div>
+
+                    <div className="md:col-span-2">
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Dodatkowe uwagi do dostawy
+                      </label>
+                      <textarea
+                        value={employeeData.deliveryAddress?.notes || ''}
+                        onChange={(e) => updateNestedField('deliveryAddress', 'notes', e.target.value)}
+                        placeholder="Np. kod do bramy, godziny odbioru, itp."
+                        rows="2"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Preferencje dostaw i płatności */}
+                <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg p-6 border-2 border-green-100 mt-6">
+                  <div className="flex items-center gap-2 mb-4">
+                    <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                    </svg>
+                    <h3 className="text-lg font-semibold text-gray-900">🚚 Preferencje dostaw i płatności</h3>
+                  </div>
+                  <p className="text-sm text-gray-600 mb-4">
+                    Domyślne ustawienia dla zamówień części tego pracownika
+                  </p>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {/* Preferowana metoda dostawy */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-3">
+                        📦 Preferowana metoda dostawy
+                      </label>
+                      <div className="space-y-2">
+                        <label className="flex items-center p-3 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+                          <input
+                            type="radio"
+                            name="preferredDeliveryMethod"
+                            value="office"
+                            checked={employeeData.deliveryPreferences?.preferredDeliveryMethod === 'office'}
+                            onChange={(e) => updateNestedField('deliveryPreferences', 'preferredDeliveryMethod', e.target.value)}
+                            className="w-4 h-4 text-green-600 border-gray-300"
+                          />
+                          <span className="ml-3 text-sm text-gray-900">
+                            🏢 <strong>Biuro firmowe</strong> (adres z profilu)
+                          </span>
+                        </label>
+
+                        <label className="flex items-center p-3 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+                          <input
+                            type="radio"
+                            name="preferredDeliveryMethod"
+                            value="paczkomat"
+                            checked={employeeData.deliveryPreferences?.preferredDeliveryMethod === 'paczkomat'}
+                            onChange={(e) => updateNestedField('deliveryPreferences', 'preferredDeliveryMethod', e.target.value)}
+                            className="w-4 h-4 text-green-600 border-gray-300"
+                          />
+                          <span className="ml-3 text-sm text-gray-900">
+                            📮 <strong>Paczkomat InPost</strong>
+                          </span>
+                        </label>
+
+                        <label className="flex items-center p-3 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+                          <input
+                            type="radio"
+                            name="preferredDeliveryMethod"
+                            value="custom"
+                            checked={employeeData.deliveryPreferences?.preferredDeliveryMethod === 'custom'}
+                            onChange={(e) => updateNestedField('deliveryPreferences', 'preferredDeliveryMethod', e.target.value)}
+                            className="w-4 h-4 text-green-600 border-gray-300"
+                          />
+                          <span className="ml-3 text-sm text-gray-900">
+                            📍 <strong>Pytaj za każdym razem</strong>
+                          </span>
+                        </label>
+                      </div>
+
+                      {/* Domyślny paczkomat */}
+                      {employeeData.deliveryPreferences?.preferredDeliveryMethod === 'paczkomat' && (
+                        <div className="mt-3">
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Domyślny numer paczkomatu
+                          </label>
+                          <input
+                            type="text"
+                            value={employeeData.deliveryPreferences?.defaultPaczkomatId || ''}
+                            onChange={(e) => updateNestedField('deliveryPreferences', 'defaultPaczkomatId', e.target.value)}
+                            placeholder="np. KRA01M"
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                          />
+                          <p className="mt-1 text-xs text-gray-500">
+                            💡 Znajdź na: <a href="https://inpost.pl/znajdz-paczkomat" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">inpost.pl/znajdz-paczkomat</a>
+                          </p>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Preferowana forma płatności */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-3">
+                        💳 Preferowana forma płatności za przesyłkę
+                      </label>
+                      <div className="space-y-2">
+                        <label className="flex items-center p-3 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+                          <input
+                            type="radio"
+                            name="preferredPaymentMethod"
+                            value="prepaid"
+                            checked={employeeData.deliveryPreferences?.preferredPaymentMethod === 'prepaid'}
+                            onChange={(e) => updateNestedField('deliveryPreferences', 'preferredPaymentMethod', e.target.value)}
+                            className="w-4 h-4 text-green-600 border-gray-300"
+                          />
+                          <div className="ml-3 flex-1">
+                            <div className="text-sm font-medium text-gray-900">
+                              ✅ Przedpłata (przelew)
+                            </div>
+                            <div className="text-xs text-gray-500">
+                              Firma opłaca z góry - szybsze zamówienie
+                            </div>
+                          </div>
+                        </label>
+
+                        <label className="flex items-center p-3 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+                          <input
+                            type="radio"
+                            name="preferredPaymentMethod"
+                            value="cod"
+                            checked={employeeData.deliveryPreferences?.preferredPaymentMethod === 'cod'}
+                            onChange={(e) => updateNestedField('deliveryPreferences', 'preferredPaymentMethod', e.target.value)}
+                            className="w-4 h-4 text-green-600 border-gray-300"
+                          />
+                          <div className="ml-3 flex-1">
+                            <div className="text-sm font-medium text-gray-900">
+                              📦 Pobranie (przy odbiorze)
+                            </div>
+                            <div className="text-xs text-gray-500">
+                              Płatność gotówką/kartą + opłata ~5 zł
+                            </div>
+                          </div>
+                        </label>
+                      </div>
+
+                      {/* Checkbox - czy dozwolone jest pobranie */}
+                      <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+                        <label className="flex items-start gap-2 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={employeeData.deliveryPreferences?.allowCOD !== false}
+                            onChange={(e) => updateNestedField('deliveryPreferences', 'allowCOD', e.target.checked)}
+                            className="w-4 h-4 text-green-600 border-gray-300 rounded mt-0.5"
+                          />
+                          <div className="flex-1">
+                            <div className="text-sm font-medium text-gray-900">
+                              Zezwól na pobranie
+                            </div>
+                            <div className="text-xs text-gray-600">
+                              Jeśli odznaczone, pracownik nie będzie mógł wybrać opcji "pobranie"
+                            </div>
+                          </div>
+                        </label>
+                      </div>
+                    </div>
+
+                    {/* Dodatkowe uwagi */}
+                    <div className="md:col-span-2">
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        📝 Dodatkowe uwagi do preferencji dostaw
+                      </label>
+                      <textarea
+                        value={employeeData.deliveryPreferences?.notes || ''}
+                        onChange={(e) => updateNestedField('deliveryPreferences', 'notes', e.target.value)}
+                        placeholder="Np. preferowane godziny odbioru, specjalne instrukcje, itp."
+                        rows="2"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                      />
+                    </div>
                   </div>
                 </div>
               </div>

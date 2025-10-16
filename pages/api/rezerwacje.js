@@ -13,6 +13,7 @@ import {
   deleteOrder
 } from '../../utils/clientOrderStorage';
 import { createNotification, NotificationTemplates } from '../../utils/notificationHelper';
+import { apiLogger, logger } from '../../utils/logger';
 
 // Tymczasowe przechowywanie danych w pamięci do testów (fallback)
 let tempStorage = [];
@@ -29,29 +30,29 @@ try {
     );
   }
 } catch (error) {
-  console.log('Supabase not configured, using in-memory storage');
+  
 }
 
 export default async function handler(req, res) {
   if (req.method === 'POST') {
-    console.log('📞 API POST /api/rezerwacje - otrzymane dane:', req.body);
+    
 
     const { name, phone, email, city, street, fullAddress, address, category, device, problem, date, availability } = req.body;
 
     // Podstawowa walidacja - tylko name i phone są wymagane
     if (!name || !phone) {
-      console.log('❌ Brak wymaganych danych (name, phone)');
+      
       return res.status(400).json({ message: 'Brak wymaganych danych: nazwa i telefon' });
     }
 
     // Sprawdź czy mamy adres w jakiejkolwiek formie
     const finalAddress = address || fullAddress || (street && city ? `${street}, ${city}` : null);
     if (!finalAddress) {
-      console.log('❌ Brak adresu');
+      
       return res.status(400).json({ message: 'Brak adresu - podaj pełny adres lub miasto i ulicę' });
     }
 
-    console.log('✅ Walidacja przeszła, tworzenie rekordu...');
+    
 
     const newReservation = {
       id: Date.now(),
@@ -78,7 +79,7 @@ export default async function handler(req, res) {
       ...req.body
     };
 
-    console.log('🔄 Converting reservation to client+order format...');
+    
 
     // Deklaruj zmienne na wyższym poziomie (dostępne w całym handlerze)
     let newClient = null;
@@ -92,13 +93,13 @@ export default async function handler(req, res) {
       const clients = await readClients();
       let existingClient = null;
 
-      console.log('🔍 Sprawdzanie istniejącego klienta...', { isLoggedIn, userId, clientPhone });
+      
 
       // Priorytet 1: Zalogowany użytkownik - szukaj po userId
       if (isLoggedIn && userId) {
         existingClient = clients.find(c => c.userId === userId);
         if (existingClient) {
-          console.log(`✅ Znaleziono klienta po userId: ${existingClient.id} - ${existingClient.name}`);
+          
         }
       }
 
@@ -114,17 +115,17 @@ export default async function handler(req, res) {
           return clientMainPhone === normalizedPhone || hasMatchingPhone;
         });
         if (existingClient) {
-          console.log(`✅ Znaleziono klienta po numerze telefonu: ${existingClient.id} - ${existingClient.name}`);
+          
         }
       }
 
       // Jeśli klient istnieje - użyj jego danych
       if (existingClient) {
         newClient = existingClient;
-        console.log(`♻️ Używam istniejącego klienta - zapobieganie duplikatom`);
+        
       } else {
         // Klient nie istnieje - utwórz nowego
-        console.log('➕ Klient nie istnieje - tworzenie nowego...');
+        
 
         // Konwertuj na format klient + zamówienie
         const converted = await convertReservationToClientOrder({
@@ -147,8 +148,8 @@ export default async function handler(req, res) {
         clientData = converted.client;
         orderData = converted.order;
 
-        console.log('📦 Converted client data:', clientData);
-        console.log('📦 Converted order data:', orderData);
+        
+        
 
         // Dodaj klienta
         newClient = await addClient(clientData);
@@ -173,40 +174,37 @@ export default async function handler(req, res) {
         orderData = converted.order;
       }
       if (newClient) {
-        console.log(`✅ Client created: ${newClient.id} - ${newClient.name} (source: ${newClient.source})`);
+        
         
         // Utwórz notyfikację o nowym kliencie
         await createNotification(NotificationTemplates.newClient(newClient.name));
 
-        // Przygotuj dane zamówienia z ID klienta
-        const orderWithClientId = {
-          ...orderData,
-          clientId: newClient.id
-        };
-        
-        console.log('📦 Adding order with data:', {
-          clientId: orderWithClientId.clientId,
-          deviceType: orderWithClientId.deviceType,
-          brand: orderWithClientId.brand,
-          model: orderWithClientId.model,
-          status: orderWithClientId.status,
-          devicesCount: orderWithClientId.devices?.length || 0
-        });
-
-        // Dodaj zamówienie z ID klienta
-        newOrder = await addOrder(orderWithClientId);
-
-        if (newOrder) {
-          console.log(`✅ Order created: ${newOrder.orderNumber} (ID: ${newOrder.id}) for client ${newClient.id}`);
+        // ✅ TWÓRZ ZLECENIE od razu przy POST (user dostaje numer natychmiast)
+        // ZABEZPIECZENIE: źródło 'W' (web) + zapisany reservationId zapobiega duplikatom
+        try {
           
-          // Utwórz notyfikację o nowym zamówieniu
-          await createNotification(NotificationTemplates.newOrder(
-            newOrder.orderNumber, 
-            newOrder.deviceType || 'AGD'
-          ));
-        } else {
-          console.error('❌ Order creation returned null/undefined - check addOrder function logs above');
-          console.error('❌ Order data that failed:', JSON.stringify(orderWithClientId, null, 2));
+          
+          newOrder = await addOrder(orderData, {
+            source: 'W', // Web submission - UNIKALNY źródłowy kod
+            sourceDetails: `Web reservation ${newReservation.id}`,
+            createdBy: 'web-form',
+            createdByName: 'Formularz WWW',
+            userId: newReservation.userId,
+            isUserCreated: !!newReservation.isAuthenticated,
+            ip: req.headers['x-forwarded-for'] || req.connection.remoteAddress
+          });
+
+          if (newOrder) {
+            
+            // Zapisz powiązanie rezerwacja → zlecenie
+            newReservation.orderId = newOrder.id;
+            newReservation.orderNumber = newOrder.orderNumber;
+          } else {
+            console.error('❌ addOrder returned null - zlecenie nie zostało utworzone');
+          }
+        } catch (orderError) {
+          console.error('❌ Błąd tworzenia zlecenia:', orderError);
+          // Nie przerywaj - rezerwacja jest OK, zlecenie można utworzyć później
         }
       } else {
         console.error('❌ Client creation returned null/undefined');
@@ -238,18 +236,18 @@ export default async function handler(req, res) {
       // Użyj trwałego przechowywania w pliku JSON
       const savedReservation = addReservation(newReservation);
       if (savedReservation) {
-        console.log('✅ Saved to file:', savedReservation);
+        
       } else {
         // Fallback do pamięci
         tempStorage.push(newReservation);
-        console.log('⚠️ Fallback to memory:', newReservation);
+        
       }
     }
 
     // Wyślij email jeśli skonfigurowane
     if (process.env.RESEND_API_KEY && !process.env.RESEND_API_KEY.includes('twoj_resend_api_key')) {
       try {
-        console.log('📧 Sending email to:', email);
+        
 
         // Przygotuj dane dla emaila
         const emailDevices = orderData?.devices || [];
@@ -407,8 +405,8 @@ export default async function handler(req, res) {
         }
 
         const emailResult = await emailResponse.json();
-        console.log('✅ Email sent successfully to:', email);
-        console.log('📧 Resend response:', emailResult);
+        
+        
         
         return res.status(200).json({ 
           message: 'Rezerwacja przyjęta', 
@@ -434,7 +432,7 @@ export default async function handler(req, res) {
       }
     } else {
       // Email nie skonfigurowany lub wyłączony
-      console.log('⚠️ Email service not configured');
+      
       return res.status(200).json({ 
         message: 'Rezerwacja przyjęta', 
         data: newReservation,
@@ -448,30 +446,30 @@ export default async function handler(req, res) {
   }
 
   if (req.method === 'GET') {
-    console.log('📞 API GET request - pobieranie listy rezerwacji');
+    
     const { id } = req.query;
 
     if (supabase) {
       try {
-        console.log('🔗 Próba pobrania danych z Supabase...');
+        
         
         // Jeśli podano ID, pobierz pojedynczą rezerwację
         if (id) {
           const { data, error } = await supabase.from('rezerwacje').select('*').eq('id', id).single();
           if (!error && data) {
-            console.log('✅ Single reservation retrieved:', data);
+            
             return res.status(200).json(data);
           } else if (error) {
-            console.log('❌ Supabase error:', error);
+            
           }
         } else {
           // Pobierz wszystkie rezerwacje
           const { data, error } = await supabase.from('rezerwacje').select('*').order('date', { ascending: true });
           if (!error) {
-            console.log('✅ Supabase data retrieved:', data);
+            
             return res.status(200).json({ rezerwacje: data });
           } else {
-            console.log('❌ Supabase error:', error);
+            
           }
         }
       } catch (error) {
@@ -482,7 +480,7 @@ export default async function handler(req, res) {
     // Próbuj odczytać z pliku JSON (legacy format)
     try {
       const fileReservations = readReservations();
-      console.log('📁 Legacy reservations from file:', fileReservations.length);
+      
     } catch (error) {
       console.error('❌ File read error:', error);
     }
@@ -490,7 +488,7 @@ export default async function handler(req, res) {
     // Główne źródło danych: rezervacje.json
     try {
       const reservations = readReservations();
-      console.log(`📊 Reservations from file: ${reservations.length}`);
+      
 
       // Jeśli szukamy konkretnej rezerwacji po ID
       if (id) {
@@ -499,7 +497,7 @@ export default async function handler(req, res) {
           r.id === id || r.id === Number(id) || String(r.id) === String(id)
         );
         if (singleReservation) {
-          console.log('✅ Single reservation found:', id);
+          
           // Przekształć na format zgodny z formularzem
           return res.status(200).json({
             ...singleReservation,
@@ -520,7 +518,7 @@ export default async function handler(req, res) {
       }
 
       // Zwróć wszystkie rezerwacje - jako tablicę (nie obiekt)
-      console.log('✅ Returning reservations:', reservations.length, 'items');
+      
       return res.status(200).json(reservations);
     } catch (error) {
       console.error('❌ Error reading reservations:', error);
@@ -531,7 +529,7 @@ export default async function handler(req, res) {
       const clients = await readClients();
       const orders = await readOrders();
 
-      console.log(`📊 Data summary: ${clients.length} clients, ${orders.length} orders`);
+      
 
       // Konwertuj na format zgodny z mapą i stroną /admin/rezerwacje
       const combinedReservations = clients.map(client => {
@@ -579,16 +577,16 @@ export default async function handler(req, res) {
           r.id === id || r.id === Number(id) || String(r.id) === String(id)
         );
         if (singleReservation) {
-          console.log('✅ Single reservation found:', id);
+          
           return res.status(200).json(singleReservation);
         } else {
-          console.log('❌ Reservation not found:', id);
+          
           return res.status(404).json({ message: 'Rezerwacja nie znaleziona' });
         }
       }
 
       if (combinedReservations.length > 0) {
-        console.log('✅ Returning combined client+order data:', combinedReservations.length, 'items');
+        
         return res.status(200).json({ rezerwacje: combinedReservations });
       }
     } catch (error) {
@@ -596,21 +594,21 @@ export default async function handler(req, res) {
     }
 
     // Fallback do pamięci
-    console.log('📤 Fallback to memory storage:', tempStorage.length, 'items');
-    console.log(`📊 Zwracam ${tempStorage.length} rezerwacji z pamięci`);
+    
+    
     return res.status(200).json({ rezerwacje: tempStorage });
   }
 
   if (req.method === 'PUT') {
-    console.log('📞 API PUT /api/rezerwacje - aktualizacja rezerwacji');
+    
     const { id, orderId, orderNumber, ...updateData } = req.body;
 
     if (!id) {
       return res.status(400).json({ message: 'Brak ID rezerwacji' });
     }
 
-    console.log(`🔍 Updating reservation/client: ${id}`);
-    console.log('📝 Update data:', updateData);
+    
+    
 
     // Najpierw spróbuj zaktualizować jako rezerwację (numeric ID)
     try {
@@ -621,14 +619,69 @@ export default async function handler(req, res) {
 
       if (reservationIndex !== -1) {
         // Znaleziono rezerwację - aktualizuj ją
-        console.log('✅ Found reservation at index:', reservationIndex);
+        
         const reservation = reservations[reservationIndex];
         
-        // Sprawdź czy zmiana statusu na "contacted" - konwertuj na zlecenie
+        // Sprawdź czy zmiana statusu na "contacted" - TYLKO AKTUALIZUJ powiązania
         if (updateData.status === 'contacted' && reservation.status !== 'contacted') {
-          console.log('🔄 Status changed to "contacted" - converting to order');
+          
           
           try {
+            // Sprawdź czy zamówienie już istnieje (utworzone przy POST)
+            const orders = await readOrders();
+            
+            // Szukaj zamówienia po: orderNumber z rezerwacji LUB po ID rezerwacji
+            let existingOrder = null;
+            
+            if (reservation.orderNumber) {
+              existingOrder = orders.find(o => o.orderNumber === reservation.orderNumber);
+            }
+            
+            if (!existingOrder) {
+              existingOrder = orders.find(o => 
+                o.originalReservationId === reservation.id || 
+                o.reservationId === reservation.id
+              );
+            }
+            
+            if (existingOrder) {
+              
+              
+              // ✅ FIX: Aktualizuj ZARÓWNO rezerwację JAK I zamówienie!
+              const result = updateReservation(reservation.id, {
+                ...updateData,
+                orderId: existingOrder.id,
+                orderNumber: existingOrder.orderNumber,
+                clientId: reservation.clientId || existingOrder.clientId,
+                convertedToOrder: true,
+                convertedAt: existingOrder.createdAt || new Date().toISOString(),
+                updatedAt: new Date().toISOString(),
+                updatedBy: 'admin'
+              });
+              
+              // ✅ NOWE: Synchronizuj status z zamówieniem
+              if (updateData.status) {
+                
+                const updatedOrder = await updateOrder({
+                  ...existingOrder,
+                  status: updateData.status,
+                  updatedAt: new Date().toISOString(),
+                  updatedBy: 'admin_reservation'
+                });
+                
+              }
+              
+              
+              return res.status(200).json({ 
+                message: 'Status zaktualizowany - rezerwacja i zlecenie zsynchronizowane', 
+                data: result,
+                order: existingOrder
+              });
+            }
+            
+            // FALLBACK: Jeśli zamówienie nie istnieje (stare rezerwacje), utwórz teraz
+            
+            
             // Przygotuj dane rezerwacji do konwersji
             const reservationToConvert = {
               ...reservation,
@@ -656,7 +709,7 @@ export default async function handler(req, res) {
             let client;
             
             if (existingClient) {
-              console.log('📋 Client already exists, using existing ID:', existingClient.id);
+              
               clientId = existingClient.id;
               client = existingClient;
               
@@ -678,74 +731,47 @@ export default async function handler(req, res) {
               const newClient = await addClient(clientData);
               clientId = newClient.id;
               client = newClient;
-              console.log('✅ New client created from reservation:', clientId);
+              
             }
             
-            // Sprawdź czy zamówienie dla tej rezerwacji już istnieje
-            const orders = await readOrders();
-            const existingOrder = orders.find(o => 
-              o.originalReservationId === reservation.id || 
-              o.reservationId === reservation.id
-            );
+            // Połącz zamówienie z klientem
+            orderData.clientId = clientId;
+            orderData.source = 'Z'; // Reservation conversion - UNIKALNY kod
+            orderData.originalReservationId = reservation.id;
+            orderData.reservationId = reservation.id;
+            orderData.createdBy = 'admin';
+            orderData.createdFrom = 'reservation';
             
-            if (existingOrder) {
-              console.log('📋 Order already exists for this reservation:', existingOrder.orderNumber);
-              
-              // ✅ FIX: Aktualizuj rezerwację z danymi istniejącego zamówienia
-              const result = updateReservation(reservation.id, {
-                ...updateData,
-                orderId: existingOrder.id,
-                orderNumber: existingOrder.orderNumber,
-                clientId: clientId,
-                convertedToOrder: true,
-                convertedAt: existingOrder.createdAt || new Date().toISOString(),
-                updatedAt: new Date().toISOString(),
-                updatedBy: 'admin'
-              });
-              
-              console.log('✅ Reservation linked to existing order');
-              return res.status(200).json({ 
-                message: 'Rezerwacja połączona z istniejącym zleceniem', 
-                data: result,
-                client: client,
-                order: existingOrder
-              });
-            } else {
-              // Połącz zamówienie z klientem
-              orderData.clientId = clientId;
-              orderData.source = 'reservation_conversion';
-              orderData.originalReservationId = reservation.id;
-              orderData.reservationId = reservation.id;
-              orderData.createdBy = 'admin';
-              orderData.createdFrom = 'reservation';
-              
-              // Utwórz zamówienie
-              const newOrder = await addOrder(orderData);
-              console.log('✅ Order created from reservation:', newOrder.orderNumber);
-              
-              // ✅ FIX: Aktualizuj rezerwację ze statusem i numerem zamówienia
-              const result = updateReservation(reservation.id, {
-                ...updateData,
-                orderId: newOrder.id,
-                orderNumber: newOrder.orderNumber,
-                clientId: clientId,
-                convertedToOrder: true,
-                convertedAt: new Date().toISOString(),
-                updatedAt: new Date().toISOString(),
-                updatedBy: 'admin'
-              });
-              
-              console.log('✅ Reservation converted to order successfully');
-              console.log('📋 Order ID:', newOrder.id, 'Order Number:', newOrder.orderNumber);
-              console.log('📋 Updated reservation:', result);
-              
-              return res.status(200).json({ 
-                message: 'Rezerwacja przekonwertowana na zlecenie', 
-                data: result,
-                client: client,
-                order: newOrder
-              });
-            }
+            // Utwórz zamówienie (FALLBACK dla starych rezerwacji)
+            const newOrder = await addOrder(orderData, {
+              source: 'Z',
+              sourceDetails: `Legacy reservation ${reservation.id} converted`,
+              createdBy: 'admin',
+              createdByName: 'Admin Panel'
+            });
+            
+            
+            // ✅ FIX: Aktualizuj rezerwację ze statusem i numerem zamówienia
+            const result = updateReservation(reservation.id, {
+              ...updateData,
+              orderId: newOrder.id,
+              orderNumber: newOrder.orderNumber,
+              clientId: clientId,
+              convertedToOrder: true,
+              convertedAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString(),
+              updatedBy: 'admin'
+            });
+            
+            
+            
+            
+            return res.status(200).json({ 
+              message: 'Rezerwacja przekonwertowana na zlecenie', 
+              data: result,
+              client: client,
+              order: newOrder
+            });
           } catch (conversionError) {
             console.error('❌ Error converting reservation to order:', conversionError);
             // Kontynuuj z normalną aktualizacją jeśli konwersja się nie powiodła
@@ -760,7 +786,7 @@ export default async function handler(req, res) {
         });
 
         if (result) {
-          console.log('✅ Reservation updated successfully');
+          
           return res.status(200).json({ 
             message: 'Rezerwacja zaktualizowana', 
             data: result 
@@ -782,10 +808,10 @@ export default async function handler(req, res) {
           .single();
 
         if (!error && data) {
-          console.log('✅ Rezerwacja zaktualizowana w Supabase:', data);
+          
           return res.status(200).json({ message: 'Rezerwacja zaktualizowana', data });
         } else {
-          console.log('❌ Supabase update error:', error);
+          
         }
       } catch (error) {
         console.error('❌ Supabase update error:', error);
@@ -800,7 +826,7 @@ export default async function handler(req, res) {
       // Znajdź klienta
       const client = clients.find(c => c.id === id);
       if (!client) {
-        console.log('❌ Client not found:', id);
+        
         return res.status(404).json({ message: 'Klient nie znaleziony' });
       }
 
@@ -823,7 +849,7 @@ export default async function handler(req, res) {
       };
 
       await updateClient(updatedClient);
-      console.log('✅ Client updated:', id);
+      
 
       // Jeśli istnieje zamówienie, aktualizuj je
       if (mainOrder) {
@@ -840,7 +866,7 @@ export default async function handler(req, res) {
         };
 
         await updateOrder(updatedOrder);
-        console.log('✅ Order updated:', mainOrder.orderNumber);
+        
       }
 
       return res.status(200).json({ 
@@ -855,7 +881,7 @@ export default async function handler(req, res) {
   }
 
   if (req.method === 'DELETE') {
-    console.log('📞 API DELETE /api/rezerwacje - usuwanie rezerwacji');
+    
     const { id } = req.query;
 
     if (!id) {
@@ -870,10 +896,10 @@ export default async function handler(req, res) {
           .eq('id', id);
 
         if (!error) {
-          console.log('✅ Rezerwacja usunięta z Supabase');
+          
           return res.status(200).json({ message: 'Rezerwacja usunięta' });
         } else {
-          console.log('❌ Supabase delete error:', error);
+          
         }
       } catch (error) {
         console.error('❌ Supabase delete error:', error);
@@ -888,7 +914,7 @@ export default async function handler(req, res) {
       // Znajdź klienta
       const client = clients.find(c => c.id === id);
       if (!client) {
-        console.log('❌ Client not found:', id);
+        
         return res.status(404).json({ message: 'Klient nie znaleziony' });
       }
 
@@ -898,12 +924,12 @@ export default async function handler(req, res) {
       // Usuń wszystkie zamówienia
       for (const order of clientOrders) {
         await deleteOrder(order.id);
-        console.log('✅ Order deleted:', order.orderNumber);
+        
       }
 
       // Usuń klienta
       await deleteClient(id);
-      console.log('✅ Client deleted:', id);
+      
 
       return res.status(200).json({ message: 'Rezerwacja usunięta' });
 
@@ -915,3 +941,5 @@ export default async function handler(req, res) {
 
   return res.status(405).json({ message: 'Method Not Allowed' });
 }
+
+

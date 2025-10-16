@@ -1,21 +1,44 @@
 
 {
-  "name": "Rezerwacja Serwisu",
-  "short_name": "Rezerwacja",
+  "name": "Technik - Panel Serwisanta",
+  "short_name": "Technik",
+  "description": "Aplikacja do zarządzania wizytami serwisowymi z obsługą offline",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#2563eb",
+  "orientation": "portrait",
+  "scope": "/",
   "icons": [
     {
       "src": "/icon-192.png",
       "type": "image/png",
-      "sizes": "192x192"
+      "sizes": "192x192",
+      "purpose": "any maskable"
     },
     {
       "src": "/icon-512.png",
       "type": "image/png",
-      "sizes": "512x512"
+      "sizes": "512x512",
+      "purpose": "any maskable"
     }
-  ]
+  ],
+  "categories": ["productivity", "business"],
+  "shortcuts": [
+    {
+      "name": "Moje wizyty",
+      "short_name": "Wizyty",
+      "description": "Zobacz dzisiejsze wizyty",
+      "url": "/technician",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Magazyn",
+      "short_name": "Magazyn",
+      "description": "Sprawdź stan magazynu",
+      "url": "/technician/warehouse",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    }
+  ],
+  "prefer_related_applications": false
 }

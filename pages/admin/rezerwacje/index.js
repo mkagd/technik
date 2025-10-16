@@ -6,10 +6,12 @@ import { useRouter } from 'next/router';
 import AdminLayout from '../../../components/AdminLayout';
 import { useToast } from '../../../contexts/ToastContext';
 import { statusToUI, statusToBackend } from '../../../utils/fieldMapping';
+import { STATUS_LABELS, STATUS_COLORS, STATUS_ICONS } from '../../../utils/orderStatusConstants';
 import { 
   FiEye, FiTrash2, FiEdit, FiSearch, FiFilter, FiX, FiPhone, 
   FiMail, FiMapPin, FiClock, FiCalendar, FiDownload, FiRefreshCw, FiPlus,
-  FiChevronUp, FiChevronDown, FiCheck, FiPhoneCall, FiFileText
+  FiChevronUp, FiChevronDown, FiCheck, FiPhoneCall, FiFileText,
+  FiGrid, FiList, FiColumns, FiCheckSquare, FiSquare
 } from 'react-icons/fi';
 
 export default function AdminRezerwacje() {
@@ -28,6 +30,15 @@ export default function AdminRezerwacje() {
   const itemsPerPage = 20;
   const [sortField, setSortField] = useState('created_at');
   const [sortDirection, setSortDirection] = useState('desc');
+  
+  // ✅ NOWE: Tryby widoku
+  const [viewMode, setViewMode] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('reservationsViewMode') || 'table';
+    }
+    return 'table';
+  });
+  const [showBulkDeleteModal, setShowBulkDeleteModal] = useState(false);
 
   const [filters, setFilters] = useState({
     search: '',
@@ -38,19 +49,13 @@ export default function AdminRezerwacje() {
     sortBy: 'date-desc' // date-desc, date-asc, name, status
   });
 
-  // Statusy rezerwacji
-  const bookingStatuses = [
-    { value: 'pending', label: 'Oczekuje na kontakt', color: 'bg-yellow-100 text-yellow-800', icon: '⏳' },
-    { value: 'contacted', label: 'Skontaktowano się', color: 'bg-blue-100 text-blue-800', icon: '📞' },
-    { value: 'scheduled', label: 'Umówiona wizyta', color: 'bg-purple-100 text-purple-800', icon: '📅' },
-    { value: 'confirmed', label: 'Potwierdzona', color: 'bg-green-100 text-green-800', icon: '✅' },
-    { value: 'in-progress', label: 'W trakcie realizacji', color: 'bg-indigo-100 text-indigo-800', icon: '🔧' },
-    { value: 'waiting-parts', label: 'Oczekuje na części', color: 'bg-orange-100 text-orange-800', icon: '📦' },
-    { value: 'ready', label: 'Gotowe do odbioru', color: 'bg-teal-100 text-teal-800', icon: '🎉' },
-    { value: 'completed', label: 'Zakończone', color: 'bg-green-100 text-green-800', icon: '✔️' },
-    { value: 'cancelled', label: 'Anulowane', color: 'bg-red-100 text-red-800', icon: '❌' },
-    { value: 'no-show', label: 'Nie stawił się', color: 'bg-gray-100 text-gray-800', icon: '👻' }
-  ];
+  // Statusy z centralnego pliku orderStatusConstants.js
+  const bookingStatuses = Object.keys(STATUS_LABELS).map(statusKey => ({
+    value: statusKey,
+    label: STATUS_LABELS[statusKey],
+    color: STATUS_COLORS[statusKey] || 'bg-gray-100 text-gray-800',
+    icon: STATUS_ICONS[statusKey] || '�'
+  }));
 
   const categories = [
     'Pralki', 'Lodówki', 'Zmywarki', 'Piekarniki', 'Kuchenki', 
@@ -238,6 +243,8 @@ export default function AdminRezerwacje() {
     }
   };
 
+
+
   // Nowa funkcja: Dodaj zlecenie (zmień status na contacted)
   const handleCreateOrder = async (rezerwacjaId) => {
     try {
@@ -287,11 +294,9 @@ export default function AdminRezerwacje() {
   };
 
   const handleBulkDelete = async () => {
-    if (!window.confirm(`Czy na pewno chcesz usunąć ${selectedIds.length} rezerwacji?`)) {
-      return;
-    }
-
+    // ✅ Usunięto window.confirm - modal zajmuje się potwierdzeniem
     try {
+      const count = selectedIds.length;
       const deletePromises = selectedIds.map(id => 
         fetch(`/api/rezerwacje/${id}`, { method: 'DELETE' })
       );
@@ -299,7 +304,7 @@ export default function AdminRezerwacje() {
       await Promise.all(deletePromises);
       await loadRezerwacje();
       setSelectedIds([]);
-      toast.success(`Usunięto ${selectedIds.length} rezerwacji`);
+      toast.success(`Usunięto ${count} rezerwacji`);
     } catch (error) {
       console.error('Błąd:', error);
       toast.error('Błąd podczas usuwania rezerwacji');
@@ -373,32 +378,80 @@ export default function AdminRezerwacje() {
       ]}
     >
       {/* Action bar */}
-      <div className="mb-6 flex justify-between items-center">
-        <p className="text-gray-600">
+      <div className="mb-6 flex flex-col lg:flex-row lg:justify-between lg:items-center gap-4">
+        <p className="text-gray-600 text-sm lg:text-base">
           Zarządzaj rezerwacjami klientów - przeglądaj, edytuj i aktualizuj statusy
         </p>
-        <div className="flex items-center space-x-3">
+        <div className="flex flex-wrap items-center gap-2 lg:gap-3">
+          {/* ✅ Przełącznik widoku */}
+          <div className="inline-flex rounded-lg border border-gray-300 bg-white">
+            <button
+              onClick={() => {
+                setViewMode('cards');
+                localStorage.setItem('reservationsViewMode', 'cards');
+              }}
+              className={`inline-flex items-center px-2 lg:px-3 py-2 text-sm font-medium rounded-l-lg transition-colors ${
+                viewMode === 'cards' 
+                  ? 'bg-blue-50 text-blue-700 border-blue-200' 
+                  : 'text-gray-700 hover:bg-gray-50'
+              }`}
+              title="Widok kafelków"
+            >
+              <FiGrid className="h-4 w-4" />
+            </button>
+            <button
+              onClick={() => {
+                setViewMode('list');
+                localStorage.setItem('reservationsViewMode', 'list');
+              }}
+              className={`inline-flex items-center px-2 lg:px-3 py-2 text-sm font-medium border-l border-gray-300 transition-colors ${
+                viewMode === 'list' 
+                  ? 'bg-blue-50 text-blue-700 border-blue-200' 
+                  : 'text-gray-700 hover:bg-gray-50'
+              }`}
+              title="Widok listy"
+            >
+              <FiList className="h-4 w-4" />
+            </button>
+            <button
+              onClick={() => {
+                setViewMode('table');
+                localStorage.setItem('reservationsViewMode', 'table');
+              }}
+              className={`inline-flex items-center px-2 lg:px-3 py-2 text-sm font-medium rounded-r-lg border-l border-gray-300 transition-colors ${
+                viewMode === 'table' 
+                  ? 'bg-blue-50 text-blue-700 border-blue-200' 
+                  : 'text-gray-700 hover:bg-gray-50'
+              }`}
+              title="Widok tabeli"
+            >
+              <FiColumns className="h-4 w-4" />
+            </button>
+          </div>
+          
           <button
             onClick={() => router.push('/admin/rezerwacje/nowa')}
-            className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors"
+            className="inline-flex items-center px-3 lg:px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors whitespace-nowrap"
           >
-            <FiCalendar className="mr-2 h-4 w-4" />
-            + Nowa rezerwacja
+            <FiCalendar className="mr-1 lg:mr-2 h-4 w-4" />
+            <span className="hidden sm:inline">+ Nowa rezerwacja</span>
+            <span className="sm:hidden">+ Nowa</span>
           </button>
           <button
             onClick={loadRezerwacje}
-            className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors"
+            className="inline-flex items-center px-3 lg:px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors whitespace-nowrap"
           >
-            <FiRefreshCw className="mr-2 h-4 w-4" />
-            Odśwież
+            <FiRefreshCw className="mr-1 lg:mr-2 h-4 w-4" />
+            <span className="hidden sm:inline">Odśwież</span>
           </button>
           <button
             onClick={exportToCSV}
             disabled={filteredRezerwacje.length === 0}
-            className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors disabled:opacity-50"
+            className="inline-flex items-center px-3 lg:px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors disabled:opacity-50 whitespace-nowrap"
           >
-            <FiDownload className="mr-2 h-4 w-4" />
-            Eksportuj CSV
+            <FiDownload className="mr-1 lg:mr-2 h-4 w-4" />
+            <span className="hidden sm:inline">Eksportuj CSV</span>
+            <span className="sm:hidden">CSV</span>
           </button>
         </div>
       </div>
@@ -575,12 +628,28 @@ export default function AdminRezerwacje() {
 
         {/* Stats */}
         <div className="mt-4 flex items-center justify-between text-sm text-gray-600">
-          <div>
-            Znaleziono: <span className="font-semibold">{filteredRezerwacje.length}</span> rezerwacji
+          <div className="flex items-center gap-4">
+            <span>
+              Znaleziono: <span className="font-semibold">{filteredRezerwacje.length}</span> rezerwacji
+            </span>
             {selectedIds.length > 0 && (
-              <span className="ml-3 text-blue-600 font-semibold">
+              <span className="text-blue-600 font-semibold">
                 • Zaznaczono: {selectedIds.length}
               </span>
+            )}
+            {/* ✅ POPRAWIONY: Zaznacz wszystko (używa starego toggleSelectAll) */}
+            {filteredRezerwacje.length > 0 && (
+              <button
+                onClick={toggleSelectAll}
+                className="inline-flex items-center gap-2 px-3 py-1 text-sm text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded transition-colors"
+              >
+                {selectedIds.length === filteredRezerwacje.length && filteredRezerwacje.length > 0 ? (
+                  <FiCheckSquare className="h-4 w-4" />
+                ) : (
+                  <FiSquare className="h-4 w-4" />
+                )}
+                Zaznacz wszystko
+              </button>
             )}
           </div>
           <div className="flex items-center space-x-4">
@@ -598,43 +667,31 @@ export default function AdminRezerwacje() {
         </div>
       </div>
 
-      {/* Bulk Actions Bar */}
+      {/* ✅ POPRAWIONY: Bulk Actions Bar (używa starego selectedIds) */}
       {selectedIds.length > 0 && (
-        <div className="bg-blue-50 border-2 border-blue-200 rounded-lg p-4 mb-6 flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            <span className="text-sm font-medium text-blue-900">
-              Zaznaczono: {selectedIds.length} rezerwacji
-            </span>
-            <button
-              onClick={() => setSelectedIds([])}
-              className="text-sm text-blue-600 hover:text-blue-800 underline"
-            >
-              Odznacz wszystkie
-            </button>
-          </div>
-          <div className="flex items-center space-x-3">
-            <select
-              onChange={(e) => {
-                if (e.target.value) {
-                  handleBulkStatusChange(e.target.value);
-                  e.target.value = '';
-                }
-              }}
-              className="px-3 py-1.5 border border-blue-300 rounded-lg text-sm font-medium text-blue-700 bg-white hover:bg-blue-50"
-            >
-              <option value="">Zmień status...</option>
-              {bookingStatuses.map(status => (
-                <option key={status.value} value={status.value}>
-                  {status.icon} {status.label}
-                </option>
-              ))}
-            </select>
-            <button
-              onClick={handleBulkDelete}
-              className="px-4 py-1.5 bg-red-600 text-white rounded-lg text-sm font-medium hover:bg-red-700 transition-colors"
-            >
-              Usuń zaznaczone
-            </button>
+        <div className="bg-orange-50 border border-orange-200 rounded-lg p-4 mb-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <FiCheckSquare className="h-5 w-5 text-orange-600" />
+              <span className="text-sm font-medium text-orange-900">
+                🎯 Nowy panel: Zaznaczono {selectedIds.length} {selectedIds.length === 1 ? 'rezerwację' : 'rezerwacji'}
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setSelectedIds([])}
+                className="px-3 py-1.5 text-sm text-orange-700 hover:text-orange-800 hover:bg-orange-100 rounded transition-colors"
+              >
+                Odznacz wszystko
+              </button>
+              <button
+                onClick={() => setShowBulkDeleteModal(true)}
+                className="inline-flex items-center gap-2 px-4 py-1.5 bg-red-600 text-white rounded-lg text-sm font-medium hover:bg-red-700 transition-colors"
+              >
+                <FiTrash2 className="h-4 w-4" />
+                Usuń zaznaczone
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -983,6 +1040,49 @@ export default function AdminRezerwacje() {
               </div>
             </div>
           )}
+        </div>
+      )}
+
+      {/* ✅ Bulk Delete Modal (używa starego handleBulkDelete) */}
+      {showBulkDeleteModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6">
+            <div className="flex items-start mb-4">
+              <div className="flex-shrink-0">
+                <div className="flex items-center justify-center h-12 w-12 rounded-full bg-red-100">
+                  <FiTrash2 className="h-6 w-6 text-red-600" />
+                </div>
+              </div>
+              <div className="ml-4 flex-1">
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                  Potwierdź usunięcie rezerwacji
+                </h3>
+                <p className="text-sm text-gray-600">
+                  Czy na pewno chcesz usunąć <strong>{selectedIds.length}</strong> {selectedIds.length === 1 ? 'rezerwację' : 'rezerwacji'}? 
+                  Ta operacja jest <strong>nieodwracalna</strong>.
+                </p>
+              </div>
+            </div>
+            
+            <div className="flex justify-end space-x-3 mt-6">
+              <button
+                onClick={() => setShowBulkDeleteModal(false)}
+                className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+              >
+                Anuluj
+              </button>
+              <button
+                onClick={() => {
+                  handleBulkDelete();
+                  setShowBulkDeleteModal(false);
+                }}
+                className="px-4 py-2 bg-red-600 text-white rounded-lg text-sm font-medium hover:bg-red-700 transition-colors shadow-sm"
+              >
+                <FiTrash2 className="inline-block mr-1.5 h-4 w-4" />
+                Usuń {selectedIds.length} {selectedIds.length === 1 ? 'rezerwację' : 'rezerwacji'}
+              </button>
+            </div>
+          </div>
         </div>
       )}
 

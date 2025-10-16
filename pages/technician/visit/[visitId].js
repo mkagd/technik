@@ -8,6 +8,9 @@ import PhotoUploader from '../../../components/technician/PhotoUploader';
 import ModelAIScanner from '../../../components/ModelAIScanner';
 import ModelManagerModal from '../../../components/ModelManagerModal';
 import AllegroQuickSearch from '../../../components/AllegroQuickSearch';
+import CompletionWizard from '../../../components/technician/CompletionWizard';
+import VehicleInventoryModal from '../../../components/technician/VehicleInventoryModal';
+import { showToast } from '../../../utils/toast';
 
 export default function VisitDetailsPage() {
   const router = useRouter();
@@ -25,12 +28,35 @@ export default function VisitDetailsPage() {
   const [showNotesEditor, setShowNotesEditor] = useState(false);
   const [showAIScanner, setShowAIScanner] = useState(false);
   const [showModelManager, setShowModelManager] = useState(false);
+  const [showCompletionWizard, setShowCompletionWizard] = useState(false);
+  const [showPhotoUploader, setShowPhotoUploader] = useState(false);
+  const [showVehicleInventory, setShowVehicleInventory] = useState(false);
+  const [isAddVisitModalOpen, setIsAddVisitModalOpen] = useState(false);
+  const [isEditVisitDateModal, setIsEditVisitDateModal] = useState(false);
+  const [editDateForm, setEditDateForm] = useState({ date: '', time: '09:00' });
+  
+  // Inicjalizuj formularz daty przy otwarciu modala
+  useEffect(() => {
+    if (isEditVisitDateModal && visit) {
+      setEditDateForm({
+        date: visit.scheduledDate ? new Date(visit.scheduledDate).toISOString().split('T')[0] : '',
+        time: visit.scheduledTime || '09:00'
+      });
+    }
+  }, [isEditVisitDateModal, visit]);
   
   // ✅ MULTI-DEVICE: Selected device index
   const [selectedDeviceIndex, setSelectedDeviceIndex] = useState(0);
   
   // Visit models state
   const [visitModels, setVisitModels] = useState([]);
+  
+  // 🚗 Vehicle parts usage state
+  const [vehiclePartsUsage, setVehiclePartsUsage] = useState([]);
+  
+  // 🔄 Auto-refresh state (dla background processing)
+  const [autoRefreshEnabled, setAutoRefreshEnabled] = useState(false);
+  const [lastModelCount, setLastModelCount] = useState(0);
 
   // Check authentication
   useEffect(() => {
@@ -56,6 +82,50 @@ export default function VisitDetailsPage() {
       loadVisitDetails();
     }
   }, [visitId, employee]);
+
+  // 🔄 Auto-refresh: Sprawdzaj nowe modele co 3 sekundy
+  useEffect(() => {
+    if (!autoRefreshEnabled || !visitId || !employee) return;
+
+    const interval = setInterval(async () => {
+      console.log('🔄 Auto-refresh: Sprawdzam nowe modele...');
+      
+      try {
+        const token = localStorage.getItem('technicianToken');
+        const response = await fetch(`/api/technician/visit-details?visitId=${visitId}`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (!response.ok) return;
+
+        const data = await response.json();
+        
+        // Sprawdź czy pojawiły się nowe modele
+        const currentDeviceModels = data.visit.deviceModels?.find(
+          dm => dm.deviceIndex === selectedDeviceIndex
+        );
+        const newModelCount = currentDeviceModels?.models?.length || 0;
+
+        if (newModelCount > lastModelCount) {
+          console.log(`✨ Wykryto nowe modele! ${lastModelCount} → ${newModelCount}`);
+          setVisit(data.visit);
+          setVisitModels(currentDeviceModels?.models || []);
+          setLastModelCount(newModelCount);
+          
+          // Zatrzymaj auto-refresh po znalezieniu nowych modeli
+          setAutoRefreshEnabled(false);
+          
+          // 🎉 CICHE odświeżenie - bez alertu! Dane po prostu się pojawią
+          console.log(`✅ SUKCES: Rozpoznano ${newModelCount - lastModelCount} model(i) - aktualizacja cicha`);
+        }
+      } catch (error) {
+        console.error('❌ Auto-refresh error:', error);
+      }
+    }, 3000); // Co 3 sekundy
+
+    // Cleanup
+    return () => clearInterval(interval);
+  }, [autoRefreshEnabled, visitId, employee, selectedDeviceIndex, lastModelCount]);
 
   const loadVisitDetails = async () => {
     setLoading(true);
@@ -105,9 +175,41 @@ export default function VisitDetailsPage() {
     }
   };
 
+  // 🚗 Load vehicle parts usage for this visit
+  const loadVehiclePartsUsage = async () => {
+    if (!visitId) return;
+
+    try {
+      const token = localStorage.getItem('technicianToken');
+      const res = await fetch(`/api/inventory/personal/history?orderId=${visitId}`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+
+      const data = await res.json();
+      
+      if (data.success && data.usageHistory && data.usageHistory.length > 0) {
+        setVehiclePartsUsage(data.usageHistory);
+        console.log(`🚗 Loaded ${data.usageHistory.length} vehicle parts usage records`);
+      } else {
+        setVehiclePartsUsage([]);
+      }
+    } catch (error) {
+      console.error('Error loading vehicle parts usage:', error);
+      setVehiclePartsUsage([]);
+    }
+  };
+
+  // Load vehicle parts usage when visit is loaded
+  useEffect(() => {
+    if (visit?.visitId) {
+      loadVehiclePartsUsage();
+    }
+  }, [visit?.visitId]);
+
   // Status helpers
   const getStatusColor = (status) => {
     const colors = {
+      unscheduled: 'bg-gray-100 text-gray-700 border-gray-300',
       scheduled: 'bg-blue-100 text-blue-800 border-blue-200',
       on_way: 'bg-yellow-100 text-yellow-800 border-yellow-200',
       in_progress: 'bg-green-100 text-green-800 border-green-200',
@@ -121,6 +223,7 @@ export default function VisitDetailsPage() {
 
   const getStatusLabel = (status) => {
     const labels = {
+      unscheduled: 'Do zaplanowania',
       scheduled: 'Zaplanowana',
       on_way: 'W drodze',
       in_progress: 'W trakcie',
@@ -177,7 +280,7 @@ export default function VisitDetailsPage() {
     // ModelAIScanner przekazuje pojedynczy obiekt model (nie tablicę!)
     if (!detectedModel || typeof detectedModel !== 'object') {
       console.error('❌ Nieprawidłowy format modelu:', detectedModel);
-      alert('❌ Błąd: Nieprawidłowe dane z skanera');
+      showToast.error('Błąd: Nieprawidłowe dane z skanera');
       setShowAIScanner(false);
       return;
     }
@@ -197,7 +300,7 @@ export default function VisitDetailsPage() {
 
     // Walidacja - sprawdź czy wykryto przynajmniej markę lub model
     if (!modelToSave.brand && !modelToSave.finalModel) {
-      alert('❌ Nie udało się rozpoznać marki ani modelu');
+      showToast.error('Nie udało się rozpoznać marki ani modelu');
       setShowAIScanner(false);
       return;
     }
@@ -210,7 +313,7 @@ export default function VisitDetailsPage() {
     );
 
     if (isDuplicate) {
-      alert('⚠️ Ten model został już dodany do tej wizyty');
+      showToast.warning('Ten model został już dodany do tej wizyty');
       setShowAIScanner(false);
       return;
     }
@@ -264,12 +367,12 @@ export default function VisitDetailsPage() {
         ? visit.devices[selectedDeviceIndex].deviceType 
         : `Urządzenie ${selectedDeviceIndex + 1}`;
       
-      alert(`✅ Zapisano ${modelCount} ${modelCount === 1 ? 'model' : 'modeli'} dla ${deviceName}${deviceInfo ? '\n📱 ' + deviceInfo : ''}`);
+      showToast.success(`Zapisano ${modelCount} ${modelCount === 1 ? 'model' : 'modeli'} dla ${deviceName}${deviceInfo ? '\n📱 ' + deviceInfo : ''}`);
       setShowModelManager(false);
       
     } catch (err) {
       console.error('Error saving models:', err);
-      alert('❌ Błąd zapisywania modeli: ' + err.message);
+      showToast.error('Błąd zapisywania modeli: ' + err.message);
     }
   };
 
@@ -322,24 +425,27 @@ export default function VisitDetailsPage() {
             </div>
 
             <div className="flex items-center space-x-2">
+              {/* Przycisk Dodaj wizytę */}
+              <button
+                onClick={() => setIsAddVisitModalOpen(true)}
+                className="flex items-center px-2 sm:px-3 py-2 bg-green-600 text-white text-xs sm:text-sm rounded-lg hover:bg-green-700 transition-colors"
+                title="Dodaj kolejną wizytę do tego zlecenia"
+              >
+                <svg className="w-4 h-4 sm:mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                <span className="hidden sm:inline">Dodaj wizytę</span>
+              </button>
+              
               {/* Przycisk Zamów część */}
               <Link
-                href={{
-                  pathname: '/technician/magazyn/zamow',
-                  query: {
-                    orderNumber: visit.visitId,
-                    clientName: visit.client?.name || '',
-                    deviceBrand: visit.devices?.[selectedDeviceIndex]?.brand || visitModels?.[0]?.brand || '',
-                    deviceModel: visit.devices?.[selectedDeviceIndex]?.model || visitModels?.[0]?.finalModel || visitModels?.[0]?.model || '',
-                    issueDescription: visit.description || ''
-                  }
-                }}
-                className="hidden sm:flex items-center px-3 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors"
+                href={`/technician/magazyn/zamow?visitId=${visit.visitId}&orderNumber=${visit.visitId}&clientName=${encodeURIComponent(visit.client?.name || '')}&deviceType=${encodeURIComponent(visit.devices?.[selectedDeviceIndex]?.deviceType || visitModels?.[0]?.type || '')}&deviceBrand=${encodeURIComponent(visit.devices?.[selectedDeviceIndex]?.brand || visitModels?.[0]?.brand || '')}&deviceModel=${encodeURIComponent(visit.devices?.[selectedDeviceIndex]?.model || visitModels?.[0]?.finalModel || visitModels?.[0]?.model || '')}&issueDescription=${encodeURIComponent(visit.description || '')}`}
+                className="flex items-center px-2 sm:px-3 py-2 bg-blue-600 text-white text-xs sm:text-sm rounded-lg hover:bg-blue-700 transition-colors"
               >
-                <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 sm:mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                 </svg>
-                Zamów część
+                <span className="hidden sm:inline">Zamów część</span>
               </Link>
               
               <span className={`px-2 sm:px-3 py-1 text-xs sm:text-sm font-medium rounded-full border ${getStatusColor(visit.status)}`}>
@@ -419,6 +525,84 @@ export default function VisitDetailsPage() {
                   </a>
                 )}
               </div>
+            </div>
+
+            {/* Visit Date/Schedule Card */}
+            <div className="bg-white rounded-lg shadow-sm p-4 sm:p-6">
+              <h2 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4 flex items-center">
+                <svg className="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                Termin wizyty
+              </h2>
+
+              {visit.scheduledDate ? (
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between p-4 bg-green-50 border border-green-200 rounded-lg">
+                    <div>
+                      <p className="text-sm text-gray-600 mb-1">Zaplanowano na:</p>
+                      <p className="text-lg font-semibold text-gray-900">
+                        {new Date(visit.scheduledDate).toLocaleDateString('pl-PL', {
+                          weekday: 'long',
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric'
+                        })}
+                      </p>
+                      {visit.scheduledTime && (
+                        <p className="text-base text-gray-700 mt-1">
+                          🕐 Godzina: <span className="font-medium">{visit.scheduledTime}</span>
+                        </p>
+                      )}
+                    </div>
+                    <svg className="w-12 h-12 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+
+                  <button
+                    onClick={() => setIsEditVisitDateModal(true)}
+                    className="w-full flex items-center justify-center px-4 py-2 bg-blue-50 text-blue-700 border border-blue-200 rounded-lg hover:bg-blue-100 transition-colors text-sm font-medium"
+                  >
+                    <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                    </svg>
+                    Zmień termin wizyty
+                  </button>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                    <div className="flex items-start">
+                      <svg className="w-6 h-6 text-yellow-600 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                      </svg>
+                      <div>
+                        <p className="text-sm font-medium text-yellow-900 mb-1">
+                          ⚠️ Wizyta nie ma ustalonego terminu
+                        </p>
+                        <p className="text-xs text-yellow-700">
+                          Aby rozpocząć pracę, musisz zaplanować termin wizyty w swoim harmonogramie.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={() => setIsEditVisitDateModal(true)}
+                    className="w-full flex items-center justify-center px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium shadow-md hover:shadow-lg"
+                  >
+                    <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    Zaplanuj wizytę w harmonogramie
+                  </button>
+
+                  <p className="text-xs text-center text-gray-500">
+                    💡 Po dodaniu do harmonogramu będziesz mógł rozpocząć śledzenie czasu i wykonać serwis
+                  </p>
+                </div>
+              )}
             </div>
 
             {/* Device info card */}
@@ -740,6 +924,20 @@ export default function VisitDetailsPage() {
                         allPhotos: updatedPhotos,
                         photoCount: updatedPhotos.length
                       }));
+                      
+                      // 🔄 Włącz auto-refresh jeśli dodano tabliczkę znamionową
+                      const hasSerialPhoto = updatedPhotos.some(photo => photo.type === 'serial');
+                      if (hasSerialPhoto && updatedPhotos.length > (visit.allPhotos?.length || 0)) {
+                        console.log('🔄 Wykryto nową tabliczkę - włączam auto-refresh');
+                        setLastModelCount(visitModels?.length || 0);
+                        setAutoRefreshEnabled(true);
+                        
+                        // Auto-wyłącz po 30 sekundach (10 prób x 3s)
+                        setTimeout(() => {
+                          setAutoRefreshEnabled(false);
+                          console.log('⏱️ Auto-refresh timeout - wyłączam');
+                        }, 30000);
+                      }
                     }}
                   />
                 )}
@@ -747,6 +945,182 @@ export default function VisitDetailsPage() {
                 {/* Parts tab - NEW */}
                 {activeTab === 'parts' && (
                   <div className="space-y-6">
+                    {/* 🔧 Przypisane części do wizyty */}
+                    {visit.parts?.assigned && visit.parts.assigned.length > 0 && (
+                      <div className="bg-white rounded-lg border-2 border-green-200 p-6">
+                        <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                          <svg className="w-5 h-5 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                          </svg>
+                          Części przypisane do wizyty ({visit.parts.assigned.length})
+                        </h3>
+                        
+                        <div className="space-y-3">
+                          {visit.parts.assigned.map((part, index) => (
+                            <div key={index} className="flex items-start justify-between p-4 bg-gray-50 rounded-lg border border-gray-200">
+                              <div className="flex-1">
+                                <h4 className="font-medium text-gray-900 mb-1">
+                                  {part.partName}
+                                </h4>
+                                {part.partNumber && (
+                                  <p className="text-sm text-gray-600 mb-2">
+                                    Nr katalogowy: <span className="font-mono">{part.partNumber}</span>
+                                  </p>
+                                )}
+                                <div className="flex items-center space-x-4 text-sm">
+                                  <span className="text-gray-700">
+                                    Ilość: <strong>{part.quantity} szt</strong>
+                                  </span>
+                                  <span className="text-gray-700">
+                                    Cena: <strong className="text-blue-600">{part.unitPrice} zł/szt</strong>
+                                  </span>
+                                  <span className="text-gray-700">
+                                    Suma: <strong className="text-green-600">{part.totalPrice?.toFixed(2) || (part.unitPrice * part.quantity).toFixed(2)} zł</strong>
+                                  </span>
+                                </div>
+                                {part.priceNotes && (
+                                  <p className="text-xs text-gray-500 mt-2 italic">
+                                    💡 {part.priceNotes}
+                                  </p>
+                                )}
+                              </div>
+                              
+                              {/* Przycisk szukania na Allegro */}
+                              <div className="ml-4">
+                                <AllegroQuickSearch
+                                  partName={part.partName}
+                                  partNumber={part.partNumber}
+                                  compact={true}
+                                />
+                              </div>
+                            </div>
+                          ))}
+                          
+                          {/* Suma wszystkich części */}
+                          <div className="pt-4 border-t-2 border-gray-300">
+                            <div className="flex items-center justify-between">
+                              <span className="text-base font-semibold text-gray-700">Suma części:</span>
+                              <span className="text-2xl font-bold text-green-600">
+                                {visit.parts.assigned.reduce((sum, p) => sum + (p.totalPrice || (p.unitPrice * p.quantity)), 0).toFixed(2)} zł
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* 🚗 Części użyte z magazynu pojazdu */}
+                    {vehiclePartsUsage && vehiclePartsUsage.length > 0 && (
+                      <div className="bg-white rounded-lg border-2 border-blue-200 p-6">
+                        <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                          <svg className="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2" />
+                          </svg>
+                          🚗 Części użyte z magazynu pojazdu ({vehiclePartsUsage.reduce((sum, u) => sum + u.parts.length, 0)})
+                        </h3>
+                        
+                        <div className="space-y-4">
+                          {vehiclePartsUsage.map((usage, idx) => (
+                            <div key={idx} className="bg-blue-50 rounded-lg p-4 border border-blue-200">
+                              <div className="flex items-center justify-between mb-3">
+                                <span className="text-xs text-gray-500">
+                                  {new Date(usage.usageDate).toLocaleString('pl-PL')}
+                                </span>
+                                <div className="text-right">
+                                  <p className="text-xs text-gray-500 uppercase tracking-wide">Razem</p>
+                                  <p className="text-lg font-bold text-blue-600">
+                                    {usage.totalValue.toFixed(2)} <span className="text-sm text-gray-500">PLN</span>
+                                  </p>
+                                </div>
+                              </div>
+                              
+                              <div className="space-y-2">
+                                {usage.parts.map((part, partIdx) => (
+                                  <div key={partIdx} className="flex items-start justify-between p-3 bg-white rounded border border-blue-100">
+                                    <div className="flex-1">
+                                      <h4 className="font-medium text-gray-900 mb-1">
+                                        {part.partName}
+                                      </h4>
+                                      {part.partNumber && (
+                                        <p className="text-sm text-gray-600 mb-2">
+                                          Nr katalogowy: <span className="font-mono text-xs">{part.partNumber}</span>
+                                        </p>
+                                      )}
+                                      <div className="flex items-center space-x-4 text-sm">
+                                        <span className="text-gray-700">
+                                          Ilość: <strong>{part.quantity} szt</strong>
+                                        </span>
+                                        <span className="text-gray-700">
+                                          Cena: <strong className="text-blue-600">{part.unitPrice.toFixed(2)} zł/szt</strong>
+                                        </span>
+                                      </div>
+                                      {part.installationNotes && (
+                                        <p className="text-xs text-gray-500 mt-2 italic">
+                                          💡 {part.installationNotes}
+                                        </p>
+                                      )}
+                                    </div>
+                                    
+                                    {/* Przycisk usuwania */}
+                                    <button
+                                      onClick={async () => {
+                                        if (!confirm(`Cofnąć użycie części: ${part.partName}?\n\nCzęść zostanie przywrócona do magazynu pojazdu.`)) return;
+                                        
+                                        try {
+                                          const token = localStorage.getItem('technicianToken');
+                                          const res = await fetch(`/api/inventory/personal/undo-usage`, {
+                                            method: 'POST',
+                                            headers: {
+                                              'Authorization': `Bearer ${token}`,
+                                              'Content-Type': 'application/json'
+                                            },
+                                            body: JSON.stringify({
+                                              usageId: usage.usageId,
+                                              partId: part.partId
+                                            })
+                                          });
+                                          
+                                          const data = await res.json();
+                                          
+                                          if (data.success) {
+                                            console.log('✅ Cofnięto użycie części:', part.partName);
+                                            await loadVehiclePartsUsage();
+                                            await loadVisitDetails();
+                                          } else {
+                                            showToast.error(`Błąd: ${data.error}`);
+                                          }
+                                        } catch (error) {
+                                          console.error('Error undoing part usage:', error);
+                                          showToast.error('Błąd podczas cofania użycia części');
+                                        }
+                                      }}
+                                      className="ml-3 px-3 py-1 text-xs bg-red-100 text-red-700 rounded hover:bg-red-200 transition-colors flex items-center"
+                                      title="Cofnij użycie tej części"
+                                    >
+                                      <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                      </svg>
+                                      Cofnij
+                                    </button>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          ))}
+                          
+                          {/* Suma wszystkich części z pojazdu */}
+                          <div className="pt-4 border-t-2 border-blue-300">
+                            <div className="flex items-center justify-between">
+                              <span className="text-base font-semibold text-gray-700">🚗 Razem części z pojazdu:</span>
+                              <span className="text-2xl font-bold text-blue-600">
+                                {vehiclePartsUsage.reduce((sum, u) => sum + u.totalValue, 0).toFixed(2)} zł
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
                     {/* Quick Search */}
                     <div className="bg-gradient-to-br from-purple-50 to-white dark:from-purple-900/20 dark:to-gray-800 rounded-lg p-6 border-2 border-purple-200 dark:border-purple-700">
                       <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
@@ -977,6 +1351,13 @@ export default function VisitDetailsPage() {
                 {visit.actualDuration && (
                   <div>
                     <p className="text-sm text-gray-500 mb-1">Rzeczywisty czas</p>
+                    <p className="text-base font-bold text-green-600">{visit.actualDuration} min</p>
+                  </div>
+                )}
+
+                {visit.actualDuration && (
+                  <div>
+                    <p className="text-sm text-gray-500 mb-1">Rzeczywisty czas</p>
                     <p className="text-base font-medium text-gray-900">{visit.actualDuration} min</p>
                   </div>
                 )}
@@ -984,36 +1365,98 @@ export default function VisitDetailsPage() {
             </div>
 
             {/* Costs card */}
-            {visit.costs && (
+            {(visit.payment || visit.costs) && (
               <div className="bg-white rounded-lg shadow-sm p-6">
                 <h3 className="text-sm font-semibold text-gray-500 uppercase mb-4">Koszty</h3>
                 
-                <div className="space-y-2">
-                  {visit.costs.labor > 0 && (
-                    <div className="flex justify-between">
-                      <span className="text-sm text-gray-600">Robocizna</span>
-                      <span className="text-sm font-medium text-gray-900">{visit.costs.labor} PLN</span>
+                {visit.payment ? (
+                  // 💰 Nowy system - z CompletionWizard
+                  <div className="space-y-2">
+                    {visit.payment.laborCost > 0 && (
+                      <div className="flex justify-between">
+                        <span className="text-sm text-gray-600">Robocizna</span>
+                        <span className="text-sm font-medium text-gray-900">{visit.payment.laborCost.toFixed(2)} PLN</span>
+                      </div>
+                    )}
+                    {visit.payment.partsCost > 0 && (
+                      <div className="flex justify-between">
+                        <span className="text-sm text-gray-600">Części</span>
+                        <span className="text-sm font-medium text-gray-900">{visit.payment.partsCost.toFixed(2)} PLN</span>
+                      </div>
+                    )}
+                    {visit.payment.prepaidAmount > 0 && (
+                      <div className="flex justify-between text-green-600">
+                        <span className="text-sm">✅ Zaliczka</span>
+                        <span className="text-sm font-medium">-{visit.payment.prepaidAmount.toFixed(2)} PLN</span>
+                      </div>
+                    )}
+                    <div className="border-t border-gray-200 pt-2 mt-2">
+                      <div className="flex justify-between">
+                        <span className="text-base font-semibold text-gray-900">Razem</span>
+                        <span className="text-base font-bold text-blue-600">{visit.payment.totalCost.toFixed(2)} PLN</span>
+                      </div>
+                      {visit.payment.amountDue > 0 && (
+                        <div className="flex justify-between mt-1">
+                          <span className="text-sm font-medium text-orange-700">Do zapłaty</span>
+                          <span className="text-sm font-bold text-orange-700">{visit.payment.amountDue.toFixed(2)} PLN</span>
+                        </div>
+                      )}
                     </div>
-                  )}
-                  {visit.costs.parts > 0 && (
-                    <div className="flex justify-between">
-                      <span className="text-sm text-gray-600">Części</span>
-                      <span className="text-sm font-medium text-gray-900">{visit.costs.parts} PLN</span>
-                    </div>
-                  )}
-                  {visit.costs.transport > 0 && (
-                    <div className="flex justify-between">
-                      <span className="text-sm text-gray-600">Dojazd</span>
-                      <span className="text-sm font-medium text-gray-900">{visit.costs.transport} PLN</span>
-                    </div>
-                  )}
-                  <div className="border-t border-gray-200 pt-2 mt-2">
-                    <div className="flex justify-between">
-                      <span className="text-base font-semibold text-gray-900">Razem</span>
-                      <span className="text-base font-bold text-blue-600">{visit.costs.total} PLN</span>
+                    
+                    {/* Status płatności */}
+                    {visit.payment.paymentStatus && (
+                      <div className="mt-3 pt-2 border-t border-gray-200">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs text-gray-500">Status płatności</span>
+                          <span className={`text-xs px-2 py-1 rounded font-medium ${
+                            visit.payment.paymentStatus === 'paid' ? 'bg-green-100 text-green-800' :
+                            visit.payment.paymentStatus === 'partial' ? 'bg-yellow-100 text-yellow-800' :
+                            'bg-red-100 text-red-800'
+                          }`}>
+                            {visit.payment.paymentStatus === 'paid' ? '✅ Zapłacono' :
+                             visit.payment.paymentStatus === 'partial' ? '🟡 Częściowo' :
+                             '❌ Niezapłacone'}
+                          </span>
+                        </div>
+                        {visit.payment.paymentMethod && (
+                          <p className="text-xs text-gray-600 mt-1">
+                            Metoda: {visit.payment.paymentMethod === 'cash' ? 'Gotówka' :
+                                    visit.payment.paymentMethod === 'card' ? 'Karta' :
+                                    visit.payment.paymentMethod === 'transfer' ? 'Przelew' : visit.payment.paymentMethod}
+                          </p>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  // Stary system - visit.costs
+                  <div className="space-y-2">
+                    {visit.costs.labor > 0 && (
+                      <div className="flex justify-between">
+                        <span className="text-sm text-gray-600">Robocizna</span>
+                        <span className="text-sm font-medium text-gray-900">{visit.costs.labor} PLN</span>
+                      </div>
+                    )}
+                    {visit.costs.parts > 0 && (
+                      <div className="flex justify-between">
+                        <span className="text-sm text-gray-600">Części</span>
+                        <span className="text-sm font-medium text-gray-900">{visit.costs.parts} PLN</span>
+                      </div>
+                    )}
+                    {visit.costs.transport > 0 && (
+                      <div className="flex justify-between">
+                        <span className="text-sm text-gray-600">Dojazd</span>
+                        <span className="text-sm font-medium text-gray-900">{visit.costs.transport} PLN</span>
+                      </div>
+                    )}
+                    <div className="border-t border-gray-200 pt-2 mt-2">
+                      <div className="flex justify-between">
+                        <span className="text-base font-semibold text-gray-900">Razem</span>
+                        <span className="text-base font-bold text-blue-600">{visit.costs.total} PLN</span>
+                      </div>
                     </div>
                   </div>
-                </div>
+                )}
               </div>
             )}
 
@@ -1037,15 +1480,72 @@ export default function VisitDetailsPage() {
               </div>
             )}
 
-            {/* Status Control */}
+            {/* Vehicle Parts Usage card */}
+            {vehiclePartsUsage.length > 0 && (
+              <div className="bg-white rounded-lg shadow-sm p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-sm font-semibold text-gray-500 uppercase">🚗 Części z pojazdu</h3>
+                  <span className="px-2 py-1 bg-green-100 text-green-800 text-xs font-bold rounded">
+                    {vehiclePartsUsage.reduce((sum, usage) => sum + usage.parts.length, 0)} szt
+                  </span>
+                </div>
+                <div className="space-y-3">
+                  {vehiclePartsUsage.map((usage, usageIdx) => (
+                    <div key={usageIdx} className="border-l-4 border-green-500 pl-3">
+                      {usage.parts.map((part, partIdx) => (
+                        <div key={partIdx} className="mb-2">
+                          <div className="flex items-start justify-between">
+                            <div className="flex-1">
+                              <p className="text-sm font-medium text-gray-900">{part.partName || part.name}</p>
+                              <p className="text-xs text-gray-500">{part.partNumber}</p>
+                            </div>
+                            <div className="text-right ml-2">
+                              <p className="text-sm font-semibold text-green-700">{part.quantity} szt</p>
+                              {part.unitPrice > 0 && (
+                                <p className="text-xs text-gray-600">{part.totalPrice.toFixed(2)} zł</p>
+                              )}
+                            </div>
+                          </div>
+                          {part.location && (
+                            <p className="text-xs text-gray-500 mt-1">📍 {part.location}</p>
+                          )}
+                        </div>
+                      ))}
+                      <div className="mt-2 pt-2 border-t border-gray-200">
+                        <div className="flex justify-between items-center text-xs text-gray-600">
+                          <span>Użyto: {new Date(usage.usageDate).toLocaleString('pl-PL')}</span>
+                          <span className="font-semibold text-green-700">{usage.totalValue.toFixed(2)} zł</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Status Control / Complete Visit */}
             <div className="bg-white rounded-lg shadow-sm p-6">
-              <h3 className="text-sm font-semibold text-gray-500 uppercase mb-4">Zmień status</h3>
-              <StatusControl 
-                visit={visit} 
-                onStatusChanged={(updatedVisit) => {
-                  setVisit(updatedVisit);
-                }}
-              />
+              <h3 className="text-sm font-semibold text-gray-500 uppercase mb-4">Status wizyty</h3>
+              
+              {/* Show completion button only for in_progress visits */}
+              {visit.status === 'in_progress' ? (
+                <button
+                  onClick={() => setShowCompletionWizard(true)}
+                  className="w-full px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center font-bold shadow-md hover:shadow-lg"
+                >
+                  <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  ✅ Zakończ wizytę
+                </button>
+              ) : (
+                <StatusControl 
+                  visit={visit} 
+                  onStatusChanged={(updatedVisit) => {
+                    setVisit(updatedVisit);
+                  }}
+                />
+              )}
             </div>
 
             {/* Quick Actions */}
@@ -1061,12 +1561,25 @@ export default function VisitDetailsPage() {
                   </svg>
                   Dodaj notatkę
                 </button>
-                <button className="w-full px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors flex items-center justify-center">
+                <button 
+                  onClick={() => setShowPhotoUploader(true)}
+                  className="w-full px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors flex items-center justify-center"
+                >
                   <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
                   </svg>
-                  Dodaj zdjęcie
+                  📸 Dodaj zdjęcia
+                </button>
+
+                <button 
+                  onClick={() => setShowVehicleInventory(true)}
+                  className="w-full px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center mt-3"
+                >
+                  <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
+                  </svg>
+                  🚗 Użyj część z pojazdu
                 </button>
               </div>
             </div>
@@ -1129,6 +1642,358 @@ export default function VisitDetailsPage() {
               : 'Zarządzanie tabliczkami znamionowymi urządzeń dla wizyty'
           }}
         />
+      )}
+
+      {/* Photo Uploader Modal - 📸 Dodawanie zdjęć do wizyty */}
+      {showPhotoUploader && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold text-gray-900">
+                  📸 Dodaj zdjęcia do wizyty
+                </h2>
+                <button
+                  onClick={() => setShowPhotoUploader(false)}
+                  className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+
+              <PhotoUploader
+                visitId={visit.visitId}
+                existingPhotos={visit.allPhotos || []}
+                onPhotosUpdate={async (updatedPhotos, addedCount) => {
+                  console.log('📸 Zdjęcia zaktualizowane:', updatedPhotos.length, `(+${addedCount} nowych)`);
+                  
+                  // Odśwież dane wizyty z serwera
+                  await loadVisitDetails();
+                  
+                  // Komunikat sukcesu (tylko przy dodawaniu)
+                  if (addedCount > 0) {
+                    showToast.success(`Dodano ${addedCount} ${addedCount === 1 ? 'zdjęcie' : 'zdjęć'} do wizyty!`);
+                    
+                    // Zamknij modal po sukcesie
+                    setTimeout(() => setShowPhotoUploader(false), 1500);
+                  }
+                }}
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Completion Wizard Modal - Smart Visit Completion System */}
+      {showCompletionWizard && (
+        <CompletionWizard
+          visit={{
+            ...visit,
+            visitId: visit.visitId || visitId,
+            photos: visit.allPhotos || [],
+            status: visit.status
+          }}
+          onComplete={async (result) => {
+            console.log('✅ Wizyta zakończona:', result);
+            setShowCompletionWizard(false);
+            
+            // Reload visit to get fresh data with completion info
+            await loadVisitDetails();
+            
+            // Optional: Show success message
+            showToast.success(`Wizyta ${visit.visitId} zakończona pomyślnie!\n\n` +
+                  `Typ: ${result.completionType}\n` +
+                  `Zdjęcia: ${result.completionPhotos || 0}\n` +
+                  (result.modelsDetected > 0 ? `Wykryto modeli: ${result.modelsDetected}` : ''));
+            
+            // Optional: Navigate back to visits list
+            // router.push('/technician/visits');
+          }}
+          onCancel={() => setShowCompletionWizard(false)}
+        />
+      )}
+
+      {/* Vehicle Inventory Modal - Use Parts from Technician's Vehicle */}
+      {showVehicleInventory && (
+        <VehicleInventoryModal
+          visitId={visit?.visitId || visitId}
+          onPartsUsed={async (usage, parts) => {
+            console.log(`✅ Used ${parts.length} parts from vehicle inventory:`, usage);
+            console.log(`💰 Total value: ${usage.totalValue.toFixed(2)} zł`);
+            
+            // Reload visit and vehicle parts usage
+            await loadVisitDetails();
+            await loadVehiclePartsUsage();
+            
+            // Parts are now visible in the Parts tab with "🚗 Razem części z pojazdu: X zł"
+          }}
+          onClose={() => setShowVehicleInventory(false)}
+        />
+      )}
+
+      {/* Add Visit Modal - Add another visit to the same order */}
+      {isAddVisitModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold text-gray-900">
+                  📅 Dodaj kolejną wizytę do zlecenia
+                </h2>
+                <button
+                  onClick={() => setIsAddVisitModalOpen(false)}
+                  className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+                <div className="flex items-start">
+                  <svg className="w-5 h-5 text-blue-600 mr-2 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <div>
+                    <p className="text-sm text-blue-900 font-medium mb-1">
+                      Dodajesz wizytę do zlecenia: {visit.visitId}
+                    </p>
+                    <p className="text-sm text-blue-700">
+                      Klient: {visit.client?.name}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <form onSubmit={async (e) => {
+                e.preventDefault();
+                const formData = new FormData(e.target);
+                
+                try {
+                  const token = localStorage.getItem('technicianToken');
+                  const res = await fetch('/api/technician/add-visit-to-order', {
+                    method: 'POST',
+                    headers: {
+                      'Authorization': `Bearer ${token}`,
+                      'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                      orderId: visit.orderId,
+                      visitType: formData.get('visitType'),
+                      scheduledDate: formData.get('scheduledDate'),
+                      description: formData.get('description')
+                    })
+                  });
+
+                  const data = await res.json();
+
+                  if (data.success) {
+                    showToast.success(`Dodano nową wizytę!\n\nID: ${data.visitId}\nTyp: ${formData.get('visitType')}`);
+                    setIsAddVisitModalOpen(false);
+                    router.push(`/technician/visit/${data.visitId}`);
+                  } else {
+                    showToast.error(`Błąd: ${data.error}`);
+                  }
+                } catch (error) {
+                  console.error('Error adding visit:', error);
+                  showToast.error('Błąd podczas dodawania wizyty');
+                }
+              }}>
+                <div className="space-y-4">
+                  {/* Typ wizyty */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Typ wizyty *
+                    </label>
+                    <select
+                      name="visitType"
+                      required
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
+                    >
+                      <option value="repair">🔧 Naprawa</option>
+                      <option value="diagnosis">🔍 Diagnoza</option>
+                      <option value="control">✓ Kontrola</option>
+                      <option value="installation">📦 Instalacja</option>
+                      <option value="warranty">🛡️ Gwarancja</option>
+                    </select>
+                  </div>
+
+                  {/* Data wizyty */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Planowana data i godzina <span className="text-gray-400 text-xs">(opcjonalne)</span>
+                    </label>
+                    <input
+                      type="datetime-local"
+                      name="scheduledDate"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
+                    />
+                    <p className="text-xs text-gray-500 mt-1">
+                      💡 Możesz pozostawić puste - wizyta będzie w statusie "Do zaplanowania"
+                    </p>
+                  </div>
+
+                  {/* Opis */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Opis problemu / cel wizyty
+                    </label>
+                    <textarea
+                      name="description"
+                      rows={4}
+                      placeholder="Np. Wymiana uszczelki po diagnozie, kontrola po naprawie..."
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex justify-end space-x-3 mt-6 pt-6 border-t">
+                  <button
+                    type="button"
+                    onClick={() => setIsAddVisitModalOpen(false)}
+                    className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors"
+                  >
+                    Anuluj
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center"
+                  >
+                    <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                    </svg>
+                    Dodaj wizytę
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal edycji daty wizyty */}
+      {isEditVisitDateModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl w-full max-w-md">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-xl font-bold text-gray-900 flex items-center">
+                  <svg className="w-6 h-6 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                  {visit?.scheduledDate ? 'Zmień termin wizyty' : 'Zaplanuj wizytę w harmonogramie'}
+                </h2>
+                <button
+                  onClick={() => setIsEditVisitDateModal(false)}
+                  className="text-gray-500 hover:text-gray-700 transition-colors"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+
+              <form onSubmit={async (e) => {
+                e.preventDefault();
+                
+                if (!editDateForm.date) {
+                  alert('Proszę wybrać datę wizyty');
+                  return;
+                }
+
+                try {
+                  const response = await fetch('/api/technician/update-visit-date', {
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/json',
+                      'Authorization': `Bearer ${localStorage.getItem('technicianToken')}`
+                    },
+                    body: JSON.stringify({
+                      visitId: visit.visitId,
+                      scheduledDate: editDateForm.date,
+                      scheduledTime: editDateForm.time
+                    })
+                  });
+
+                  if (!response.ok) {
+                    throw new Error('Błąd podczas aktualizacji terminu wizyty');
+                  }
+
+                  // Sukces - zamknij modal i odśwież dane
+                  setIsEditVisitDateModal(false);
+                  loadVisitDetails(); // Odśwież dane wizyty
+                  
+                  // Pokaż komunikat sukcesu
+                  alert('Termin wizyty został zaktualizowany');
+                } catch (error) {
+                  console.error('Error updating visit date:', error);
+                  alert('Wystąpił błąd podczas zapisywania terminu wizyty');
+                }
+              }}>
+                <div className="space-y-4">
+                  {/* Data wizyty */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Data wizyty *
+                    </label>
+                    <input
+                      type="date"
+                      value={editDateForm.date}
+                      onChange={(e) => setEditDateForm(prev => ({ ...prev, date: e.target.value }))}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      required
+                    />
+                  </div>
+
+                  {/* Godzina wizyty */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Godzina wizyty (opcjonalnie)
+                    </label>
+                    <input
+                      type="time"
+                      value={editDateForm.time}
+                      onChange={(e) => setEditDateForm(prev => ({ ...prev, time: e.target.value }))}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                  </div>
+
+                  {/* Info */}
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                    <p className="text-sm text-blue-800">
+                      <svg className="w-4 h-4 inline mr-1" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                      </svg>
+                      Wizyta zostanie zaplanowana w Twoim harmonogramie na wybrany termin.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex justify-end space-x-3 mt-6 pt-6 border-t">
+                  <button
+                    type="button"
+                    onClick={() => setIsEditVisitDateModal(false)}
+                    className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors"
+                  >
+                    Anuluj
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center"
+                  >
+                    <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    {visit?.scheduledDate ? 'Zmień termin' : 'Zaplanuj wizytę'}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

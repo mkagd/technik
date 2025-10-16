@@ -12,8 +12,8 @@
         "partNumber": "DC97-16151A",
         "name": "Łożysko bębna Samsung",
         "quantity": 2,
-        "unitPrice": 85.00,
-        "totalPrice": 170.00,
+        "unitPrice": 85,
+        "totalPrice": 170,
         "fromPersonalInventory": true,
         "installedSuccessfully": true,
         "warranty": "12 months",
@@ -21,7 +21,7 @@
         "notes": "Wymiana łożyska, wszystko OK"
       }
     ],
-    "totalValue": 170.00,
+    "totalValue": 170,
     "addedToInvoice": true,
     "invoiceId": "FV/2025/10/123",
     "createdAt": "2025-10-02T16:00:00Z"
@@ -39,8 +39,8 @@
         "partNumber": "DC96-01414G",
         "name": "Pompa odpływowa Samsung",
         "quantity": 1,
-        "unitPrice": 90.00,
-        "totalPrice": 90.00,
+        "unitPrice": 90,
+        "totalPrice": 90,
         "fromPersonalInventory": true,
         "installedSuccessfully": true,
         "warranty": "12 months",
@@ -48,7 +48,7 @@
         "notes": "Pompa wymieniona, pralka działa"
       }
     ],
-    "totalValue": 90.00,
+    "totalValue": 90,
     "addedToInvoice": true,
     "invoiceId": "FV/2025/10/124",
     "createdAt": "2025-10-03T11:00:00Z"
@@ -66,8 +66,8 @@
         "partNumber": "DC66-00343A",
         "name": "Amortyzator pralki Samsung",
         "quantity": 2,
-        "unitPrice": 45.00,
-        "totalPrice": 90.00,
+        "unitPrice": 45,
+        "totalPrice": 90,
         "fromPersonalInventory": true,
         "installedSuccessfully": true,
         "warranty": "12 months",
@@ -79,8 +79,8 @@
         "partNumber": "DC63-00563A",
         "name": "Uszczelka drzwi pralki",
         "quantity": 1,
-        "unitPrice": 45.00,
-        "totalPrice": 45.00,
+        "unitPrice": 45,
+        "totalPrice": 45,
         "fromPersonalInventory": true,
         "installedSuccessfully": true,
         "warranty": "12 months",
@@ -88,9 +88,177 @@
         "notes": "Uszczelka wymieniona"
       }
     ],
-    "totalValue": 135.00,
+    "totalValue": 135,
     "addedToInvoice": true,
     "invoiceId": "FV/2025/10/122",
     "createdAt": "2025-10-01T15:30:00Z"
+  },
+  {
+    "usageId": "PU-2025-10-14-1372",
+    "employeeId": "EMPA252780002",
+    "employeeName": "Mariusz Bielaszka",
+    "orderId": "VIS251013003",
+    "usageDate": "2025-10-13T22:02:54.564Z",
+    "parts": [
+      {
+        "partId": "PART-ZMY-001",
+        "partName": "Pompa odpływowa do zmywarki Askoll M224 XP",
+        "partNumber": "M224XP",
+        "quantity": 1,
+        "unitPrice": 0,
+        "totalPrice": 0,
+        "installationNotes": "Użyto podczas wizyty VIS251013003",
+        "warranty": 12
+      }
+    ],
+    "totalValue": 0,
+    "addedToInvoice": true,
+    "invoiceId": null,
+    "customerInfo": null,
+    "createdAt": "2025-10-13T22:02:54.564Z"
+  },
+  {
+    "usageId": "PU-2025-10-14-4929",
+    "employeeId": "EMPA252780002",
+    "employeeName": "Mariusz Bielaszka",
+    "orderId": "VIS251013002",
+    "usageDate": "2025-10-13T22:05:26.167Z",
+    "parts": [
+      {
+        "partId": "PART-ZMY-001",
+        "partName": "Pompa odpływowa do zmywarki Askoll M224 XP",
+        "partNumber": "M224XP",
+        "quantity": 1,
+        "unitPrice": 135,
+        "totalPrice": 135,
+        "installationNotes": "Użyto podczas wizyty VIS251013002",
+        "warranty": 12
+      }
+    ],
+    "totalValue": 135,
+    "addedToInvoice": true,
+    "invoiceId": null,
+    "customerInfo": null,
+    "createdAt": "2025-10-13T22:05:26.167Z"
+  },
+  {
+    "usageId": "PU-2025-10-14-2112",
+    "employeeId": "EMPA252780002",
+    "employeeName": "Mariusz Bielaszka",
+    "orderId": "VIS251013002",
+    "usageDate": "2025-10-13T22:12:35.133Z",
+    "parts": [
+      {
+        "partId": "PART-ZMY-001",
+        "partName": "Pompa odpływowa do zmywarki Askoll M224 XP",
+        "partNumber": "M224XP",
+        "quantity": 1,
+        "unitPrice": 135,
+        "totalPrice": 135,
+        "installationNotes": "Użyto podczas wizyty VIS251013002",
+        "warranty": 12
+      }
+    ],
+    "totalValue": 135,
+    "addedToInvoice": true,
+    "invoiceId": null,
+    "customerInfo": null,
+    "createdAt": "2025-10-13T22:12:35.133Z"
+  },
+  {
+    "usageId": "PU-2025-10-14-3579",
+    "employeeId": "EMPA252780002",
+    "employeeName": "Mariusz Bielaszka",
+    "orderId": "VIS251014001",
+    "usageDate": "2025-10-13T22:17:33.158Z",
+    "parts": [
+      {
+        "partId": "PART-LOD-003",
+        "partName": "Dmuchawa wentylatora No Frost Samsung DA31-00146E",
+        "partNumber": "DA31-00146E",
+        "quantity": 1,
+        "unitPrice": 125,
+        "totalPrice": 125,
+        "installationNotes": "Użyto podczas wizyty VIS251014001",
+        "warranty": 12
+      }
+    ],
+    "totalValue": 125,
+    "addedToInvoice": true,
+    "invoiceId": null,
+    "customerInfo": null,
+    "createdAt": "2025-10-13T22:17:33.158Z"
+  },
+  {
+    "usageId": "PU-2025-10-14-7765",
+    "employeeId": "EMPA252780002",
+    "employeeName": "Mariusz Bielaszka",
+    "orderId": "VIS251013003",
+    "usageDate": "2025-10-13T22:28:20.221Z",
+    "parts": [
+      {
+        "partId": "PART-LOD-001",
+        "partName": "Termostat lodówki Ranco K59-L1287",
+        "partNumber": "K59-L1287",
+        "quantity": 1,
+        "unitPrice": 75,
+        "totalPrice": 75,
+        "installationNotes": "Użyto podczas wizyty VIS251013003",
+        "warranty": 12
+      }
+    ],
+    "totalValue": 75,
+    "addedToInvoice": true,
+    "invoiceId": null,
+    "customerInfo": null,
+    "createdAt": "2025-10-13T22:28:20.221Z"
+  },
+  {
+    "usageId": "PU-2025-10-14-1667",
+    "employeeId": "EMPA252780002",
+    "employeeName": "Mariusz Bielaszka",
+    "orderId": "VIS251014001",
+    "usageDate": "2025-10-13T22:49:31.808Z",
+    "parts": [
+      {
+        "partId": "PART-LOD-003",
+        "partName": "Dmuchawa wentylatora No Frost Samsung DA31-00146E",
+        "partNumber": "DA31-00146E",
+        "quantity": 1,
+        "unitPrice": 125,
+        "totalPrice": 125,
+        "installationNotes": "Użyto podczas wizyty VIS251014001",
+        "warranty": 12
+      }
+    ],
+    "totalValue": 125,
+    "addedToInvoice": true,
+    "invoiceId": null,
+    "customerInfo": null,
+    "createdAt": "2025-10-13T22:49:31.808Z"
+  },
+  {
+    "usageId": "PU-2025-10-14-2204",
+    "employeeId": "EMPA252780002",
+    "employeeName": "Mariusz Bielaszka",
+    "orderId": "VIS251014001",
+    "usageDate": "2025-10-14T20:09:00.184Z",
+    "parts": [
+      {
+        "partId": "PART-LOD-002",
+        "partName": "Uszczelka drzwi lodówki Gorenje 616254",
+        "partNumber": "616254",
+        "quantity": 1,
+        "unitPrice": 145,
+        "totalPrice": 145,
+        "installationNotes": "Użyto podczas wizyty VIS251014001",
+        "warranty": 12
+      }
+    ],
+    "totalValue": 145,
+    "addedToInvoice": true,
+    "invoiceId": null,
+    "customerInfo": null,
+    "createdAt": "2025-10-14T20:09:00.184Z"
   }
 ]

@@ -68,7 +68,7 @@
       "Piekarniki"
     ],
     "repairTimes": {
-      "pralka": 25,
+      "pralka": 28,
       "lodówka": 35,
       "zmywarka": 30,
       "piekarnik": 40,
@@ -188,7 +188,12 @@
     "isLocked": false,
     "requirePasswordChange": false,
     "createdAt": "2025-01-15T10:00:00.000Z",
-    "updatedAt": "2025-10-05T12:00:00.000Z"
+    "updatedAt": "2025-10-05T12:00:00.000Z",
+    "metadata": {
+      "updatedAt": "2025-10-12T14:07:57.084Z",
+      "lastModifiedBy": "admin-panel"
+    },
+    "updated_at": "2025-10-12T14:07:57.084Z"
   },
   {
     "id": "EMPA252780002",
@@ -328,14 +333,29 @@
         "socialContributions": 0
       }
     },
+    "deliveryAddress": {
+      "street": "ul. Serwisowa 15",
+      "city": "Warszawa",
+      "postalCode": "02-001",
+      "fullAddress": "ul. Serwisowa 15, 02-001 Warszawa",
+      "notes": "Domyślny adres dostawy części"
+    },
+    "deliveryPreferences": {
+      "preferredDeliveryMethod": "office",
+      "defaultPaczkomatId": "",
+      "preferredPaymentMethod": "prepaid",
+      "allowCOD": true,
+      "notes": ""
+    },
     "passwordHash": "$2b$10$3bI36gmts1ffzRVkxjDVcOoCOgeP8OJAweON117BXhw7kUdEJlDAi",
     "loginToken": "marius_token_2025_secure_def456uvw",
     "passwordSetAt": "2025-10-05T12:00:00.000Z",
-    "lastLogin": "2025-10-05T20:12:51.790Z",
+    "lastLogin": "2025-10-13T20:13:01.771Z",
     "failedLoginAttempts": 0,
     "isLocked": false,
     "requirePasswordChange": false,
     "createdAt": "2025-02-20T10:00:00.000Z",
-    "updatedAt": "2025-10-05T12:00:00.000Z"
+    "updatedAt": "2025-10-05T12:00:00.000Z",
+    "lastLoginAttempt": "2025-10-13T18:30:39.078Z"
   }
 ]

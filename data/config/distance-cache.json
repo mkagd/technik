@@ -286,5 +286,53 @@
       "timestamp": "2025-10-11T09:27:11.997Z"
     },
     "timestamp": "2025-10-11T09:27:11.998Z"
+  },
+  "49.9864,20.0642|50.0529,19.9599": {
+    "data": {
+      "distance": {
+        "value": 13642,
+        "text": "13.6 km",
+        "km": 13.64
+      },
+      "duration": {
+        "value": 1200,
+        "text": "20 min",
+        "minutes": 20
+      },
+      "status": "OK",
+      "provider": "haversine",
+      "metadata": {
+        "straightDistance": 10.49,
+        "multiplier": 1.3,
+        "isCity": true,
+        "avgSpeed": 40
+      },
+      "timestamp": "2025-10-11T11:51:51.429Z"
+    },
+    "timestamp": "2025-10-11T11:51:51.429Z"
+  },
+  "50.0647,19.9450|50.0898,19.9687": {
+    "data": {
+      "distance": {
+        "value": 4237,
+        "text": "4.2 km",
+        "km": 4.24
+      },
+      "duration": {
+        "value": 360,
+        "text": "6 min",
+        "minutes": 6
+      },
+      "status": "OK",
+      "provider": "haversine",
+      "metadata": {
+        "straightDistance": 3.26,
+        "multiplier": 1.3,
+        "isCity": true,
+        "avgSpeed": 40
+      },
+      "timestamp": "2025-10-12T13:15:39.604Z"
+    },
+    "timestamp": "2025-10-12T13:15:39.604Z"
   }
 }

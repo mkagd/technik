@@ -9,10 +9,12 @@ import ModelManagerModal from '../../../components/ModelManagerModal';
 import { formatAddress } from '../../../utils/formatAddress';
 import { normalizeObject, statusToUI, getTechnicianId } from '../../../utils/fieldMapping';
 import { checkAvailability, getBestTimeSlots, getAvailabilityCategory } from '../../../utils/availabilityScore';
+import { getSmartDistanceService } from '../../../distance-matrix/SmartDistanceService';
+import { STATUS_LABELS, STATUS_COLORS, STATUS_ICONS } from '../../../utils/orderStatusConstants';
 import { 
   FiSave, FiArrowLeft, FiUser, FiPhone, FiMail, FiMapPin, 
   FiTool, FiPackage, FiFileText, FiCalendar, FiClock, FiCheckCircle,
-  FiPlus, FiX, FiAlertTriangle, FiHome
+  FiPlus, FiX, FiAlertTriangle, FiHome, FiNavigation, FiAlertCircle
 } from 'react-icons/fi';
 
 export default function AdminZamowienieDetails() {
@@ -29,9 +31,23 @@ export default function AdminZamowienieDetails() {
   const [employees, setEmployees] = useState([]);
   const [addingVisit, setAddingVisit] = useState(false);
   
+  // 🚗 Distance/Travel Time
+  const [distanceInfo, setDistanceInfo] = useState(null);
+  const [calculatingDistance, setCalculatingDistance] = useState(false);
+  
   // 📦 Device Models Manager
   const [showModelManager, setShowModelManager] = useState(false);
   const [orderModels, setOrderModels] = useState([]);
+  
+  // 🔧 Parts Management
+  const [showAddPartsModal, setShowAddPartsModal] = useState(false);
+  const [availableParts, setAvailableParts] = useState([]);
+  const [selectedParts, setSelectedParts] = useState([]);
+  const [partSearchQuery, setPartSearchQuery] = useState('');
+  const [editingPartId, setEditingPartId] = useState(null);
+  const [editPrice, setEditPrice] = useState('');
+  const [editPriceNotes, setEditPriceNotes] = useState('');
+  
   const [visitForm, setVisitForm] = useState({
     type: 'diagnosis',
     employeeId: '',
@@ -40,14 +56,48 @@ export default function AdminZamowienieDetails() {
     notes: ''
   });
 
-  const orderStatuses = [
-    { value: 'nowe', label: 'Nowe' },
-    { value: 'zaplanowane', label: 'Zaplanowane' },
-    { value: 'w-trakcie', label: 'W trakcie' },
-    { value: 'oczekuje-na-czesci', label: 'Oczekuje na części' },
-    { value: 'zakonczone', label: 'Zakończone' },
-    { value: 'anulowane', label: 'Anulowane' }
-  ];
+  const orderStatuses = Object.keys(STATUS_LABELS).map(statusKey => ({
+    value: statusKey,
+    label: STATUS_LABELS[statusKey],
+    color: STATUS_COLORS[statusKey] || 'bg-gray-100 text-gray-800',
+    icon: STATUS_ICONS[statusKey] || '📋'
+  }));
+
+  // 🎯 Smart defaults when opening Add Visit modal
+  useEffect(() => {
+    if (showAddVisitModal && order && order.visits && order.visits.length > 0) {
+      const lastVisit = order.visits[order.visits.length - 1];
+      
+      console.log('🎯 Setting smart defaults from last visit:', lastVisit);
+      
+      // Auto-select technician from previous visit
+      const defaultEmployeeId = lastVisit.technicianId || lastVisit.employeeId || '';
+      
+      // If last visit was diagnosis → default to repair, otherwise keep repair
+      const defaultType = lastVisit.type === 'diagnosis' ? 'repair' : 'repair';
+      
+      setVisitForm(prev => ({
+        ...prev,
+        employeeId: defaultEmployeeId,
+        type: defaultType
+      }));
+      
+      console.log('✅ Smart defaults applied:', { 
+        employeeId: defaultEmployeeId, 
+        type: defaultType 
+      });
+    } else if (showAddVisitModal && (!order || !order.visits || order.visits.length === 0)) {
+      // First visit - reset to defaults
+      console.log('📝 First visit - using default values');
+      setVisitForm({
+        type: 'diagnosis',
+        employeeId: '',
+        scheduledDate: '',
+        scheduledTime: '09:00',
+        notes: ''
+      });
+    }
+  }, [showAddVisitModal, order]);
 
   const priorities = [
     { value: 'normal', label: 'Normalny' },
@@ -59,6 +109,7 @@ export default function AdminZamowienieDetails() {
     if (id) {
       loadOrder();
       loadEmployees();
+      loadParts();
     }
   }, [id]);
 
@@ -85,6 +136,243 @@ export default function AdminZamowienieDetails() {
     }
   };
 
+  // 🔧 Load available parts
+  const loadParts = async () => {
+    try {
+      const response = await fetch('/api/inventory/parts');
+      const data = await response.json();
+      if (data.parts) {
+        setAvailableParts(data.parts);
+        console.log(`✅ Załadowano ${data.parts.length} części`);
+      }
+    } catch (error) {
+      console.error('❌ Błąd ładowania części:', error);
+    }
+  };
+
+  // 🔧 Add parts to order
+  const handleAddPartsToOrder = async () => {
+    if (selectedParts.length === 0) {
+      alert('Wybierz przynajmniej jedną część!');
+      return;
+    }
+
+    try {
+      const partsToAdd = selectedParts.map(sp => {
+        const part = availableParts.find(p => (p.id || p.partId) === sp.partId);
+        const basePrice = part?.pricing?.retailPrice || part?.unitPrice || 0;
+        const finalPrice = sp.customPrice !== null && sp.customPrice !== undefined ? sp.customPrice : basePrice;
+        
+        return {
+          partId: sp.partId,
+          partName: part?.name || part?.partName || sp.partId,
+          partNumber: part?.partNumber || '',
+          quantity: sp.quantity,
+          unitPrice: finalPrice,
+          totalPrice: finalPrice * sp.quantity,
+          priceNotes: sp.customPrice ? 'Cena niestandardowa (ustawiona przy dodawaniu)' : null
+        };
+      });
+
+      const updatedOrder = {
+        ...order,
+        parts: [...(order.parts || []), ...partsToAdd],
+        updatedAt: new Date().toISOString()
+      };
+
+      const response = await fetch('/api/orders', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updatedOrder)
+      });
+
+      if (response.ok) {
+        setOrder(updatedOrder);
+        setSelectedParts([]);
+        setPartSearchQuery('');
+        setShowAddPartsModal(false);
+        alert(`✅ Dodano ${partsToAdd.length} części do zamówienia!`);
+      } else {
+        alert('❌ Błąd podczas dodawania części');
+      }
+    } catch (error) {
+      console.error('❌ Błąd:', error);
+      alert('❌ Błąd połączenia z serwerem');
+    }
+  };
+
+  // 🔧 Edit part price for client
+  const handleEditPartPrice = async (partId, newPrice, notes) => {
+    const updatedParts = (order.parts || []).map(p => {
+      if (p.partId === partId) {
+        const quantity = p.quantity || 1;
+        return {
+          ...p,
+          unitPrice: parseFloat(newPrice),
+          totalPrice: parseFloat(newPrice) * quantity,
+          priceNotes: notes || null,
+          priceModifiedAt: new Date().toISOString()
+        };
+      }
+      return p;
+    });
+
+    const updatedOrder = {
+      ...order,
+      parts: updatedParts,
+      updatedAt: new Date().toISOString()
+    };
+
+    try {
+      const response = await fetch('/api/orders', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updatedOrder)
+      });
+
+      if (response.ok) {
+        setOrder(updatedOrder);
+        alert('✅ Cena części zaktualizowana');
+      } else {
+        alert('❌ Błąd podczas aktualizacji ceny');
+      }
+    } catch (error) {
+      console.error('❌ Błąd:', error);
+      alert('❌ Błąd połączenia z serwerem');
+    }
+  };
+
+  // 🔧 Remove part from order
+  const handleRemovePart = async (partId) => {
+    if (!confirm('Czy na pewno chcesz usunąć tę część?')) return;
+
+    const updatedParts = (order.parts || []).filter(p => p.partId !== partId);
+    const updatedOrder = {
+      ...order,
+      parts: updatedParts,
+      updatedAt: new Date().toISOString()
+    };
+
+    try {
+      const response = await fetch('/api/orders', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updatedOrder)
+      });
+
+      if (response.ok) {
+        setOrder(updatedOrder);
+        alert('✅ Część usunięta');
+      } else {
+        alert('❌ Błąd podczas usuwania części');
+      }
+    } catch (error) {
+      console.error('❌ Błąd:', error);
+      alert('❌ Błąd połączenia z serwerem');
+    }
+  };
+
+  // 🔧 Toggle part selection
+  const togglePartSelection = (partId) => {
+    setSelectedParts(prev => {
+      const exists = prev.find(p => p.partId === partId);
+      if (exists) {
+        return prev.filter(p => p.partId !== partId);
+      } else {
+        return [...prev, { partId, quantity: 1 }];
+      }
+    });
+  };
+
+  // 🔧 Update part quantity
+  const updatePartQuantity = (partId, quantity) => {
+    setSelectedParts(prev =>
+      prev.map(p => p.partId === partId ? { ...p, quantity: Math.max(1, quantity) } : p)
+    );
+  };
+
+  // 🔧 Update part custom price
+  const updatePartCustomPrice = (partId, customPrice) => {
+    setSelectedParts(prev =>
+      prev.map(p => p.partId === partId ? { ...p, customPrice: customPrice ? parseFloat(customPrice) : null } : p)
+    );
+  };
+
+  // 🔧 Filter parts by search query
+  const getFilteredParts = () => {
+    if (!partSearchQuery.trim()) return availableParts;
+    
+    const query = partSearchQuery.toLowerCase();
+    return availableParts.filter(part => {
+      const partId = (part.id || part.partId || '').toLowerCase();
+      const partName = (part.name || part.partName || '').toLowerCase();
+      const partNumber = (part.partNumber || '').toLowerCase();
+      const category = (part.category || '').toLowerCase();
+      
+      return partId.includes(query) || 
+             partName.includes(query) || 
+             partNumber.includes(query) ||
+             category.includes(query);
+    });
+  };
+
+  // 🔄 Sync parts from order to existing visits
+  const syncPartsToVisits = async () => {
+    if (!order.parts || order.parts.length === 0) {
+      alert('⚠️ Brak części w zamówieniu do zsynchronizowania');
+      return;
+    }
+
+    if (!order.visits || order.visits.length === 0) {
+      alert('⚠️ Brak wizyt w zamówieniu. Najpierw dodaj wizytę.');
+      return;
+    }
+
+    const confirmMsg = `Czy chcesz skopiować ${order.parts.length} część/części z zamówienia do ${order.visits.length} wizyty/wizyt?\n\nTo nadpisze istniejące części w wizytach.`;
+    
+    if (!confirm(confirmMsg)) {
+      return;
+    }
+
+    try {
+      setSaving(true);
+      
+      // Zaktualizuj każdą wizytę z częściami z zamówienia
+      const updatedVisits = order.visits.map(visit => ({
+        ...visit,
+        parts: [...order.parts], // Kopiuj części z zamówienia
+        updatedAt: new Date().toISOString()
+      }));
+
+      const updatedOrder = {
+        ...order,
+        visits: updatedVisits,
+        updatedAt: new Date().toISOString()
+      };
+
+      const response = await fetch('/api/orders', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updatedOrder)
+      });
+
+      if (response.ok) {
+        setOrder(updatedOrder);
+        setHasChanges(false);
+        alert(`✅ Zsynchronizowano ${order.parts.length} część/części do ${order.visits.length} wizyty/wizyt!`);
+        await loadOrder(); // Odśwież dane
+      } else {
+        const errorData = await response.json();
+        alert(`❌ Błąd: ${errorData.message || 'Nie udało się zapisać'}`);
+      }
+    } catch (error) {
+      console.error('❌ Błąd synchronizacji części:', error);
+      alert('❌ Błąd połączenia z serwerem');
+    } finally {
+      setSaving(false);
+    }
+  };
+
   const loadOrder = async () => {
     try {
       setLoading(true);
@@ -93,6 +381,11 @@ export default function AdminZamowienieDetails() {
       
       if (response.ok && data) {
         setOrder(data);
+        
+        // 🚗 Automatycznie oblicz odległość jeśli mamy GPS
+        if (data.clientLocation?.coordinates || (data.latitude && data.longitude)) {
+          calculateDistance(data);
+        }
       } else {
         alert('Nie znaleziono zamówienia');
         router.push('/admin/zamowienia');
@@ -102,6 +395,48 @@ export default function AdminZamowienieDetails() {
       alert('Błąd połączenia z serwerem');
     } finally {
       setLoading(false);
+    }
+  };
+
+  // 🚗 Oblicz odległość od firmy
+  const calculateDistance = async (orderData) => {
+    if (calculatingDistance) return;
+    
+    try {
+      setCalculatingDistance(true);
+      
+      const destination = orderData.clientLocation?.coordinates || {
+        lat: orderData.latitude,
+        lng: orderData.longitude
+      };
+      
+      if (!destination.lat || !destination.lng) {
+        console.warn('⚠️ Brak współrzędnych GPS');
+        return;
+      }
+      
+      console.log('🚗 Obliczam odległość do:', destination);
+      
+      const distanceService = getSmartDistanceService();
+      const result = await distanceService.calculateDistanceFromCompany(destination);
+      
+      console.log('✅ Odległość obliczona:', result);
+      
+      setDistanceInfo({
+        distance: result.distance.text,
+        distanceKm: result.distance.km,
+        duration: result.duration.text,
+        durationMinutes: result.duration.minutes,
+        source: result.source
+      });
+      
+    } catch (error) {
+      console.error('❌ Błąd obliczania odległości:', error);
+      setDistanceInfo({
+        error: 'Nie udało się obliczyć odległości'
+      });
+    } finally {
+      setCalculatingDistance(false);
     }
   };
 
@@ -203,54 +538,27 @@ export default function AdminZamowienieDetails() {
     try {
       setAddingVisit(true);
 
-      // Generate visitId in VIS format
-      const visitDate = new Date(visitForm.scheduledDate);
-      const year = visitDate.getFullYear().toString().substring(2);
-      const dayOfYear = Math.floor((visitDate - new Date(visitDate.getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24));
-      const visitNumber = (order.visits?.length || 0) + 1;
-      const visitId = `VIS${year}${dayOfYear.toString().padStart(3, '0')}${visitNumber.toString().padStart(3, '0')}`;
-
       // Find selected employee
       const selectedEmployee = employees.find(emp => emp.id === visitForm.employeeId);
       
-      // Create new visit object
-      const newVisit = {
-        visitId: visitId,
-        visitNumber: visitNumber,
-        type: visitForm.type,
-        status: 'scheduled',
-        scheduledDate: visitForm.scheduledDate,
-        scheduledTime: visitForm.scheduledTime,
-        date: visitForm.scheduledDate,
-        time: visitForm.scheduledTime,
-        technicianId: visitForm.employeeId,
-        technicianName: selectedEmployee?.name || 'Nieznany',
-        notes: visitForm.notes,
-        createdAt: new Date().toISOString(),
-        createdBy: 'admin'
-      };
-
-      // Update order with new visit (normalizuj przed zapisem)
-      const updatedOrder = normalizeObject({
-        ...order,
-        visits: [...(order.visits || []), newVisit],
-        status: 'scheduled',
-        updatedAt: new Date().toISOString()
-      });
-
-      // Save to API
-      const response = await fetch('/api/orders', {
+      // 🆕 Wyślij do API /api/orders/[id] - API automatycznie utworzy wizytę z unikalnym visitId
+      const response = await fetch(`/api/orders/${order.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          id: order.id,
-          visits: updatedOrder.visits,
-          status: updatedOrder.status,
-          updatedAt: updatedOrder.updatedAt
+          assignedTo: visitForm.employeeId,
+          scheduledDate: visitForm.scheduledDate,
+          scheduledTime: visitForm.scheduledTime,
+          visitType: visitForm.type,
+          status: 'scheduled'
         })
       });
 
       if (response.ok) {
+        const result = await response.json();
+        const createdVisit = result.order?.visits?.[result.order.visits.length - 1];
+        const visitId = createdVisit?.visitId || 'nowa wizyta';
+        
         alert(`✅ Wizyta ${visitId} została dodana i przydzielona do ${selectedEmployee?.name}`);
         
         // Reset form and close modal
@@ -267,7 +575,7 @@ export default function AdminZamowienieDetails() {
         await loadOrder();
       } else {
         const errorData = await response.json();
-        alert('❌ Błąd podczas dodawania wizyty: ' + (errorData.error || 'Nieznany błąd'));
+        alert('❌ Błąd podczas dodawania wizyty: ' + (errorData.message || 'Nieznany błąd'));
       }
     } catch (error) {
       console.error('Błąd dodawania wizyty:', error);
@@ -499,6 +807,127 @@ export default function AdminZamowienieDetails() {
               )}
             </div>
 
+            {/* 🌍 GPS Coordinates */}
+            {(order.latitude || order.clientLocation) && (
+              <div className="mt-4">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  📍 Współrzędne GPS
+                </label>
+                <div className="p-3 bg-green-50 rounded-lg border border-green-200">
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <div className="text-sm text-gray-700 space-y-1">
+                        <div className="flex items-center">
+                          <span className="font-medium text-gray-900 mr-2">Szerokość:</span>
+                          <span className="text-green-700 font-mono">
+                            {order.latitude || order.clientLocation?.coordinates?.lat || 'N/A'}°
+                          </span>
+                        </div>
+                        <div className="flex items-center">
+                          <span className="font-medium text-gray-900 mr-2">Długość:</span>
+                          <span className="text-green-700 font-mono">
+                            {order.longitude || order.clientLocation?.coordinates?.lng || 'N/A'}°
+                          </span>
+                        </div>
+                        {order.clientLocation?.accuracy && (
+                          <div className="flex items-center text-xs text-gray-600 mt-1">
+                            <span className="mr-2">Dokładność:</span>
+                            <span className={`px-2 py-0.5 rounded ${
+                              order.clientLocation.accuracy === 'ROOFTOP' ? 'bg-green-100 text-green-700' :
+                              order.clientLocation.accuracy === 'RANGE_INTERPOLATED' ? 'bg-yellow-100 text-yellow-700' :
+                              'bg-gray-100 text-gray-700'
+                            }`}>
+                              {order.clientLocation.accuracy}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                    <a
+                      href={`https://www.google.com/maps?q=${order.latitude || order.clientLocation?.coordinates?.lat},${order.longitude || order.clientLocation?.coordinates?.lng}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="ml-3 px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white text-sm rounded-lg transition-colors inline-flex items-center"
+                    >
+                      <FiMapPin className="mr-1 h-4 w-4" />
+                      Otwórz w mapach
+                    </a>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* 🚗 Distance & Travel Time */}
+            {(order.latitude || order.clientLocation) && (
+              <div className="mt-4">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  🚗 Odległość i Czas Dojazdu
+                </label>
+                {calculatingDistance ? (
+                  <div className="p-3 bg-blue-50 rounded-lg border border-blue-200">
+                    <div className="flex items-center text-sm text-blue-600">
+                      <div className="animate-spin mr-2">⏳</div>
+                      <span>Obliczam odległość...</span>
+                    </div>
+                  </div>
+                ) : distanceInfo && !distanceInfo.error ? (
+                  <div className="p-3 bg-blue-50 rounded-lg border border-blue-200">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <div className="text-xs text-gray-600 mb-1">Odległość od siedziby</div>
+                        <div className="text-lg font-bold text-blue-700">
+                          <FiNavigation className="inline mr-1 h-4 w-4" />
+                          {distanceInfo.distance}
+                        </div>
+                      </div>
+                      <div>
+                        <div className="text-xs text-gray-600 mb-1">Szacowany czas jazdy</div>
+                        <div className="text-lg font-bold text-blue-700">
+                          <FiClock className="inline mr-1 h-4 w-4" />
+                          {distanceInfo.duration}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="mt-2 pt-2 border-t border-blue-200 flex items-center justify-between">
+                      <div className="text-xs text-gray-500">
+                        Źródło: {distanceInfo.source === 'osrm' ? 'OSRM (OpenStreetMap)' : 'Google Maps'}
+                        {distanceInfo.source === 'osrm' && ' • Darmowy routing'}
+                      </div>
+                      <button
+                        onClick={() => calculateDistance(order)}
+                        className="text-xs text-blue-600 hover:text-blue-700 underline"
+                      >
+                        Przelicz ponownie
+                      </button>
+                    </div>
+                  </div>
+                ) : distanceInfo?.error ? (
+                  <div className="p-3 bg-red-50 rounded-lg border border-red-200">
+                    <div className="flex items-center text-sm text-red-600">
+                      <FiAlertTriangle className="mr-2 h-4 w-4" />
+                      <span>{distanceInfo.error}</span>
+                    </div>
+                    <button
+                      onClick={() => calculateDistance(order)}
+                      className="mt-2 text-xs text-red-600 hover:text-red-700 underline"
+                    >
+                      Spróbuj ponownie
+                    </button>
+                  </div>
+                ) : (
+                  <div className="p-3 bg-gray-50 rounded-lg border border-gray-200">
+                    <button
+                      onClick={() => calculateDistance(order)}
+                      className="text-sm text-blue-600 hover:text-blue-700 inline-flex items-center"
+                    >
+                      <FiNavigation className="mr-1 h-4 w-4" />
+                      Oblicz odległość i czas dojazdu
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
+
             {/* Dostępność klienta */}
             {order.availability && (
               <div className="mt-4">
@@ -522,13 +951,36 @@ export default function AdminZamowienieDetails() {
                 <FiTool className="mr-2 h-5 w-5 text-blue-600" />
                 Urządzenia {order.devices && order.devices.length > 0 && `(${order.devices.length})`}
               </h2>
-              <button
-                onClick={addDevice}
-                className="inline-flex items-center px-3 py-2 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 transition-colors"
-              >
-                <FiPlus className="mr-1 h-4 w-4" />
-                Dodaj urządzenie
-              </button>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => {
+                    // Załaduj istniejące urządzenia z zamówienia
+                    const models = order.devices?.map((d, idx) => ({
+                      id: idx,
+                      brand: d.brand || '',
+                      model: d.model || '',
+                      name: d.deviceType || '',
+                      type: d.deviceType || '',
+                      serialNumber: d.serialNumber || '',
+                      notes: d.notes || '',
+                      source: 'existing'
+                    })) || [];
+                    setOrderModels(models);
+                    setShowModelManager(true);
+                  }}
+                  className="inline-flex items-center px-3 py-2 bg-purple-600 text-white text-sm rounded-lg hover:bg-purple-700 transition-colors"
+                >
+                  <FiPackage className="mr-1 h-4 w-4" />
+                  📷 Skanuj tabliczkę
+                </button>
+                <button
+                  onClick={addDevice}
+                  className="inline-flex items-center px-3 py-2 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 transition-colors"
+                >
+                  <FiPlus className="mr-1 h-4 w-4" />
+                  Dodaj ręcznie
+                </button>
+              </div>
             </div>
 
             {/* Render devices array or fallback to old single device */}
@@ -697,6 +1149,264 @@ export default function AdminZamowienieDetails() {
                   >
                     Konwertuj na nowy system wielourządzeniowy
                   </button>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* 🔧 Parts Management Section */}
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-semibold text-gray-900 flex items-center">
+                <FiPackage className="mr-2 h-5 w-5 text-green-600" />
+                Części zamienne {order.parts && order.parts.length > 0 && `(${order.parts.length})`}
+              </h2>
+              <div className="flex items-center gap-2">
+                {/* Przycisk synchronizacji części do wizyt */}
+                {order.parts && order.parts.length > 0 && order.visits && order.visits.length > 0 && (
+                  <button
+                    onClick={syncPartsToVisits}
+                    disabled={saving}
+                    className="inline-flex items-center px-3 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    title="Skopiuj części z zamówienia do wizyt"
+                  >
+                    <svg className="mr-1 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                    {saving ? 'Synchronizuję...' : 'Synchronizuj do wizyt'}
+                  </button>
+                )}
+                <button
+                  onClick={() => setShowAddPartsModal(true)}
+                  className="inline-flex items-center px-3 py-2 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 transition-colors"
+                >
+                  <FiPlus className="mr-1 h-4 w-4" />
+                  Dodaj części
+                </button>
+              </div>
+            </div>
+
+            {(!order.parts || order.parts.length === 0) ? (
+              <div className="text-center py-8 text-gray-500">
+                <FiPackage className="mx-auto h-12 w-12 mb-2 opacity-50" />
+                <p>Brak dodanych części</p>
+                <p className="text-sm">Kliknij "Dodaj części" aby przypisać części do tego zamówienia</p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {order.parts.map((part, index) => {
+                  const isEditing = editingPartId === part.partId;
+                  
+                  return (
+                    <div key={index} className="p-3 bg-gray-50 rounded-lg border border-gray-200">
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <div className="font-medium text-gray-900">{part.partName}</div>
+                          <div className="text-sm text-gray-500">
+                            {part.partNumber && `${part.partNumber}`}
+                          </div>
+                          
+                          {/* Edycja ceny */}
+                          {isEditing ? (
+                            <div className="mt-3 space-y-2 bg-white p-3 rounded-lg border border-blue-300">
+                              <div className="flex items-center space-x-3">
+                                <div className="flex-1">
+                                  <label className="block text-xs font-medium text-gray-700 mb-1">
+                                    Ilość
+                                  </label>
+                                  <input
+                                    type="number"
+                                    value={part.quantity}
+                                    disabled
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-600"
+                                  />
+                                </div>
+                                <div className="flex-1">
+                                  <label className="block text-xs font-medium text-gray-700 mb-1">
+                                    Cena za szt. (zł) <span className="text-red-500">*</span>
+                                  </label>
+                                  <input
+                                    type="number"
+                                    step="0.01"
+                                    value={editPrice}
+                                    onChange={(e) => setEditPrice(e.target.value)}
+                                    className="w-full px-3 py-2 border border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                    placeholder="np. 85.50"
+                                    autoFocus
+                                  />
+                                </div>
+                                <div className="flex-1">
+                                  <label className="block text-xs font-medium text-gray-700 mb-1">
+                                    Suma
+                                  </label>
+                                  <input
+                                    type="text"
+                                    value={`${(parseFloat(editPrice || 0) * part.quantity).toFixed(2)} zł`}
+                                    disabled
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-600 font-semibold"
+                                  />
+                                </div>
+                              </div>
+                              
+                              <div>
+                                <label className="block text-xs font-medium text-gray-700 mb-1">
+                                  Notatka (opcjonalnie)
+                                </label>
+                                <input
+                                  type="text"
+                                  value={editPriceNotes}
+                                  onChange={(e) => setEditPriceNotes(e.target.value)}
+                                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                  placeholder="np. z marżą 20%, z przesyłką, cena promocyjna"
+                                />
+                              </div>
+                              
+                              <div className="flex items-center justify-end space-x-2 pt-2">
+                                <button
+                                  onClick={() => {
+                                    setEditingPartId(null);
+                                    setEditPrice('');
+                                    setEditPriceNotes('');
+                                  }}
+                                  className="px-3 py-1.5 text-sm bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition-colors"
+                                >
+                                  Anuluj
+                                </button>
+                                <button
+                                  onClick={() => {
+                                    if (!editPrice || parseFloat(editPrice) <= 0) {
+                                      alert('Podaj prawidłową cenę!');
+                                      return;
+                                    }
+                                    handleEditPartPrice(part.partId, editPrice, editPriceNotes);
+                                    setEditingPartId(null);
+                                    setEditPrice('');
+                                    setEditPriceNotes('');
+                                  }}
+                                  className="px-3 py-1.5 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+                                >
+                                  Zapisz cenę
+                                </button>
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="mt-2">
+                              <div className="text-sm text-gray-700">
+                                <span className="font-medium">{part.quantity} szt</span>
+                                {' × '}
+                                <span className="font-semibold text-blue-600">{part.unitPrice} zł</span>
+                                {' = '}
+                                <span className="font-bold text-green-600">{part.totalPrice.toFixed(2)} zł</span>
+                              </div>
+                              {part.priceNotes && (
+                                <div className="mt-1 text-xs text-gray-500 italic">
+                                  💡 {part.priceNotes}
+                                </div>
+                              )}
+                              {part.priceModifiedAt && (
+                                <div className="mt-1 text-xs text-gray-400">
+                                  Cena zmieniona: {new Date(part.priceModifiedAt).toLocaleString('pl-PL')}
+                                </div>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                        
+                        {/* Przyciski akcji */}
+                        <div className="flex items-center space-x-2 ml-3">
+                          {!isEditing && (
+                            <button
+                              onClick={() => {
+                                setEditingPartId(part.partId);
+                                setEditPrice(part.unitPrice.toString());
+                                setEditPriceNotes(part.priceNotes || '');
+                              }}
+                              className="p-2 text-blue-600 hover:bg-blue-50 rounded transition-colors"
+                              title="Edytuj cenę"
+                            >
+                              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                              </svg>
+                            </button>
+                          )}
+                          <button
+                            onClick={() => handleRemovePart(part.partId)}
+                            className="p-2 text-red-600 hover:bg-red-50 rounded transition-colors"
+                            title="Usuń część"
+                          >
+                            <FiX className="h-5 w-5" />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+                
+                <div className="pt-3 border-t-2 border-gray-300">
+                  <div className="flex items-center justify-between">
+                    <span className="text-base font-semibold text-gray-700">Suma części:</span>
+                    <span className="text-2xl font-bold text-green-600">
+                      {order.parts.reduce((sum, p) => sum + (p.totalPrice || 0), 0).toFixed(2)} zł
+                    </span>
+                  </div>
+                  <p className="text-xs text-gray-500 mt-1">
+                    💡 Możesz edytować ceny części klikając ikonę ołówka (np. aby dodać marżę, koszty przesyłki)
+                  </p>
+                  
+                  {/* Status synchronizacji z wizytami */}
+                  {order.visits && order.visits.length > 0 && (
+                    <div className="mt-3 p-3 rounded-lg border">
+                      {(() => {
+                        const visitsWithParts = order.visits.filter(v => v.parts && v.parts.length > 0);
+                        const allVisitsHaveParts = visitsWithParts.length === order.visits.length;
+                        const someVisitsHaveParts = visitsWithParts.length > 0;
+                        
+                        if (allVisitsHaveParts) {
+                          return (
+                            <div className="bg-green-50 border-green-200">
+                              <div className="flex items-start space-x-2 text-sm text-green-800">
+                                <FiCheckCircle className="h-5 w-5 flex-shrink-0 mt-0.5" />
+                                <div>
+                                  <p className="font-medium">Części zsynchronizowane z wizytami ✓</p>
+                                  <p className="text-xs mt-1">
+                                    {order.visits.length} {order.visits.length === 1 ? 'wizyta ma' : 'wizyty mają'} przypisane części
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        } else if (someVisitsHaveParts) {
+                          return (
+                            <div className="bg-yellow-50 border-yellow-200">
+                              <div className="flex items-start space-x-2 text-sm text-yellow-800">
+                                <FiAlertTriangle className="h-5 w-5 flex-shrink-0 mt-0.5" />
+                                <div>
+                                  <p className="font-medium">Częściowo zsynchronizowane</p>
+                                  <p className="text-xs mt-1">
+                                    {visitsWithParts.length} z {order.visits.length} {order.visits.length === 1 ? 'wizyty' : 'wizyt'} ma przypisane części
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        } else {
+                          return (
+                            <div className="bg-orange-50 border-orange-200">
+                              <div className="flex items-start space-x-2 text-sm text-orange-800">
+                                <FiAlertCircle className="h-5 w-5 flex-shrink-0 mt-0.5" />
+                                <div>
+                                  <p className="font-medium">Części nie są zsynchronizowane z wizytami</p>
+                                  <p className="text-xs mt-1">
+                                    Kliknij "Synchronizuj do wizyt" aby skopiować części do {order.visits.length} {order.visits.length === 1 ? 'wizyty' : 'wizyt'}
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        }
+                      })()}
+                    </div>
+                  )}
                 </div>
               </div>
             )}
@@ -1137,7 +1847,281 @@ export default function AdminZamowienieDetails() {
         </div>
       )}
 
-      {/* 📦 Device Models Manager Modal */}
+      {/* � Add Parts Modal */}
+      {showAddPartsModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] flex flex-col">
+            {/* Header */}
+            <div className="p-6 border-b border-gray-200">
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    Dodaj części do zamówienia
+                  </h3>
+                  <p className="text-sm text-gray-500 mt-1">
+                    Zamówienie: {order.orderNumber}
+                  </p>
+                </div>
+                <button
+                  onClick={() => {
+                    setShowAddPartsModal(false);
+                    setSelectedParts([]);
+                    setPartSearchQuery('');
+                  }}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  <FiX className="w-6 h-6" />
+                </button>
+              </div>
+
+              {/* Search */}
+              <div className="relative">
+                <input
+                  type="text"
+                  value={partSearchQuery}
+                  onChange={(e) => setPartSearchQuery(e.target.value)}
+                  placeholder="🔍 Szukaj części po nazwie, ID, numerze katalogowym..."
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                />
+                {partSearchQuery && (
+                  <button
+                    onClick={() => setPartSearchQuery('')}
+                    className="absolute right-3 top-3.5 text-gray-400 hover:text-gray-600"
+                  >
+                    <FiX className="w-5 h-5" />
+                  </button>
+                )}
+              </div>
+              
+              <div className="mt-2 flex items-center justify-between text-sm">
+                <span className="text-gray-500">
+                  Znaleziono: {getFilteredParts().length} części
+                </span>
+                <span className={`font-medium ${selectedParts.length > 0 ? 'text-blue-600' : 'text-gray-400'}`}>
+                  Zaznaczono: {selectedParts.length} części
+                </span>
+              </div>
+            </div>
+
+            {/* Parts Grid */}
+            <div className="flex-1 overflow-y-auto p-6">
+              {getFilteredParts().length === 0 ? (
+                <div className="text-center py-12">
+                  <FiPackage className="mx-auto h-12 w-12 text-gray-400 mb-3" />
+                  <p className="text-gray-500">Nie znaleziono części</p>
+                  <p className="text-sm text-gray-400 mt-1">Spróbuj zmienić kryteria wyszukiwania</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {getFilteredParts().map(part => {
+                    const partId = part.id || part.partId;
+                    const partName = part.name || part.partName;
+                    const partPrice = part.pricing?.retailPrice || part.unitPrice || 0;
+                    const partImage = part.imageUrl || part.images?.[0]?.url || '/uploads/parts/default-part.svg';
+                    const inStock = part.availability?.inStock || part.stockQuantity || 0;
+                    const selectedPart = selectedParts.find(p => p.partId === partId);
+                    const isSelected = !!selectedPart;
+
+                    return (
+                      <div
+                        key={partId}
+                        className={`border-2 rounded-lg p-4 transition-all cursor-pointer ${
+                          isSelected 
+                            ? 'border-blue-500 bg-blue-50' 
+                            : 'border-gray-200 hover:border-blue-300'
+                        }`}
+                        onClick={() => togglePartSelection(partId)}
+                      >
+                        <div className="flex space-x-4">
+                          {/* Checkbox */}
+                          <div className="flex-shrink-0 pt-1">
+                            <input
+                              type="checkbox"
+                              checked={isSelected}
+                              onChange={() => {}}
+                              className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500 cursor-pointer"
+                            />
+                          </div>
+
+                          {/* Image */}
+                          <div className="flex-shrink-0">
+                            <div className="w-20 h-20 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden">
+                              <img 
+                                src={partImage} 
+                                alt={partName}
+                                className="w-full h-full object-contain"
+                                onError={(e) => {
+                                  e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik00MCAyMEMyOC45NTQzIDIwIDIwIDI4Ljk1NDMgMjAgNDBDMjAgNTEuMDQ1NyAyOC45NTQzIDYwIDQwIDYwQzUxLjA0NTcgNjAgNjAgNTEuMDQ1NyA2MCA0MEM2MCAyOC45NTQzIDUxLjA0NTcgMjAgNDAgMjBaIiBmaWxsPSIjRDFENUREIi8+CjxwYXRoIGQ9Ik00MCAzMEMzOS40NDc3IDMwIDM5IDMwLjQ0NzcgMzkgMzFWNDFDMzkgNDEuNTUyMyAzOS40NDc3IDQyIDQwIDQyQzQwLjU1MjMgNDIgNDEgNDEuNTUyMyA0MSA0MVYzMUM0MSAzMC40NDc3IDQwLjU1MjMgMzAgNDAgMzBaIiBmaWxsPSIjOUM5RUE2Ii8+CjxwYXRoIGQ9Ik00MCA0N0MzOS40NDc3IDQ3IDM5IDQ3LjQ0NzcgMzkgNDhDMzkgNDguNTUyMyAzOS40NDc3IDQ5IDQwIDQ5QzQwLjU1MjMgNDkgNDEgNDguNTUyMyA0MSA0OEM0MSA0Ny40NDc3IDQwLjU1MjMgNDcgNDAgNDdaIiBmaWxsPSIjOUM5RUE2Ii8+Cjwvc3ZnPgo=';
+                                }}
+                              />
+                            </div>
+                          </div>
+
+                          {/* Info */}
+                          <div className="flex-1 min-w-0">
+                            <div className="font-medium text-gray-900 truncate">
+                              {partName}
+                            </div>
+                            <div className="text-xs text-gray-500 mt-0.5">
+                              {partId} {part.partNumber && `• ${part.partNumber}`}
+                            </div>
+                            {(part.category || part.subcategory) && (
+                              <div className="flex items-center space-x-1 mt-1">
+                                {part.category && (
+                                  <span className="text-xs bg-gray-200 text-gray-700 px-2 py-0.5 rounded">
+                                    {part.category}
+                                  </span>
+                                )}
+                              </div>
+                            )}
+                            <div className="flex items-center justify-between mt-2">
+                              <div className="text-lg font-bold text-blue-600">
+                                {partPrice} zł
+                              </div>
+                              <div className={`text-xs ${inStock > 0 ? 'text-green-600' : 'text-red-600'}`}>
+                                {inStock > 0 ? `✓ ${inStock} szt` : '✗ Brak'}
+                              </div>
+                            </div>
+
+                            {/* Quantity and Price inputs */}
+                            {isSelected && (
+                              <div className="mt-3 space-y-2 bg-white p-2 rounded border border-blue-300" onClick={(e) => e.stopPropagation()}>
+                                <div className="flex items-center space-x-2">
+                                  <label className="text-sm font-medium text-gray-700 w-16">
+                                    Ilość:
+                                  </label>
+                                  <input
+                                    type="number"
+                                    min="1"
+                                    value={selectedPart.quantity}
+                                    onChange={(e) => updatePartQuantity(partId, parseInt(e.target.value) || 1)}
+                                    className="flex-1 px-3 py-1.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm"
+                                  />
+                                  <span className="text-sm text-gray-500">szt</span>
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                  <label className="text-sm font-medium text-gray-700 w-16">
+                                    Cena:
+                                  </label>
+                                  <input
+                                    type="number"
+                                    step="0.01"
+                                    placeholder={partPrice.toString()}
+                                    value={selectedPart.customPrice || ''}
+                                    onChange={(e) => updatePartCustomPrice(partId, e.target.value)}
+                                    className="flex-1 px-3 py-1.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm"
+                                  />
+                                  <span className="text-sm text-gray-500">zł</span>
+                                </div>
+                                <div className="text-xs text-gray-500">
+                                  {selectedPart.customPrice ? (
+                                    <span className="text-blue-600">
+                                      💡 Cena niestandardowa: {selectedPart.customPrice} zł (oryg. {partPrice} zł)
+                                    </span>
+                                  ) : (
+                                    <span>
+                                      💰 Cena magazynowa: {partPrice} zł (możesz zmienić)
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+
+            {/* Footer */}
+            <div className="p-6 border-t border-gray-200 bg-gray-50">
+              {selectedParts.length > 0 && (
+                <div className="mb-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="font-medium text-blue-900">
+                      Wybrane części ({selectedParts.length}):
+                    </span>
+                    <button
+                      onClick={() => setSelectedParts([])}
+                      className="text-sm text-blue-600 hover:text-blue-800"
+                    >
+                      Wyczyść wszystkie
+                    </button>
+                  </div>
+                  <div className="space-y-1.5 max-h-32 overflow-y-auto">
+                    {selectedParts.map(sp => {
+                      const part = availableParts.find(p => (p.id || p.partId) === sp.partId);
+                      const partName = part?.name || part?.partName || sp.partId;
+                      const basePrice = part?.pricing?.retailPrice || part?.unitPrice || 0;
+                      const finalPrice = sp.customPrice !== null && sp.customPrice !== undefined ? sp.customPrice : basePrice;
+                      const isPriceModified = sp.customPrice !== null && sp.customPrice !== undefined;
+                      
+                      return (
+                        <div key={sp.partId} className="flex items-center justify-between text-sm">
+                          <span className="text-gray-700 truncate">
+                            {partName}
+                            {isPriceModified && <span className="ml-1 text-xs text-orange-600">*</span>}
+                          </span>
+                          <span className={`font-medium ml-2 whitespace-nowrap ${isPriceModified ? 'text-orange-600' : 'text-blue-600'}`}>
+                            {sp.quantity} × {finalPrice} zł = {(sp.quantity * finalPrice).toFixed(2)} zł
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                  <div className="pt-2 mt-2 border-t border-blue-200">
+                    <div className="flex items-center justify-between font-semibold text-blue-900">
+                      <span>Suma:</span>
+                      <span className="text-lg">
+                        {selectedParts.reduce((sum, sp) => {
+                          const part = availableParts.find(p => (p.id || p.partId) === sp.partId);
+                          const basePrice = part?.pricing?.retailPrice || part?.unitPrice || 0;
+                          const finalPrice = sp.customPrice !== null && sp.customPrice !== undefined ? sp.customPrice : basePrice;
+                          return sum + (sp.quantity * finalPrice);
+                        }, 0).toFixed(2)} zł
+                      </span>
+                    </div>
+                    {selectedParts.some(sp => sp.customPrice !== null && sp.customPrice !== undefined) && (
+                      <div className="mt-1 text-xs text-orange-600">
+                        * - cena niestandardowa (z marżą/przesyłką)
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              <div className="flex items-center justify-end space-x-4">
+                <button
+                  onClick={() => {
+                    setShowAddPartsModal(false);
+                    setSelectedParts([]);
+                    setPartSearchQuery('');
+                  }}
+                  className="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors font-medium"
+                >
+                  Anuluj
+                </button>
+                <button
+                  onClick={handleAddPartsToOrder}
+                  disabled={selectedParts.length === 0}
+                  className={`px-6 py-2 rounded-lg transition-colors font-medium ${
+                    selectedParts.length === 0
+                      ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                      : 'bg-green-600 text-white hover:bg-green-700'
+                  }`}
+                  title={selectedParts.length === 0 ? 'Zaznacz przynajmniej jedną część' : 'Dodaj zaznaczone części do zamówienia'}
+                >
+                  ✓ Dodaj części ({selectedParts.length})
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* �📦 Device Models Manager Modal */}
       <ModelManagerModal
         isOpen={showModelManager}
         onClose={() => setShowModelManager(false)}
@@ -1146,22 +2130,26 @@ export default function AdminZamowienieDetails() {
         onSave={async (updatedModels) => {
           // Zaktualizuj zamówienie z nowymi modelami
           setOrderModels(updatedModels);
+          
+          console.log('💾 Zapisuję modele z tabliczek znamionowych:', updatedModels);
+          
           if (updatedModels.length > 0) {
             const mainModel = updatedModels[0];
-            // Zaktualizuj główne pola urządzenia
+            // Zaktualizuj główne pola urządzenia + devices[]
             const updatedOrder = {
               ...order,
-              brand: mainModel.brand,
-              model: mainModel.model,
-              deviceType: mainModel.type || mainModel.name,
-              serialNumber: mainModel.serialNumber,
+              brand: mainModel.brand || order.brand,
+              model: mainModel.model || order.model,
+              deviceType: mainModel.type || mainModel.name || order.deviceType,
+              serialNumber: mainModel.serialNumber || order.serialNumber,
               devices: updatedModels.map((m, idx) => ({
                 deviceIndex: idx,
-                deviceType: m.type || m.name,
-                brand: m.brand,
-                model: m.model,
-                serialNumber: m.serialNumber,
-                notes: m.notes || ''
+                deviceType: m.type || m.name || 'Nieznane urządzenie',
+                brand: m.brand || '',
+                model: m.model || '',
+                serialNumber: m.serialNumber || '',
+                notes: m.notes || '',
+                scannedAt: m.source === 'scanner' ? new Date().toISOString() : undefined
               }))
             };
             
@@ -1177,9 +2165,13 @@ export default function AdminZamowienieDetails() {
               if (response.ok) {
                 setOrder(updatedOrder);
                 setHasChanges(false);
-                alert(`✅ Zapisano ${updatedModels.length} urządzeń z tabliczek znamionowych do zamówienia!`);
+                console.log('✅ Zapisano do serwera:', updatedOrder);
+                alert(`✅ Zapisano ${updatedModels.length} urządzeń z tabliczek znamionowych do zamówienia ${order.orderNumber}!`);
+                // Przeładuj zamówienie aby pobrać świeże dane
+                await loadOrder();
               } else {
-                console.error('❌ Błąd zapisu:', await response.text());
+                const errorText = await response.text();
+                console.error('❌ Błąd zapisu:', errorText);
                 alert('❌ Błąd podczas zapisywania danych. Kliknij "Zapisz zamówienie" ręcznie.');
                 setOrder(updatedOrder);
                 setHasChanges(true);
@@ -1189,6 +2181,30 @@ export default function AdminZamowienieDetails() {
               alert('❌ Błąd połączenia z serwerem. Kliknij "Zapisz zamówienie" ręcznie.');
               setOrder(updatedOrder);
               setHasChanges(true);
+            } finally {
+              setSaving(false);
+            }
+          } else {
+            // Jeśli usunięto wszystkie modele
+            console.log('⚠️ Brak modeli - usuwam devices[] z zamówienia');
+            const updatedOrder = {
+              ...order,
+              devices: []
+            };
+            try {
+              setSaving(true);
+              const response = await fetch('/api/orders', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(updatedOrder)
+              });
+              if (response.ok) {
+                setOrder(updatedOrder);
+                setHasChanges(false);
+                await loadOrder();
+              }
+            } catch (error) {
+              console.error('❌ Błąd:', error);
             } finally {
               setSaving(false);
             }

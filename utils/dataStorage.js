@@ -22,7 +22,9 @@ export const readReservations = () => {
             return [];
         }
         const data = fs.readFileSync(DATA_FILE, 'utf8');
-        return JSON.parse(data);
+        const parsed = JSON.parse(data);
+        // ✅ FIX: Obsłuż zarówno tablicę jak i obiekt { rezerwacje: [...] }
+        return Array.isArray(parsed) ? parsed : (parsed.rezerwacje || []);
     } catch (error) {
         console.error('Błąd odczytu danych:', error);
         return [];
@@ -33,7 +35,9 @@ export const readReservations = () => {
 export const writeReservations = (reservations) => {
     try {
         ensureDataDir();
-        fs.writeFileSync(DATA_FILE, JSON.stringify(reservations, null, 2));
+        // ✅ FIX: Zachowaj format { rezerwacje: [...] } dla kompatybilności
+        const data = { rezerwacje: Array.isArray(reservations) ? reservations : [] };
+        fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2));
         return true;
     } catch (error) {
         console.error('Błąd zapisu danych:', error);

@@ -1,0 +1,390 @@
+[
+  {
+    "id": "ORD-2025-001",
+    "orderNumber": "ORD-2025-001",
+    "clientName": "Jan Kowalski",
+    "phone": "+48 123 456 789",
+    "email": "jan.kowalski@email.pl",
+    "address": "ul. Floria�ska 15, 31-019 Krak�w",
+    "city": "Krak�w",
+    "postalCode": "31-019",
+    "coordinates": {
+      "lat": 50.0647,
+      "lng": 19.945
+    },
+    "deviceType": "Pralka",
+    "brand": "Bosch",
+    "model": "WAT28461PL",
+    "description": "Pralka nie wiruje, woda zostaje w b�bnie",
+    "problemDescription": "Urz�dzenie nie przechodzi do fazy wirowania. Po zako�czeniu prania woda pozostaje w b�bnie.",
+    "symptoms": [
+      "Nie wiruje",
+      "Woda w b�bnie",
+      "B��d E18"
+    ],
+    "status": "pending",
+    "priority": "high",
+    "estimatedDuration": 90,
+    "estimatedCost": 200,
+    "estimatedRepairTime": 90,
+    "serviceCost": 200,
+    "createdAt": "2025-10-11T08:00:00.000Z",
+    "receivedAt": "2025-10-11T08:00:00.000Z",
+    "preferredTimeSlots": [
+      "09:00-12:00",
+      "14:00-17:00"
+    ],
+    "isVIP": false,
+    "regionPriority": 1,
+    "customerRating": 5,
+    "scheduledDate": null,
+    "assignedTo": null,
+    "preferredTime": "09:00",
+    "scheduledTime": "08:00"
+  },
+  {
+    "id": "ORD-2025-002",
+    "orderNumber": "ORD-2025-002",
+    "clientName": "Anna Nowak",
+    "phone": "+48 987 654 321",
+    "email": "anna.nowak@email.pl",
+    "address": "ul. Karmelicka 22, 31-128 Krak�w",
+    "city": "Krak�w",
+    "postalCode": "31-128",
+    "coordinates": {
+      "lat": 50.062,
+      "lng": 19.9392
+    },
+    "deviceType": "Zmywarka",
+    "brand": "Electrolux",
+    "model": "ESF5555LOW",
+    "description": "Zmywarka nie grzeje wody",
+    "problemDescription": "Naczynia s� zimne po zako�czeniu programu. Woda nie nagrzewa si� podczas zmywania.",
+    "symptoms": [
+      "Zimna woda",
+      "Naczynia nieczyste",
+      "D�ugi czas zmywania"
+    ],
+    "status": "pending",
+    "priority": "medium",
+    "estimatedDuration": 60,
+    "estimatedCost": 180,
+    "estimatedRepairTime": 60,
+    "serviceCost": 180,
+    "createdAt": "2025-10-11T09:15:00.000Z",
+    "receivedAt": "2025-10-11T09:15:00.000Z",
+    "preferredTimeSlots": [
+      "10:00-13:00"
+    ],
+    "isVIP": true,
+    "regionPriority": 1,
+    "customerRating": 5,
+    "scheduledDate": null,
+    "assignedTo": null,
+    "scheduledTime": "09:00"
+  },
+  {
+    "id": "ORD-2025-003",
+    "orderNumber": "ORD-2025-003",
+    "clientName": "Piotr Zieli�ski",
+    "phone": "+48 555 123 456",
+    "email": "piotr.zielinski@email.pl",
+    "address": "ul. Dietla 45, 31-054 Krak�w",
+    "city": "Krak�w",
+    "postalCode": "31-054",
+    "coordinates": {
+      "lat": 50.056,
+      "lng": 19.952
+    },
+    "deviceType": "Lod�wka",
+    "brand": "Samsung",
+    "model": "RB34T632ESA",
+    "description": "Lod�wka nie ch�odzi",
+    "problemDescription": "Temperatura w komorze ch�odniczej wynosi +15C zamiast +4C. Kompresor pracuje ci�gle.",
+    "symptoms": [
+      "Nie ch�odzi",
+      "G�o�na praca",
+      "Wilgo� wewn�trz"
+    ],
+    "status": "pending",
+    "priority": "urgent",
+    "estimatedDuration": 120,
+    "estimatedCost": 250,
+    "estimatedRepairTime": 120,
+    "serviceCost": 250,
+    "createdAt": "2025-10-11T07:30:00.000Z",
+    "receivedAt": "2025-10-11T07:30:00.000Z",
+    "preferredTimeSlots": [
+      "08:00-11:00",
+      "12:00-15:00"
+    ],
+    "isVIP": false,
+    "regionPriority": 1,
+    "customerRating": 4,
+    "scheduledDate": "2025-10-14",
+    "assignedTo": null,
+    "scheduledTime": "08:45"
+  },
+  {
+    "id": "ORD-2025-004",
+    "orderNumber": "ORD-2025-004",
+    "clientName": "Maria Wi�niewska",
+    "phone": "+48 666 789 012",
+    "email": "maria.wisniewska@email.pl",
+    "address": "ul. Krakowska 100, 32-020 Wieliczka",
+    "city": "Wieliczka",
+    "postalCode": "32-020",
+    "coordinates": {
+      "lat": 49.9864,
+      "lng": 20.0642
+    },
+    "deviceType": "Kuchenka",
+    "brand": "Whirlpool",
+    "model": "AKZ96230IX",
+    "description": "Piekarnik nie w��cza si�",
+    "problemDescription": "Po naci�ni�ciu przycisku power piekarnik nie reaguje. Brak pod�wietlenia wy�wietlacza.",
+    "symptoms": [
+      "Nie w��cza si�",
+      "Czarny wy�wietlacz",
+      "Brak reakcji"
+    ],
+    "status": "pending",
+    "priority": "medium",
+    "estimatedDuration": 75,
+    "estimatedCost": 190,
+    "estimatedRepairTime": 75,
+    "serviceCost": 190,
+    "createdAt": "2025-10-11T10:00:00.000Z",
+    "receivedAt": "2025-10-11T10:00:00.000Z",
+    "preferredTimeSlots": [
+      "13:00-16:00",
+      "16:00-19:00"
+    ],
+    "isVIP": false,
+    "regionPriority": 2,
+    "customerRating": 5,
+    "scheduledDate": null,
+    "assignedTo": null,
+    "scheduledTime": "09:30"
+  },
+  {
+    "id": "ORD-2025-006",
+    "orderNumber": "ORD-2025-006",
+    "clientName": "Katarzyna D�browska",
+    "phone": "+48 888 345 678",
+    "email": "katarzyna.dabrowska@email.pl",
+    "address": "ul. Wielicka 259, 30-663 Krak�w",
+    "city": "Krak�w",
+    "postalCode": "30-663",
+    "coordinates": {
+      "lat": 50.0339,
+      "lng": 19.9858
+    },
+    "deviceType": "Suszarka",
+    "brand": "Bosch",
+    "model": "WTW85231PL",
+    "description": "Suszarka nie suszy ubra�",
+    "problemDescription": "Program suszenia dzia�a, ale ubrania s� nadal mokre. B�ben obraca si�, ale brak ciep�ego powietrza.",
+    "symptoms": [
+      "Mokre ubrania",
+      "Zimne powietrze",
+      "D�ugi czas suszenia"
+    ],
+    "status": "pending",
+    "priority": "low",
+    "estimatedDuration": 60,
+    "estimatedCost": 170,
+    "estimatedRepairTime": 60,
+    "serviceCost": 170,
+    "createdAt": "2025-10-11T12:45:00.000Z",
+    "receivedAt": "2025-10-11T12:45:00.000Z",
+    "preferredTimeSlots": [
+      "15:00-18:00"
+    ],
+    "isVIP": false,
+    "regionPriority": 1,
+    "customerRating": 4,
+    "scheduledDate": null,
+    "assignedTo": null,
+    "scheduledTime": "08:00"
+  },
+  {
+    "id": "ORD-2025-007",
+    "orderNumber": "ORD-2025-007",
+    "clientName": "Marek Szyma�ski",
+    "phone": "+48 999 456 789",
+    "email": "marek.szymanski@email.pl",
+    "address": "ul. Mogilska 47, 31-545 Krak�w",
+    "city": "Krak�w",
+    "postalCode": "31-545",
+    "coordinates": {
+      "lat": 50.0754,
+      "lng": 19.9669
+    },
+    "deviceType": "Pralka",
+    "brand": "LG",
+    "model": "F4WV709P2T",
+    "description": "Pralka przecieka podczas prania",
+    "problemDescription": "Z przedniej cz�ci pralki wycieka woda podczas prania. Wi�ksze przecieki przy wy�szych obrotach.",
+    "symptoms": [
+      "Przeciek",
+      "Ka�u�a pod pralk�",
+      "Wilgotne uszczelki"
+    ],
+    "status": "pending",
+    "priority": "high",
+    "estimatedDuration": 90,
+    "estimatedCost": 220,
+    "estimatedRepairTime": 90,
+    "serviceCost": 220,
+    "createdAt": "2025-10-11T13:30:00.000Z",
+    "receivedAt": "2025-10-11T13:30:00.000Z",
+    "preferredTimeSlots": [
+      "16:00-19:00"
+    ],
+    "isVIP": true,
+    "regionPriority": 1,
+    "customerRating": 5,
+    "scheduledDate": "2025-10-10",
+    "assignedTo": "EMPA252780001",
+    "scheduledTime": "09:45"
+  },
+  {
+    "id": "ORD-2025-008",
+    "orderNumber": "ORD-2025-008",
+    "clientName": "Agnieszka Kaczmarek",
+    "phone": "+48 111 567 890",
+    "email": "agnieszka.kaczmarek@email.pl",
+    "address": "ul. Lea 114, 30-133 Krak�w",
+    "city": "Krak�w",
+    "postalCode": "30-133",
+    "coordinates": {
+      "lat": 50.0878,
+      "lng": 19.9119
+    },
+    "deviceType": "Zmywarka",
+    "brand": "Beko",
+    "model": "DFN28422X",
+    "description": "Zmywarka ha�asuje podczas pracy",
+    "problemDescription": "Podczas zmywania urz�dzenie wydaje g�o�ne ha�asy i wibracje. Zmywanie odbywa si� prawid�owo.",
+    "symptoms": [
+      "Ha�as",
+      "Wibracje",
+      "Dudnienie"
+    ],
+    "status": "pending",
+    "priority": "low",
+    "estimatedDuration": 45,
+    "estimatedCost": 160,
+    "estimatedRepairTime": 45,
+    "serviceCost": 160,
+    "createdAt": "2025-10-11T14:15:00.000Z",
+    "receivedAt": "2025-10-11T14:15:00.000Z",
+    "preferredTimeSlots": [
+      "17:00-20:00"
+    ],
+    "isVIP": false,
+    "regionPriority": 1,
+    "customerRating": 4,
+    "scheduledDate": "2025-10-12",
+    "assignedTo": null,
+    "scheduledTime": "09:30"
+  },
+  {
+    "clientId": "CLIS252840001",
+    "clientName": "Klient #440469",
+    "clientPhone": "987987987",
+    "email": "",
+    "address": "sienkiewicza 12, 39-300 Mielec",
+    "city": "Mielec",
+    "street": "sienkiewicza 12",
+    "postalCode": "",
+    "phones": [
+      {
+        "number": "987987987",
+        "label": "Główny",
+        "isPrimary": true
+      }
+    ],
+    "addresses": [
+      {
+        "street": "sienkiewicza 12",
+        "city": "Mielec",
+        "postalCode": "39-300",
+        "label": "Główny",
+        "isPrimary": true
+      }
+    ],
+    "clientLocation": null,
+    "latitude": null,
+    "longitude": null,
+    "deviceType": "Lodówki",
+    "brand": "Nie określono",
+    "model": "AEG",
+    "serialNumber": "",
+    "description": "Brak opisu problemu",
+    "priority": "urgent",
+    "status": "pending",
+    "visits": [],
+    "category": "Lodówki",
+    "serviceType": "AEG",
+    "scheduledDate": null,
+    "availability": "Nie określono",
+    "devices": [
+      {
+        "name": "Lodówki",
+        "brand": "AEG",
+        "model": "",
+        "serialNumber": "",
+        "description": "Brak opisu",
+        "hasBuiltIn": false,
+        "builtInParams": {
+          "demontaz": false,
+          "montaz": false,
+          "trudna": false,
+          "wolnostojacy": false,
+          "ograniczony": false,
+          "front": false,
+          "czas": false
+        },
+        "builtInParamsNotes": {}
+      }
+    ],
+    "builtInParams": {
+      "demontaz": false,
+      "montaz": false,
+      "trudna": false,
+      "wolnostojacy": false,
+      "ograniczony": false,
+      "front": false,
+      "czas": false
+    },
+    "deviceDetails": {
+      "deviceType": "lodówki",
+      "hasBuiltIn": false,
+      "hasDemontaz": false,
+      "hasMontaz": false,
+      "hasTrudnaZabudowa": false,
+      "manualAdditionalTime": 0
+    },
+    "dates": [],
+    "hours": null,
+    "end": null,
+    "id": 1760163440535,
+    "orderNumber": "ORDS252840002",
+    "source": "system-auto",
+    "sourceDetails": null,
+    "createdBy": "system",
+    "createdByName": "System",
+    "userId": null,
+    "isUserCreated": false,
+    "createdFromIP": null,
+    "dateAdded": "2025-10-11T06:17:20.535Z",
+    "createdAt": "2025-10-11T06:17:20.535Z",
+    "updatedAt": "2025-10-11T06:17:20.535Z",
+    "updatedBy": null,
+    "assignedTo": null,
+    "preferredTime": "24:00",
+    "scheduledTime": "08:15"
+  }
+]

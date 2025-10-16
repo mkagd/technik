@@ -3,6 +3,7 @@
 
 import fs from 'fs';
 import path from 'path';
+import { logger } from '../../../../utils/logger';
 
 const ORDERS_FILE = path.join(process.cwd(), 'data', 'orders.json');
 const SESSIONS_FILE = path.join(process.cwd(), 'data', 'technician-sessions.json');
@@ -16,7 +17,7 @@ const readOrders = () => {
     const data = fs.readFileSync(ORDERS_FILE, 'utf8');
     return JSON.parse(data);
   } catch (error) {
-    console.error('❌ Error reading orders.json:', error);
+    logger.error('❌ Error reading orders.json:', error);
     return [];
   }
 };
@@ -24,10 +25,10 @@ const readOrders = () => {
 const writeOrders = (orders) => {
   try {
     fs.writeFileSync(ORDERS_FILE, JSON.stringify(orders, null, 2), 'utf8');
-    console.log('✅ Orders saved successfully');
+    logger.success('✅ Orders saved successfully');
     return true;
   } catch (error) {
-    console.error('❌ Error writing orders.json:', error);
+    logger.error('❌ Error writing orders.json:', error);
     return false;
   }
 };
@@ -40,7 +41,7 @@ const readSessions = () => {
     }
     return [];
   } catch (error) {
-    console.error('❌ Error reading sessions:', error);
+    logger.error('❌ Error reading sessions:', error);
     return [];
   }
 };
@@ -138,7 +139,7 @@ const handleGet = (req, res, visitId, employeeId) => {
       orderCreatedAt: result.order.createdAt
     };
     
-    console.log(`✅ Zwracam szczegóły wizyty ${visitId} dla pracownika ${employeeId}`);
+    logger.success(`✅ Zwracam szczegóły wizyty ${visitId} dla pracownika ${employeeId}`);
     
     return res.status(200).json({
       success: true,
@@ -146,7 +147,7 @@ const handleGet = (req, res, visitId, employeeId) => {
     });
     
   } catch (error) {
-    console.error('❌ Error getting visit:', error);
+    logger.error('❌ Error getting visit:', error);
     return res.status(500).json({
       success: false,
       message: 'Server error',
@@ -183,9 +184,9 @@ const handlePut = (req, res, visitId, employeeId) => {
     const updateData = req.body;
     const { deviceIndex, models } = updateData; // ✅ NEW: deviceIndex dla multi-device
     
-    console.log(`🔄 Aktualizuję wizytę ${visitId}:`, updateData);
+    logger.debug(`🔄 Aktualizuję wizytę ${visitId}:`, updateData);
     if (typeof deviceIndex === 'number') {
-      console.log(`   📱 Dla urządzenia deviceIndex=${deviceIndex}`);
+      logger.debug(`   📱 Dla urządzenia deviceIndex=${deviceIndex}`);
     }
     
     // Lista pól, które serwisant może aktualizować
@@ -230,7 +231,7 @@ const handlePut = (req, res, visitId, employeeId) => {
     
     // ✅ MULTI-DEVICE: Zapisz modele dla konkretnego urządzenia
     if (models && Array.isArray(models) && typeof deviceIndex === 'number') {
-      console.log(`📱 Zapisuję ${models.length} model(i) dla urządzenia deviceIndex=${deviceIndex}`);
+      logger.debug(`📱 Zapisuję ${models.length} model(i) dla urządzenia deviceIndex=${deviceIndex}`);
       
       // Inicjalizuj deviceModels jeśli nie istnieje
       if (!result.visit.deviceModels) {
@@ -246,18 +247,18 @@ const handlePut = (req, res, visitId, employeeId) => {
           models: []
         };
         result.visit.deviceModels.push(deviceModelsEntry);
-        console.log(`   ✅ Utworzono nowy wpis deviceModels[${deviceIndex}]`);
+        logger.debug(`   ✅ Utworzono nowy wpis deviceModels[${deviceIndex}]`);
       }
       
       // Zaktualizuj modele dla tego urządzenia
       deviceModelsEntry.models = models;
-      console.log(`   ✅ Zaktualizowano modele dla urządzenia ${deviceIndex}`);
+      logger.debug(`   ✅ Zaktualizowano modele dla urządzenia ${deviceIndex}`);
       
       // Zachowaj backward compatibility - zapisz też do starego pola models
       // (tylko jeśli to pierwsze urządzenie deviceIndex=0)
       if (deviceIndex === 0) {
         result.visit.models = models;
-        console.log(`   ⚠️  Backward compatibility: skopiowano też do visit.models`);
+        logger.debug(`   ⚠️  Backward compatibility: skopiowano też do visit.models`);
       }
     }
     
@@ -266,87 +267,111 @@ const handlePut = (req, res, visitId, employeeId) => {
       const firstModel = models[0];
       const order = orders[result.orderIndex];
       
-      console.log(`🔍 Auto-fill check dla urządzenia ${deviceIndex}:`, firstModel.brand, firstModel.model);
+      logger.debug(`🔍 Auto-fill check dla urządzenia ${deviceIndex}:`, firstModel.brand, firstModel.model);
+      
+      // ✅ INICJALIZUJ order.devices[] jeśli nie istnieje
+      if (!order.devices || !Array.isArray(order.devices)) {
+        logger.debug(`   📦 Inicjalizuję order.devices[] (było puste)`);
+        order.devices = [];
+      }
+      
+      // ✅ UTWÓRZ urządzenie jeśli nie istnieje
+      if (!order.devices[deviceIndex]) {
+        logger.debug(`   📦 Tworzę order.devices[${deviceIndex}] (nie istniało)`);
+        order.devices[deviceIndex] = {
+          deviceIndex: deviceIndex,
+          deviceType: firstModel.type || firstModel.finalType || 'Nieznane',
+          brand: firstModel.brand || '',
+          model: firstModel.model || firstModel.finalModel || '',
+          serialNumber: firstModel.serialNumber || '',
+          notes: ''
+        };
+      }
       
       // Sprawdź czy urządzenie o tym indeksie istnieje w order.devices
       if (order.devices && order.devices[deviceIndex]) {
         const device = order.devices[deviceIndex];
         
-        console.log(`   📋 Aktualne dane urządzenia ${deviceIndex}:`, {
+        logger.debug(`   📋 Aktualne dane urządzenia ${deviceIndex}:`, {
           type: device.deviceType,
           brand: device.brand,
           model: device.model,
           sn: device.serialNumber
         });
         
-        // Uzupełnij puste pola w devices[deviceIndex]
+        // ✅ ZAWSZE nadpisuj dane z tabliczki znamionowej (są bardziej aktualne!)
         const isEmpty = (val) => !val || val === 'Nieznany' || val === 'Brak' || val === '';
         
-        if (isEmpty(device.deviceType)) {
-          device.deviceType = firstModel.type || firstModel.finalType || device.deviceType;
-          console.log(`   ✅ Auto-fill deviceType[${deviceIndex}]:`, device.deviceType);
+        // Nadpisz dane z modelu (tabliczka znamionowa ma priorytet)
+        if (firstModel.type || firstModel.finalType) {
+          const oldType = device.deviceType;
+          device.deviceType = firstModel.type || firstModel.finalType;
+          logger.debug(`   ✅ Nadpisano deviceType[${deviceIndex}]: "${oldType}" → "${device.deviceType}"`);
         }
         
-        if (isEmpty(device.brand)) {
-          device.brand = firstModel.brand || device.brand;
-          console.log(`   ✅ Auto-fill brand[${deviceIndex}]:`, device.brand);
+        if (firstModel.brand) {
+          const oldBrand = device.brand;
+          device.brand = firstModel.brand;
+          logger.debug(`   ✅ Nadpisano brand[${deviceIndex}]: "${oldBrand}" → "${device.brand}"`);
         }
         
-        if (isEmpty(device.model)) {
-          device.model = firstModel.model || firstModel.finalModel || device.model;
-          console.log(`   ✅ Auto-fill model[${deviceIndex}]:`, device.model);
+        if (firstModel.model || firstModel.finalModel) {
+          const oldModel = device.model;
+          device.model = firstModel.model || firstModel.finalModel;
+          logger.debug(`   ✅ Nadpisano model[${deviceIndex}]: "${oldModel}" → "${device.model}"`);
         }
         
-        if (isEmpty(device.serialNumber)) {
-          device.serialNumber = firstModel.serialNumber || device.serialNumber;
-          console.log(`   ✅ Auto-fill serialNumber[${deviceIndex}]:`, device.serialNumber);
+        if (firstModel.serialNumber) {
+          const oldSN = device.serialNumber;
+          device.serialNumber = firstModel.serialNumber;
+          logger.debug(`   ✅ Nadpisano serialNumber[${deviceIndex}]: "${oldSN}" → "${device.serialNumber}"`);
         }
         
         // ⚠️  Backward compatibility: Jeśli to pierwsze urządzenie, zaktualizuj też stare pola
         if (deviceIndex === 0) {
           if (isEmpty(order.deviceType)) {
             order.deviceType = device.deviceType;
-            console.log(`   ⚠️  Backward compat: order.deviceType =`, order.deviceType);
+            logger.debug(`   ⚠️  Backward compat: order.deviceType =`, order.deviceType);
           }
           if (isEmpty(order.brand)) {
             order.brand = device.brand;
-            console.log(`   ⚠️  Backward compat: order.brand =`, order.brand);
+            logger.debug(`   ⚠️  Backward compat: order.brand =`, order.brand);
           }
           if (isEmpty(order.model)) {
             order.model = device.model;
-            console.log(`   ⚠️  Backward compat: order.model =`, order.model);
+            logger.debug(`   ⚠️  Backward compat: order.model =`, order.model);
           }
           if (isEmpty(order.serialNumber)) {
             order.serialNumber = device.serialNumber;
-            console.log(`   ⚠️  Backward compat: order.serialNumber =`, order.serialNumber);
+            logger.debug(`   ⚠️  Backward compat: order.serialNumber =`, order.serialNumber);
           }
         }
         
-        console.log(`✅ Auto-fill zakończone dla urządzenia ${deviceIndex}`);
+        logger.debug(`✅ Auto-fill zakończone dla urządzenia ${deviceIndex}`);
       } else {
-        console.log(`⚠️  OSTRZEŻENIE: Urządzenie deviceIndex=${deviceIndex} nie istnieje w order.devices[]`);
+        logger.warn(`⚠️  OSTRZEŻENIE: Urządzenie deviceIndex=${deviceIndex} nie istnieje w order.devices[]`);
         
         // Fallback: stary sposób (dla backward compatibility)
         if (deviceIndex === 0) {
-          console.log(`   📌 Stosuj stary sposób auto-fill dla deviceIndex=0`);
+          logger.debug(`   📌 Stosuj stary sposób auto-fill dla deviceIndex=0`);
           
           const isEmpty = (val) => !val || val === 'Nieznany' || val === 'Brak' || val === '';
           
           if (isEmpty(order.deviceType)) {
             order.deviceType = firstModel.type || firstModel.finalType || order.deviceType;
-            console.log(`   ✅ Fallback: order.deviceType =`, order.deviceType);
+            logger.debug(`   ✅ Fallback: order.deviceType =`, order.deviceType);
           }
           if (isEmpty(order.brand)) {
             order.brand = firstModel.brand || order.brand;
-            console.log(`   ✅ Fallback: order.brand =`, order.brand);
+            logger.debug(`   ✅ Fallback: order.brand =`, order.brand);
           }
           if (isEmpty(order.model)) {
             order.model = firstModel.model || firstModel.finalModel || order.model;
-            console.log(`   ✅ Fallback: order.model =`, order.model);
+            logger.debug(`   ✅ Fallback: order.model =`, order.model);
           }
           if (isEmpty(order.serialNumber)) {
             order.serialNumber = firstModel.serialNumber || order.serialNumber;
-            console.log(`   ✅ Fallback: order.serialNumber =`, order.serialNumber);
+            logger.debug(`   ✅ Fallback: order.serialNumber =`, order.serialNumber);
           }
         }
       }
@@ -358,6 +383,12 @@ const handlePut = (req, res, visitId, employeeId) => {
     // Zaktualizuj timestamp zlecenia
     orders[result.orderIndex].updatedAt = new Date().toISOString();
     
+    // 🔍 DEBUG: Pokaż co zostanie zapisane do order.devices
+    if (models && deviceIndex !== undefined) {
+      logger.debug(`📊 Finalne order.devices[${deviceIndex}] przed zapisem:`, 
+        JSON.stringify(orders[result.orderIndex].devices?.[deviceIndex], null, 2));
+    }
+    
     // Zapisz do pliku
     const saved = writeOrders(orders);
     
@@ -368,16 +399,26 @@ const handlePut = (req, res, visitId, employeeId) => {
       });
     }
     
-    console.log(`✅ Wizyta ${visitId} zaktualizowana pomyślnie`);
+    logger.success(`✅ Wizyta ${visitId} zaktualizowana pomyślnie`);
+    
+    // 🔍 DEBUG: Sprawdź czy dane zostały zapisane do pliku
+    if (models && deviceIndex !== undefined) {
+      const rereadOrders = readOrders();
+      const rereadOrder = rereadOrders.find(o => o.id === orders[result.orderIndex].id);
+      logger.debug(`🔍 Weryfikacja zapisu - order.devices[${deviceIndex}] po odczycie z pliku:`,
+        JSON.stringify(rereadOrder?.devices?.[deviceIndex], null, 2));
+    }
     
     return res.status(200).json({
       success: true,
       message: 'Visit updated successfully',
-      visit: result.visit
+      visit: result.visit,
+      // ✅ Zwróć też zaktualizowane devices dla frontendu
+      orderDevices: orders[result.orderIndex].devices
     });
     
   } catch (error) {
-    console.error('❌ Error updating visit:', error);
+    logger.error('❌ Error updating visit:', error);
     return res.status(500).json({
       success: false,
       message: 'Server error',
@@ -429,7 +470,7 @@ export default function handler(req, res) {
     });
   }
 
-  console.log(`📞 API ${req.method} /api/technician/visits/${visitId} - Pracownik: ${employeeId}`);
+  logger.debug(`📞 API ${req.method} /api/technician/visits/${visitId} - Pracownik: ${employeeId}`);
 
   // Routing
   if (req.method === 'GET') {

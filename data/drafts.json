@@ -1,44 +1,5 @@
 [
   {
-    "id": "DRAFT-1759777702871",
-    "userId": null,
-    "adminId": "ADMIN-1759777694426",
-    "formData": {
-      "categories": [
-        "Pralka"
-      ],
-      "devices": [],
-      "brands": [
-        "Amica"
-      ],
-      "problems": [
-        "Nie pobiera wody"
-      ],
-      "hasBuiltIn": [
-        true
-      ],
-      "hasDemontaz": [
-        true
-      ],
-      "hasMontaz": [
-        true
-      ],
-      "hasTrudnaZabudowa": [],
-      "postalCode": "28-133",
-      "city": "Pacanow",
-      "street": "Słupia 114",
-      "name": "Mariusz Bielaszka",
-      "phone": "572772540",
-      "email": "",
-      "timeSlot": "Cały dzień",
-      "additionalNotes": ""
-    },
-    "currentStep": 4,
-    "createdAt": "2025-10-06T19:08:22.871Z",
-    "updatedAt": "2025-10-06T19:08:54.182Z",
-    "status": "active"
-  },
-  {
     "id": "DRAFT-1759782027310",
     "userId": null,
     "adminId": "ADMIN-1759782009719",

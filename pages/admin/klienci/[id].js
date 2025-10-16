@@ -7,8 +7,10 @@ import AdminLayout from '../../../components/AdminLayout';
 import AvailabilityScheduler from '../../../components/AvailabilityScheduler';
 import { 
   FiSave, FiX, FiChevronLeft, FiUser, FiPhone, FiMail, 
-  FiMapPin, FiCalendar, FiAlertCircle, FiClock, FiTool, FiHome
+  FiMapPin, FiCalendar, FiAlertCircle, FiClock, FiTool, FiHome,
+  FiShield, FiLock, FiUnlock, FiKey, FiActivity, FiLogOut
 } from 'react-icons/fi';
+import { showToast } from '../../../utils/toast';
 
 export default function KlientDetale() {
   const router = useRouter();
@@ -18,6 +20,15 @@ export default function KlientDetale() {
   const [saving, setSaving] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
   const [errors, setErrors] = useState({});
+  
+  // Security state
+  const [securityInfo, setSecurityInfo] = useState(null);
+  const [loadingSecurity, setLoadingSecurity] = useState(false);
+  const [showSecurityModal, setShowSecurityModal] = useState(false);
+  const [securityAction, setSecurityAction] = useState(null); // 'reset', 'lock', 'unlock', 'sessions'
+  const [newPassword, setNewPassword] = useState('');
+  const [lockReason, setLockReason] = useState('');
+  const [processingAction, setProcessingAction] = useState(false);
 
   const [klient, setKlient] = useState({
     name: '',
@@ -41,6 +52,7 @@ export default function KlientDetale() {
   useEffect(() => {
     if (id) {
       loadKlient();
+      loadSecurityInfo();
     }
   }, [id]);
 
@@ -65,15 +77,15 @@ export default function KlientDetale() {
         
         setKlient(data);
       } else if (response.status === 404) {
-        alert('Nie znaleziono klienta o ID: ' + id);
+        showToast.error('Nie znaleziono klienta o ID: ' + id);
         router.push('/admin/klienci');
       } else {
-        alert(data.message || 'Nie znaleziono klienta');
+        showToast.error(data.message || 'Nie znaleziono klienta');
         router.push('/admin/klienci');
       }
     } catch (error) {
       console.error('❌ Błąd pobierania klienta:', error);
-      alert('Błąd połączenia z serwerem');
+      showToast.error('Błąd połączenia z serwerem');
       router.push('/admin/klienci');
     } finally {
       setLoading(false);
@@ -104,7 +116,7 @@ export default function KlientDetale() {
 
   const handleSave = async () => {
     if (!validate()) {
-      alert('Proszę wypełnić wszystkie wymagane pola');
+      showToast.warning('Proszę wypełnić wszystkie wymagane pola');
       return;
     }
 
@@ -132,15 +144,15 @@ export default function KlientDetale() {
 
       if (response.ok) {
         setHasChanges(false);
-        alert('Dane klienta zostały zaktualizowane');
+        showToast.success('Dane klienta zostały zaktualizowane');
         await loadKlient();
       } else {
         const data = await response.json();
-        alert(data.message || 'Błąd podczas zapisywania');
+        showToast.error(data.message || 'Błąd podczas zapisywania');
       }
     } catch (error) {
       console.error('Błąd:', error);
-      alert('Błąd połączenia z serwerem');
+      showToast.error('Błąd połączenia z serwerem');
     } finally {
       setSaving(false);
     }
@@ -148,12 +160,200 @@ export default function KlientDetale() {
 
   const handleCancel = () => {
     if (hasChanges) {
-      if (confirm('Masz niezapisane zmiany. Czy na pewno chcesz wyjść?')) {
-        router.push('/admin/klienci');
-      }
+      showToast.confirm(
+        'Masz niezapisane zmiany. Czy na pewno chcesz wyjść?',
+        () => router.push('/admin/klienci')
+      );
     } else {
       router.push('/admin/klienci');
     }
+  };
+
+  // ===========================
+  // SECURITY FUNCTIONS
+  // ===========================
+  
+  const loadSecurityInfo = async () => {
+    try {
+      setLoadingSecurity(true);
+      const response = await fetch(`/api/admin/client-accounts?action=getSecurityInfo&clientId=${id}`);
+      const data = await response.json();
+      
+      if (data.success) {
+        setSecurityInfo(data.securityInfo);
+      }
+    } catch (error) {
+      console.error('Błąd ładowania informacji bezpieczeństwa:', error);
+    } finally {
+      setLoadingSecurity(false);
+    }
+  };
+
+  const handleResetPassword = async () => {
+    if (!newPassword || newPassword.length < 6) {
+      showToast.warning('Hasło musi mieć minimum 6 znaków');
+      return;
+    }
+
+    showToast.confirm(
+      `Czy na pewno chcesz zresetować hasło dla ${klient.name}?\n\nWszystkie sesje użytkownika zostaną unieważnione.`,
+      async () => {
+        try {
+          setProcessingAction(true);
+      const response = await fetch('/api/admin/client-accounts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'resetPassword',
+          clientId: id,
+          newPassword,
+          adminId: 'admin', // TODO: Pobierz z sesji admina
+          adminName: 'Administrator'
+        })
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        showToast.success(data.message);
+        setShowSecurityModal(false);
+        setNewPassword('');
+        await loadSecurityInfo();
+        await loadKlient();
+      } else {
+        showToast.error(data.message);
+      }
+    } catch (error) {
+      console.error('Błąd resetowania hasła:', error);
+      showToast.error('Błąd połączenia z serwerem');
+    } finally {
+      setProcessingAction(false);
+    }
+      }
+    );
+  };
+
+  const handleLockAccount = async () => {
+    if (!lockReason.trim()) {
+      showToast.warning('Podaj powód blokady konta');
+      return;
+    }
+
+    showToast.confirm(
+      `Czy na pewno chcesz ZABLOKOWAĆ konto ${klient.name}?\n\nUżytkownik nie będzie mógł się zalogować.`,
+      async () => {
+        try {
+          setProcessingAction(true);
+      const response = await fetch('/api/admin/client-accounts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'lockAccount',
+          clientId: id,
+          reason: lockReason,
+          adminId: 'admin',
+          adminName: 'Administrator'
+        })
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        showToast.success(data.message);
+        setShowSecurityModal(false);
+        setLockReason('');
+        await loadSecurityInfo();
+        await loadKlient();
+      } else {
+        showToast.error(data.message);
+      }
+    } catch (error) {
+      console.error('Błąd blokowania konta:', error);
+      showToast.error('Błąd połączenia z serwerem');
+    } finally {
+      setProcessingAction(false);
+    }
+      }
+    );
+  };
+
+  const handleUnlockAccount = async () => {
+    showToast.confirm(
+      `Czy na pewno chcesz ODBLOKOWAĆ konto ${klient.name}?\n\nUżytkownik będzie mógł się ponownie zalogować.`,
+      async () => {
+        try {
+          setProcessingAction(true);
+          const response = await fetch('/api/admin/client-accounts', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              action: 'unlockAccount',
+              clientId: id,
+              adminId: 'admin',
+              adminName: 'Administrator'
+            })
+          });
+
+          const data = await response.json();
+
+          if (data.success) {
+            showToast.success(data.message);
+            await loadSecurityInfo();
+            await loadKlient();
+          } else {
+            showToast.error(data.message);
+          }
+        } catch (error) {
+          console.error('Błąd odblokowywania konta:', error);
+          showToast.error('Błąd połączenia z serwerem');
+        } finally {
+          setProcessingAction(false);
+        }
+      }
+    );
+  };
+
+  const handleInvalidateAllSessions = async () => {
+    showToast.confirm(
+      `Czy na pewno chcesz unieważnić WSZYSTKIE SESJE użytkownika ${klient.name}?\n\nUżytkownik będzie musiał zalogować się ponownie.`,
+      async () => {
+        try {
+          setProcessingAction(true);
+          const response = await fetch('/api/admin/client-accounts', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              action: 'invalidateAllSessions',
+              clientId: id,
+              adminId: 'admin',
+              adminName: 'Administrator'
+            })
+          });
+
+          const data = await response.json();
+
+          if (data.success) {
+            showToast.success(data.message);
+            setShowSecurityModal(false);
+            await loadSecurityInfo();
+          } else {
+            showToast.error(data.message);
+          }
+        } catch (error) {
+          console.error('Błąd unieważniania sesji:', error);
+          showToast.error('Błąd połączenia z serwerem');
+        } finally {
+          setProcessingAction(false);
+        }
+      }
+    );
+  };
+
+  const openSecurityModal = (action) => {
+    setSecurityAction(action);
+    setShowSecurityModal(true);
+    setNewPassword('');
+    setLockReason('');
   };
 
   if (loading) {
@@ -377,6 +577,186 @@ export default function KlientDetale() {
         </div>
 
         {/* Grid z historią i metadanymi */}
+        {/* Security Section */}
+        {securityInfo && (
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+              <FiShield className="mr-2 h-5 w-5 text-blue-600" />
+              Bezpieczeństwo konta
+            </h3>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {/* Status konta */}
+              <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+                <div className="text-xs text-gray-500 mb-1">Status konta</div>
+                <div className="flex items-center space-x-2">
+                  {securityInfo.isLocked ? (
+                    <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800">
+                      <FiLock className="mr-1 h-4 w-4" />
+                      Zablokowane
+                    </span>
+                  ) : securityInfo.hasPassword ? (
+                    <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                      <FiUnlock className="mr-1 h-4 w-4" />
+                      Aktywne
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-800">
+                      <FiUser className="mr-1 h-4 w-4" />
+                      Bez konta
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              {/* Hasło */}
+              <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+                <div className="text-xs text-gray-500 mb-1">Hasło</div>
+                <div className="text-sm font-medium text-gray-900">
+                  {securityInfo.hasPassword ? (
+                    <span className="text-green-600">✓ Ustawione</span>
+                  ) : (
+                    <span className="text-gray-400">— Nie ustawione</span>
+                  )}
+                </div>
+                {securityInfo.passwordResetAt && (
+                  <div className="text-xs text-gray-500 mt-1">
+                    Reset: {new Date(securityInfo.passwordResetAt).toLocaleDateString('pl-PL')}
+                  </div>
+                )}
+              </div>
+
+              {/* Nieudane próby logowania */}
+              <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+                <div className="text-xs text-gray-500 mb-1">Nieudane próby logowania</div>
+                <div className="text-sm font-medium">
+                  <span className={`${securityInfo.failedLoginAttempts >= 3 ? 'text-red-600' : 'text-gray-900'}`}>
+                    {securityInfo.failedLoginAttempts} / {securityInfo.maxFailedAttempts}
+                  </span>
+                </div>
+                {securityInfo.failedLoginAttempts > 0 && (
+                  <div className="text-xs text-orange-600 mt-1">
+                    ⚠️ Wykryto nieudane próby
+                  </div>
+                )}
+              </div>
+
+              {/* Ostatnie logowanie */}
+              <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+                <div className="text-xs text-gray-500 mb-1">Ostatnie logowanie</div>
+                <div className="text-sm font-medium text-gray-900">
+                  {securityInfo.lastLogin ? (
+                    <>
+                      {new Date(securityInfo.lastLogin).toLocaleDateString('pl-PL')}
+                      <div className="text-xs text-gray-500">
+                        {new Date(securityInfo.lastLogin).toLocaleTimeString('pl-PL')}
+                      </div>
+                    </>
+                  ) : (
+                    <span className="text-gray-400">Nigdy</span>
+                  )}
+                </div>
+                {securityInfo.lastLoginMethod && (
+                  <div className="text-xs text-blue-600 mt-1">
+                    {securityInfo.lastLoginMethod === 'email' ? '📧 Email' : 
+                     securityInfo.lastLoginMethod === 'phone' ? '📱 Telefon' : 
+                     '📦 Zamówienie'}
+                  </div>
+                )}
+              </div>
+
+              {/* Aktywne sesje */}
+              <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+                <div className="text-xs text-gray-500 mb-1">Aktywne sesje</div>
+                <div className="text-sm font-medium text-gray-900">
+                  {securityInfo.activeSessions || 0}
+                  {securityInfo.totalSessions > 0 && (
+                    <span className="text-xs text-gray-500"> / {securityInfo.totalSessions} całk.</span>
+                  )}
+                </div>
+                {securityInfo.activeSessions > 0 && (
+                  <button
+                    onClick={() => openSecurityModal('sessions')}
+                    className="text-xs text-blue-600 hover:text-blue-800 mt-1"
+                  >
+                    Zobacz szczegóły →
+                  </button>
+                )}
+              </div>
+
+              {/* Info o blokadzie */}
+              {securityInfo.isLocked && (
+                <div className="p-4 bg-red-50 rounded-lg border border-red-200 md:col-span-2 lg:col-span-3">
+                  <div className="flex items-start">
+                    <FiLock className="h-5 w-5 text-red-600 mr-2 flex-shrink-0 mt-0.5" />
+                    <div className="flex-1">
+                      <div className="text-sm font-medium text-red-900 mb-1">
+                        Konto zablokowane
+                      </div>
+                      {securityInfo.lockReason && (
+                        <div className="text-xs text-red-700 mb-1">
+                          Powód: {securityInfo.lockReason}
+                        </div>
+                      )}
+                      {securityInfo.lockedAt && (
+                        <div className="text-xs text-red-600">
+                          Zablokowano: {new Date(securityInfo.lockedAt).toLocaleString('pl-PL')}
+                          {securityInfo.lockedByName && ` przez ${securityInfo.lockedByName}`}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Action buttons */}
+            {securityInfo.hasPassword && (
+              <div className="mt-6 pt-6 border-t border-gray-200">
+                <div className="flex flex-wrap gap-3">
+                  <button
+                    onClick={() => openSecurityModal('reset')}
+                    className="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
+                  >
+                    <FiKey className="mr-2 h-4 w-4" />
+                    Resetuj hasło
+                  </button>
+
+                  {securityInfo.isLocked ? (
+                    <button
+                      onClick={handleUnlockAccount}
+                      disabled={processingAction}
+                      className="inline-flex items-center px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50"
+                    >
+                      <FiUnlock className="mr-2 h-4 w-4" />
+                      Odblokuj konto
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => openSecurityModal('lock')}
+                      className="inline-flex items-center px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 transition-colors"
+                    >
+                      <FiLock className="mr-2 h-4 w-4" />
+                      Zablokuj konto
+                    </button>
+                  )}
+
+                  {securityInfo.activeSessions > 0 && (
+                    <button
+                      onClick={handleInvalidateAllSessions}
+                      disabled={processingAction}
+                      className="inline-flex items-center px-4 py-2 bg-orange-600 text-white text-sm font-medium rounded-lg hover:bg-orange-700 transition-colors disabled:opacity-50"
+                    >
+                      <FiLogOut className="mr-2 h-4 w-4" />
+                      Wyloguj ze wszystkich urządzeń
+                    </button>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Historia wizyt */}
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
@@ -436,6 +816,183 @@ export default function KlientDetale() {
             </div>
           </div>
         </div>
+
+      {/* Security Modal */}
+      {showSecurityModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              {/* Header */}
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-lg font-semibold text-gray-900">
+                  {securityAction === 'reset' && '🔑 Resetuj hasło'}
+                  {securityAction === 'lock' && '🔒 Zablokuj konto'}
+                  {securityAction === 'sessions' && '📱 Aktywne sesje'}
+                </h3>
+                <button
+                  onClick={() => setShowSecurityModal(false)}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  <FiX className="h-6 w-6" />
+                </button>
+              </div>
+
+              {/* Content */}
+              <div className="space-y-4">
+                {securityAction === 'reset' && (
+                  <>
+                    <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
+                      <div className="flex items-start">
+                        <FiAlertCircle className="h-5 w-5 text-blue-600 mr-2 flex-shrink-0 mt-0.5" />
+                        <div className="text-sm text-blue-800">
+                          <p className="font-medium mb-1">Resetowanie hasła</p>
+                          <p>Ustaw nowe hasło dla użytkownika {klient.name}. Wszystkie sesje zostaną unieważnione.</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Nowe hasło (min. 6 znaków)
+                      </label>
+                      <input
+                        type="password"
+                        value={newPassword}
+                        onChange={(e) => setNewPassword(e.target.value)}
+                        placeholder="Wprowadź nowe hasło..."
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      />
+                    </div>
+
+                    <div className="flex justify-end space-x-3 pt-4">
+                      <button
+                        onClick={() => setShowSecurityModal(false)}
+                        className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+                      >
+                        Anuluj
+                      </button>
+                      <button
+                        onClick={handleResetPassword}
+                        disabled={processingAction || !newPassword || newPassword.length < 6}
+                        className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {processingAction ? 'Resetowanie...' : 'Resetuj hasło'}
+                      </button>
+                    </div>
+                  </>
+                )}
+
+                {securityAction === 'lock' && (
+                  <>
+                    <div className="p-4 bg-red-50 rounded-lg border border-red-200">
+                      <div className="flex items-start">
+                        <FiAlertCircle className="h-5 w-5 text-red-600 mr-2 flex-shrink-0 mt-0.5" />
+                        <div className="text-sm text-red-800">
+                          <p className="font-medium mb-1">Blokada konta</p>
+                          <p>Użytkownik {klient.name} nie będzie mógł się zalogować do systemu. Wszystkie sesje zostaną unieważnione.</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Powód blokady
+                      </label>
+                      <textarea
+                        value={lockReason}
+                        onChange={(e) => setLockReason(e.target.value)}
+                        placeholder="Np. Podejrzana aktywność, naruszenie regulaminu..."
+                        rows="3"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      />
+                    </div>
+
+                    <div className="flex justify-end space-x-3 pt-4">
+                      <button
+                        onClick={() => setShowSecurityModal(false)}
+                        className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+                      >
+                        Anuluj
+                      </button>
+                      <button
+                        onClick={handleLockAccount}
+                        disabled={processingAction || !lockReason.trim()}
+                        className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {processingAction ? 'Blokowanie...' : 'Zablokuj konto'}
+                      </button>
+                    </div>
+                  </>
+                )}
+
+                {securityAction === 'sessions' && securityInfo && (
+                  <>
+                    <div className="space-y-3">
+                      {securityInfo.sessions && securityInfo.sessions.length > 0 ? (
+                        securityInfo.sessions.map((session, index) => (
+                          <div key={index} className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+                            <div className="flex items-start justify-between mb-2">
+                              <div className="flex items-center text-sm font-medium text-gray-900">
+                                <FiActivity className="mr-2 h-4 w-4 text-green-600" />
+                                Aktywna sesja
+                              </div>
+                              <span className="text-xs text-gray-500">
+                                {session.token}
+                              </span>
+                            </div>
+                            <div className="space-y-1 text-xs text-gray-600">
+                              <div>
+                                <span className="font-medium">Metoda:</span>{' '}
+                                {session.loginMethod === 'email' ? '📧 Email' : 
+                                 session.loginMethod === 'phone' ? '📱 Telefon' : '📦 Zamówienie'}
+                              </div>
+                              <div>
+                                <span className="font-medium">Zalogowano:</span>{' '}
+                                {new Date(session.createdAt).toLocaleString('pl-PL')}
+                              </div>
+                              <div>
+                                <span className="font-medium">Ostatnia aktywność:</span>{' '}
+                                {new Date(session.lastActivity).toLocaleString('pl-PL')}
+                              </div>
+                              {session.ip !== 'unknown' && (
+                                <div>
+                                  <span className="font-medium">IP:</span> {session.ip}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        ))
+                      ) : (
+                        <div className="text-center py-8 text-gray-500">
+                          Brak aktywnych sesji
+                        </div>
+                      )}
+                    </div>
+
+                    {securityInfo.activeSessions > 0 && (
+                      <div className="flex justify-end space-x-3 pt-4 border-t border-gray-200">
+                        <button
+                          onClick={() => setShowSecurityModal(false)}
+                          className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+                        >
+                          Zamknij
+                        </button>
+                        <button
+                          onClick={handleInvalidateAllSessions}
+                          disabled={processingAction}
+                          className="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 disabled:opacity-50"
+                        >
+                          {processingAction ? 'Wylogowywanie...' : 'Wyloguj ze wszystkich'}
+                        </button>
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </AdminLayout>
   );
 }

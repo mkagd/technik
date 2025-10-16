@@ -1,11 +1,13 @@
 // pages/admin/zamowienia/nowe.js
 // Formularz dodawania nowego zlecenia (pełna wersja z rezerwacji)
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/router';
 import AdminLayout from '../../../components/AdminLayout';
 import AvailabilityScheduler from '../../../components/AvailabilityScheduler';
 import DateRangePicker from '../../../components/DateRangePicker';
+import GoogleGeocoder from '../../../geocoding/simple/GoogleGeocoder.js';
+import { STATUS_LABELS, STATUS_COLORS, STATUS_ICONS } from '../../../utils/orderStatusConstants';
 import { 
   FiSave, FiArrowLeft, FiUser, FiPhone, FiMail, FiMapPin, 
   FiCalendar, FiTool, FiFileText, FiAlertCircle, FiPlus, FiTrash2, FiHome
@@ -15,6 +17,9 @@ export default function NoweZamowienie() {
   const router = useRouter();
   const [saving, setSaving] = useState(false);
   const [errors, setErrors] = useState({});
+  
+  // 🌍 Geocoder reference
+  const geocoder = useRef(null);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -85,12 +90,25 @@ export default function NoweZamowienie() {
     'Sharp', 'Siemens', 'Whirlpool', 'Zanussi', 'Inne'
   ];
 
-  const bookingStatuses = [
-    { value: 'pending', label: 'Oczekuje na kontakt' },
-    { value: 'contacted', label: 'Skontaktowano się' },
-    { value: 'scheduled', label: 'Umówiona wizyta' },
-    { value: 'confirmed', label: 'Potwierdzona' }
-  ];
+  const bookingStatuses = Object.keys(STATUS_LABELS).map(statusKey => ({
+    value: statusKey,
+    label: STATUS_LABELS[statusKey],
+    color: STATUS_COLORS[statusKey] || 'bg-gray-100 text-gray-800',
+    icon: STATUS_ICONS[statusKey] || '📋'
+  }));
+  
+  // 🌍 Inicjalizacja geocodera (Nominatim - nie wymaga API key!)
+  useEffect(() => {
+    const initGeocoder = async () => {
+      try {
+        geocoder.current = new GoogleGeocoder(); // Nominatim nie wymaga API key! 🎉
+        console.log('🌍 Nominatim Geocoder zainicjalizowany (100% DARMOWY)');
+      } catch (error) {
+        console.error('❌ Błąd inicjalizacji geocodera:', error);
+      }
+    };
+    initGeocoder();
+  }, []);
 
   const handleChange = (field, value) => {
     setFormData({ ...formData, [field]: value });
@@ -340,6 +358,35 @@ export default function NoweZamowienie() {
       const primaryAddress = addresses.find(a => a.isPrimary) || addresses[0];
       const primaryDevice = devices[0];
 
+      // 🌍 GEOCODING - Pobierz współrzędne GPS dla adresu
+      let clientLocation = null;
+      const fullAddress = `${primaryAddress.street}, ${primaryAddress.postalCode || ''} ${primaryAddress.city}`.trim();
+      
+      if (geocoder.current) {
+        try {
+          console.log('📍 Geocoding adresu (zamówienie):', fullAddress);
+          const geocodeResult = await geocoder.current.geocode(fullAddress);
+          
+          if (geocodeResult.success) {
+            clientLocation = {
+              address: geocodeResult.data.address,
+              coordinates: {
+                lat: geocodeResult.data.lat,
+                lng: geocodeResult.data.lng
+              },
+              accuracy: geocodeResult.data.accuracy,
+              confidence: geocodeResult.data.confidence
+            };
+            console.log('✅ Geocoding sukces (zamówienie):', clientLocation);
+          } else {
+            console.warn('⚠️ Geocoding nie powiódł się, kontynuuję bez współrzędnych');
+          }
+        } catch (geocodeError) {
+          console.error('❌ Błąd geocodingu:', geocodeError);
+          // Nie przerywamy - kontynuujemy bez współrzędnych
+        }
+      }
+
       // Przygotuj dane do wysłania
       const submitData = {
         ...formData,
@@ -348,7 +395,9 @@ export default function NoweZamowienie() {
         // Główny adres (dla kompatybilności)
         city: primaryAddress.city,
         street: primaryAddress.street,
-        fullAddress: `${primaryAddress.street}, ${primaryAddress.postalCode || ''} ${primaryAddress.city}`.trim(),
+        fullAddress: fullAddress,
+        // 🌍 WSPÓŁRZĘDNE GPS
+        clientLocation: clientLocation,
         // Główne urządzenie (dla kompatybilności)
         category: primaryDevice.category,
         device: primaryDevice.model || primaryDevice.brand || primaryDevice.category,

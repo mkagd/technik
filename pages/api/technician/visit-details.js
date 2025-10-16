@@ -3,6 +3,7 @@
 
 import fs from 'fs';
 import path from 'path';
+import { logger } from '../../../utils/logger';
 
 const ORDERS_FILE = path.join(process.cwd(), 'data', 'orders.json');
 const SESSIONS_FILE = path.join(process.cwd(), 'data', 'technician-sessions.json');
@@ -17,7 +18,7 @@ const readOrders = () => {
     const data = fs.readFileSync(ORDERS_FILE, 'utf8');
     return JSON.parse(data);
   } catch (error) {
-    console.error('❌ Error reading orders.json:', error);
+    logger.error('❌ Error reading orders.json:', error);
     return [];
   }
 };
@@ -30,7 +31,7 @@ const readClients = () => {
     }
     return [];
   } catch (error) {
-    console.error('❌ Error reading clients.json:', error);
+    logger.error('❌ Error reading clients.json:', error);
     return [];
   }
 };
@@ -43,26 +44,39 @@ const readSessions = () => {
     }
     return [];
   } catch (error) {
-    console.error('❌ Error reading sessions:', error);
+    logger.error('❌ Error reading sessions:', error);
     return [];
   }
 };
 
-// Waliduj token
+// Waliduj token (multi-auth: technician-sessions + employee-sessions)
 const validateToken = (token) => {
+  // Try technician-sessions.json (primary)
   const sessions = readSessions();
   const session = sessions.find(s => s.token === token && s.isValid);
   
-  if (!session) return null;
-  
-  const expirationTime = 7 * 24 * 60 * 60 * 1000;
-  const sessionAge = Date.now() - new Date(session.createdAt).getTime();
-  
-  if (sessionAge > expirationTime) {
-    return null;
+  if (session) {
+    // ✅ Jeśli jest isValid: true, to token jest aktywny (nie sprawdzamy daty)
+    logger.debug(`✅ Valid technician token for ${session.employeeId}`);
+    return session.employeeId;
   }
   
-  return session.employeeId;
+  // Try employee-sessions.json (fallback for pracownik-logowanie)
+  const employeeSessionsPath = path.join(process.cwd(), 'data', 'employee-sessions.json');
+  if (fs.existsSync(employeeSessionsPath)) {
+    try {
+      const empSessions = JSON.parse(fs.readFileSync(employeeSessionsPath, 'utf-8'));
+      const empSession = empSessions.find(s => s.token === token && s.isValid);
+      if (empSession) {
+        logger.debug(`✅ Valid employee token for ${empSession.employeeId}`);
+        return empSession.employeeId;
+      }
+    } catch (error) {
+      logger.error('Error reading employee-sessions:', error);
+    }
+  }
+  
+  return null;
 };
 
 // Znajdź wizytę po ID
@@ -108,7 +122,7 @@ const buildVisitDetails = (visitData) => {
     return {
       visitId: `VIS-${order.orderNumber}`,
       orderNumber: order.orderNumber,
-      orderId: order.id,
+      orderId: order.orderNumber || order.id, // ✅ Use orderNumber as primary orderId
       type: 'repair',
       typeLabel: 'Naprawa',
       status: mapOrderStatusToVisitStatus(order.status),
@@ -191,6 +205,8 @@ const buildVisitDetails = (visitData) => {
       
       // Części
       parts: {
+        // 🆕 Główna lista części przypisanych (dla starych zleceń bez systemu wizyt)
+        assigned: order.parts || [],
         needed: order.partsNeeded || [],
         used: order.partsUsed || [],
         ordered: order.partsOrdered || [],
@@ -261,7 +277,7 @@ const buildVisitDetails = (visitData) => {
   return {
     visitId: visit.visitId,
     orderNumber: order.orderNumber,
-    orderId: order.id,
+    orderId: visit.orderId || order.orderNumber || order.id, // ✅ Use visit.orderId first, then orderNumber
     type: visit.type,
     typeLabel: getVisitTypeLabel(visit.type),
     status: visit.status,
@@ -299,7 +315,7 @@ const buildVisitDetails = (visitData) => {
       } : {})
     },
     
-    // Urządzenie
+    // Urządzenie (backward compatibility - pojedyncze urządzenie)
     device: {
       type: order.deviceType || order.category,
       brand: order.brand,
@@ -321,6 +337,12 @@ const buildVisitDetails = (visitData) => {
       previousIssues: order.deviceHistory?.issues || []
     },
     
+    // ✅ MULTI-DEVICE: Tablica wszystkich urządzeń ze zlecenia
+    devices: order.devices || [],
+    
+    // ✅ MULTI-DEVICE: Modele zeskanowane dla każdego urządzenia
+    deviceModels: visit.deviceModels || [],
+    
     // Problem i diagnoza
     problem: {
       description: order.problemDescription || order.description,
@@ -340,6 +362,8 @@ const buildVisitDetails = (visitData) => {
     
     // Części
     parts: {
+      // 🆕 Główna lista części przypisanych do wizyty (z zamówienia)
+      assigned: visit.parts || order.parts || [],
       needed: visit.partsNeeded || order.partsNeeded || [],
       used: visit.partsUsed || [],
       ordered: visit.partsOrdered || order.partsOrdered || [],
@@ -509,7 +533,7 @@ export default function handler(req, res) {
       });
     }
 
-    console.log(`🔍 Szukam wizyty ${visitId} dla pracownika ${employeeId}`);
+    logger.debug(`🔍 Szukam wizyty ${visitId} dla pracownika ${employeeId}`);
 
     // Znajdź wizytę
     const visitData = findVisitById(visitId);
@@ -539,7 +563,7 @@ export default function handler(req, res) {
     // Buduj pełne szczegóły
     const fullDetails = buildVisitDetails(visitData);
 
-    console.log(`✅ Zwracam szczegóły wizyty ${visitId}`);
+    logger.success(`✅ Zwracam szczegóły wizyty ${visitId}`);
 
     return res.status(200).json({
       success: true,
@@ -549,7 +573,7 @@ export default function handler(req, res) {
     });
 
   } catch (error) {
-    console.error('❌ Error fetching visit details:', error);
+    logger.error('❌ Error fetching visit details:', error);
     return res.status(500).json({
       success: false,
       message: 'Server error',

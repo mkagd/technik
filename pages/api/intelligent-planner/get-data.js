@@ -4,10 +4,11 @@
 
 import fs from 'fs';
 import path from 'path';
+import { logger } from '../../../utils/logger';
 
 // Helper do logowania
 const log = (message, data) => {
-  console.log(`[Intelligent Planner API] ${message}`, data || '');
+  logger.debug(`[Intelligent Planner API] ${message}`, data || '');
 };
 
 // Pomocnicze funkcje do ładowania danych z plików JSON
@@ -18,10 +19,10 @@ const loadJSONFile = (filename) => {
       const fileData = fs.readFileSync(filePath, 'utf8');
       return JSON.parse(fileData);
     }
-    console.warn(`⚠️ File not found: ${filename}`);
+    logger.warn(`⚠️ File not found: ${filename}`);
     return [];
   } catch (error) {
-    console.error(`❌ Error loading ${filename}:`, error);
+    logger.error(`❌ Error loading ${filename}:`, error);
     return [];
   }
 };
@@ -83,7 +84,7 @@ const formatOrderForPlanner = (order) => {
     // Spróbuj oszacować z adresu
     const address = order.address || order.clientAddress || order.city;
     coordinates = estimateCoordinatesFromAddress(address);
-    console.log(`📍 Estimated coordinates for ${order.clientName || order.id}: ${address} -> ${coordinates.lat}, ${coordinates.lng}`);
+    logger.debug(`📍 Estimated coordinates for ${order.clientName || order.id}: ${address} -> ${coordinates.lat}, ${coordinates.lng}`);
   }
   
   return {
@@ -165,7 +166,7 @@ export default async function handler(req, res) {
   try {
     const { servicemanId, week } = req.query;
     
-    console.log('📊 Intelligent Planner - fetching data:', { servicemanId, week });
+    logger.debug('📊 Intelligent Planner - fetching data:', { servicemanId, week });
     
     // Pobierz zlecenia z pliku JSON
     let orders = loadJSONFile('orders.json');
@@ -196,7 +197,7 @@ export default async function handler(req, res) {
       // Połącz: zlecenia przypisane + niezapisane
       orders = [...assignedOrders, ...unassignedOrders];
       
-      console.log(`🔍 Filtered for serviceman ${servicemanId}: ${assignedOrders.length} assigned + ${unassignedOrders.length} unassigned = ${orders.length} total`);
+      logger.debug(`🔍 Filtered for serviceman ${servicemanId}: ${assignedOrders.length} assigned + ${unassignedOrders.length} unassigned = ${orders.length} total`);
     }
     
     // 🔄 Filtruj zlecenia - tylko aktywne (ACTIVE_STATUSES)
@@ -230,7 +231,7 @@ export default async function handler(req, res) {
         }))
       );
       
-      console.log(`📋 Wszystkich wizyt w systemie: ${visits.length}`);
+      logger.debug(`📋 Wszystkich wizyt w systemie: ${visits.length}`);
       
       // Filtruj wizyty dla konkretnego serwisanta jeśli podano
       if (servicemanId && servicemanId !== 'all') {
@@ -241,17 +242,17 @@ export default async function handler(req, res) {
           v.servicemanId === servicemanId ||
           v.assignedTo === servicemanId
         );
-        console.log(`🔍 Po filtrze serwisanta ${servicemanId}: ${visits.length} wizyt (było ${beforeFilter})`);
+        logger.debug(`🔍 Po filtrze serwisanta ${servicemanId}: ${visits.length} wizyt (było ${beforeFilter})`);
       }
       
       // 🔄 Filtruj tylko aktywne wizyty (nie pokazuj completed, cancelled, no_show)
       const ACTIVE_VISIT_STATUSES = ['scheduled', 'confirmed', 'in_progress', 'pending'];
       visits = visits.filter(v => ACTIVE_VISIT_STATUSES.includes(v.status));
       
-      console.log(`✅ Finalna liczba wizyt: ${visits.length} (statuses: ${ACTIVE_VISIT_STATUSES.join(', ')})`);
+      logger.debug(`✅ Finalna liczba wizyt: ${visits.length} (statuses: ${ACTIVE_VISIT_STATUSES.join(', ')})`);
       
     } catch (error) {
-      console.warn('⚠️ No visits data available:', error.message);
+      logger.warn('⚠️ No visits data available:', error.message);
     }
     
     // Formatuj dane
@@ -259,7 +260,7 @@ export default async function handler(req, res) {
     const formattedServicemen = servicemen.map(formatServicemanForPlanner);
     const formattedVisits = visits.map(formatVisitForPlanner);
     
-    console.log(`✅ Loaded: ${formattedOrders.length} orders, ${formattedServicemen.length} servicemen, ${formattedVisits.length} visits`);
+    logger.success(`✅ Loaded: ${formattedOrders.length} orders, ${formattedServicemen.length} servicemen, ${formattedVisits.length} visits`);
     
     return res.status(200).json({
       success: true,
@@ -278,7 +279,7 @@ export default async function handler(req, res) {
     });
     
   } catch (error) {
-    console.error('❌ Error fetching planner data:', error);
+    logger.error('❌ Error fetching planner data:', error);
     return res.status(500).json({
       success: false,
       error: 'Failed to fetch data',

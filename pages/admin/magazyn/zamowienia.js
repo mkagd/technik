@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import AdminLayout from '../../../components/AdminLayout';
 import { useDarkMode } from '../../../contexts/DarkModeContext';
 import DarkModeToggle from '../../../components/DarkModeToggle';
+import { showToast } from '../../../utils/toast';
 
 export default function AdminMagazynZamowienia() {
   const router = useRouter();
@@ -31,15 +32,99 @@ export default function AdminMagazynZamowienia() {
   const loadData = async () => {
     setLoading(true);
     try {
-      const [requestsRes, employeesRes] = await Promise.all([
+      const [requestsRes, employeesRes, ordersRes, visitsRes] = await Promise.all([
         fetch('/api/part-requests'),
-        fetch('/api/employees')
+        fetch('/api/employees'),
+        fetch('/api/orders'),
+        fetch('/api/visits')
       ]);
 
       const requestsData = await requestsRes.json();
       const employeesData = await employeesRes.json();
+      const ordersData = await ordersRes.json();
+      const visitsData = await visitsRes.json();
 
-      setRequests(requestsData.requests || []);
+      // Wzbogać zamówienia o dane z orders i visits
+      const enrichedRequests = (requestsData.requests || []).map(request => {
+        let orderDetails = null;
+        let visitDetails = null;
+
+        // Znajdź powiązane zlecenie
+        if (request.orderNumber || request.orderId) {
+          const order = ordersData.orders?.find(o => 
+            o.orderNumber === request.orderNumber || o.id === request.orderId
+          );
+          
+          if (order) {
+            orderDetails = {
+              orderNumber: order.orderNumber,
+              clientName: order.clientName,
+              clientPhone: order.phone,
+              address: order.address,
+              deviceType: order.deviceType,
+              deviceBrand: order.deviceBrand,
+              deviceModel: order.deviceModel,
+              serialNumber: order.serialNumber,
+              description: order.description,
+              models: order.models, // Modele zeskanowane przez technika
+            };
+          }
+        }
+
+        // Znajdź powiązaną wizytę
+        if (request.visitId) {
+          // Szukaj wizyty w zleceniach
+          for (const order of (ordersData.orders || [])) {
+            const visit = order.visits?.find(v => v.visitId === request.visitId);
+            if (visit) {
+              visitDetails = {
+                visitId: visit.visitId,
+                scheduledDate: visit.scheduledDate,
+                status: visit.status,
+                photos: visit.photos || [],
+                notes: visit.notes,
+                models: visit.models, // Modele dodane podczas wizyty
+              };
+              
+              // Jeśli nie mamy orderDetails, weź z order
+              if (!orderDetails && order) {
+                orderDetails = {
+                  orderNumber: order.orderNumber,
+                  clientName: order.clientName,
+                  clientPhone: order.phone,
+                  address: order.address,
+                  deviceType: order.deviceType,
+                  deviceBrand: order.deviceBrand,
+                  deviceModel: order.deviceModel,
+                  serialNumber: order.serialNumber,
+                  description: order.description,
+                  models: order.models,
+                };
+              }
+              break;
+            }
+          }
+        }
+
+        return {
+          ...request,
+          orderDetails,
+          visitDetails,
+          // Dodaj pola do łatwiejszego dostępu
+          clientName: orderDetails?.clientName || request.clientName,
+          clientPhone: orderDetails?.clientPhone,
+          clientAddress: orderDetails?.address,
+          deviceBrand: orderDetails?.deviceBrand || request.deviceInfo?.brand,
+          deviceModel: orderDetails?.deviceModel || request.deviceInfo?.model,
+          deviceType: orderDetails?.deviceType,
+          deviceSerialNumber: orderDetails?.serialNumber || request.deviceInfo?.serialNumber,
+          issueDescription: orderDetails?.description,
+          scannedModels: visitDetails?.models || orderDetails?.models,
+          attachedPhotos: request.attachedPhotos || visitDetails?.photos || [],
+        };
+      });
+
+      setRequests(enrichedRequests);
       setEmployees(employeesData.employees || []);
     } catch (error) {
       console.error('Error loading data:', error);
@@ -117,7 +202,7 @@ export default function AdminMagazynZamowienia() {
       });
 
       if (res.ok) {
-        alert('✅ Zamówienie zatwierdzone!');
+        showToast.success('Zamówienie zatwierdzone!');
         loadData();
         
         // Odśwież badge magazynu
@@ -126,11 +211,11 @@ export default function AdminMagazynZamowienia() {
         }
       } else {
         const error = await res.json();
-        alert('❌ Błąd: ' + (error.error || 'Nie można zatwierdzić'));
+        showToast.error('Błąd: ' + (error.error || 'Nie można zatwierdzić'));
       }
     } catch (error) {
       console.error('Error approving:', error);
-      alert('❌ Błąd: ' + error.message);
+      showToast.error('Błąd: ' + error.message);
     }
   };
 
@@ -153,7 +238,7 @@ export default function AdminMagazynZamowienia() {
       });
 
       if (res.ok) {
-        alert('✅ Zamówienie odrzucone!');
+        showToast.success('Zamówienie odrzucone!');
         loadData();
         
         // Odśwież badge magazynu
@@ -161,11 +246,11 @@ export default function AdminMagazynZamowienia() {
           await window.refreshAdminBadges();
         }
       } else {
-        alert('❌ Błąd podczas odrzucania');
+        showToast.error('Błąd podczas odrzucania');
       }
     } catch (error) {
       console.error('Error rejecting:', error);
-      alert('❌ Błąd: ' + error.message);
+      showToast.error('Błąd: ' + error.message);
     }
   };
 
@@ -180,35 +265,38 @@ export default function AdminMagazynZamowienia() {
       });
 
       if (res.ok) {
-        alert('✅ Zamówienie oznaczone jako zamówione!');
+        showToast.success('Zamówienie oznaczone jako zamówione!');
         loadData();
       } else {
-        alert('❌ Błąd');
+        showToast.error('Błąd');
       }
     } catch (error) {
       console.error('Error:', error);
-      alert('❌ Błąd: ' + error.message);
+      showToast.error('Błąd: ' + error.message);
     }
   };
 
   const handleMarkDelivered = async (requestId) => {
-    if (!confirm('Oznaczyć jako dostarczone?')) return;
+    showToast.confirm(
+      'Oznaczyć zamówienie jako dostarczone?',
+      async () => {
+        try {
+          const res = await fetch(`/api/part-requests/${requestId}/deliver`, {
+            method: 'POST'
+          });
 
-    try {
-      const res = await fetch(`/api/part-requests/${requestId}/deliver`, {
-        method: 'POST'
-      });
-
-      if (res.ok) {
-        alert('✅ Zamówienie dostarczone!');
-        loadData();
-      } else {
-        alert('❌ Błąd');
+          if (res.ok) {
+            showToast.success('Zamówienie dostarczone!');
+            loadData();
+          } else {
+            showToast.error('Błąd');
+          }
+        } catch (error) {
+          console.error('Error:', error);
+          showToast.error('Błąd: ' + error.message);
+        }
       }
-    } catch (error) {
-      console.error('Error:', error);
-      alert('❌ Błąd: ' + error.message);
-    }
+    );
   };
 
   const getStatusBadge = (status) => {
@@ -467,6 +555,17 @@ export default function AdminMagazynZamowienia() {
                         <span className={`px-2 py-1 text-xs font-medium rounded-full ${getUrgencyBadge(request.urgency)}`}>
                           {getUrgencyLabel(request.urgency)}
                         </span>
+                        {/* Link do zlecenia/wizyty */}
+                        {(request.orderId || request.visitId) && (
+                          <a
+                            href={request.visitId ? `/admin/wizyty?search=${request.visitId}` : `/admin/zamowienia?search=${request.orderId}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="px-2 py-1 text-xs font-medium bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded hover:bg-blue-200 dark:hover:bg-blue-900/50 transition-colors"
+                          >
+                            📋 {request.visitId || request.orderId}
+                          </a>
+                        )}
                       </div>
                       
                       {/* Informacje o pracowniku i datach */}
@@ -557,61 +656,409 @@ export default function AdminMagazynZamowienia() {
                     </div>
                   </div>
 
-                  {/* Parts List */}
-                  <div className="mb-4">
-                    <div className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Części:</div>
-                    <div className="space-y-2">
-                      {request.parts?.map((part, idx) => {
-                        const unitPrice = part.unitPrice || 0;
-                        const totalPrice = part.quantity * unitPrice;
-                        return (
-                          <div key={idx} className="flex items-center justify-between py-2 px-3 bg-gray-50 dark:bg-gray-700 rounded">
-                            <div className="flex-1">
-                              <div className="text-sm font-medium text-gray-900 dark:text-white">{part.partName}</div>
-                              <div className="text-xs text-gray-500 dark:text-gray-400">{part.partId}</div>
+                  {/* 📋 Informacje o zleceniu i kliencie */}
+                  {(request.orderDetails || request.clientName || request.deviceInfo) && (
+                    <div className="mb-4 p-4 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {/* Klient */}
+                        {(request.clientName || request.orderDetails?.clientName) && (
+                          <div>
+                            <div className="flex items-center text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                              <svg className="w-4 h-4 mr-1.5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                              </svg>
+                              Klient
                             </div>
-                            <div className="text-sm text-gray-900 dark:text-white">
-                              {part.quantity} szt × {unitPrice.toFixed(2)} zł = <strong>{totalPrice.toFixed(2)} zł</strong>
+                            <div className="space-y-1 text-sm">
+                              <div className="text-gray-900 dark:text-white font-medium">
+                                {String(request.clientName || request.orderDetails?.clientName || 'Brak danych')}
+                              </div>
+                              {(request.clientPhone || request.orderDetails?.clientPhone) && (
+                                <div className="flex items-center text-gray-600 dark:text-gray-400">
+                                  <svg className="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                                  </svg>
+                                  {String(request.clientPhone || request.orderDetails?.clientPhone)}
+                                </div>
+                              )}
+                              {(request.clientAddress || request.orderDetails?.address) && (
+                                <div className="flex items-start text-gray-600 dark:text-gray-400">
+                                  <svg className="w-3.5 h-3.5 mr-1 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                  </svg>
+                                  <span className="flex-1">{String(request.clientAddress || request.orderDetails?.address)}</span>
+                                </div>
+                              )}
                             </div>
                           </div>
-                        );
-                      })}
-                    </div>
-                  </div>
+                        )}
 
-                  {/* Attached Photos */}
-                  {request.attachedPhotos && request.attachedPhotos.length > 0 && (
-                    <div className="mb-4">
-                      <div className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        📸 Załączone zdjęcia ({request.attachedPhotos.length}):
+                        {/* Urządzenie */}
+                        {(request.deviceInfo || request.deviceBrand || request.orderDetails?.deviceBrand) && (
+                          <div>
+                            <div className="flex items-center text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                              <svg className="w-4 h-4 mr-1.5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                              </svg>
+                              Urządzenie
+                            </div>
+                            <div className="space-y-1 text-sm">
+                              <div className="text-gray-900 dark:text-white font-medium">
+                                {String(request.deviceBrand || request.orderDetails?.deviceBrand || 'Nieznana marka')}
+                                {(request.deviceModel || request.orderDetails?.deviceModel) && 
+                                  ` ${String(request.deviceModel || request.orderDetails?.deviceModel)}`
+                                }
+                              </div>
+                              {(request.deviceType || request.orderDetails?.deviceType) && (
+                                <div className="text-gray-600 dark:text-gray-400">
+                                  Typ: {String(request.deviceType || request.orderDetails?.deviceType)}
+                                </div>
+                              )}
+                              {(request.deviceSerialNumber || request.orderDetails?.serialNumber) && (
+                                <div className="text-gray-600 dark:text-gray-400 font-mono text-xs">
+                                  S/N: {String(request.deviceSerialNumber || request.orderDetails?.serialNumber)}
+                                </div>
+                              )}
+                              {request.deviceInfo && (
+                                <div className="text-gray-600 dark:text-gray-400 text-xs mt-1 italic">
+                                  {typeof request.deviceInfo === 'string' 
+                                    ? request.deviceInfo 
+                                    : typeof request.deviceInfo === 'object' && request.deviceInfo !== null
+                                      ? `${request.deviceInfo.brand || ''} ${request.deviceInfo.model || ''}`.trim() || JSON.stringify(request.deviceInfo)
+                                      : ''
+                                  }
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        )}
                       </div>
-                      <div className="flex flex-wrap gap-2">
+
+                      {/* Modele zeskanowane przez technika */}
+                      {(request.scannedModels || request.orderDetails?.models || request.deviceModel) && (
+                        <div className="mt-3 pt-3 border-t border-blue-200 dark:border-blue-800">
+                          <div className="flex items-start">
+                            <svg className="w-4 h-4 mr-1.5 text-indigo-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
+                            </svg>
+                            <div className="flex-1">
+                              <div className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">
+                                Modele urządzeń (zeskanowane przez technika):
+                              </div>
+                              <div className="flex flex-wrap gap-2 mt-1">
+                                {(Array.isArray(request.scannedModels) ? request.scannedModels : 
+                                  Array.isArray(request.orderDetails?.models) ? request.orderDetails.models :
+                                  [request.deviceModel]).filter(Boolean).map((model, idx) => {
+                                    // Określ tekst do wyświetlenia
+                                    let displayText = 'Model';
+                                    if (typeof model === 'string') {
+                                      displayText = model;
+                                    } else if (typeof model === 'object' && model !== null) {
+                                      // Jeśli obiekt ma brand i model
+                                      if (model.brand && model.model) {
+                                        displayText = `${model.brand} ${model.model}`;
+                                      } else if (model.model) {
+                                        displayText = model.model;
+                                      } else if (model.name) {
+                                        displayText = model.name;
+                                      } else if (model.brand) {
+                                        displayText = model.brand;
+                                      }
+                                    }
+                                    
+                                    return (
+                                      <span key={idx} className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-indigo-100 dark:bg-indigo-900/50 text-indigo-800 dark:text-indigo-200 border border-indigo-300 dark:border-indigo-700">
+                                        <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                          <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z" />
+                                        </svg>
+                                        {displayText}
+                                      </span>
+                                    );
+                                  })}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Problem/Opis usterki */}
+                      {(request.issueDescription || request.orderDetails?.description) && (
+                        <div className="mt-3 pt-3 border-t border-blue-200 dark:border-blue-800">
+                          <div className="flex items-start">
+                            <svg className="w-4 h-4 mr-1.5 text-red-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                            </svg>
+                            <div className="flex-1">
+                              <div className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">
+                                Opis usterki/problem:
+                              </div>
+                              <div className="text-sm text-gray-900 dark:text-white">
+                                {String(request.issueDescription || request.orderDetails?.description || '')}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Notatki technika o zamówieniu */}
+                      {request.notes && (
+                        <div className="mt-3 pt-3 border-t border-blue-200 dark:border-blue-800">
+                          <div className="flex items-start">
+                            <svg className="w-4 h-4 mr-1.5 text-amber-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                            </svg>
+                            <div className="flex-1">
+                              <div className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">
+                                💬 Notatka technika:
+                              </div>
+                              <div className="text-sm text-gray-900 dark:text-white italic bg-amber-50 dark:bg-amber-900/20 p-2 rounded border border-amber-200 dark:border-amber-800">
+                                "{String(request.notes)}"
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* 📸 Galeria zdjęć z wizyty - PRIORYTET! */}
+                  {request.attachedPhotos && request.attachedPhotos.length > 0 && (
+                    <div className="mb-4 p-4 bg-gradient-to-br from-green-50 to-teal-50 dark:from-green-900/20 dark:to-teal-900/20 border-2 border-green-300 dark:border-green-700 rounded-lg shadow-md">
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center text-sm font-bold text-green-900 dark:text-green-100">
+                          <svg className="w-5 h-5 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                          </svg>
+                          📸 Dokumentacja fotograficzna z wizyty technika
+                        </div>
+                        <span className="text-xs font-semibold text-green-800 dark:text-green-200 bg-green-200 dark:bg-green-800 px-2 py-1 rounded">
+                          {request.attachedPhotos.length} zdjęć
+                        </span>
+                      </div>
+                      
+                      <div className="bg-green-100 dark:bg-green-900/30 border border-green-300 dark:border-green-700 rounded p-3 mb-3">
+                        <p className="text-xs text-green-900 dark:text-green-100 font-medium">
+                          💡 Zdjęcia dodane przez technika podczas wizyty - pomogą zweryfikować czy zamówiona część jest właściwa
+                        </p>
+                      </div>
+
+                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
                         {request.attachedPhotos.map((photo, idx) => (
                           <a
                             key={idx}
-                            href={photo.url}
+                            href={typeof photo === 'string' ? photo : photo.url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="relative group"
+                            className="relative group block"
                           >
-                            <img
-                              src={photo.url}
-                              alt={`Zdjęcie ${idx + 1}`}
-                              className="w-24 h-24 object-cover rounded-lg border-2 border-gray-200 dark:border-gray-600 hover:border-blue-500 dark:hover:border-blue-400 transition-all cursor-pointer"
-                              onError={(e) => {
-                                e.target.style.display = 'none';
-                              }}
-                            />
-                            <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 rounded-lg transition-all flex items-center justify-center">
-                              <svg className="w-6 h-6 text-white opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <div className="aspect-square overflow-hidden rounded-lg border-2 border-gray-300 dark:border-gray-600 hover:border-green-500 dark:hover:border-green-400 transition-all shadow-sm hover:shadow-lg">
+                              <img
+                                src={typeof photo === 'string' ? photo : photo.url}
+                                alt={photo.type || `Zdjęcie ${idx + 1}`}
+                                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-200"
+                                onError={(e) => {
+                                  e.target.src = '/placeholder-image.png';
+                                  e.target.onerror = null;
+                                }}
+                              />
+                            </div>
+                            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/50 rounded-lg transition-all flex items-center justify-center">
+                              <svg className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity drop-shadow-lg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
                               </svg>
+                            </div>
+                            {/* Typ zdjęcia jako badge */}
+                            {photo.type && (
+                              <div className="absolute top-1 left-1 bg-gray-900/80 text-white text-xs px-2 py-0.5 rounded font-semibold">
+                                {photo.type === 'before' && '📷 Przed'}
+                                {photo.type === 'after' && '✅ Po'}
+                                {photo.type === 'during' && '🔧 W trakcie'}
+                                {photo.type === 'serial' && '🔢 S/N'}
+                                {photo.type === 'problem' && '⚠️ Problem'}
+                                {!['before', 'after', 'during', 'serial', 'problem'].includes(photo.type) && photo.type}
+                              </div>
+                            )}
+                            {/* Numer zdjęcia */}
+                            <div className="absolute bottom-1 right-1 bg-gray-900/80 text-white text-xs px-2 py-0.5 rounded font-mono">
+                              {idx + 1}/{request.attachedPhotos.length}
                             </div>
                           </a>
                         ))}
                       </div>
                     </div>
                   )}
+
+                  {/* 📦 Informacje o dostawie i płatności */}
+                  <div className="mb-4 p-4 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 border border-purple-200 dark:border-purple-800 rounded-lg">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {/* Miejsce dostawy */}
+                      <div>
+                        <div className="flex items-center text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                          <svg className="w-4 h-4 mr-1.5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                          </svg>
+                          Miejsce dostawy
+                        </div>
+                        <div className="space-y-1 text-sm">
+                          {request.preferredDelivery === 'paczkomat' && (
+                            <>
+                              <div className="text-gray-900 dark:text-white font-medium">
+                                📮 Paczkomat InPost
+                              </div>
+                              {request.paczkomatId && (
+                                <div className="text-gray-600 dark:text-gray-400 font-mono text-xs bg-white dark:bg-gray-800 px-2 py-1 rounded inline-block">
+                                  {request.paczkomatId}
+                                </div>
+                              )}
+                            </>
+                          )}
+                          {request.preferredDelivery === 'office' && (
+                            <div className="text-gray-900 dark:text-white font-medium">
+                              🏢 Biuro firmowe (adres z profilu pracownika)
+                            </div>
+                          )}
+                          {request.preferredDelivery === 'custom' && (
+                            <>
+                              <div className="text-gray-900 dark:text-white font-medium">
+                                📍 Inny adres
+                              </div>
+                              {request.alternativeAddress && (
+                                <div className="text-gray-600 dark:text-gray-400 text-sm mt-1">
+                                  {request.alternativeAddress}
+                                </div>
+                              )}
+                            </>
+                          )}
+                          {!request.preferredDelivery && (
+                            <div className="text-gray-500 dark:text-gray-400 italic">
+                              Nie określono
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Forma płatności */}
+                      <div>
+                        <div className="flex items-center text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                          <svg className="w-4 h-4 mr-1.5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                          </svg>
+                          Forma płatności za przesyłkę
+                        </div>
+                        <div className="space-y-1 text-sm">
+                          {request.paymentMethod === 'prepaid' && (
+                            <div className="text-gray-900 dark:text-white font-medium">
+                              ✅ Przedpłata (przelew)
+                            </div>
+                          )}
+                          {request.paymentMethod === 'cod' && (
+                            <>
+                              <div className="text-gray-900 dark:text-white font-medium">
+                                📦 Pobranie (przy odbiorze)
+                              </div>
+                              <div className="text-amber-600 dark:text-amber-400 text-xs bg-amber-50 dark:bg-amber-900/30 px-2 py-1 rounded inline-block">
+                                ⚠️ Dodatkowa opłata ~5 zł
+                              </div>
+                            </>
+                          )}
+                          {!request.paymentMethod && (
+                            <div className="text-gray-500 dark:text-gray-400 italic">
+                              Nie określono (domyślnie: przedpłata)
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Parts List with Images */}
+                  <div className="mb-4">
+                    <div className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Zamówione części:</div>
+                    <div className="space-y-3">
+                      {request.parts?.map((part, idx) => {
+                        const unitPrice = part.unitPrice || part.northData?.price || 0;
+                        const totalPrice = part.quantity * unitPrice;
+                        const hasNorthData = part.northData;
+                        const partImages = hasNorthData?.images || [];
+                        
+                        return (
+                          <div key={idx} className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+                            <div className="flex items-start gap-3 p-3 bg-gray-50 dark:bg-gray-700">
+                              {/* Zdjęcie produktu z North */}
+                              {partImages.length > 0 && (
+                                <div className="flex-shrink-0">
+                                  <img 
+                                    src={partImages[0]}
+                                    alt={part.partName || hasNorthData?.name}
+                                    className="w-20 h-20 object-cover rounded border border-gray-300 dark:border-gray-600"
+                                    onError={(e) => e.target.style.display = 'none'}
+                                  />
+                                </div>
+                              )}
+                              
+                              {/* Informacje o części */}
+                              <div className="flex-1 min-w-0">
+                                <div className="text-sm font-medium text-gray-900 dark:text-white">
+                                  {part.partName || hasNorthData?.name || 'Część'}
+                                </div>
+                                <div className="text-xs text-gray-500 dark:text-gray-400">
+                                  {part.partId || part.partNumber || hasNorthData?.partNumber}
+                                </div>
+                                {hasNorthData?.sourceUrl && (
+                                  <a 
+                                    href={hasNorthData.sourceUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-xs text-orange-600 hover:text-orange-700 dark:text-orange-400 flex items-center gap-1 mt-1"
+                                  >
+                                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                    </svg>
+                                    Pokaż na North.pl
+                                  </a>
+                                )}
+                              </div>
+                              
+                              {/* Cena */}
+                              <div className="text-sm text-gray-900 dark:text-white text-right flex-shrink-0">
+                                {part.quantity} szt × {unitPrice.toFixed(2)} zł
+                                <div className="font-bold">{totalPrice.toFixed(2)} zł</div>
+                              </div>
+                            </div>
+                            
+                            {/* Galeria zdjęć produktu (jeśli więcej niż 1) */}
+                            {partImages.length > 1 && (
+                              <div className="px-3 pb-3 bg-gray-50 dark:bg-gray-700">
+                                <div className="flex gap-2 overflow-x-auto">
+                                  {partImages.slice(1).map((img, imgIdx) => (
+                                    <a 
+                                      key={imgIdx}
+                                      href={img}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="flex-shrink-0"
+                                    >
+                                      <img 
+                                        src={img}
+                                        alt={`Zdjęcie ${imgIdx + 2}`}
+                                        className="w-16 h-16 object-cover rounded border border-gray-300 dark:border-gray-600 hover:opacity-75 transition-opacity"
+                                        onError={(e) => e.target.style.display = 'none'}
+                                      />
+                                    </a>
+                                  ))}
+                                </div>
+                                <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                                  📸 {partImages.length} zdjęć z North.pl
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
 
                   {/* Actions */}
                   <div className="flex flex-wrap gap-2">
@@ -655,11 +1102,11 @@ export default function AdminMagazynZamowienia() {
                     )}
                   </div>
 
-                  {/* Notes */}
-                  {request.notes && (
-                    <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded">
-                      <div className="text-xs font-medium text-blue-900 dark:text-blue-300 mb-1">Uwagi:</div>
-                      <div className="text-sm text-blue-700 dark:text-blue-400">{request.notes}</div>
+                  {/* Logistician Notes - notatki magazyniera/admina */}
+                  {request.logisticianNotes && (
+                    <div className="mt-4 p-3 bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800 rounded">
+                      <div className="text-xs font-medium text-purple-900 dark:text-purple-300 mb-1">📝 Notatki magazyniera:</div>
+                      <div className="text-sm text-purple-700 dark:text-purple-400">{String(request.logisticianNotes)}</div>
                     </div>
                   )}
                 </div>

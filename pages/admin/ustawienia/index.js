@@ -55,6 +55,7 @@ export default function AdminUstawienia() {
       icon: FiDatabase,
       description: 'Zarządzanie danymi i kopiami zapasowymi',
       color: 'indigo',
+      path: '/admin/ustawienia/dane',
       items: [
         { label: 'Backup automatyczny', value: 'Codziennie 02:00' },
         { label: 'Ostatni backup', value: new Date().toLocaleDateString('pl-PL') },
@@ -71,6 +72,19 @@ export default function AdminUstawienia() {
         { label: 'Email notifications', value: 'Włączone' },
         { label: 'SMS notifications', value: 'Wyłączone' },
         { label: 'Push notifications', value: 'Włączone' }
+      ]
+    },
+    {
+      id: 'location',
+      title: 'Lokalizacja firmy',
+      icon: FiMap,
+      description: 'Ustaw adres siedziby firmy dla kalkulacji odległości',
+      color: 'blue',
+      path: '/admin/ustawienia/lokalizacja',
+      items: [
+        { label: 'Routing OSRM', value: '100% darmowy' },
+        { label: 'Kalkulacja odległości', value: 'Aktywna' },
+        { label: 'Sortowanie GPS', value: 'Dostępne' }
       ]
     },
     {
@@ -160,7 +174,9 @@ export default function AdminUstawienia() {
               key={section.id}
               className={`${colors.bg} rounded-lg border-2 ${colors.border} ${colors.hover} p-6 transition-all cursor-pointer`}
               onClick={() => {
-                if (section.id === 'payroll') {
+                if (section.path) {
+                  router.push(section.path);
+                } else if (section.id === 'payroll') {
                   router.push('/admin/rozliczenia');
                 } else {
                   alert(`Sekcja "${section.title}" - wkrótce dostępna`);

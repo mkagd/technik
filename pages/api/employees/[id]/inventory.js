@@ -10,20 +10,29 @@ const historyPath = path.join(process.cwd(), 'data', 'inventory-history.json');
 
 function readJSON(filePath) {
   try {
+    if (!fs.existsSync(filePath)) {
+      console.error(`❌ File does not exist: ${filePath}`);
+      return null;
+    }
     const data = fs.readFileSync(filePath, 'utf8');
-    return JSON.parse(data);
+    const parsed = JSON.parse(data);
+    console.log(`✅ Successfully read ${filePath}`);
+    return parsed;
   } catch (error) {
-    console.error(`Error reading ${filePath}:`, error);
+    console.error(`❌ Error reading ${filePath}:`, error.message);
     return null;
   }
 }
 
 function writeJSON(filePath, data) {
   try {
-    fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf8');
+    const jsonString = JSON.stringify(data, null, 2);
+    fs.writeFileSync(filePath, jsonString, 'utf8');
+    console.log(`✅ Successfully wrote to ${filePath} (${jsonString.length} bytes)`);
     return true;
   } catch (error) {
-    console.error(`Error writing ${filePath}:`, error);
+    console.error(`❌ Error writing ${filePath}:`, error.message);
+    console.error('Error details:', error);
     return false;
   }
 }
@@ -46,6 +55,8 @@ function logHistory(action, data) {
 export default async function handler(req, res) {
   const { id: employeeId } = req.query;
 
+  console.log(`📦 [/api/employees/${employeeId}/inventory] ${req.method} request received`);
+
   if (req.method === 'POST') {
     // Dodaj część do magazynu pracownika (przez personal-inventories.json)
     try {
@@ -57,7 +68,10 @@ export default async function handler(req, res) {
         assignedBy = 'ADMIN'
       } = req.body;
 
+      console.log('📝 Request body:', { partId, quantity, location, notes, assignedBy });
+
       if (!partId || !quantity || quantity < 1) {
+        console.log('❌ Invalid data:', { partId, quantity });
         return res.status(400).json({ 
           success: false, 
           message: 'Nieprawidłowe dane' 
@@ -65,27 +79,38 @@ export default async function handler(req, res) {
       }
 
       // Wczytaj dane
-      const employees = readJSON(employeesPath);
-      const employee = employees?.find(emp => emp.id === employeeId);
+      const employeesData = readJSON(employeesPath);
+      const employees = Array.isArray(employeesData) ? employeesData : employeesData?.employees || [];
+      console.log(`📋 Loaded ${employees.length} employees`);
+      const employee = employees.find(emp => emp.id === employeeId);
 
       if (!employee) {
+        console.log(`❌ Employee not found: ${employeeId}`);
         return res.status(404).json({ 
           success: false, 
           message: 'Pracownik nie znaleziony' 
         });
       }
+      console.log(`✅ Employee found: ${employee.name}`);
 
       let inventories = readJSON(personalInventoriesPath) || [];
+      console.log(`📦 Loaded ${inventories.length} personal inventories`);
+      
       const parts = readJSON(partsInventoryPath);
       const allParts = parts?.inventory || parts || [];
+      console.log(`🔧 Loaded ${allParts.length} parts from inventory`);
+      
       const partDetails = allParts.find(p => p.id === partId);
 
       if (!partDetails) {
+        console.log(`❌ Part not found: ${partId}`);
+        console.log(`Available part IDs sample:`, allParts.slice(0, 5).map(p => p.id));
         return res.status(404).json({ 
           success: false, 
           message: `Część ${partId} nie znaleziona w systemie` 
         });
       }
+      console.log(`✅ Part found: ${partDetails.name}`);
 
       // Znajdź lub utwórz magazyn osobisty
       let inventory = inventories.find(inv => inv.employeeId === employeeId);
@@ -140,6 +165,7 @@ export default async function handler(req, res) {
         });
       } else {
         // Dodaj nową część
+        const unitPrice = partDetails.pricing?.retailPrice || partDetails.price || 0;
         const newPart = {
           partId,
           partNumber: partDetails.partNumber || 'N/A',
@@ -150,9 +176,11 @@ export default async function handler(req, res) {
           assignedByName: `Admin/Logistyka`,
           location,
           status: 'available',
-          unitPrice: partDetails.price || 0,
+          unitPrice,
           notes: notes || null
         };
+        
+        console.log(`📦 Creating new part entry:`, newPart);
 
         inventory.parts.push(newPart);
         console.log(`✅ Dodano ${quantity}x ${partDetails.name} do magazynu ${employee.name}`);
@@ -199,15 +227,18 @@ export default async function handler(req, res) {
       });
 
     } catch (error) {
-      console.error('Błąd dodawania części do magazynu:', error);
+      console.error('❌ Błąd dodawania części do magazynu:', error);
+      console.error('Stack trace:', error.stack);
       return res.status(500).json({ 
         success: false, 
         message: 'Błąd serwera', 
-        error: error.message 
+        error: error.message,
+        details: process.env.NODE_ENV === 'development' ? error.stack : undefined
       });
     }
   }
 
+  console.log(`⚠️ Method ${req.method} not allowed`);
   return res.status(405).json({ 
     success: false, 
     message: 'Metoda nie obsługiwana' 

@@ -115,11 +115,6 @@ export const addClient = async (clientData, metadata = {}) => {
             };
 
             clients.push(clientToAdd);
-            console.log('✅ Client added:', { 
-                id: clientToAdd.id, 
-                name: clientToAdd.name,
-                source: clientToAdd.source
-            });
             
             return clients;
         }, []);
@@ -157,7 +152,6 @@ export const deleteClient = async (clientId) => {
     try {
         await LockedFileOperations.updateJSON(CLIENTS_FILE, async (clients) => {
             const filteredClients = clients.filter(c => c.id !== clientId);
-            console.log(`🗑️ Client deleted: ${clientId}`);
             return filteredClients;
         }, []);
         
@@ -187,7 +181,6 @@ export const logClientContact = async (clientId, type, source = 'WebApp') => {
             };
 
             clients[clientIndex].history = [...(clients[clientIndex].history || []), newEntry];
-            console.log(`📞 Contact logged for client ${clientId}: ${type}`);
             return clients;
         }, []);
 
@@ -220,10 +213,8 @@ export const readOrders = async () => {
         if (fs.existsSync(ORDERS_FILE)) {
             const data = fs.readFileSync(ORDERS_FILE, 'utf8');
             const orders = JSON.parse(data);
-            console.log(`✅ readOrders: Loaded ${orders.length} orders`);
             return orders;
         }
-        console.log('⚠️ readOrders: File not found, returning empty array');
         return [];
     } catch (error) {
         console.error('❌ Błąd odczytu zamówień:', error);
@@ -290,12 +281,6 @@ export const addOrder = async (newOrder, metadata = {}) => {
             };
 
             orders.push(orderToAdd);
-            console.log('✅ Order added:', { 
-                id: orderToAdd.id, 
-                orderNumber: orderToAdd.orderNumber,
-                source: orderToAdd.source,
-                devicesCount: devices.length 
-            });
             return orders;
         }, []);
 
@@ -326,10 +311,14 @@ export const patchOrder = async (id, patch) => {
             };
 
             if (patch.dates) merged.dates = [...patch.dates];
+            
+            // ✅ KRYTYCZNE: Upewnij się że visits[] jest prawidłowo skopiowane
+            if (patch.visits) {
+                merged.visits = [...patch.visits];
+            }
 
             orders[orderIndex] = merged;
             patchedOrder = merged;
-            console.log('✅ Order patched:', { id: merged.id });
             return orders;
         }, []);
 
@@ -343,16 +332,23 @@ export const patchOrder = async (id, patch) => {
 // Aktualizuj zamówienie - ATOMIC OPERATION WITH LOCKING
 export const updateOrder = async (updatedOrder) => {
     try {
+        let finalOrder = null;
         const result = await LockedFileOperations.updateJSON(ORDERS_FILE, async (orders) => {
             const index = orders.findIndex(order => order.id === updatedOrder.id);
             if (index !== -1) {
-                orders[index] = updatedOrder;
+                // ✅ MERGE zamiast REPLACE - zachowaj wszystkie istniejące pola
+                orders[index] = {
+                    ...orders[index],      // Zachowaj wszystkie stare dane
+                    ...updatedOrder,       // Nadpisz tylko nowe pola
+                    id: orders[index].id   // Zabezpiecz ID (nie może się zmienić)
+                };
+                finalOrder = orders[index];  // Zwróć pełny obiekt
                 return orders;
             }
             throw new Error('Order not found');
         }, []);
 
-        return updatedOrder;
+        return finalOrder;  // Zwróć pełny zaktualizowany obiekt
     } catch (error) {
         console.error('🔒 Błąd aktualizacji zamówienia:', error);
         return null;
@@ -374,9 +370,7 @@ export const deleteOrder = async (orderId) => {
             
             const deletedCount = initialCount - filteredOrders.length;
             if (deletedCount > 0) {
-                console.log(`🗑️ Order deleted: ${orderId} (${deletedCount} zamówień usuniętych)`);
             } else {
-                console.log(`⚠️ Order not found: ${orderId}`);
             }
             
             return filteredOrders;
@@ -522,3 +516,4 @@ export const convertReservationToClientOrder = async (reservationData) => {
 
     return { client, order };
 };
+

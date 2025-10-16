@@ -274,6 +274,26 @@
         "duration": 405,
         "notes": "Praca",
         "createdAt": "2025-10-11T07:02:13.397Z"
+      },
+      {
+        "id": "SLOT-1760298539955-1rag6g8ji",
+        "dayOfWeek": 1,
+        "startTime": "10:00",
+        "endTime": "14:00",
+        "type": "work",
+        "duration": 240,
+        "notes": "Praca",
+        "createdAt": "2025-10-12T19:48:59.955Z"
+      },
+      {
+        "id": "SLOT-1760301048092-mo4tjhqv0",
+        "dayOfWeek": 4,
+        "startTime": "04:15",
+        "endTime": "07:15",
+        "type": "work",
+        "duration": 180,
+        "notes": "Praca",
+        "createdAt": "2025-10-12T20:30:48.092Z"
       }
     ],
     "breaks": [
@@ -289,6 +309,410 @@
       }
     ],
     "createdAt": "2025-10-06T08:19:41.108Z",
-    "updatedAt": "2025-10-11T07:02:13.397Z"
+    "updatedAt": "2025-10-12T20:30:48.092Z"
+  },
+  {
+    "id": "SCH-1760333605466-m0r3g4696",
+    "employeeId": "EMPA252780002",
+    "weekStart": "2025-10-12",
+    "workSlots": [
+      {
+        "id": "SLOT-1760333605466-p93d9aa5i",
+        "dayOfWeek": 1,
+        "startTime": "04:15",
+        "endTime": "13:30",
+        "type": "work",
+        "duration": 555,
+        "notes": "Praca",
+        "createdAt": "2025-10-13T05:33:25.466Z"
+      }
+    ],
+    "breaks": [],
+    "createdAt": "2025-10-13T05:33:25.466Z",
+    "updatedAt": "2025-10-13T05:33:25.466Z"
+  },
+  {
+    "id": "SCH-1760561102529-x2m97l1zu",
+    "employeeId": "EMPA252780002",
+    "weekStart": "2025-10-13",
+    "workSlots": [
+      {
+        "id": "SLOT-1760561102529-193nil1u1",
+        "dayOfWeek": 3,
+        "startTime": "10:30",
+        "endTime": "19:30",
+        "type": "work",
+        "duration": 540,
+        "notes": "Praca",
+        "createdAt": "2025-10-15T20:45:02.529Z"
+      },
+      {
+        "id": "SLOT-1760561102529-h8zdttc6n",
+        "dayOfWeek": 4,
+        "startTime": "10:00",
+        "endTime": "18:45",
+        "type": "work",
+        "duration": 525,
+        "notes": "Praca",
+        "createdAt": "2025-10-15T20:45:02.529Z"
+      },
+      {
+        "id": "SLOT-1760561102529-weqcrehvb",
+        "dayOfWeek": 5,
+        "startTime": "09:30",
+        "endTime": "12:15",
+        "type": "work",
+        "duration": 165,
+        "notes": "Praca",
+        "createdAt": "2025-10-15T20:45:02.529Z"
+      },
+      {
+        "id": "SLOT-1760561102529-m532iug6l",
+        "dayOfWeek": 5,
+        "startTime": "12:30",
+        "endTime": "17:45",
+        "type": "work",
+        "duration": 315,
+        "notes": "Praca",
+        "createdAt": "2025-10-15T20:45:02.529Z"
+      },
+      {
+        "id": "SLOT-1760561102529-adxvn1gp5",
+        "dayOfWeek": 5,
+        "startTime": "20:45",
+        "endTime": "23:15",
+        "type": "work",
+        "duration": 150,
+        "notes": "Praca",
+        "createdAt": "2025-10-15T20:45:02.529Z"
+      },
+      {
+        "id": "SLOT-1760561102529-d08yrcpsm",
+        "dayOfWeek": 6,
+        "startTime": "16:30",
+        "endTime": "22:15",
+        "type": "work",
+        "duration": 345,
+        "notes": "Praca",
+        "createdAt": "2025-10-15T20:45:02.529Z"
+      },
+      {
+        "id": "SLOT-1760561102529-igl15qqt6",
+        "dayOfWeek": 6,
+        "startTime": "09:15",
+        "endTime": "14:00",
+        "type": "work",
+        "duration": 285,
+        "notes": "Praca",
+        "createdAt": "2025-10-15T20:45:02.529Z"
+      },
+      {
+        "id": "SLOT-1760561102529-rrli5ru16",
+        "dayOfWeek": 2,
+        "startTime": "10:00",
+        "endTime": "12:30",
+        "type": "work",
+        "duration": 150,
+        "notes": "Praca",
+        "createdAt": "2025-10-15T20:45:02.529Z"
+      },
+      {
+        "id": "SLOT-1760561102529-816t7r70h",
+        "dayOfWeek": 1,
+        "startTime": "14:30",
+        "endTime": "21:00",
+        "type": "work",
+        "duration": 390,
+        "notes": "Praca",
+        "createdAt": "2025-10-15T20:45:02.529Z"
+      },
+      {
+        "id": "SLOT-1760561102529-dtxxzb769",
+        "dayOfWeek": 2,
+        "startTime": "14:15",
+        "endTime": "20:30",
+        "type": "work",
+        "duration": 375,
+        "notes": "Praca",
+        "createdAt": "2025-10-15T20:45:02.529Z"
+      },
+      {
+        "id": "SLOT-1760561102529-5j6xv23f1",
+        "dayOfWeek": 2,
+        "startTime": "00:45",
+        "endTime": "07:30",
+        "type": "work",
+        "duration": 405,
+        "notes": "Praca",
+        "createdAt": "2025-10-15T20:45:02.529Z"
+      },
+      {
+        "id": "SLOT-1760561102529-x3p9oiad2",
+        "dayOfWeek": 3,
+        "startTime": "01:00",
+        "endTime": "03:00",
+        "type": "work",
+        "duration": 120,
+        "notes": "Praca",
+        "createdAt": "2025-10-15T20:45:02.529Z"
+      },
+      {
+        "id": "SLOT-1760561102529-iifi7axoe",
+        "dayOfWeek": 2,
+        "startTime": "07:45",
+        "endTime": "09:30",
+        "type": "work",
+        "duration": 105,
+        "notes": "Praca",
+        "createdAt": "2025-10-15T20:45:02.529Z"
+      },
+      {
+        "id": "SLOT-1760561102529-ctfjbtbqv",
+        "dayOfWeek": 3,
+        "startTime": "04:00",
+        "endTime": "10:00",
+        "type": "work",
+        "duration": 360,
+        "notes": "Praca",
+        "createdAt": "2025-10-15T20:45:02.529Z"
+      },
+      {
+        "id": "SLOT-1760561102529-6lsosc0ax",
+        "dayOfWeek": 1,
+        "startTime": "03:15",
+        "endTime": "10:00",
+        "type": "work",
+        "duration": 405,
+        "notes": "Praca",
+        "createdAt": "2025-10-15T20:45:02.529Z"
+      },
+      {
+        "id": "SLOT-1760561102529-emif8npty",
+        "dayOfWeek": 1,
+        "startTime": "10:00",
+        "endTime": "14:00",
+        "type": "work",
+        "duration": 240,
+        "notes": "Praca",
+        "createdAt": "2025-10-15T20:45:02.529Z"
+      },
+      {
+        "id": "SLOT-1760561102529-q8rt74mzr",
+        "dayOfWeek": 4,
+        "startTime": "04:15",
+        "endTime": "07:15",
+        "type": "work",
+        "duration": 180,
+        "notes": "Praca",
+        "createdAt": "2025-10-15T20:45:02.529Z"
+      }
+    ],
+    "breaks": [
+      {
+        "id": "SLOT-1760561102529-c2et3hukz",
+        "dayOfWeek": 6,
+        "startTime": "14:45",
+        "endTime": "16:15",
+        "type": "break",
+        "duration": 90,
+        "notes": "Przerwa",
+        "createdAt": "2025-10-15T20:45:02.529Z"
+      }
+    ],
+    "copiedFrom": "2025-10-06",
+    "createdAt": "2025-10-15T20:45:02.529Z",
+    "updatedAt": "2025-10-15T20:45:02.529Z"
+  },
+  {
+    "id": "SCH-1760561106453-grwo6hg98",
+    "employeeId": "EMPA252780002",
+    "weekStart": "2025-10-20",
+    "workSlots": [
+      {
+        "id": "SLOT-1760561106453-s6uldk7rj",
+        "dayOfWeek": 3,
+        "startTime": "10:30",
+        "endTime": "19:30",
+        "type": "work",
+        "duration": 540,
+        "notes": "Praca",
+        "createdAt": "2025-10-15T20:45:06.453Z"
+      },
+      {
+        "id": "SLOT-1760561106453-qsc1so5so",
+        "dayOfWeek": 4,
+        "startTime": "10:00",
+        "endTime": "18:45",
+        "type": "work",
+        "duration": 525,
+        "notes": "Praca",
+        "createdAt": "2025-10-15T20:45:06.453Z"
+      },
+      {
+        "id": "SLOT-1760561106453-d3rb7svpo",
+        "dayOfWeek": 5,
+        "startTime": "09:30",
+        "endTime": "12:15",
+        "type": "work",
+        "duration": 165,
+        "notes": "Praca",
+        "createdAt": "2025-10-15T20:45:06.453Z"
+      },
+      {
+        "id": "SLOT-1760561106453-mh72x8awp",
+        "dayOfWeek": 5,
+        "startTime": "12:30",
+        "endTime": "17:45",
+        "type": "work",
+        "duration": 315,
+        "notes": "Praca",
+        "createdAt": "2025-10-15T20:45:06.453Z"
+      },
+      {
+        "id": "SLOT-1760561106453-6n7g8osfl",
+        "dayOfWeek": 5,
+        "startTime": "20:45",
+        "endTime": "23:15",
+        "type": "work",
+        "duration": 150,
+        "notes": "Praca",
+        "createdAt": "2025-10-15T20:45:06.453Z"
+      },
+      {
+        "id": "SLOT-1760561106453-s3lnzahcx",
+        "dayOfWeek": 6,
+        "startTime": "16:30",
+        "endTime": "22:15",
+        "type": "work",
+        "duration": 345,
+        "notes": "Praca",
+        "createdAt": "2025-10-15T20:45:06.453Z"
+      },
+      {
+        "id": "SLOT-1760561106453-hnpajh12l",
+        "dayOfWeek": 6,
+        "startTime": "09:15",
+        "endTime": "14:00",
+        "type": "work",
+        "duration": 285,
+        "notes": "Praca",
+        "createdAt": "2025-10-15T20:45:06.453Z"
+      },
+      {
+        "id": "SLOT-1760561106453-2s5b4cmc2",
+        "dayOfWeek": 2,
+        "startTime": "10:00",
+        "endTime": "12:30",
+        "type": "work",
+        "duration": 150,
+        "notes": "Praca",
+        "createdAt": "2025-10-15T20:45:06.453Z"
+      },
+      {
+        "id": "SLOT-1760561106453-sh24vwyv9",
+        "dayOfWeek": 1,
+        "startTime": "14:30",
+        "endTime": "21:00",
+        "type": "work",
+        "duration": 390,
+        "notes": "Praca",
+        "createdAt": "2025-10-15T20:45:06.453Z"
+      },
+      {
+        "id": "SLOT-1760561106453-vidhlc5n6",
+        "dayOfWeek": 2,
+        "startTime": "14:15",
+        "endTime": "20:30",
+        "type": "work",
+        "duration": 375,
+        "notes": "Praca",
+        "createdAt": "2025-10-15T20:45:06.453Z"
+      },
+      {
+        "id": "SLOT-1760561106453-n3e0z68cu",
+        "dayOfWeek": 2,
+        "startTime": "00:45",
+        "endTime": "07:30",
+        "type": "work",
+        "duration": 405,
+        "notes": "Praca",
+        "createdAt": "2025-10-15T20:45:06.453Z"
+      },
+      {
+        "id": "SLOT-1760561106453-9eaiao122",
+        "dayOfWeek": 3,
+        "startTime": "01:00",
+        "endTime": "03:00",
+        "type": "work",
+        "duration": 120,
+        "notes": "Praca",
+        "createdAt": "2025-10-15T20:45:06.453Z"
+      },
+      {
+        "id": "SLOT-1760561106453-1qeyf1i31",
+        "dayOfWeek": 2,
+        "startTime": "07:45",
+        "endTime": "09:30",
+        "type": "work",
+        "duration": 105,
+        "notes": "Praca",
+        "createdAt": "2025-10-15T20:45:06.453Z"
+      },
+      {
+        "id": "SLOT-1760561106453-3j6dd760m",
+        "dayOfWeek": 3,
+        "startTime": "04:00",
+        "endTime": "10:00",
+        "type": "work",
+        "duration": 360,
+        "notes": "Praca",
+        "createdAt": "2025-10-15T20:45:06.453Z"
+      },
+      {
+        "id": "SLOT-1760561106453-64x86fdsz",
+        "dayOfWeek": 1,
+        "startTime": "03:15",
+        "endTime": "10:00",
+        "type": "work",
+        "duration": 405,
+        "notes": "Praca",
+        "createdAt": "2025-10-15T20:45:06.453Z"
+      },
+      {
+        "id": "SLOT-1760561106453-7u70p2g26",
+        "dayOfWeek": 1,
+        "startTime": "10:00",
+        "endTime": "14:00",
+        "type": "work",
+        "duration": 240,
+        "notes": "Praca",
+        "createdAt": "2025-10-15T20:45:06.453Z"
+      },
+      {
+        "id": "SLOT-1760561106453-jsiqmhd2y",
+        "dayOfWeek": 4,
+        "startTime": "04:15",
+        "endTime": "07:15",
+        "type": "work",
+        "duration": 180,
+        "notes": "Praca",
+        "createdAt": "2025-10-15T20:45:06.453Z"
+      }
+    ],
+    "breaks": [
+      {
+        "id": "SLOT-1760561106453-4y5xqwxqk",
+        "dayOfWeek": 6,
+        "startTime": "14:45",
+        "endTime": "16:15",
+        "type": "break",
+        "duration": 90,
+        "notes": "Przerwa",
+        "createdAt": "2025-10-15T20:45:06.453Z"
+      }
+    ],
+    "copiedFrom": "2025-10-13",
+    "createdAt": "2025-10-15T20:45:06.453Z",
+    "updatedAt": "2025-10-15T20:45:06.453Z"
   }
 ]

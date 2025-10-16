@@ -3,6 +3,7 @@
 
 import fs from 'fs';
 import path from 'path';
+import { logger } from '../../../utils/logger';
 
 const ORDERS_FILE = path.join(process.cwd(), 'data', 'orders.json');
 const SESSIONS_FILE = path.join(process.cwd(), 'data', 'technician-sessions.json');
@@ -16,7 +17,7 @@ const readOrders = () => {
     const data = fs.readFileSync(ORDERS_FILE, 'utf8');
     return JSON.parse(data);
   } catch (error) {
-    console.error('❌ Error reading orders.json:', error);
+    logger.error('❌ Error reading orders.json:', error);
     return [];
   }
 };
@@ -26,7 +27,7 @@ const writeOrders = (orders) => {
     fs.writeFileSync(ORDERS_FILE, JSON.stringify(orders, null, 2), 'utf8');
     return true;
   } catch (error) {
-    console.error('❌ Error writing orders.json:', error);
+    logger.error('❌ Error writing orders.json:', error);
     return false;
   }
 };
@@ -39,7 +40,7 @@ const readSessions = () => {
     }
     return [];
   } catch (error) {
-    console.error('❌ Error reading sessions:', error);
+    logger.error('❌ Error reading sessions:', error);
     return [];
   }
 };

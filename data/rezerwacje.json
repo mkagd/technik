@@ -1,23 +1,420 @@
-﻿[
-  {
-    "id": 1733900000000,
-    "name": "Test Rezerwacji",
-    "phone": "+48 123 456 789",
-    "email": "test@rezerwacja.pl",
-    "city": "Kraków",
-    "street": "ul. Floriańska 10",
-    "address": "ul. Floriańska 10, 31-019 Kraków",
-    "category": "Pralki",
-    "device": "Pralka Samsung",
-    "problem": "Nie wiruje",
-    "availability": "Poniedziałek 10:00-14:00",
-    "date": "2025-10-15",
-    "created_at": "2025-10-11T10:00:00.000Z",
-    "status": "pending",
-    "clientLocation": {
-      "lat": 50.0647,
-      "lng": 19.9450
+{
+  "rezerwacje": [
+    {
+      "id": 1760545640878,
+      "name": "Klient #639931",
+      "phone": "124121231232",
+      "email": "",
+      "city": "Mielec",
+      "street": "sienkiewicza 12",
+      "address": "",
+      "category": "Pralki",
+      "device": "Pralki",
+      "problem": "Brak opisu problemu",
+      "availability": "",
+      "date": "",
+      "created_at": "2025-10-15T16:27:20.879Z",
+      "status": "contacted",
+      "clientLocation": {
+        "address": "Hebe, 12, Henryka Sienkiewicza, Kościuszki, Stary Mielec, Mielec, powiat mielecki, województwo podkarpackie, 39-300, Polska",
+        "coordinates": {
+          "lat": 50.288371,
+          "lng": 21.4240855
+        },
+        "accuracy": "APPROXIMATE",
+        "confidence": 0.7000000000000001
+      },
+      "postalCode": "",
+      "userId": null,
+      "isAuthenticated": false,
+      "dateRange": {
+        "from": "2025-10-15",
+        "to": "2025-10-23",
+        "flexible": true
+      },
+      "dateMode": "range",
+      "time": "",
+      "physicalAvailability": null,
+      "clientType": "private",
+      "fullAddress": "sienkiewicza 12, 39-300 Mielec",
+      "phones": [
+        {
+          "number": "124121231232",
+          "label": "Główny",
+          "isPrimary": true
+        }
+      ],
+      "addresses": [
+        {
+          "street": "sienkiewicza 12",
+          "city": "Mielec",
+          "postalCode": "39-300",
+          "label": "Główny",
+          "isPrimary": true
+        }
+      ],
+      "devices": [
+        {
+          "category": "Pralki",
+          "brand": "",
+          "model": "",
+          "problem": "",
+          "serialNumber": "",
+          "hasBuiltIn": false
+        }
+      ],
+      "isFlexibleDate": true,
+      "companyData": null,
+      "multiDevice": false,
+      "multiPhone": false,
+      "multiAddress": false,
+      "updatedAt": "2025-10-15T19:52:19.889Z",
+      "updatedBy": "auto_heal",
+      "orderId": 1760557939884,
+      "orderNumber": "ORDS252880001",
+      "clientId": "CLIS252880001",
+      "convertedToOrder": true,
+      "convertedAt": "2025-10-15T19:52:19.889Z"
     },
-    "postalCode": "31-019"
-  }
-]
+    {
+      "id": 1760557259787,
+      "name": "Klient #257948",
+      "phone": "234234234",
+      "email": "",
+      "city": "Mielec",
+      "street": "sienkiewicza 12",
+      "address": "",
+      "category": "Piekarniki",
+      "device": "Piekarniki",
+      "problem": "Brak opisu problemu",
+      "availability": "",
+      "date": "2025-10-15",
+      "created_at": "2025-10-15T19:40:59.787Z",
+      "status": "contacted",
+      "clientLocation": {
+        "address": "Hebe, 12, Henryka Sienkiewicza, Kościuszki, Stary Mielec, Mielec, powiat mielecki, województwo podkarpackie, 39-300, Polska",
+        "coordinates": {
+          "lat": 50.288371,
+          "lng": 21.4240855
+        },
+        "accuracy": "APPROXIMATE",
+        "confidence": 0.7000000000000001
+      },
+      "postalCode": "",
+      "userId": null,
+      "isAuthenticated": false,
+      "dateRange": null,
+      "dateMode": "single",
+      "time": "",
+      "physicalAvailability": null,
+      "clientType": "private",
+      "fullAddress": "sienkiewicza 12, 39-300 Mielec",
+      "phones": [
+        {
+          "number": "234234234",
+          "label": "Główny",
+          "isPrimary": true
+        }
+      ],
+      "addresses": [
+        {
+          "street": "sienkiewicza 12",
+          "city": "Mielec",
+          "postalCode": "39-300",
+          "label": "Główny",
+          "isPrimary": true
+        }
+      ],
+      "devices": [
+        {
+          "category": "Piekarniki",
+          "brand": "",
+          "model": "",
+          "problem": "",
+          "serialNumber": "",
+          "hasBuiltIn": false
+        }
+      ],
+      "isFlexibleDate": false,
+      "companyData": null,
+      "multiDevice": false,
+      "multiPhone": false,
+      "multiAddress": false,
+      "updatedAt": "2025-10-15T19:52:19.908Z",
+      "updatedBy": "auto_heal",
+      "orderId": 1760557939903,
+      "orderNumber": "ORDS252880001",
+      "clientId": "CLIS252880002",
+      "convertedToOrder": true,
+      "convertedAt": "2025-10-15T19:52:19.908Z"
+    },
+    {
+      "id": 1760557756272,
+      "name": "Klient #755606",
+      "phone": "789789789",
+      "email": "",
+      "city": "Tarnów",
+      "street": "krakowska",
+      "address": "",
+      "category": "Lodówki",
+      "device": "Lodówki",
+      "problem": "Brak opisu problemu",
+      "availability": "",
+      "date": "2025-10-16",
+      "created_at": "2025-10-15T19:49:16.272Z",
+      "status": "contacted",
+      "clientLocation": {
+        "address": "Krakowska, Osiedle Starówka, Starówka, Tarnów, województwo małopolskie, 33-100, Polska",
+        "coordinates": {
+          "lat": 50.0099929,
+          "lng": 20.9799414
+        },
+        "accuracy": "RANGE_INTERPOLATED",
+        "confidence": 0.85
+      },
+      "postalCode": "",
+      "userId": null,
+      "isAuthenticated": false,
+      "dateRange": null,
+      "dateMode": "single",
+      "time": "",
+      "physicalAvailability": null,
+      "clientType": "private",
+      "fullAddress": "krakowska, 33-100 Tarnów",
+      "phones": [
+        {
+          "number": "789789789",
+          "label": "Główny",
+          "isPrimary": true
+        }
+      ],
+      "addresses": [
+        {
+          "street": "krakowska",
+          "city": "Tarnów",
+          "postalCode": "33-100",
+          "label": "Główny",
+          "isPrimary": true
+        }
+      ],
+      "devices": [
+        {
+          "category": "Lodówki",
+          "brand": "",
+          "model": "",
+          "problem": "",
+          "serialNumber": "",
+          "hasBuiltIn": false
+        }
+      ],
+      "isFlexibleDate": false,
+      "companyData": null,
+      "multiDevice": false,
+      "multiPhone": false,
+      "multiAddress": false,
+      "updatedAt": "2025-10-15T19:52:19.923Z",
+      "updatedBy": "auto_heal",
+      "orderId": 1760557939919,
+      "orderNumber": "ORDS252880001",
+      "clientId": "CLIS252880003",
+      "convertedToOrder": true,
+      "convertedAt": "2025-10-15T19:52:19.923Z"
+    },
+    {
+      "id": 1760557970983,
+      "name": "S/0001/10/25",
+      "phone": "2323652369",
+      "email": "bielaszkam2@gmail.com",
+      "city": "Dębica",
+      "street": "ul. Stefana Batorego 11",
+      "address": "",
+      "category": "Piekarniki",
+      "device": "Piekarniki",
+      "problem": "Brak opisu problemu",
+      "availability": "",
+      "date": "2025-10-15",
+      "created_at": "2025-10-15T19:52:50.983Z",
+      "status": "contacted",
+      "clientLocation": null,
+      "postalCode": "",
+      "userId": null,
+      "isAuthenticated": false,
+      "dateRange": null,
+      "dateMode": "single",
+      "time": "",
+      "physicalAvailability": null,
+      "clientType": "private",
+      "fullAddress": "ul. Stefana Batorego 11, 39-200 Dębica",
+      "phones": [
+        {
+          "number": "2323652369",
+          "label": "Główny",
+          "isPrimary": true
+        }
+      ],
+      "addresses": [
+        {
+          "street": "ul. Stefana Batorego 11",
+          "city": "Dębica",
+          "postalCode": "39-200",
+          "label": "Główny",
+          "isPrimary": true
+        }
+      ],
+      "devices": [
+        {
+          "category": "Piekarniki",
+          "brand": "",
+          "model": "",
+          "problem": "",
+          "serialNumber": "",
+          "hasBuiltIn": false
+        }
+      ],
+      "isFlexibleDate": false,
+      "companyData": null,
+      "multiDevice": false,
+      "multiPhone": false,
+      "multiAddress": false,
+      "orderId": 1760557971019,
+      "orderNumber": "ORDW252880001",
+      "updatedAt": "2025-10-15T19:52:58.234Z",
+      "clientId": null,
+      "convertedToOrder": true,
+      "convertedAt": "2025-10-15T19:52:51.019Z",
+      "updatedBy": "admin"
+    },
+    {
+      "id": 1760559124421,
+      "name": "Klient #122997",
+      "phone": "321321325",
+      "email": "",
+      "city": "Brzeźnica",
+      "street": "Jh",
+      "address": "",
+      "category": "Płyty indukcyjne",
+      "device": "Płyty indukcyjne",
+      "problem": "Brak opisu problemu",
+      "availability": "",
+      "date": "2025-10-16",
+      "created_at": "2025-10-15T20:12:04.421Z",
+      "status": "contacted",
+      "clientLocation": null,
+      "postalCode": "",
+      "userId": null,
+      "isAuthenticated": false,
+      "dateRange": null,
+      "dateMode": "single",
+      "time": "",
+      "physicalAvailability": null,
+      "clientType": "private",
+      "fullAddress": "Jh, 39-207 Brzeźnica",
+      "phones": [
+        {
+          "number": "321321325",
+          "label": "Główny",
+          "isPrimary": true
+        }
+      ],
+      "addresses": [
+        {
+          "street": "Jh",
+          "city": "Brzeźnica",
+          "postalCode": "39-207",
+          "label": "Główny",
+          "isPrimary": true
+        }
+      ],
+      "devices": [
+        {
+          "category": "Płyty indukcyjne",
+          "brand": "",
+          "model": "",
+          "problem": "",
+          "serialNumber": "",
+          "hasBuiltIn": false
+        }
+      ],
+      "isFlexibleDate": false,
+      "companyData": null,
+      "multiDevice": false,
+      "multiPhone": false,
+      "multiAddress": false,
+      "orderId": 1760559124449,
+      "orderNumber": "ORDW252880002",
+      "updatedAt": "2025-10-15T20:12:14.827Z",
+      "clientId": null,
+      "convertedToOrder": true,
+      "convertedAt": "2025-10-15T20:12:04.449Z",
+      "updatedBy": "admin"
+    },
+    {
+      "id": 1760560584601,
+      "name": "Klient #583359",
+      "phone": "235632352699",
+      "email": "",
+      "city": "Mielec",
+      "street": "Tuhhh",
+      "address": "",
+      "category": "Pralki",
+      "device": "Beko",
+      "problem": "Nie pobiera wody",
+      "availability": "",
+      "date": "",
+      "created_at": "2025-10-15T20:36:24.601Z",
+      "status": "contacted",
+      "clientLocation": null,
+      "postalCode": "",
+      "userId": null,
+      "isAuthenticated": false,
+      "dateRange": {
+        "from": "2025-10-15",
+        "to": "2025-10-22",
+        "flexible": true
+      },
+      "dateMode": "range",
+      "time": "",
+      "physicalAvailability": null,
+      "clientType": "private",
+      "fullAddress": "Tuhhh, 39-300 Mielec",
+      "phones": [
+        {
+          "number": "235632352699",
+          "label": "Główny",
+          "isPrimary": true
+        }
+      ],
+      "addresses": [
+        {
+          "street": "Tuhhh",
+          "city": "Mielec",
+          "postalCode": "39-300",
+          "label": "Główny",
+          "isPrimary": true
+        }
+      ],
+      "devices": [
+        {
+          "category": "Pralki",
+          "brand": "Beko",
+          "model": "",
+          "problem": "Nie pobiera wody",
+          "serialNumber": "",
+          "hasBuiltIn": false
+        }
+      ],
+      "isFlexibleDate": true,
+      "companyData": null,
+      "multiDevice": false,
+      "multiPhone": false,
+      "multiAddress": false,
+      "orderId": 1760560584616,
+      "orderNumber": "ORDW252880003",
+      "updatedAt": "2025-10-15T20:36:31.598Z",
+      "clientId": null,
+      "convertedToOrder": true,
+      "convertedAt": "2025-10-15T20:36:24.616Z",
+      "updatedBy": "admin"
+    }
+  ]
+}

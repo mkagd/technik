@@ -56,6 +56,7 @@ export default function ClientRegister() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
+  const [linkedOrdersCount, setLinkedOrdersCount] = useState(0);
 
   // Handle input change
   const handleChange = (e) => {
@@ -221,6 +222,7 @@ export default function ClientRegister() {
 
       if (data.success) {
         setSuccess(true);
+        setLinkedOrdersCount(data.linkedOrdersCount || 0);
         
         // Automatyczne logowanie po rejestracji
         setTimeout(() => {
@@ -416,6 +418,19 @@ export default function ClientRegister() {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -20 }}
           >
+            {/* Informacja o automatycznym linkowaniu */}
+            <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+              <div className="flex items-start gap-2">
+                <FiAlertCircle className="text-blue-600 mt-0.5 flex-shrink-0" />
+                <div className="text-sm text-blue-800">
+                  <strong>Już składałeś zgłoszenie?</strong>
+                  <p className="mt-1">
+                    Podaj ten sam adres i numer telefonu - automatycznie znajdziemy Twoje wcześniejsze zgłoszenia i dodamy je do Twojego konta!
+                  </p>
+                </div>
+              </div>
+            </div>
+            
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -619,8 +634,27 @@ export default function ClientRegister() {
             <h2 className="text-2xl font-bold text-gray-900 mb-2">
               Rejestracja Zakończona!
             </h2>
+            <p className="text-gray-600 mb-4">
+              Twoje konto zostało utworzone{linkedOrdersCount > 0 && ' i automatycznie zlinkowane z wcześniejszymi zgłoszeniami'}.
+            </p>
+            
+            {linkedOrdersCount > 0 && (
+              <div className="bg-blue-50 border-2 border-blue-200 rounded-lg p-4 mb-4">
+                <div className="flex items-center justify-center gap-2 mb-2">
+                  <FiCheckCircle className="text-blue-600 text-xl" />
+                  <span className="font-semibold text-blue-900">
+                    Znaleziono {linkedOrdersCount} {linkedOrdersCount === 1 ? 'zlecenie' : linkedOrdersCount < 5 ? 'zlecenia' : 'zleceń'}!
+                  </span>
+                </div>
+                <p className="text-sm text-blue-700">
+                  Twoje wcześniejsze zgłoszenia zostały automatycznie przypisane do Twojego konta. 
+                  Możesz je teraz przeglądać w panelu klienta.
+                </p>
+              </div>
+            )}
+            
             <p className="text-gray-600 mb-6">
-              Twoje konto zostało utworzone. Za chwilę zostaniesz przekierowany do panelu klienta.
+              Za chwilę zostaniesz przekierowany do panelu klienta.
             </p>
             <div className="flex items-center justify-center gap-2 text-blue-600">
               <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>

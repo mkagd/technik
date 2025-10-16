@@ -1,6 +1,6 @@
 // components/AdminLayout.js - Uniwersalny layout dla wszystkich stron admin
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/router';
 import GlobalSearch from './GlobalSearch';
 import { 
@@ -28,26 +28,22 @@ export default function AdminLayout({ children, title, breadcrumbs = [] }) {
   const [notifications, setNotifications] = useState([]);
   
   // 🔧 Funkcja do natychmiastowego odświeżania badge'y (wywoływana po zmianach)
-  const refreshBadges = async () => {
+  // ✅ useCallback zapobiega tworzeniu nowej funkcji przy każdym renderze
+  const refreshBadges = useCallback(async () => {
     try {
-      console.log('🔄 Refreshing badges...');
-      
       // Odśwież badge rezerwacji
       const rezRes = await fetch('/api/rezerwacje');
       if (rezRes.ok) {
         const data = await rezRes.json();
         // API może zwrócić tablicę lub obiekt { rezerwacje: [...] }
         const rezerwacje = Array.isArray(data) ? data : (data.rezerwacje || []);
-        console.log('📊 Total reservations:', rezerwacje.length);
         const pendingCount = rezerwacje.filter(r => 
           r.status === 'pending' && !r.orderId && !r.convertedToOrder
         ).length;
-        console.log('✅ Pending reservations (no orderId):', pendingCount);
         setReservationsBadge({ 
           count: pendingCount, 
           type: pendingCount > 0 ? 'info' : 'success'
         });
-        console.log('✅ Reservations badge updated to:', pendingCount);
       }
       
       // Odśwież badge zleceń
@@ -56,16 +52,13 @@ export default function AdminLayout({ children, title, breadcrumbs = [] }) {
         const ordersData = await ordersRes.json();
         // API może zwrócić tablicę lub obiekt { orders: [...] }
         const orders = Array.isArray(ordersData) ? ordersData : (ordersData.orders || []);
-        console.log('📊 Total orders:', orders.length);
         const activeOrdersCount = orders.filter(o => 
           !o.reservationId && o.status !== 'completed' && o.status !== 'cancelled'
         ).length;
-        console.log('✅ Active orders (no reservationId):', activeOrdersCount);
         setOrdersBadge({ 
           count: activeOrdersCount, 
           type: activeOrdersCount > 0 ? 'info' : 'success'
         });
-        console.log('✅ Orders badge updated to:', activeOrdersCount);
       }
       
       // Odśwież badge magazynu (zamówienia części pending)
@@ -74,30 +67,27 @@ export default function AdminLayout({ children, title, breadcrumbs = [] }) {
         const partRequestsData = await partRequestsRes.json();
         const partRequests = partRequestsData.requests || [];
         const pendingRequestsCount = partRequests.length;
-        console.log('📊 Part requests pending:', pendingRequestsCount);
         setMagazynBadge({ 
           count: pendingRequestsCount, 
           type: pendingRequestsCount > 0 ? 'error' : 'success' // error = pilne/czerwony
         });
-        console.log('✅ Magazyn badge updated to:', pendingRequestsCount);
       }
     } catch (error) {
       console.error('❌ Error refreshing badges:', error);
     }
-  };
+  }, []); // ✅ Pusta tablica dependencies - funkcja jest tworzona tylko raz
   
   // 🔧 Expose refreshBadges globally so it can be called from other components
   useEffect(() => {
     if (typeof window !== 'undefined') {
       window.refreshAdminBadges = refreshBadges;
-      console.log('✅ window.refreshAdminBadges registered');
     }
     return () => {
       if (typeof window !== 'undefined') {
         delete window.refreshAdminBadges;
       }
     };
-  }, [refreshBadges]);
+  }, [refreshBadges]); // ✅ refreshBadges jest stabilny dzięki useCallback
 
   // 🔒 CHECK AUTHENTICATION - Sprawdź czy użytkownik jest zalogowany
   useEffect(() => {
@@ -179,116 +169,54 @@ export default function AdminLayout({ children, title, breadcrumbs = [] }) {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Check for unread notifications
-  useEffect(() => {
-    const checkNotifications = async () => {
-      try {
-        // Get all unread notifications for dropdown
-        const notifRes = await fetch('/api/notifications?read=false');
-        if (notifRes.ok) {
-          const data = await notifRes.json();
-          setNotifications(data);
-          
-          // Helper: Get priority type for a category (error > info > success)
-          const getPriorityType = (notifs) => {
-            if (notifs.some(n => n.type === 'error')) return 'error';
-            if (notifs.some(n => n.type === 'info')) return 'info';
-            if (notifs.some(n => n.type === 'success')) return 'success';
-            return 'info';
-          };
-          
-          // Categorize notifications by link
-          const total = data.length;
-          const reservationsNotifs = data.filter(n => n.link && n.link.startsWith('/admin/rezerwacje'));
-          const ordersNotifs = data.filter(n => n.link && n.link.startsWith('/admin/zamowienia'));
-          const magazynNotifs = data.filter(n => n.link && n.link.startsWith('/admin/magazyn'));
-          const logistykaNotifs = data.filter(n => n.link && n.link.startsWith('/admin/logistyk'));
-          
-          // 🔧 Badge dla rezerwacji pokazuje tylko rezerwacje pending (nieprzetworzone)
-          // Pobierz aktualną liczbę rezerwacji pending zamiast liczyć notyfikacje
-          try {
-            const rezRes = await fetch('/api/rezerwacje');
-            if (rezRes.ok) {
-              const rezData = await rezRes.json();
-              // API może zwrócić tablicę lub obiekt { rezerwacje: [...] }
-              const rezerwacje = Array.isArray(rezData) ? rezData : (rezData.rezerwacje || []);
-              const pendingCount = rezerwacje.filter(r => 
-                r.status === 'pending' && !r.orderId && !r.convertedToOrder
-              ).length;
-              setReservationsBadge({ 
-                count: pendingCount, 
-                type: pendingCount > 0 ? 'info' : 'success'
-              });
-            } else {
-              // Fallback: użyj liczby notyfikacji jeśli API nie działa
-              setReservationsBadge({ count: reservationsNotifs.length, type: getPriorityType(reservationsNotifs) });
-            }
-          } catch (error) {
-            console.error('Error fetching reservations:', error);
-            // Fallback: użyj liczby notyfikacji
-            setReservationsBadge({ count: reservationsNotifs.length, type: getPriorityType(reservationsNotifs) });
-          }
-          
-          // 🔧 Badge dla zleceń pokazuje tylko zlecenia bez reservationId (nie przekonwertowane z rezerwacji)
-          try {
-            const ordersRes = await fetch('/api/orders');
-            if (ordersRes.ok) {
-              const ordersData = await ordersRes.json();
-              // API może zwrócić tablicę lub obiekt { orders: [...] }
-              const orders = Array.isArray(ordersData) ? ordersData : (ordersData.orders || []);
-              const activeOrdersCount = orders.filter(o => 
-                !o.reservationId && o.status !== 'completed' && o.status !== 'cancelled'
-              ).length;
-              console.log('📊 Total orders:', orders.length);
-              console.log('✅ Active orders (no reservationId):', activeOrdersCount);
-              setOrdersBadge({ 
-                count: activeOrdersCount, 
-                type: activeOrdersCount > 0 ? 'info' : 'success'
-              });
-            } else {
-              // Fallback: użyj liczby notyfikacji jeśli API nie działa
-              setOrdersBadge({ count: ordersNotifs.length, type: getPriorityType(ordersNotifs) });
-            }
-          } catch (error) {
-            console.error('Error fetching orders:', error);
-            // Fallback: użyj liczby notyfikacji
-            setOrdersBadge({ count: ordersNotifs.length, type: getPriorityType(ordersNotifs) });
-          }
-          
-          // 🔧 Badge dla magazynu pokazuje zamówienia części pending (do zaakceptowania)
-          try {
-            const partRequestsRes = await fetch('/api/part-requests?status=pending');
-            if (partRequestsRes.ok) {
-              const partRequestsData = await partRequestsRes.json();
-              const partRequests = partRequestsData.requests || [];
-              const pendingRequestsCount = partRequests.length;
-              setMagazynBadge({ 
-                count: pendingRequestsCount, 
-                type: pendingRequestsCount > 0 ? 'error' : 'success' // error = pilne/czerwony
-              });
-            } else {
-              // Fallback: użyj liczby notyfikacji jeśli API nie działa
-              setMagazynBadge({ count: magazynNotifs.length, type: getPriorityType(magazynNotifs) });
-            }
-          } catch (error) {
-            console.error('Error fetching part requests:', error);
-            // Fallback: użyj liczby notyfikacji
-            setMagazynBadge({ count: magazynNotifs.length, type: getPriorityType(magazynNotifs) });
-          }
-          
-          setNotificationCount(total);
-          setLogistykaBadge({ count: logistykaNotifs.length, type: getPriorityType(logistykaNotifs) });
-        }
-      } catch (error) {
-        console.error('Error checking notifications:', error);
+  // 🔄 Check for unread notifications AND refresh badges - Combined function
+  // ✅ useCallback dla stabilnej referencji
+  const checkNotifications = useCallback(async () => {
+    try {
+      // Get all unread notifications for dropdown
+      const notifRes = await fetch('/api/notifications?read=false');
+      if (notifRes.ok) {
+        const data = await notifRes.json();
+        setNotifications(data);
+        
+        // Helper: Get priority type for a category (error > info > success)
+        const getPriorityType = (notifs) => {
+          if (notifs.some(n => n.type === 'error')) return 'error';
+          if (notifs.some(n => n.type === 'info')) return 'info';
+          if (notifs.some(n => n.type === 'success')) return 'success';
+          return 'info';
+        };
+        
+        // Categorize notifications by link
+        const total = data.length;
+        const logistykaNotifs = data.filter(n => n.link && n.link.startsWith('/admin/logistyk'));
+        
+        setNotificationCount(total);
+        setLogistykaBadge({ count: logistykaNotifs.length, type: getPriorityType(logistykaNotifs) });
       }
-    };
-
+      
+      // 📊 Refresh badges from actual data (not notifications)
+      await refreshBadges();
+      
+    } catch (error) {
+      console.error('Error checking notifications:', error);
+    }
+  }, [refreshBadges]); // ✅ refreshBadges jest stabilny dzięki useCallback
+  
+  useEffect(() => {
+    // Initial check
     checkNotifications();
-    // Refresh every 30 seconds
-    const interval = setInterval(checkNotifications, 30000);
-    return () => clearInterval(interval);
-  }, []);
+    
+    // Refresh every 2 minutes (120 seconds)
+    const interval = setInterval(checkNotifications, 120000);
+    
+    console.log('✅ AdminLayout: Auto-refresh interwał utworzony (co 2 minuty)');
+    
+    return () => {
+      clearInterval(interval);
+      console.log('🧹 AdminLayout: Auto-refresh interwał wyczyszczony');
+    };
+  }, [checkNotifications]); // ✅ checkNotifications jest stabilny dzięki useCallback
 
   // Close notifications dropdown when clicking outside
   useEffect(() => {
