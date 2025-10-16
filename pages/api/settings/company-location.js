@@ -1,10 +1,7 @@
 // pages/api/settings/company-location.js
 // API endpoint do zarządzania lokalizacją firmy
 
-import fs from 'fs';
-import path from 'path';
-
-const SETTINGS_FILE = path.join(process.cwd(), 'data', 'company-settings.json');
+import { getServiceSupabase } from '../../../lib/supabase';
 
 // Domyślna lokalizacja (Kraków)
 const DEFAULT_LOCATION = {
@@ -15,63 +12,71 @@ const DEFAULT_LOCATION = {
   updatedAt: new Date().toISOString()
 };
 
-// Upewnij się że folder data istnieje
-function ensureDataDir() {
-  const dataDir = path.join(process.cwd(), 'data');
-  if (!fs.existsSync(dataDir)) {
-    fs.mkdirSync(dataDir, { recursive: true });
-  }
-}
-
-// Wczytaj lokalizację
-function loadCompanyLocation() {
+// Wczytaj lokalizację z Supabase
+async function loadCompanyLocation() {
   try {
-    ensureDataDir();
+    const supabase = getServiceSupabase();
     
-    if (!fs.existsSync(SETTINGS_FILE)) {
-      // Stwórz domyślny plik
-      fs.writeFileSync(SETTINGS_FILE, JSON.stringify({
-        companyLocation: DEFAULT_LOCATION
-      }, null, 2));
+    const { data, error } = await supabase
+      .from('settings')
+      .select('value')
+      .eq('key', 'company_location')
+      .single();
+    
+    if (error || !data) {
+      // Jeśli nie ma ustawień, zwróć domyślne
       return DEFAULT_LOCATION;
     }
     
-    const data = JSON.parse(fs.readFileSync(SETTINGS_FILE, 'utf8'));
-    return data.companyLocation || DEFAULT_LOCATION;
+    return data.value || DEFAULT_LOCATION;
   } catch (error) {
     console.error('❌ Błąd wczytywania lokalizacji firmy:', error);
     return DEFAULT_LOCATION;
   }
 }
 
-// Zapisz lokalizację
-function saveCompanyLocation(location) {
+// Zapisz lokalizację do Supabase
+async function saveCompanyLocation(location) {
   try {
-    ensureDataDir();
+    const supabase = getServiceSupabase();
     
-    const settings = fs.existsSync(SETTINGS_FILE)
-      ? JSON.parse(fs.readFileSync(SETTINGS_FILE, 'utf8'))
-      : {};
-    
-    settings.companyLocation = {
+    const locationData = {
       ...location,
       updatedAt: new Date().toISOString()
     };
     
-    fs.writeFileSync(SETTINGS_FILE, JSON.stringify(settings, null, 2));
+    // Użyj upsert (insert or update)
+    const { data, error } = await supabase
+      .from('settings')
+      .upsert({
+        key: 'company_location',
+        value: locationData,
+        category: 'company',
+        description: 'Company headquarters location',
+        updated_at: new Date().toISOString()
+      }, {
+        onConflict: 'key'
+      })
+      .select()
+      .single();
+    
+    if (error) {
+      throw error;
+    }
+    
     console.log('✅ Lokalizacja firmy zapisana:', location.name);
-    return settings.companyLocation;
+    return locationData;
   } catch (error) {
     console.error('❌ Błąd zapisywania lokalizacji firmy:', error);
     throw error;
   }
 }
 
-export default function handler(req, res) {
+export default async function handler(req, res) {
   try {
     if (req.method === 'GET') {
       // Pobierz aktualną lokalizację
-      const location = loadCompanyLocation();
+      const location = await loadCompanyLocation();
       return res.status(200).json(location);
       
     } else if (req.method === 'POST' || req.method === 'PUT') {
@@ -97,7 +102,7 @@ export default function handler(req, res) {
         });
       }
       
-      const location = saveCompanyLocation({
+      const location = await saveCompanyLocation({
         lat,
         lng,
         name: name || 'Siedziba firmy',

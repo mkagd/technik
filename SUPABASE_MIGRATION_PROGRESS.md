@@ -26,6 +26,7 @@
 - [x] `/api/visits/index` - GET/POST/PUT/DELETE (visits management with filters, search, pagination)
 - [x] `/api/part-requests/index` - GET/POST/PUT (parts requests management)
 - [x] `/api/orders/search` - GET (search orders by number, phone, client name, device type)
+- [x] `/api/settings/company-location` - GET/POST/PUT (company location management with Supabase upsert)
 
 ## 🔄 IN PROGRESS - Critical API Endpoints
 
