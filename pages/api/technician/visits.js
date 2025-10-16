@@ -1,72 +1,208 @@
 // pages/api/technician/visits.js
 // 📅 API dla pobierania wizyt pracownika z systemu Enhanced v4.0
 
-import fs from 'fs';
-import path from 'path';
+import { getServiceSupabase } from '../../../lib/supabase';
 import { getTechnicianId, statusToUI } from '../../../utils/fieldMapping';
 import { logger } from '../../../utils/logger';
-
-const ORDERS_FILE = path.join(process.cwd(), 'data', 'orders.json');
-const SESSIONS_FILE = path.join(process.cwd(), 'data', 'technician-sessions.json');
 
 // ===========================
 // HELPER FUNCTIONS
 // ===========================
 
-const readOrders = () => {
-  try {
-    const data = fs.readFileSync(ORDERS_FILE, 'utf8');
-    return JSON.parse(data);
-  } catch (error) {
-    logger.error('❌ Error reading orders.json:', error);
-    return [];
-  }
-};
-
-const readSessions = () => {
-  try {
-    if (fs.existsSync(SESSIONS_FILE)) {
-      const data = fs.readFileSync(SESSIONS_FILE, 'utf8');
-      return JSON.parse(data);
-    }
-    return [];
-  } catch (error) {
-    logger.error('❌ Error reading sessions:', error);
-    return [];
-  }
-};
-
-// Waliduj token i zwróć employeeId (multi-auth: technician-sessions + employee-sessions)
-const validateToken = (token) => {
-  // Try technician-sessions.json (primary)
-  const sessions = readSessions();
-  const session = sessions.find(s => s.token === token && s.isValid);
+// Waliduj token i zwróć employeeId (sprawdza sesje w Supabase)
+const validateToken = async (token) => {
+  const supabase = getServiceSupabase();
   
-  if (session) {
-    // ✅ Jeśli jest isValid: true, to token jest aktywny (nie sprawdzamy daty)
-    logger.debug(`✅ Valid technician token for ${session.employeeId}`);
-    return session.employeeId;
+  // Sprawdź sesje w tabeli sessions (is_valid = true)
+  const { data: session, error } = await supabase
+    .from('sessions')
+    .select('employee_id, is_valid')
+    .eq('token', token)
+    .eq('is_valid', true)
+    .single();
+  
+  if (error || !session) {
+    logger.debug('❌ Invalid or expired token');
+    return null;
   }
   
-  // Try employee-sessions.json (fallback for pracownik-logowanie)
-  const employeeSessionsPath = path.join(process.cwd(), 'data', 'employee-sessions.json');
-  if (fs.existsSync(employeeSessionsPath)) {
-    try {
-      const empSessions = JSON.parse(fs.readFileSync(employeeSessionsPath, 'utf-8'));
-      const empSession = empSessions.find(s => s.token === token && s.isValid);
-      if (empSession) {
-        logger.debug(`✅ Valid employee token for ${empSession.employeeId}`);
-        return empSession.employeeId;
-      }
-    } catch (error) {
-      logger.error('Error reading employee-sessions:', error);
-    }
-  }
-  
-  return null;
+  logger.debug(`✅ Valid token for employee ${session.employee_id}`);
+  return session.employee_id;
 };
 
-// Wyciągnij wszystkie wizyty ze zlecenia
+// Wyciągnij wizyty z bazy danych (używamy tabeli visits)
+const getEmployeeVisits = async (employeeId, filters = {}) => {
+  const supabase = getServiceSupabase();
+  
+  let query = supabase
+    .from('visits')
+    .select(`
+      *,
+      order:orders(
+        order_number,
+        client_name,
+        phone,
+        email,
+        address,
+        city,
+        device_type,
+        brand,
+        model,
+        serial_number,
+        problem_description,
+        symptoms,
+        priority,
+        source,
+        metadata
+      )
+    `)
+    .eq('employee_id', employeeId);
+  
+  // Filtrowanie po dacie
+  if (filters.date) {
+    query = query.eq('scheduled_date', filters.date);
+  } else if (filters.period === 'today') {
+    const today = new Date().toISOString().split('T')[0];
+    query = query.eq('scheduled_date', today);
+  } else if (filters.period === 'week') {
+    const today = new Date();
+    const startOfWeek = new Date(today);
+    startOfWeek.setDate(today.getDate() - today.getDay());
+    const endOfWeek = new Date(startOfWeek);
+    endOfWeek.setDate(startOfWeek.getDate() + 7);
+    
+    query = query
+      .gte('scheduled_date', startOfWeek.toISOString().split('T')[0])
+      .lt('scheduled_date', endOfWeek.toISOString().split('T')[0]);
+  } else if (filters.period === 'month') {
+    const today = new Date();
+    const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+    const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+    
+    query = query
+      .gte('scheduled_date', startOfMonth.toISOString().split('T')[0])
+      .lte('scheduled_date', endOfMonth.toISOString().split('T')[0]);
+  }
+  
+  // Filtrowanie po statusie
+  if (filters.status) {
+    query = query.eq('status', filters.status);
+  }
+  
+  // Filtrowanie po typie
+  if (filters.type) {
+    query = query.eq('visit_type', filters.type);
+  }
+  
+  // Wykluczenie zakończonych
+  if (filters.includeCompleted === 'false') {
+    query = query.not('status', 'in', '(completed,cancelled)');
+  }
+  
+  // Sortowanie po dacie i czasie
+  query = query.order('scheduled_date', { ascending: true });
+  
+  const { data: visits, error } = await query;
+  
+  if (error) {
+    logger.error('❌ Error fetching visits:', error);
+    throw error;
+  }
+  
+  // Transformuj wizyty do formatu API
+  return visits.map(visit => transformVisitToAPI(visit));
+};
+
+// Transformuj wizytę z Supabase do formatu API
+const transformVisitToAPI = (visit) => {
+  const order = visit.order || {};
+  
+  return {
+    visitId: visit.id,
+    orderNumber: order.order_number,
+    orderId: visit.order_id,
+    
+    // Typ wizyty
+    type: visit.visit_type,
+    typeLabel: getVisitTypeLabel(visit.visit_type),
+    
+    // Status wizyty
+    status: visit.status,
+    statusLabel: getVisitStatusLabel(visit.status),
+    
+    // Data i czas
+    date: visit.scheduled_date,
+    time: visit.scheduled_date ? new Date(visit.scheduled_date).toTimeString().slice(0, 5) : '09:00',
+    scheduledDate: visit.scheduled_date,
+    
+    // Przypisanie
+    technicianId: visit.employee_id,
+    
+    // Dane klienta (z order)
+    clientId: order.client_id,
+    clientName: order.client_name || order.metadata?.clientName,
+    clientPhone: order.phone || order.metadata?.phone,
+    clientEmail: order.email || order.metadata?.email,
+    address: order.address || order.metadata?.address,
+    city: order.city,
+    
+    // Dane urządzenia (z order)
+    device: order.metadata?.device || `${order.brand || ''} ${order.model || ''}`.trim(),
+    deviceType: order.device_type,
+    brand: order.brand,
+    model: order.model,
+    serialNumber: order.serial_number,
+    
+    // AGD Specific (z metadata)
+    warrantyStatus: order.metadata?.agdSpecific?.warrantyStatus,
+    isBuiltIn: order.metadata?.builtInParams?.isBuiltIn || false,
+    builtInType: order.metadata?.builtInParams?.type,
+    
+    // Problem i diagnoza
+    problemDescription: order.problem_description,
+    symptoms: order.symptoms || order.metadata?.symptoms || [],
+    diagnosis: visit.diagnosis,
+    
+    // Części i koszty
+    partsUsed: visit.parts_used || [],
+    estimatedCost: visit.estimated_cost,
+    totalCost: visit.total_cost,
+    
+    // Czas i priorytet
+    estimatedDuration: visit.duration_minutes || order.metadata?.estimatedDuration || 120,
+    actualDuration: visit.actual_duration_minutes,
+    priority: order.priority || 'medium',
+    
+    // Notatki
+    technicianNotes: visit.notes || '',
+    internalNotes: order.metadata?.internalNotes,
+    
+    // Zdjęcia (z metadata)
+    photos: order.metadata?.photos || [],
+    beforePhotos: visit.metadata?.beforePhotos || order.metadata?.beforePhotos || [],
+    duringPhotos: visit.metadata?.duringPhotos || order.metadata?.duringPhotos || [],
+    afterPhotos: visit.metadata?.afterPhotos || order.metadata?.afterPhotos || [],
+    completionPhotos: visit.metadata?.completionPhotos || order.metadata?.completionPhotos || [],
+    problemPhotos: visit.metadata?.problemPhotos || order.metadata?.problemPhotos || [],
+    partPhotos: visit.metadata?.partPhotos || order.metadata?.partPhotos || [],
+    allPhotos: order.metadata?.allPhotos || [],
+    
+    // Tracking
+    startTime: visit.started_at,
+    endTime: visit.completed_at,
+    workSessions: visit.metadata?.workSessions || [],
+    
+    // Metadane
+    createdAt: visit.created_at,
+    completedAt: visit.completed_at,
+    source: order.source,
+    
+    // Pełne dane zlecenia
+    _orderData: order
+  };
+};
+
+// Wyciągnij wszystkie wizyty ze zlecenia (LEGACY - dla kompatybilności)
 const extractVisitsFromOrder = (order) => {
   const visits = [];
   
@@ -302,7 +438,7 @@ const isThisWeek = (dateString) => {
 // MAIN API HANDLER
 // ===========================
 
-export default function handler(req, res) {
+export default async function handler(req, res) {
   // CORS
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
@@ -329,7 +465,7 @@ export default function handler(req, res) {
     });
   }
 
-  const employeeId = validateToken(token);
+  const employeeId = await validateToken(token);
   
   if (!employeeId) {
     return res.status(401).json({
@@ -348,72 +484,16 @@ export default function handler(req, res) {
       includeCompleted  // czy włączyć zakończone
     } = req.query;
 
-    // Wczytaj wszystkie zlecenia
-    const allOrders = readOrders();
-    
-    // Wyciągnij wszystkie wizyty ze wszystkich zleceń
-    let allVisits = [];
-    allOrders.forEach(order => {
-      const orderVisits = extractVisitsFromOrder(order);
-      allVisits = allVisits.concat(orderVisits);
+    // Pobierz wizyty pracownika z Supabase
+    const employeeVisits = await getEmployeeVisits(employeeId, {
+      date,
+      period,
+      status,
+      type,
+      includeCompleted
     });
 
-    // Filtruj wizyty przypisane do tego pracownika
-    let employeeVisits = allVisits.filter(visit => {
-      const isAssigned = visit.technicianId === employeeId;
-      
-      if (isAssigned) {
-        logger.debug(`✅ Wizyta ${visit.visitId} przypisana do ${employeeId}:`, {
-          technicianId: visit.technicianId,
-          date: visit.date,
-          status: visit.status
-        });
-      }
-      
-      return isAssigned;
-    });
-
-    logger.debug(`📊 Znaleziono ${employeeVisits.length} wizyt dla pracownika ${employeeId} z ${allVisits.length} wszystkich wizyt`);
-
-    // Filtrowanie po dacie/okresie
-    if (date) {
-      employeeVisits = employeeVisits.filter(visit => 
-        visit.date && visit.date.startsWith(date)
-      );
-    } else if (period === 'today') {
-      employeeVisits = employeeVisits.filter(visit => isToday(visit.date));
-    } else if (period === 'week') {
-      employeeVisits = employeeVisits.filter(visit => isThisWeek(visit.date));
-    } else if (period === 'month') {
-      const currentMonth = new Date().toISOString().substring(0, 7); // YYYY-MM
-      employeeVisits = employeeVisits.filter(visit => 
-        visit.date && visit.date.startsWith(currentMonth)
-      );
-    }
-
-    // Filtrowanie po statusie
-    if (status) {
-      employeeVisits = employeeVisits.filter(visit => visit.status === status);
-    }
-
-    // Filtrowanie po typie
-    if (type) {
-      employeeVisits = employeeVisits.filter(visit => visit.type === type);
-    }
-
-    // Czy wykluczyć zakończone?
-    if (includeCompleted === 'false') {
-      employeeVisits = employeeVisits.filter(visit => 
-        visit.status !== 'completed' && visit.status !== 'cancelled'
-      );
-    }
-
-    // Sortuj po dacie i czasie
-    employeeVisits.sort((a, b) => {
-      const dateA = new Date(`${a.date}T${a.time}`);
-      const dateB = new Date(`${b.date}T${b.time}`);
-      return dateA - dateB;
-    });
+    logger.debug(`📊 Znaleziono ${employeeVisits.length} wizyt dla pracownika ${employeeId}`);
 
     // Przygotuj statystyki
     const stats = {
@@ -421,7 +501,7 @@ export default function handler(req, res) {
       today: employeeVisits.filter(v => isToday(v.date)).length,
       thisWeek: employeeVisits.filter(v => isThisWeek(v.date)).length,
       byStatus: {
-        pending: employeeVisits.filter(v => v.status === 'pending').length, // Dodano: pending
+        pending: employeeVisits.filter(v => v.status === 'pending').length,
         scheduled: employeeVisits.filter(v => v.status === 'scheduled').length,
         on_way: employeeVisits.filter(v => v.status === 'on_way').length,
         in_progress: employeeVisits.filter(v => v.status === 'in_progress').length,
