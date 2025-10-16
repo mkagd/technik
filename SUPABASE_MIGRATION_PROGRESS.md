@@ -18,7 +18,9 @@
 ### API Endpoints Migrated
 - [x] `/api/auth/login` - Authentication with Supabase + env fallback
 - [x] `/api/orders` - GET/POST/PUT/PATCH/DELETE (complete CRUD)
+- [x] `/api/orders/[id]` - GET/PUT/DELETE (individual order operations)
 - [x] `/api/clients` - GET/POST/PUT/DELETE (complete CRUD)
+- [x] `/api/employees` - GET/POST/PUT/DELETE (complete CRUD)
 
 ## 🔄 IN PROGRESS - Critical API Endpoints
 
@@ -152,5 +154,8 @@ Vercel will auto-deploy within 1-2 minutes.
 
 ---
 
-**Migration Status**: 20% complete (3/15 critical endpoints)
-**Estimated Time Remaining**: 1-2 hours
+**Migration Status**: 35% complete (5/15 critical endpoints)
+**Estimated Time Remaining**: 45-60 minutes
+
+**Last Deployment**: Just now (employees + orders detail)
+**Status**: ✅ Deploying to Vercel automatically

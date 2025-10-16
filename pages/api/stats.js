@@ -1,8 +1,7 @@
-import fs from 'fs';
-import path from 'path';
+import { getServiceSupabase } from '../../lib/supabase';
 
 /**
- * API endpoint for dashboard statistics
+ * API endpoint for dashboard statistics - SUPABASE
  * GET /api/stats - Returns real-time statistics from all data sources
  */
 export default async function handler(req, res) {
@@ -11,84 +10,72 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Read all data files
-    const dataDir = path.join(process.cwd(), 'data');
-    
-    const clientsPath = path.join(dataDir, 'clients.json');
-    const ordersPath = path.join(dataDir, 'orders.json');
-    const employeesPath = path.join(dataDir, 'employees.json');
-    const rezerwacjePath = path.join(dataDir, 'rezervacje.json'); // Uwaga: nazwa pliku z 'v' nie 'w'
+    const supabase = getServiceSupabase();
 
-    // Parse data
-    const clients = fs.existsSync(clientsPath) 
-      ? JSON.parse(fs.readFileSync(clientsPath, 'utf8'))
-      : [];
-    
-    const orders = fs.existsSync(ordersPath)
-      ? JSON.parse(fs.readFileSync(ordersPath, 'utf8'))
-      : [];
-    
-    const employees = fs.existsSync(employeesPath)
-      ? JSON.parse(fs.readFileSync(employeesPath, 'utf8'))
-      : [];
-    
-    const rezerwacje = fs.existsSync(rezerwacjePath)
-      ? JSON.parse(fs.readFileSync(rezerwacjePath, 'utf8'))
-      : [];
+    // Fetch all data in parallel
+    const [
+      { data: clients },
+      { data: orders },
+      { data: employees },
+      { data: visits }
+    ] = await Promise.all([
+      supabase.from('clients').select('*'),
+      supabase.from('orders').select('*'),
+      supabase.from('employees').select('*'),
+      supabase.from('visits').select('*')
+    ]);
 
     // Calculate statistics
     const stats = {
       // Total counts
-      totalClients: clients.length,
-      totalOrders: orders.length,
-      totalEmployees: employees.length,
-      totalReservations: rezerwacje.length,
+      totalClients: clients?.length || 0,
+      totalOrders: orders?.length || 0,
+      totalEmployees: employees?.length || 0,
+      totalVisits: visits?.length || 0,
 
       // Order statistics by status
       ordersByStatus: {
-        pending: orders.filter(o => o.status === 'Oczekujące' || o.status === 'pending').length,
-        inProgress: orders.filter(o => o.status === 'W trakcie' || o.status === 'in_progress').length,
-        completed: orders.filter(o => o.status === 'Zakończone' || o.status === 'completed').length,
-        cancelled: orders.filter(o => o.status === 'Anulowane' || o.status === 'cancelled').length,
+        pending: orders?.filter(o => o.status === 'Oczekujące' || o.status === 'pending').length || 0,
+        inProgress: orders?.filter(o => o.status === 'W trakcie' || o.status === 'in_progress').length || 0,
+        completed: orders?.filter(o => o.status === 'Zakończone' || o.status === 'completed').length || 0,
+        cancelled: orders?.filter(o => o.status === 'Anulowane' || o.status === 'cancelled').length || 0,
       },
 
-      // Reservation statistics by status
-      reservationsByStatus: {
-        pending: rezerwacje.filter(r => r.status === 'pending').length,
-        contacted: rezerwacje.filter(r => r.status === 'contacted').length,
-        scheduled: rezerwacje.filter(r => r.status === 'scheduled').length,
-        confirmed: rezerwacje.filter(r => r.status === 'confirmed').length,
-        completed: rezerwacje.filter(r => r.status === 'completed').length,
-        cancelled: rezerwacje.filter(r => r.status === 'cancelled').length,
+      // Visit statistics by status
+      visitsByStatus: {
+        scheduled: visits?.filter(v => v.status === 'scheduled').length || 0,
+        inProgress: visits?.filter(v => v.status === 'in_progress').length || 0,
+        completed: visits?.filter(v => v.status === 'completed').length || 0,
+        cancelled: visits?.filter(v => v.status === 'cancelled').length || 0,
       },
 
-      // Today's visits (from orders with visits array)
-      todayVisits: getTodayVisits(orders),
+      // Today's visits
+      todayVisits: getTodayVisits(visits || []),
 
       // This week's scheduled orders
-      thisWeekOrders: getThisWeekOrders(orders),
+      thisWeekOrders: getThisWeekOrders(orders || []),
 
       // Employee statistics
-      activeEmployees: employees.filter(e => e.active !== false).length,
-      inactiveEmployees: employees.filter(e => e.active === false).length,
+      activeEmployees: employees?.filter(e => e.is_active !== false).length || 0,
+      inactiveEmployees: employees?.filter(e => e.is_active === false).length || 0,
 
-      // Client satisfaction (from orders with rating)
-      averageRating: calculateAverageRating(orders),
-      totalRatings: orders.filter(o => o.rating).length,
+      // Client satisfaction (from orders with rating in metadata)
+      averageRating: calculateAverageRating(orders || []),
+      totalRatings: orders?.filter(o => o.metadata?.rating).length || 0,
 
       // Recent activity (last 10 items)
-      recentActivity: getRecentActivity(orders, rezerwacje, clients),
+      recentActivity: getRecentActivity(orders || [], visits || [], clients || []),
 
       // Priority distribution
       ordersByPriority: {
-        low: orders.filter(o => o.priority === 'Niska' || o.priority === 'low').length,
-        normal: orders.filter(o => o.priority === 'Normalna' || o.priority === 'normal' || !o.priority).length,
-        high: orders.filter(o => o.priority === 'Wysoka' || o.priority === 'high').length,
-        urgent: orders.filter(o => o.priority === 'Pilne' || o.priority === 'urgent').length,
+        low: orders?.filter(o => o.priority === 'Niska' || o.priority === 'low').length || 0,
+        normal: orders?.filter(o => o.priority === 'Normalna' || o.priority === 'normal' || !o.priority).length || 0,
+        high: orders?.filter(o => o.priority === 'Wysoka' || o.priority === 'high').length || 0,
+        urgent: orders?.filter(o => o.priority === 'Pilne' || o.priority === 'urgent').length || 0,
       },
 
       // Device categories (AGD types)
-      deviceCategories: getDeviceCategories(orders),
+      deviceCategories: getDeviceCategories(orders || []),
 
       // Timestamp
       generatedAt: new Date().toISOString(),
@@ -106,27 +93,18 @@ export default async function handler(req, res) {
 }
 
 /**
- * Get today's visits from orders
+ * Get today's visits
  */
-function getTodayVisits(orders) {
+function getTodayVisits(visits) {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const tomorrow = new Date(today);
   tomorrow.setDate(tomorrow.getDate() + 1);
 
-  let count = 0;
-  orders.forEach(order => {
-    if (order.visits && Array.isArray(order.visits)) {
-      order.visits.forEach(visit => {
-        const visitDate = new Date(visit.date || visit.scheduledDate);
-        if (visitDate >= today && visitDate < tomorrow) {
-          count++;
-        }
-      });
-    }
-  });
-
-  return count;
+  return visits.filter(visit => {
+    const visitDate = new Date(visit.scheduled_date || visit.scheduledDate);
+    return visitDate >= today && visitDate < tomorrow;
+  }).length;
 }
 
 /**
@@ -142,8 +120,8 @@ function getThisWeekOrders(orders) {
   endOfWeek.setDate(startOfWeek.getDate() + 7);
 
   return orders.filter(order => {
-    if (order.scheduledDate) {
-      const scheduledDate = new Date(order.scheduledDate);
+    if (order.scheduled_date || order.scheduledDate) {
+      const scheduledDate = new Date(order.scheduled_date || order.scheduledDate);
       return scheduledDate >= startOfWeek && scheduledDate < endOfWeek;
     }
     return false;
@@ -154,55 +132,61 @@ function getThisWeekOrders(orders) {
  * Calculate average rating from orders
  */
 function calculateAverageRating(orders) {
-  const ordersWithRating = orders.filter(o => o.rating && typeof o.rating === 'number');
+  const ordersWithRating = orders.filter(o => 
+    (o.metadata?.rating && typeof o.metadata.rating === 'number') ||
+    (o.rating && typeof o.rating === 'number')
+  );
+  
   if (ordersWithRating.length === 0) return 0;
   
-  const sum = ordersWithRating.reduce((acc, o) => acc + o.rating, 0);
+  const sum = ordersWithRating.reduce((acc, o) => 
+    acc + (o.metadata?.rating || o.rating), 0
+  );
   return (sum / ordersWithRating.length).toFixed(1);
 }
 
 /**
  * Get recent activity (last 10 items)
  */
-function getRecentActivity(orders, rezerwacje, clients) {
+function getRecentActivity(orders, visits, clients) {
   const activities = [];
 
-  // Add orders (with dateAdded or createdAt)
+  // Add orders (with created_at)
   orders.forEach(order => {
-    const date = order.dateAdded || order.createdAt;
+    const date = order.created_at || order.createdAt;
     if (date) {
       activities.push({
         type: 'order',
         action: 'created',
-        description: `Nowe zamówienie: ${order.deviceType || 'Urządzenie'} - ${order.brand || ''}`,
+        description: `Nowe zamówienie: ${order.device_type || order.deviceType || 'Urządzenie'} - ${order.brand || ''}`,
         date: date,
         id: order.id,
       });
     }
   });
 
-  // Add reservations
-  rezerwacje.forEach(rez => {
-    const date = rez.createdAt || rez.dateAdded;
+  // Add visits
+  visits.forEach(visit => {
+    const date = visit.created_at || visit.createdAt;
     if (date) {
       activities.push({
-        type: 'reservation',
+        type: 'visit',
         action: 'created',
-        description: `Nowa rezerwacja: ${rez.category || 'AGD'} - ${rez.clientName || 'Klient'}`,
+        description: `Nowa wizyta: ${visit.visit_type || 'Serwis'}`,
         date: date,
-        id: rez.id,
+        id: visit.id,
       });
     }
   });
 
-  // Add clients (with dateAdded)
+  // Add clients (with created_at)
   clients.forEach(client => {
-    if (client.dateAdded) {
+    if (client.created_at || client.createdAt) {
       activities.push({
         type: 'client',
         action: 'registered',
         description: `Nowy klient: ${client.name || 'Klient'}`,
-        date: client.dateAdded,
+        date: client.created_at || client.createdAt,
         id: client.id,
       });
     }
@@ -220,7 +204,7 @@ function getDeviceCategories(orders) {
   const categories = {};
   
   orders.forEach(order => {
-    const category = order.deviceType || order.category || 'Inne';
+    const category = order.device_type || order.deviceType || order.category || 'Inne';
     categories[category] = (categories[category] || 0) + 1;
   });
 
