@@ -2,9 +2,9 @@ import bcrypt from 'bcryptjs';
 import { createToken } from '../../../middleware/auth.js';
 
 // Vercel-compatible login using environment variables
-// For production, migrate to proper database (Supabase, PostgreSQL, etc.)
+// Use non-NEXT_PUBLIC variables for server-side only access
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin@technik.pl';
-const ADMIN_PASSWORD = process.env.NEXT_PUBLIC_ADMIN_PASS || 'admin123';
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || process.env.NEXT_PUBLIC_ADMIN_PASS || 'admin123';
 
 // Default admin account (hash will be created on-demand)
 function getDefaultAdmin() {
