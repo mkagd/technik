@@ -19,7 +19,7 @@
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
     "@googlemaps/react-wrapper": "^1.2.0",
-    "@supabase/supabase-js": "^2.39.5",
+    "@supabase/supabase-js": "^2.75.0",
     "axios": "^1.12.2",
     "bcryptjs": "^3.0.2",
     "chart.js": "^4.5.0",

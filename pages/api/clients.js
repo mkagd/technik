@@ -1,37 +1,46 @@
 // pages/api/clients.js
-// API endpoint dla zarządzania klientami (zgodny z ClientsContext)
+// API endpoint dla zarządzania klientami - SUPABASE
 
-import {
-    readClients,
-    addClient,
-    updateClient,
-    deleteClient,
-    logClientContact
-} from '../../utils/clientOrderStorage';
+import { getServiceSupabase } from '../../lib/supabase';
 
 export default async function handler(req, res) {
     console.log(`📞 API ${req.method} /api/clients`);
+    const supabase = getServiceSupabase();
 
     if (req.method === 'GET') {
         try {
             const { id } = req.query;
-            const clients = await readClients();
             
             // Jeśli podano ID, zwróć pojedynczego klienta
             if (id) {
-                const client = clients.find(c => c.id == id || c.clientId == id);
-                if (client) {
-                    console.log(`✅ Returning client: ${client.name}`);
-                    return res.status(200).json(client);
-                } else {
+                const { data: client, error } = await supabase
+                    .from('clients')
+                    .select('*')
+                    .eq('id', id)
+                    .single();
+                
+                if (error || !client) {
                     console.log(`❌ Client not found: ${id}`);
                     return res.status(404).json({ message: 'Klient nie znaleziony' });
                 }
+                
+                console.log(`✅ Returning client: ${client.name}`);
+                return res.status(200).json(client);
             }
             
             // Zwróć wszystkich klientów
-            console.log(`✅ Returning ${clients.length} clients`);
-            return res.status(200).json({ clients });
+            const { data: clients, error } = await supabase
+                .from('clients')
+                .select('*')
+                .order('created_at', { ascending: false });
+            
+            if (error) {
+                console.error('❌ Error reading clients:', error);
+                return res.status(500).json({ message: 'Błąd odczytu klientów' });
+            }
+            
+            console.log(`✅ Returning ${clients?.length || 0} clients`);
+            return res.status(200).json({ clients: clients || [] });
         } catch (error) {
             console.error('❌ Error reading clients:', error);
             return res.status(500).json({ message: 'Błąd odczytu klientów' });
@@ -46,13 +55,35 @@ export default async function handler(req, res) {
                 return res.status(400).json({ message: 'Brak wymaganych danych (name, phone)' });
             }
 
-            const newClient = await addClient(clientData);
-            if (newClient) {
-                console.log(`✅ Client added: ${newClient.id} - ${newClient.name}`);
-                return res.status(201).json({ client: newClient });
-            } else {
-                return res.status(500).json({ message: 'Błąd dodawania klienta' });
+            // Map frontend format to database schema
+            const newClient = {
+                id: clientData.id || `CLI-${Date.now()}`,
+                name: clientData.name,
+                email: clientData.email || null,
+                phone: clientData.phone,
+                address: clientData.address || clientData.street || null,
+                city: clientData.city || null,
+                postal_code: clientData.postalCode || null,
+                nip: clientData.nip || null,
+                company: clientData.company || null,
+                notes: clientData.notes || null,
+                created_at: new Date().toISOString(),
+                updated_at: new Date().toISOString()
+            };
+
+            const { data, error } = await supabase
+                .from('clients')
+                .insert([newClient])
+                .select()
+                .single();
+            
+            if (error) {
+                console.error('❌ Error adding client:', error);
+                return res.status(500).json({ message: 'Błąd dodawania klienta', error: error.message });
             }
+            
+            console.log(`✅ Client added: ${data.id} - ${data.name}`);
+            return res.status(201).json({ client: data });
         } catch (error) {
             console.error('❌ Error adding client:', error);
             return res.status(500).json({ message: 'Błąd serwera' });
@@ -76,13 +107,43 @@ export default async function handler(req, res) {
                     : null
             });
 
-            const updatedClient = await updateClient({ id, ...updateData });
-            if (updatedClient) {
-                console.log(`✅ Client updated: ${updatedClient.id}`);
-                return res.status(200).json({ client: updatedClient });
-            } else {
+            // Map fields to database schema
+            const dbUpdate = {
+                name: updateData.name,
+                email: updateData.email,
+                phone: updateData.phone,
+                address: updateData.address || updateData.street,
+                city: updateData.city,
+                postal_code: updateData.postalCode || updateData.postal_code,
+                nip: updateData.nip,
+                company: updateData.company,
+                notes: updateData.notes,
+                updated_at: new Date().toISOString()
+            };
+
+            // Remove undefined values
+            Object.keys(dbUpdate).forEach(key => 
+                dbUpdate[key] === undefined && delete dbUpdate[key]
+            );
+
+            const { data: updatedClient, error } = await supabase
+                .from('clients')
+                .update(dbUpdate)
+                .eq('id', id)
+                .select()
+                .single();
+            
+            if (error) {
+                console.error('❌ Error updating client:', error);
+                return res.status(500).json({ message: 'Błąd aktualizacji klienta', error: error.message });
+            }
+            
+            if (!updatedClient) {
                 return res.status(404).json({ message: 'Klient nie znaleziony' });
             }
+            
+            console.log(`✅ Client updated: ${updatedClient.id}`);
+            return res.status(200).json({ client: updatedClient });
         } catch (error) {
             console.error('❌ Error updating client:', error);
             return res.status(500).json({ message: 'Błąd aktualizacji klienta' });
@@ -97,13 +158,18 @@ export default async function handler(req, res) {
                 return res.status(400).json({ message: 'Brak ID klienta' });
             }
 
-            const success = await deleteClient(id);
-            if (success) {
-                console.log(`✅ Client deleted: ${id}`);
-                return res.status(200).json({ message: 'Klient usunięty' });
-            } else {
-                return res.status(500).json({ message: 'Błąd usuwania klienta' });
+            const { error } = await supabase
+                .from('clients')
+                .delete()
+                .eq('id', id);
+            
+            if (error) {
+                console.error('❌ Error deleting client:', error);
+                return res.status(500).json({ message: 'Błąd usuwania klienta', error: error.message });
             }
+            
+            console.log(`✅ Client deleted: ${id}`);
+            return res.status(200).json({ message: 'Klient usunięty' });
         } catch (error) {
             console.error('❌ Error deleting client:', error);
             return res.status(500).json({ message: 'Błąd serwera' });
