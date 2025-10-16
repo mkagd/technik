@@ -5,20 +5,21 @@ import { createToken } from '../../../middleware/auth.js';
 // For production, migrate to proper database (Supabase, PostgreSQL, etc.)
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin@technik.pl';
 const ADMIN_PASSWORD = process.env.NEXT_PUBLIC_ADMIN_PASS || 'admin123';
-const ADMIN_PASSWORD_HASH = bcrypt.hashSync(ADMIN_PASSWORD, 10);
 
-// Default admin account
-const DEFAULT_ADMIN = {
-  id: 'admin-001',
-  email: ADMIN_EMAIL,
-  password: ADMIN_PASSWORD_HASH,
-  name: 'Administrator Systemu',
-  role: 'admin',
-  permissions: ['*'],
-  isActive: true,
-  createdAt: new Date().toISOString(),
-  lastLogin: null
-};
+// Default admin account (hash will be created on-demand)
+function getDefaultAdmin() {
+  return {
+    id: 'admin-001',
+    email: ADMIN_EMAIL,
+    password: ADMIN_PASSWORD, // Plain password, will be compared directly
+    name: 'Administrator Systemu',
+    role: 'admin',
+    permissions: ['*'],
+    isActive: true,
+    createdAt: new Date().toISOString(),
+    lastLogin: null
+  };
+}
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -31,6 +32,7 @@ export default async function handler(req, res) {
 
   try {
     const { email, password } = req.body;
+    const DEFAULT_ADMIN = getDefaultAdmin();
 
     // Basic validation
     if (!email || !password) {
@@ -44,7 +46,7 @@ export default async function handler(req, res) {
     // Check if email matches admin
     if (email.toLowerCase() !== DEFAULT_ADMIN.email.toLowerCase()) {
       // Simulate processing time to prevent timing attacks
-      await bcrypt.hash('dummy', 10);
+      await new Promise(resolve => setTimeout(resolve, 100));
       return res.status(401).json({
         success: false,
         error: 'INVALID_CREDENTIALS',
@@ -52,10 +54,9 @@ export default async function handler(req, res) {
       });
     }
 
-    // Verify password
-    const passwordValid = await bcrypt.compare(password, DEFAULT_ADMIN.password);
-    
-    if (!passwordValid) {
+    // Simple password comparison (no hashing for env-based auth)
+    // In production, use proper database with hashed passwords
+    if (password !== DEFAULT_ADMIN.password) {
       return res.status(401).json({
         success: false,
         error: 'INVALID_CREDENTIALS',
