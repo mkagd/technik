@@ -1,275 +1,162 @@
-import fs from 'fs';
-import path from 'path';
 import Fuse from 'fuse.js';
+import { getServiceSupabase } from '../../../lib/supabase';
 
 /**
  * API endpoint for visits management
- * Extracts and manages visits from orders.json
  * GET /api/visits - Get all visits with filters
  * GET /api/visits?id=VIS123 - Get single visit
+ * POST /api/visits - Create new visit
  * PUT /api/visits - Update visit
+ * DELETE /api/visits - Delete visit
  */
 
-const ordersPath = path.join(process.cwd(), 'data', 'orders.json');
-const employeesPath = path.join(process.cwd(), 'data', 'employees.json');
-
-// Helper: Read JSON file
-function readJSON(filePath) {
-  try {
-    const data = fs.readFileSync(filePath, 'utf8');
-    return JSON.parse(data);
-  } catch (error) {
-    console.error(`Error reading ${filePath}:`, error);
-    return null;
-  }
+// Helper: Enrich visit with related data
+async function enrichVisit(visit, order, client, employee) {
+  return {
+    // Visit core data
+    id: visit.id,
+    visitId: visit.id, // Alias for backward compatibility
+    orderId: visit.order_id,
+    employeeId: visit.employee_id,
+    
+    // Dates and times
+    scheduledDate: visit.scheduled_date ? visit.scheduled_date.split('T')[0] : null,
+    scheduledTime: visit.scheduled_date ? visit.scheduled_date.split('T')[1]?.substring(0, 5) : null,
+    scheduledDateTime: visit.scheduled_date,
+    startedAt: visit.started_at,
+    completedAt: visit.completed_at,
+    
+    // Visit details
+    status: visit.status,
+    type: visit.visit_type,
+    visitType: visit.visit_type,
+    workDescription: visit.work_description,
+    
+    // Location
+    address: visit.address || order?.address,
+    city: order?.city,
+    street: order?.address,
+    postalCode: order?.postal_code,
+    latitude: visit.latitude,
+    longitude: visit.longitude,
+    
+    // Parts and costs
+    parts: visit.parts_used || [],
+    partsUsed: visit.parts_used || [],
+    partsCost: (visit.parts_used || []).reduce((sum, part) => sum + (parseFloat(part.price) || 0), 0),
+    
+    // Photos
+    photos: visit.photos || [],
+    beforePhotos: (visit.photos || []).filter(p => p.type === 'before'),
+    afterPhotos: (visit.photos || []).filter(p => p.type === 'after'),
+    totalPhotos: (visit.photos || []).length,
+    
+    // Duration
+    durationMinutes: visit.duration_minutes,
+    actualDuration: visit.duration_minutes,
+    travelDistanceKm: visit.travel_distance_km,
+    
+    // Order information (if available)
+    orderNumber: order?.order_number,
+    orderStatus: order?.status,
+    orderPriority: order?.priority,
+    priority: order?.priority,
+    
+    // Device information (from order)
+    deviceType: order?.device_type,
+    deviceBrand: order?.brand,
+    deviceModel: order?.model,
+    deviceSerialNumber: order?.serial_number,
+    deviceDescription: order?.description,
+    
+    // Client information (if available)
+    clientId: order?.client_id,
+    clientName: client?.name,
+    clientPhone: client?.phone,
+    clientEmail: client?.email,
+    
+    // Technician information (if available)
+    technicianId: visit.employee_id,
+    technicianName: employee?.name || 'Nieprzydzielony',
+    technicianPhone: employee?.phone,
+    technicianEmail: employee?.email,
+    
+    // Metadata
+    metadata: visit.metadata || {},
+    
+    // Timestamps
+    createdAt: visit.created_at,
+    updatedAt: visit.updated_at,
+    
+    // Calculate costs
+    totalCost: visit.metadata?.totalCost || 0,
+    estimatedCost: visit.metadata?.estimatedCost || 0,
+  };
 }
 
-// Helper: Write JSON file
-function writeJSON(filePath, data) {
-  try {
-    fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf8');
-    return true;
-  } catch (error) {
-    console.error(`Error writing ${filePath}:`, error);
-    return false;
-  }
-}
-
-// Helper: Extract all visits from orders
-function extractVisits(orders, employees) {
-  const visits = [];
-  const employeeMap = {};
+// Helper: Apply filters using Fuse.js for search
+function applySearchFilter(visits, search) {
+  if (!search) return visits;
   
-  // Create employee lookup map
-  if (employees && Array.isArray(employees)) {
-    employees.forEach(emp => {
-      employeeMap[emp.id] = emp;
-    });
-  }
-
-  if (!orders || !Array.isArray(orders)) return visits;
-
-  orders.forEach(order => {
-    if (order.visits && Array.isArray(order.visits)) {
-      order.visits.forEach(visit => {
-        // Enrich visit with order and employee data
-        const technician = employeeMap[visit.technicianId] || employeeMap[visit.assignedTo];
-        
-        const enrichedVisit = {
-          // Visit core data
-          ...visit,
-          
-          // Order reference - USE orderNumber as primary ID
-          orderId: visit.orderId || order.orderNumber || order.id,
-          orderNumber: order.orderNumber,
-          
-          // Client information
-          clientId: order.clientId,
-          clientName: order.clientName,
-          clientPhone: order.clientPhone,
-          clientEmail: order.email,
-          
-          // Address information
-          address: order.address,
-          city: order.city,
-          street: order.street,
-          postalCode: order.postalCode,
-          
-          // Device information
-          deviceType: order.deviceType,
-          deviceBrand: order.brand,
-          deviceModel: order.model,
-          deviceSerialNumber: order.serialNumber,
-          deviceDescription: order.description,
-          
-          // Order priority and status
-          orderPriority: order.priority,
-          orderStatus: order.status,
-          
-          // Technician information (enriched)
-          technicianName: visit.technicianName || technician?.name || 'Nieprzydzielony',
-          technicianPhone: technician?.phone || null,
-          technicianEmail: technician?.email || null,
-          technicianAvatar: technician?.avatar || null,
-          
-          // 🔧 Parts - Przypisane części z zamówienia
-          parts: visit.parts || order.parts || [],
-          
-          // Parts used (calculate total if exists)
-          partsUsed: visit.partsUsed || [],
-          partsCost: visit.partsUsed?.reduce((sum, part) => sum + (part.price || 0), 0) || 0,
-          
-          // Costs summary
-          totalCost: visit.totalCost || visit.estimatedCost || 0,
-          
-          // Photos
-          beforePhotos: visit.beforePhotos || [],
-          afterPhotos: visit.afterPhotos || [],
-          totalPhotos: (visit.beforePhotos?.length || 0) + (visit.afterPhotos?.length || 0),
-          
-          // Work sessions
-          workSessions: visit.workSessions || [],
-          
-          // Duration calculation
-          estimatedDuration: visit.estimatedDuration || null,
-          actualDuration: visit.actualDuration || null,
-          
-          // Timestamps
-          createdAt: visit.createdAt,
-          completedAt: visit.completedAt,
-          scheduledDateTime: `${visit.scheduledDate || visit.date}T${visit.scheduledTime || visit.time || '00:00'}`,
-        };
-
-        visits.push(enrichedVisit);
-      });
-    }
+  const fuse = new Fuse(visits, {
+    keys: [
+      { name: 'clientName', weight: 2 },
+      { name: 'address', weight: 1.5 },
+      { name: 'city', weight: 1 },
+      { name: 'deviceType', weight: 1.5 },
+      { name: 'deviceBrand', weight: 1 },
+      { name: 'deviceModel', weight: 1 },
+      { name: 'id', weight: 1.5 },
+      { name: 'orderId', weight: 1.5 },
+      { name: 'technicianName', weight: 1 },
+      { name: 'clientPhone', weight: 1 }
+    ],
+    threshold: 0.3,
+    includeScore: true,
+    minMatchCharLength: 2,
+    ignoreLocation: true
   });
-
-  return visits;
+  
+  const results = fuse.search(search);
+  return results.map(r => r.item);
 }
 
-// Helper: Filter visits
-function filterVisits(visits, filters) {
+// Helper: Apply additional filters in memory (for complex filters not in DB)
+function applyMemoryFilters(visits, filters) {
   let filtered = [...visits];
-
-  // Filter by visit ID
-  if (filters.id) {
-    return filtered.filter(v => v.visitId === filters.id);
-  }
-
-  // Filter by status - ENHANCED for WEEK 3: Multiple selection support
-  if (filters.selectedStatuses) {
-    // NEW: Handle array from multiple selection checkboxes
-    const statusArray = Array.isArray(filters.selectedStatuses) 
-      ? filters.selectedStatuses 
-      : filters.selectedStatuses.split(',').map(s => s.trim());
-    
-    if (statusArray.length > 0) {
-      filtered = filtered.filter(v => statusArray.includes(v.status));
-    }
-  } else if (filters.status) {
-    // LEGACY: Backward compatibility with old single-select filter
-    const statuses = filters.status.split(',').map(s => s.trim());
-    filtered = filtered.filter(v => statuses.includes(v.status));
-  }
-
-  // Filter by technician - ENHANCED for WEEK 3: Multiple selection support
-  if (filters.selectedTechnicianIds) {
-    // NEW: Handle array from multiple selection checkboxes
-    const technicianArray = Array.isArray(filters.selectedTechnicianIds) 
-      ? filters.selectedTechnicianIds 
-      : filters.selectedTechnicianIds.split(',').map(t => t.trim());
-    
-    if (technicianArray.length > 0) {
-      filtered = filtered.filter(v => 
-        technicianArray.includes(v.technicianId) || 
-        technicianArray.includes(v.assignedTo)
-      );
-    }
-  } else if (filters.technicianId) {
-    // LEGACY: Backward compatibility with old single-select filter
-    filtered = filtered.filter(v => 
-      v.technicianId === filters.technicianId || 
-      v.assignedTo === filters.technicianId
-    );
-  }
-
-  // Filter by visit type
-  if (filters.type) {
-    const types = filters.type.split(',').map(t => t.trim());
-    filtered = filtered.filter(v => types.includes(v.type));
-  }
-
-  // Filter by date range
-  if (filters.dateFrom) {
-    filtered = filtered.filter(v => {
-      const visitDate = v.scheduledDate || v.date;
-      return visitDate >= filters.dateFrom;
-    });
-  }
-
-  if (filters.dateTo) {
-    filtered = filtered.filter(v => {
-      const visitDate = v.scheduledDate || v.date;
-      return visitDate <= filters.dateTo;
-    });
-  }
-
-  // Filter by today
-  if (filters.today === 'true') {
-    const today = new Date().toISOString().split('T')[0];
-    filtered = filtered.filter(v => {
-      const visitDate = v.scheduledDate || v.date;
-      return visitDate === today;
-    });
-  }
-
-  // Filter by priority
-  if (filters.priority) {
-    const priorities = filters.priority.split(',').map(p => p.trim());
-    filtered = filtered.filter(v => priorities.includes(v.priority || v.orderPriority));
-  }
-
-  // WEEK 3 PHASE 2: Filter by cost range
+  
+  // Filter by cost range
   if (filters.costMin !== undefined && filters.costMin !== null) {
     const minCost = parseFloat(filters.costMin) || 0;
     filtered = filtered.filter(v => (v.totalCost || 0) >= minCost);
   }
-
+  
   if (filters.costMax !== undefined && filters.costMax !== null) {
     const maxCost = parseFloat(filters.costMax) || 5000;
     filtered = filtered.filter(v => (v.totalCost || 0) <= maxCost);
   }
-
-  // WEEK 3 PHASE 3: Filter by withParts (has used parts)
+  
+  // Filter by withParts
   if (filters.withParts === 'true') {
     filtered = filtered.filter(v => {
       const parts = v.partsUsed || [];
       return Array.isArray(parts) && parts.length > 0;
     });
   }
-
-  // WEEK 3 PHASE 3: Filter by withPhotos (has photos)
+  
+  // Filter by withPhotos
   if (filters.withPhotos === 'true') {
     filtered = filtered.filter(v => {
       const photos = v.photos || [];
       return Array.isArray(photos) && photos.length > 0;
     });
   }
-
-  // WEEK 3 PHASE 3: Filter by urgentOnly (only urgent priority)
+  
+  // Filter by urgentOnly
   if (filters.urgentOnly === 'true') {
-    filtered = filtered.filter(v => {
-      const priority = v.priority || v.orderPriority;
-      return priority === 'urgent';
-    });
+    filtered = filtered.filter(v => v.priority === 'urgent');
   }
-
-  // Search in client name, address, device using Fuse.js (fuzzy search)
-  if (filters.search) {
-    const fuse = new Fuse(filtered, {
-      keys: [
-        { name: 'clientName', weight: 2 },      // Most important
-        { name: 'address', weight: 1.5 },
-        { name: 'city', weight: 1 },
-        { name: 'deviceType', weight: 1.5 },
-        { name: 'deviceBrand', weight: 1 },
-        { name: 'deviceModel', weight: 1 },
-        { name: 'visitId', weight: 1.5 },
-        { name: 'orderId', weight: 1.5 },
-        { name: 'technicianName', weight: 1 },
-        { name: 'clientPhone', weight: 1 }
-      ],
-      threshold: 0.3,              // 0 = exact match, 1 = anything matches
-      includeScore: true,
-      minMatchCharLength: 2,
-      ignoreLocation: true
-    });
-    
-    const results = fuse.search(filters.search);
-    filtered = results.map(r => r.item);  // Return items sorted by relevance
-  }
-
+  
   return filtered;
 }
 
@@ -282,8 +169,8 @@ function sortVisits(visits, sortBy, sortOrder) {
 
     switch (sortBy) {
       case 'date':
-        const dateA = new Date(a.scheduledDateTime);
-        const dateB = new Date(b.scheduledDateTime);
+        const dateA = new Date(a.scheduledDateTime || a.scheduledDate || 0);
+        const dateB = new Date(b.scheduledDateTime || b.scheduledDate || 0);
         comparison = dateA - dateB;
         break;
 
@@ -300,7 +187,7 @@ function sortVisits(visits, sortBy, sortOrder) {
         break;
 
       case 'type':
-        comparison = (a.type || '').localeCompare(b.type || '');
+        comparison = (a.type || a.visitType || '').localeCompare(b.type || b.visitType || '');
         break;
 
       case 'cost':
@@ -308,25 +195,21 @@ function sortVisits(visits, sortBy, sortOrder) {
         break;
 
       case 'waitTime':
-        // Sort by how long the visit has been waiting (createdAt to now)
-        // Older visits = longer wait time = higher priority
-        const createdA = new Date(a.createdAt || a.scheduledDateTime);
-        const createdB = new Date(b.createdAt || b.scheduledDateTime);
-        comparison = createdA - createdB; // Older first when asc
+        const createdA = new Date(a.createdAt || a.scheduledDateTime || 0);
+        const createdB = new Date(b.createdAt || b.scheduledDateTime || 0);
+        comparison = createdA - createdB;
         break;
 
       case 'priority':
-        // Sort by priority: urgent > high > normal > low
         const priorityOrder = { urgent: 4, high: 3, normal: 2, low: 1 };
-        const priorityA = priorityOrder[a.priority || a.orderPriority] || 2;
-        const priorityB = priorityOrder[b.priority || b.orderPriority] || 2;
+        const priorityA = priorityOrder[a.priority] || 2;
+        const priorityB = priorityOrder[b.priority] || 2;
         comparison = priorityA - priorityB;
         break;
 
       default:
-        // Default: sort by date descending
-        const defaultDateA = new Date(a.scheduledDateTime);
-        const defaultDateB = new Date(b.scheduledDateTime);
+        const defaultDateA = new Date(a.scheduledDateTime || a.scheduledDate || 0);
+        const defaultDateB = new Date(b.scheduledDateTime || b.scheduledDate || 0);
         comparison = defaultDateB - defaultDateA;
     }
 
@@ -341,16 +224,16 @@ function calculateStats(visits) {
   const today = new Date().toISOString().split('T')[0];
   const now = new Date();
   const startOfWeek = new Date(now);
-  startOfWeek.setDate(now.getDate() - now.getDay() + 1); // Monday
+  startOfWeek.setDate(now.getDate() - now.getDay() + 1);
   startOfWeek.setHours(0, 0, 0, 0);
   const endOfWeek = new Date(startOfWeek);
   endOfWeek.setDate(startOfWeek.getDate() + 7);
 
   const stats = {
     total: visits.length,
-    today: visits.filter(v => (v.scheduledDate || v.date) === today).length,
+    today: visits.filter(v => v.scheduledDate === today).length,
     thisWeek: visits.filter(v => {
-      const visitDate = new Date(v.scheduledDate || v.date);
+      const visitDate = new Date(v.scheduledDate);
       return visitDate >= startOfWeek && visitDate < endOfWeek;
     }).length,
     
@@ -363,23 +246,23 @@ function calculateStats(visits) {
     },
     
     byType: {
-      diagnosis: visits.filter(v => v.type === 'diagnosis').length,
-      repair: visits.filter(v => v.type === 'repair').length,
-      followup: visits.filter(v => v.type === 'followup').length,
-      installation: visits.filter(v => v.type === 'installation').length,
-      maintenance: visits.filter(v => v.type === 'maintenance').length,
+      diagnosis: visits.filter(v => (v.type || v.visitType) === 'diagnosis').length,
+      repair: visits.filter(v => (v.type || v.visitType) === 'repair').length,
+      followup: visits.filter(v => (v.type || v.visitType) === 'followup').length,
+      installation: visits.filter(v => (v.type || v.visitType) === 'installation').length,
+      maintenance: visits.filter(v => (v.type || v.visitType) === 'maintenance').length,
     },
     
     byPriority: {
-      normal: visits.filter(v => (v.priority || v.orderPriority) === 'normal').length,
-      high: visits.filter(v => (v.priority || v.orderPriority) === 'high').length,
-      urgent: visits.filter(v => (v.priority || v.orderPriority) === 'urgent').length,
+      normal: visits.filter(v => v.priority === 'normal').length,
+      high: visits.filter(v => v.priority === 'high').length,
+      urgent: visits.filter(v => v.priority === 'urgent').length,
     },
     
     averageDuration: visits
-      .filter(v => v.actualDuration)
-      .reduce((sum, v) => sum + v.actualDuration, 0) / 
-      (visits.filter(v => v.actualDuration).length || 1),
+      .filter(v => v.durationMinutes || v.actualDuration)
+      .reduce((sum, v) => sum + (v.durationMinutes || v.actualDuration || 0), 0) / 
+      (visits.filter(v => v.durationMinutes || v.actualDuration).length || 1),
     
     totalCost: visits.reduce((sum, v) => sum + (v.totalCost || 0), 0),
     totalPartsCost: visits.reduce((sum, v) => sum + (v.partsCost || 0), 0),
@@ -388,193 +271,367 @@ function calculateStats(visits) {
   return stats;
 }
 
-export default function handler(req, res) {
+export default async function handler(req, res) {
+  const supabase = getServiceSupabase();
+
   if (req.method === 'GET') {
-    // GET: List visits with filters
-    const {
-      id,
-      status,
-      technicianId,
-      type,
-      dateFrom,
-      dateTo,
-      today,
-      priority,
-      search,
-      sortBy = 'date',
-      sortOrder = 'desc',
-      page = '1',
-      limit = '50',
-      includeStats = 'true'
-    } = req.query;
-
-    // Read data
-    const orders = readJSON(ordersPath);
-    const employees = readJSON(employeesPath);
-
-    if (!orders) {
-      return res.status(500).json({
-        success: false,
-        error: 'Failed to read orders data'
-      });
-    }
-
-    // Extract all visits
-    let visits = extractVisits(orders, employees);
-
-    // Calculate stats before filtering (if requested)
-    const stats = includeStats === 'true' ? calculateStats(visits) : null;
-
-    // Apply filters
-    visits = filterVisits(visits, {
-      id,
-      status,
-      technicianId,
-      type,
-      dateFrom,
-      dateTo,
-      today,
-      priority,
-      search
-    });
-
-    // If requesting single visit by ID
-    if (id && visits.length === 1) {
-      return res.status(200).json({
-        success: true,
-        visit: visits[0]
-      });
-    }
-
-    // Sort visits
-    visits = sortVisits(visits, sortBy, sortOrder);
-
-    // Pagination
-    const pageNum = parseInt(page);
-    const limitNum = parseInt(limit);
-    const startIndex = (pageNum - 1) * limitNum;
-    const endIndex = startIndex + limitNum;
-    const paginatedVisits = visits.slice(startIndex, endIndex);
-
-    return res.status(200).json({
-      success: true,
-      visits: paginatedVisits,
-      pagination: {
-        page: pageNum,
-        limit: limitNum,
-        total: visits.length,
-        pages: Math.ceil(visits.length / limitNum)
-      },
-      stats: stats,
-      filters: {
+    try {
+      const {
+        id,
         status,
         technicianId,
+        selectedTechnicianIds,
+        selectedStatuses,
         type,
         dateFrom,
         dateTo,
         today,
         priority,
-        search
+        search,
+        orderId,
+        costMin,
+        costMax,
+        withParts,
+        withPhotos,
+        urgentOnly,
+        sortBy = 'date',
+        sortOrder = 'desc',
+        page = '1',
+        limit = '50',
+        includeStats = 'true'
+      } = req.query;
+
+      // Build Supabase query
+      let query = supabase.from('visits').select(`
+        *,
+        order:orders(id, order_number, client_id, status, priority, device_type, brand, model, serial_number, description, address, city, postal_code, parts),
+        employee:employees(id, name, phone, email),
+        client:orders(clients(id, name, phone, email))
+      `);
+
+      // Filter by ID
+      if (id) {
+        query = query.eq('id', id);
       }
-    });
+
+      // Filter by order ID
+      if (orderId) {
+        query = query.eq('order_id', orderId);
+      }
+
+      // Filter by status (multiple)
+      if (selectedStatuses) {
+        const statusArray = Array.isArray(selectedStatuses) 
+          ? selectedStatuses 
+          : selectedStatuses.split(',').map(s => s.trim());
+        query = query.in('status', statusArray);
+      } else if (status) {
+        const statuses = status.split(',').map(s => s.trim());
+        query = query.in('status', statuses);
+      }
+
+      // Filter by technician (multiple)
+      if (selectedTechnicianIds) {
+        const technicianArray = Array.isArray(selectedTechnicianIds) 
+          ? selectedTechnicianIds 
+          : selectedTechnicianIds.split(',').map(t => t.trim());
+        query = query.in('employee_id', technicianArray);
+      } else if (technicianId) {
+        query = query.eq('employee_id', technicianId);
+      }
+
+      // Filter by visit type
+      if (type) {
+        const types = type.split(',').map(t => t.trim());
+        query = query.in('visit_type', types);
+      }
+
+      // Filter by date range
+      if (dateFrom) {
+        query = query.gte('scheduled_date', dateFrom);
+      }
+
+      if (dateTo) {
+        query = query.lte('scheduled_date', dateTo);
+      }
+
+      // Filter by today
+      if (today === 'true') {
+        const todayDate = new Date().toISOString().split('T')[0];
+        query = query.gte('scheduled_date', `${todayDate}T00:00:00`)
+                    .lt('scheduled_date', `${todayDate}T23:59:59`);
+      }
+
+      // Execute query
+      const { data: visitsData, error } = await query;
+
+      if (error) {
+        console.error('Supabase error:', error);
+        return res.status(500).json({
+          success: false,
+          error: 'Failed to fetch visits',
+          details: error.message
+        });
+      }
+
+      // Enrich visits with related data
+      let visits = await Promise.all(visitsData.map(async (visit) => {
+        const order = Array.isArray(visit.order) ? visit.order[0] : visit.order;
+        const employee = Array.isArray(visit.employee) ? visit.employee[0] : visit.employee;
+        const client = order?.clients ? (Array.isArray(order.clients) ? order.clients[0] : order.clients) : null;
+        
+        return enrichVisit(visit, order, client, employee);
+      }));
+
+      // Calculate stats before filtering (if requested)
+      const stats = includeStats === 'true' ? calculateStats(visits) : null;
+
+      // Apply memory filters (cost, parts, photos, urgent)
+      visits = applyMemoryFilters(visits, {
+        costMin,
+        costMax,
+        withParts,
+        withPhotos,
+        urgentOnly
+      });
+
+      // Apply search filter
+      if (search) {
+        visits = applySearchFilter(visits, search);
+      }
+
+      // Filter by priority (if not already filtered)
+      if (priority) {
+        const priorities = priority.split(',').map(p => p.trim());
+        visits = visits.filter(v => priorities.includes(v.priority));
+      }
+
+      // If requesting single visit by ID
+      if (id && visits.length === 1) {
+        return res.status(200).json({
+          success: true,
+          visit: visits[0]
+        });
+      }
+
+      // Sort visits
+      visits = sortVisits(visits, sortBy, sortOrder);
+
+      // Pagination
+      const pageNum = parseInt(page);
+      const limitNum = parseInt(limit);
+      const startIndex = (pageNum - 1) * limitNum;
+      const endIndex = startIndex + limitNum;
+      const paginatedVisits = visits.slice(startIndex, endIndex);
+
+      return res.status(200).json({
+        success: true,
+        visits: paginatedVisits,
+        pagination: {
+          page: pageNum,
+          limit: limitNum,
+          total: visits.length,
+          pages: Math.ceil(visits.length / limitNum)
+        },
+        stats: stats,
+        filters: {
+          status: selectedStatuses || status,
+          technicianId: selectedTechnicianIds || technicianId,
+          type,
+          dateFrom,
+          dateTo,
+          today,
+          priority,
+          search
+        }
+      });
+
+    } catch (error) {
+      console.error('Error fetching visits:', error);
+      return res.status(500).json({
+        success: false,
+        error: 'Internal server error',
+        details: error.message
+      });
+    }
+
+  } else if (req.method === 'POST') {
+    try {
+      // POST: Create new visit
+      const visitData = req.body;
+
+      // Map camelCase to snake_case
+      const dbData = {
+        id: visitData.id || visitData.visitId || `VIS-${Date.now()}`,
+        order_id: visitData.orderId,
+        employee_id: visitData.employeeId || visitData.technicianId,
+        scheduled_date: visitData.scheduledDate || visitData.scheduledDateTime,
+        started_at: visitData.startedAt,
+        completed_at: visitData.completedAt,
+        status: visitData.status || 'scheduled',
+        visit_type: visitData.type || visitData.visitType,
+        address: visitData.address,
+        latitude: visitData.latitude,
+        longitude: visitData.longitude,
+        work_description: visitData.workDescription,
+        parts_used: visitData.partsUsed || [],
+        photos: visitData.photos || [],
+        duration_minutes: visitData.durationMinutes || visitData.estimatedDuration,
+        travel_distance_km: visitData.travelDistanceKm,
+        metadata: visitData.metadata || {}
+      };
+
+      // Remove undefined values
+      Object.keys(dbData).forEach(key => {
+        if (dbData[key] === undefined) delete dbData[key];
+      });
+
+      const { data, error } = await supabase
+        .from('visits')
+        .insert([dbData])
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Supabase error:', error);
+        return res.status(500).json({
+          success: false,
+          error: 'Failed to create visit',
+          details: error.message
+        });
+      }
+
+      return res.status(201).json({
+        success: true,
+        visit: data,
+        message: 'Visit created successfully'
+      });
+
+    } catch (error) {
+      console.error('Error creating visit:', error);
+      return res.status(500).json({
+        success: false,
+        error: 'Internal server error',
+        details: error.message
+      });
+    }
 
   } else if (req.method === 'PUT') {
-    // PUT: Update visit
-    const { visitId, updates, userId, userName, reason } = req.body;
-
-    if (!visitId) {
-      return res.status(400).json({
-        success: false,
-        error: 'visitId is required'
-      });
-    }
-
-    const orders = readJSON(ordersPath);
-    if (!orders) {
-      return res.status(500).json({
-        success: false,
-        error: 'Failed to read orders data'
-      });
-    }
-
-    let visitFound = false;
-    let updatedVisit = null;
-    let oldVisit = null;
-    let orderId = null;
-
-    // Find and update visit in orders
-    for (let order of orders) {
-      if (order.visits && Array.isArray(order.visits)) {
-        const visitIndex = order.visits.findIndex(v => v.visitId === visitId);
-        if (visitIndex !== -1) {
-          // Store old state for audit log
-          oldVisit = { ...order.visits[visitIndex] };
-          orderId = order.id;
-
-          // Update visit
-          order.visits[visitIndex] = {
-            ...order.visits[visitIndex],
-            ...updates,
-            updatedAt: new Date().toISOString()
-          };
-          updatedVisit = order.visits[visitIndex];
-          visitFound = true;
-          break;
-        }
-      }
-    }
-
-    if (!visitFound) {
-      return res.status(404).json({
-        success: false,
-        error: 'Visit not found'
-      });
-    }
-
-    // Save updated orders
-    if (!writeJSON(ordersPath, orders)) {
-      return res.status(500).json({
-        success: false,
-        error: 'Failed to save updated visit'
-      });
-    }
-
-    // Create audit log entry (async, don't block response)
     try {
-      const auditLogPath = path.join(process.cwd(), 'pages', 'api', 'visits', 'audit-log.js');
-      
-      // Call audit log API internally
-      fetch(`http://localhost:${process.env.PORT || 3000}/api/visits/audit-log`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          visitId,
-          orderId,
-          userId: userId || 'system',
-          userName: userName || 'System',
-          action: oldVisit.status !== updatedVisit.status ? 
-                  (updatedVisit.status === 'cancelled' ? 'deleted' : 'updated') : 
-                  'updated',
-          reason: reason || `Zaktualizowano wizytę ${visitId}`,
-          oldState: oldVisit,
-          newState: updatedVisit
-        })
-      }).catch(err => {
-        // Log error but don't fail the update
-        console.error('Failed to create audit log:', err);
+      // PUT: Update visit
+      const { id, visitId, updates } = req.body;
+      const updateId = id || visitId;
+
+      if (!updateId) {
+        return res.status(400).json({
+          success: false,
+          error: 'id or visitId is required'
+        });
+      }
+
+      // Map camelCase to snake_case
+      const dbUpdates = {};
+      if (updates.status) dbUpdates.status = updates.status;
+      if (updates.scheduledDate) dbUpdates.scheduled_date = updates.scheduledDate;
+      if (updates.startedAt) dbUpdates.started_at = updates.startedAt;
+      if (updates.completedAt) dbUpdates.completed_at = updates.completedAt;
+      if (updates.visitType || updates.type) dbUpdates.visit_type = updates.visitType || updates.type;
+      if (updates.workDescription) dbUpdates.work_description = updates.workDescription;
+      if (updates.partsUsed) dbUpdates.parts_used = updates.partsUsed;
+      if (updates.photos) dbUpdates.photos = updates.photos;
+      if (updates.durationMinutes) dbUpdates.duration_minutes = updates.durationMinutes;
+      if (updates.travelDistanceKm) dbUpdates.travel_distance_km = updates.travelDistanceKm;
+      if (updates.metadata) dbUpdates.metadata = updates.metadata;
+
+      const { data, error } = await supabase
+        .from('visits')
+        .update(dbUpdates)
+        .eq('id', updateId)
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Supabase error:', error);
+        return res.status(500).json({
+          success: false,
+          error: 'Failed to update visit',
+          details: error.message
+        });
+      }
+
+      if (!data) {
+        return res.status(404).json({
+          success: false,
+          error: 'Visit not found'
+        });
+      }
+
+      return res.status(200).json({
+        success: true,
+        visit: data,
+        message: 'Visit updated successfully'
       });
-    } catch (err) {
-      console.error('Audit log error:', err);
+
+    } catch (error) {
+      console.error('Error updating visit:', error);
+      return res.status(500).json({
+        success: false,
+        error: 'Internal server error',
+        details: error.message
+      });
     }
 
-    return res.status(200).json({
-      success: true,
-      visit: updatedVisit,
-      message: 'Visit updated successfully'
-    });
+  } else if (req.method === 'DELETE') {
+    try {
+      // DELETE: Remove visit
+      const { id, visitId } = req.query;
+      const deleteId = id || visitId;
+
+      if (!deleteId) {
+        return res.status(400).json({
+          success: false,
+          error: 'id or visitId is required'
+        });
+      }
+
+      // Get visit before deleting (for response)
+      const { data: visit } = await supabase
+        .from('visits')
+        .select()
+        .eq('id', deleteId)
+        .single();
+
+      const { error } = await supabase
+        .from('visits')
+        .delete()
+        .eq('id', deleteId);
+
+      if (error) {
+        console.error('Supabase error:', error);
+        return res.status(500).json({
+          success: false,
+          error: 'Failed to delete visit',
+          details: error.message
+        });
+      }
+
+      return res.status(200).json({
+        success: true,
+        visit: visit,
+        message: 'Visit deleted successfully'
+      });
+
+    } catch (error) {
+      console.error('Error deleting visit:', error);
+      return res.status(500).json({
+        success: false,
+        error: 'Internal server error',
+        details: error.message
+      });
+    }
 
   } else {
-    res.status(405).json({
+    return res.status(405).json({
       success: false,
       error: 'Method not allowed'
     });

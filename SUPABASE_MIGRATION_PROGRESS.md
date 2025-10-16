@@ -21,6 +21,9 @@
 - [x] `/api/orders/[id]` - GET/PUT/DELETE (individual order operations)
 - [x] `/api/clients` - GET/POST/PUT/DELETE (complete CRUD)
 - [x] `/api/employees` - GET/POST/PUT/DELETE (complete CRUD)
+- [x] `/api/parts` - GET/POST/PUT/DELETE (parts inventory management)
+- [x] `/api/stats` - GET (dashboard statistics and analytics)
+- [x] `/api/visits/index` - GET/POST/PUT/DELETE (visits management with filters, search, pagination)
 
 ## 🔄 IN PROGRESS - Critical API Endpoints
 
@@ -154,8 +157,8 @@ Vercel will auto-deploy within 1-2 minutes.
 
 ---
 
-**Migration Status**: 35% complete (5/15 critical endpoints)
-**Estimated Time Remaining**: 45-60 minutes
+**Migration Status**: 50% complete (7/14 critical endpoints)
+**Estimated Time Remaining**: 30-45 minutes
 
-**Last Deployment**: Just now (employees + orders detail)
+**Last Deployment**: Just now (parts + stats/dashboard)
 **Status**: ✅ Deploying to Vercel automatically
