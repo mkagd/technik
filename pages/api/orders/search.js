@@ -1,8 +1,4 @@
-import LockedFileOperations from '../../../utils/fileLocking';
-import path from 'path';
-
-const CLIENTS_FILE = path.join(process.cwd(), 'data', 'clients.json');
-const ORDERS_FILE = path.join(process.cwd(), 'data', 'orders.json');
+import { getServiceSupabase } from '../../../lib/supabase';
 
 /**
  * 🔍 API endpoint do wyszukiwania zamówień dla klientów
@@ -11,130 +7,181 @@ const ORDERS_FILE = path.join(process.cwd(), 'data', 'orders.json');
  * Pozwala klientom sprawdzić status swojego zamówienia po numerze i telefonie
  */
 export default async function handler(req, res) {
+    const supabase = getServiceSupabase();
+
     if (req.method !== 'GET') {
         return res.status(405).json({ error: 'Tylko metoda GET' });
     }
 
-    const { orderNumber, phone } = req.query;
+    const { orderNumber, phone, clientName, deviceType } = req.query;
 
-    console.log('🔍 API search request:', { orderNumber, phone });
+    console.log('🔍 API search request:', { orderNumber, phone, clientName, deviceType });
 
-    // Walidacja parametrów
-    if (!orderNumber || !phone) {
+    // Walidacja parametrów - wymagany przynajmniej orderNumber+phone LUB inne kryteria
+    if (!orderNumber && !clientName && !deviceType) {
         return res.status(400).json({ 
             error: 'Brak wymaganych parametrów', 
-            required: ['orderNumber', 'phone'] 
+            hint: 'Podaj orderNumber i phone, lub inne kryteria wyszukiwania'
         });
     }
 
-    // Normalizacja numeru telefonu (usuń spacje, myślniki, nawiasy)
-    const cleanPhone = phone.replace(/[\s\-\(\)]/g, '');
-    const cleanOrderNumber = orderNumber.trim().toUpperCase();
-
-    console.log('🧹 Cleaned params:', { cleanOrderNumber, cleanPhone });
-
     try {
-        // 1. Pobierz wszystkie zamówienia
-        const orders = await LockedFileOperations.readJSON(ORDERS_FILE, []);
-        console.log(`📦 Loaded ${orders.length} orders from database`);
+        // Normalizacja danych
+        const cleanPhone = phone ? phone.replace(/[\s\-\(\)]/g, '') : null;
+        const cleanOrderNumber = orderNumber ? orderNumber.trim().toUpperCase() : null;
 
-        // 2. Znajdź zamówienie po orderNumber
-        const order = orders.find(o => {
-            const matchOrderNumber = o.orderNumber === cleanOrderNumber;
-            const matchId = o.id === cleanOrderNumber; // Fallback dla starych ID
-            return matchOrderNumber || matchId;
+        console.log('🧹 Cleaned params:', { cleanOrderNumber, cleanPhone });
+
+        // Build Supabase query
+        let query = supabase
+            .from('orders')
+            .select(`
+                *,
+                client:clients(id, name, phone, email, address, city, postal_code),
+                visits(*)
+            `);
+
+        // Search by order number
+        if (cleanOrderNumber) {
+            query = query.or(`order_number.eq.${cleanOrderNumber},id.eq.${cleanOrderNumber}`);
+        }
+
+        // Search by client name (fuzzy)
+        if (clientName) {
+            query = query.ilike('client_name', `%${clientName}%`);
+        }
+
+        // Search by device type
+        if (deviceType) {
+            query = query.ilike('device_type', `%${deviceType}%`);
+        }
+
+        const { data: orders, error } = await query;
+
+        if (error) {
+            console.error('Supabase error:', error);
+            return res.status(500).json({ 
+                error: 'Błąd serwera',
+                details: error.message
+            });
+        }
+
+        console.log(`📦 Found ${orders?.length || 0} orders`);
+
+        // If searching by order number, expect single result
+        if (cleanOrderNumber) {
+            if (!orders || orders.length === 0) {
+                console.log('❌ Order not found:', cleanOrderNumber);
+                return res.status(404).json({ 
+                    error: 'Nie znaleziono zamówienia o podanym numerze',
+                    orderNumber: cleanOrderNumber 
+                });
+            }
+
+            const order = orders[0];
+            console.log('✅ Order found:', order.order_number || order.id);
+
+            // Verify phone number if provided
+            if (cleanPhone) {
+                // Check order's metadata for phone, or client's phone
+                const orderPhone = (order.metadata?.phone || order.client?.phone || '').replace(/[\s\-\(\)]/g, '');
+                
+                if (orderPhone !== cleanPhone) {
+                    console.log('❌ Phone mismatch:', { orderPhone, cleanPhone });
+                    return res.status(403).json({ 
+                        error: 'Numer telefonu nie pasuje do zamówienia',
+                        hint: 'Sprawdź czy podałeś ten sam numer telefonu co przy składaniu zamówienia'
+                    });
+                }
+
+                console.log('✅ Phone verified');
+            }
+
+            const client = order.client;
+            console.log('👤 Client found:', client ? client.id : 'no client');
+
+            // Prepare single order response
+            const response = {
+                order: {
+                    orderNumber: order.order_number || order.id,
+                    orderId: order.id,
+                    clientId: order.client_id,
+                    clientName: order.metadata?.clientName || client?.name,
+                    clientPhone: order.metadata?.phone || client?.phone,
+                    email: order.metadata?.email || client?.email,
+                    address: order.address,
+                    city: order.city,
+                    postalCode: order.postal_code,
+                    
+                    // Urządzenie
+                    deviceType: order.device_type,
+                    brand: order.brand,
+                    model: order.model,
+                    serialNumber: order.serial_number,
+                    description: order.description,
+                    
+                    // Status i priorytety
+                    status: order.status,
+                    priority: order.priority,
+                    
+                    // Szczegóły
+                    metadata: order.metadata || {},
+                    
+                    // Daty
+                    dateAdded: order.created_at,
+                    scheduledDate: order.scheduled_date,
+                    createdAt: order.created_at,
+                    updatedAt: order.updated_at,
+                    completedDate: order.completed_date,
+                    
+                    // Koszty
+                    estimatedCost: order.estimated_cost,
+                    finalCost: order.final_cost,
+                    partsCost: order.parts_cost,
+                    laborCost: order.labor_cost,
+                    
+                    // Wizyty
+                    visits: order.visits || [],
+                    
+                    // Zdjęcia
+                    photos: order.photos || []
+                },
+                client: client ? {
+                    id: client.id,
+                    name: client.name,
+                    phone: client.phone,
+                    email: client.email,
+                    address: client.address,
+                    city: client.city,
+                    postalCode: client.postal_code
+                } : null
+            };
+
+            console.log('✅ Returning single order data');
+            return res.status(200).json(response);
+        }
+
+        // If searching by other criteria, return multiple results
+        const formattedOrders = orders.map(order => ({
+            orderNumber: order.order_number || order.id,
+            orderId: order.id,
+            clientId: order.client_id,
+            clientName: order.metadata?.clientName || order.client?.name,
+            deviceType: order.device_type,
+            brand: order.brand,
+            model: order.model,
+            status: order.status,
+            priority: order.priority,
+            scheduledDate: order.scheduled_date,
+            createdAt: order.created_at,
+            visits: order.visits || []
+        }));
+
+        console.log('✅ Returning multiple orders');
+        return res.status(200).json({
+            orders: formattedOrders,
+            count: formattedOrders.length
         });
-
-        if (!order) {
-            console.log('❌ Order not found:', cleanOrderNumber);
-            return res.status(404).json({ 
-                error: 'Nie znaleziono zamówienia o podanym numerze',
-                orderNumber: cleanOrderNumber 
-            });
-        }
-
-        console.log('✅ Order found:', order.orderNumber || order.id);
-
-        // 3. Weryfikuj numer telefonu
-        const orderPhone = (order.clientPhone || order.phone || '').replace(/[\s\-\(\)]/g, '');
-        
-        if (orderPhone !== cleanPhone) {
-            console.log('❌ Phone mismatch:', { orderPhone, cleanPhone });
-            return res.status(403).json({ 
-                error: 'Numer telefonu nie pasuje do zamówienia',
-                hint: 'Sprawdź czy podałeś ten sam numer telefonu co przy składaniu zamówienia'
-            });
-        }
-
-        console.log('✅ Phone verified');
-
-        // 4. Pobierz dane klienta
-        const clients = await LockedFileOperations.readJSON(CLIENTS_FILE, []);
-        const client = clients.find(c => 
-            c.id === order.clientId || 
-            c.clientId === order.clientId
-        );
-
-        console.log('👤 Client found:', client ? client.id : 'no client');
-
-        // 5. Przygotuj odpowiedź
-        const response = {
-            order: {
-                orderNumber: order.orderNumber || order.id,
-                orderId: order.id,
-                clientId: order.clientId,
-                clientName: order.clientName,
-                clientPhone: order.clientPhone || order.phone,
-                email: order.email,
-                address: order.address,
-                city: order.city,
-                street: order.street,
-                postalCode: order.postalCode,
-                
-                // Urządzenie
-                deviceType: order.deviceType || order.category,
-                brand: order.brand,
-                model: order.model,
-                serialNumber: order.serialNumber,
-                description: order.description,
-                
-                // Status i priorytety
-                status: order.status,
-                priority: order.priority,
-                
-                // Szczegóły zabudowy
-                builtInParams: order.builtInParams,
-                deviceDetails: order.deviceDetails,
-                devices: order.devices,
-                
-                // Daty
-                dateAdded: order.dateAdded || order.createdAt,
-                scheduledDate: order.scheduledDate,
-                createdAt: order.createdAt,
-                updatedAt: order.updatedAt,
-                
-                // Wizyty
-                visits: order.visits || [],
-                
-                // Metadata
-                source: order.source,
-                sourceDetails: order.sourceDetails,
-                createdBy: order.createdBy,
-                createdByName: order.createdByName
-            },
-            client: client ? {
-                id: client.id || client.clientId,
-                name: client.name,
-                phone: client.phone,
-                email: client.email,
-                address: client.address,
-                city: client.city,
-                street: client.street
-            } : null
-        };
-
-        console.log('✅ Returning order data');
-        return res.status(200).json(response);
 
     } catch (error) {
         console.error('❌ Error searching order:', error);
