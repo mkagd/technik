@@ -21,16 +21,25 @@ let tempStorage = [];
 // Spróbuj skonfigurować Supabase
 let supabase = null;
 try {
-  if (process.env.SUPABASE_URL && process.env.SUPABASE_ANON_KEY &&
-    !process.env.SUPABASE_URL.includes('twoj-projekt') &&
-    !process.env.SUPABASE_ANON_KEY.includes('wtetrtvtblzkguoxfumx')) {
-    supabase = createClient(
-      process.env.SUPABASE_URL,
-      process.env.SUPABASE_ANON_KEY
-    );
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL;
+  const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY;
+  
+  console.log('🔍 Checking Supabase config:', {
+    hasUrl: !!supabaseUrl,
+    hasKey: !!supabaseKey,
+    urlPreview: supabaseUrl ? supabaseUrl.substring(0, 30) + '...' : 'MISSING'
+  });
+  
+  if (supabaseUrl && supabaseKey &&
+    !supabaseUrl.includes('twoj-projekt') &&
+    !supabaseKey.includes('wtetrtvtblzkguoxfumx')) {
+    supabase = createClient(supabaseUrl, supabaseKey);
+    console.log('✅ Supabase client created successfully');
+  } else {
+    console.warn('⚠️ Supabase not configured - using fallback storage');
   }
 } catch (error) {
-  
+  console.error('❌ Supabase initialization error:', error);
 }
 
 export default async function handler(req, res) {
