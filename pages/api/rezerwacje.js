@@ -54,7 +54,7 @@ export default async function handler(req, res) {
 
     
 
-    const newReservation = {
+    let newReservation = {
       id: Date.now(),
       name,
       phone,
@@ -233,7 +233,7 @@ export default async function handler(req, res) {
         }
       } else if (insertData && insertData[0]) {
         // Zaktualizuj newReservation z danymi z Supabase (zawiera ID!)
-        newReservation = insertData[0];
+        Object.assign(newReservation, insertData[0]);
         console.log('✅ Rezerwacja zapisana w Supabase z ID:', newReservation.id);
       }
     } else {
