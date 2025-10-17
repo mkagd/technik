@@ -508,9 +508,14 @@ export default function NowaRezerwacja() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    console.log('🔵 handleSubmit wywołany');
+
     if (!validateForm()) {
+      console.log('❌ Walidacja nie przeszła');
       return;
     }
+
+    console.log('✅ Walidacja OK, wysyłam...');
 
     try {
       setSaving(true);
