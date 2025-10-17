@@ -1,12 +1,34 @@
 import bcrypt from 'bcryptjs';
-import { createToken } from '../../../middleware/auth';
+import jwt from 'jsonwebtoken';
 import { getServiceSupabase } from '../../../lib/supabase';
+
+// JWT Secret
+const JWT_SECRET = process.env.JWT_SECRET || 'your-super-secret-jwt-key-change-in-production';
+
+// Inline createToken function to avoid import issues
+function createToken(user) {
+  const payload = {
+    userId: user.id,
+    email: user.email,
+    role: user.role,
+    permissions: user.permissions || [],
+    iat: Math.floor(Date.now() / 1000),
+  };
+
+  return jwt.sign(payload, JWT_SECRET, {
+    expiresIn: '24h',
+    issuer: 'technik-system',
+    audience: 'technik-users'
+  });
+}
 
 // Vercel-compatible login using Supabase database
 const ADMIN_EMAIL = (process.env.ADMIN_EMAIL || 'admin@technik.pl').trim();
 const ADMIN_PASSWORD = (process.env.ADMIN_PASSWORD || process.env.NEXT_PUBLIC_ADMIN_PASS || 'admin123').trim();
 
 export default async function handler(req, res) {
+  console.log('🔐 Login handler started - method:', req.method);
+  
   if (req.method !== 'POST') {
     return res.status(405).json({
       success: false,
@@ -16,11 +38,14 @@ export default async function handler(req, res) {
   }
 
   try {
+    console.log('🔐 Parsing request body...');
     const { email, password } = req.body;
 
     console.log('🔐 Login attempt:', {
       receivedEmail: email,
-      receivedPassword: password ? '***' + password.slice(-3) : 'undefined'
+      receivedPassword: password ? '***' + password.slice(-3) : 'undefined',
+      hasSupabase: typeof getServiceSupabase === 'function',
+      hasJWT: typeof jwt !== 'undefined'
     });
 
     // Basic validation
@@ -33,7 +58,10 @@ export default async function handler(req, res) {
     }
 
     // Check Supabase for account
+    console.log('🔐 Querying Supabase...');
     const supabase = getServiceSupabase();
+    console.log('🔐 Supabase client created');
+    
     const { data: account, error } = await supabase
       .from('accounts')
       .select('*')
@@ -41,11 +69,18 @@ export default async function handler(req, res) {
       .eq('is_active', true)
       .single();
 
+    console.log('🔐 Supabase query result:', { 
+      hasAccount: !!account, 
+      hasError: !!error,
+      errorMsg: error?.message 
+    });
+
     if (error || !account) {
       console.log('🔐 Account not found in database:', email);
       
       // Fallback to env-based admin account
       if (email.toLowerCase() === ADMIN_EMAIL.toLowerCase() && password === ADMIN_PASSWORD) {
+        console.log('🔐 Using env fallback for admin');
         const user = {
           id: 'admin-001',
           email: ADMIN_EMAIL,
@@ -56,6 +91,7 @@ export default async function handler(req, res) {
           lastLogin: new Date().toISOString()
         };
         
+        console.log('🔐 Creating token for env admin...');
         const token = createToken(user);
         console.log(`🔐 Login success (env fallback): ${user.email}`);
         
@@ -159,12 +195,19 @@ export default async function handler(req, res) {
     });
 
   } catch (error) {
-    console.error('🔐 Login error:', error);
+    console.error('🔐 Login error - DETAILED:', {
+      message: error.message,
+      stack: error.stack,
+      name: error.name,
+      code: error.code
+    });
     res.status(500).json({
       success: false,
       error: 'LOGIN_ERROR',
       message: 'Internal server error during login',
-      details: process.env.NODE_ENV === 'development' ? error.message : undefined
+      details: process.env.NODE_ENV === 'development' ? error.message : undefined,
+      errorName: error.name,
+      errorCode: error.code
     });
   }
 }
