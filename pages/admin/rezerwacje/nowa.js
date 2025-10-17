@@ -602,8 +602,8 @@ export default function NowaRezerwacja() {
         const result = await response.json();
         console.log('✅ Rezerwacja utworzona:', result);
         
-        // Przekieruj do listy rezerwacji
-        router.push('/admin/rezerwacje');
+        // Przekieruj do listy rezerwacji z force reload
+        window.location.href = '/admin/rezerwacje';
       } else {
         const error = await response.json();
         alert(`Błąd: ${error.message || 'Nie udało się utworzyć rezerwacji'}`);
