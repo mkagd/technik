@@ -1,24 +1,24 @@
-// public/offline-sync-worker.js
-// 🔄 Service Worker for offline visit completion sync
+﻿// public/offline-sync-worker.js
+// đź”„ Service Worker for offline visit completion sync
 
 const CACHE_NAME = 'technik-visits-v1';
 const OFFLINE_QUEUE_NAME = 'offline-queue';
 
 // Install event
 self.addEventListener('install', (event) => {
-  console.log('📦 Service Worker installing...');
+  console.log('đź“¦ Service Worker installing...');
   self.skipWaiting();
 });
 
 // Activate event
 self.addEventListener('activate', (event) => {
-  console.log('✅ Service Worker activated');
+  console.log('âś… Service Worker activated');
   event.waitUntil(clients.claim());
 });
 
 // Online event - sync offline queue
 self.addEventListener('online', async () => {
-  console.log('🌐 Back online! Syncing offline data...');
+  console.log('đźŚ Back online! Syncing offline data...');
   await syncOfflineQueue();
 });
 
@@ -37,7 +37,7 @@ async function syncOfflineQueue() {
     const store = tx.objectStore(OFFLINE_QUEUE_NAME);
     const allRequests = await store.getAll();
 
-    console.log(`📤 Found ${allRequests.length} offline submissions to sync`);
+    console.log(`đź“¤ Found ${allRequests.length} offline submissions to sync`);
 
     for (const request of allRequests) {
       try {
@@ -48,7 +48,7 @@ async function syncOfflineQueue() {
         const deleteStore = deleteTx.objectStore(OFFLINE_QUEUE_NAME);
         await deleteStore.delete(request.visitId);
         
-        console.log(`✅ Synced visit ${request.visitId}`);
+        console.log(`âś… Synced visit ${request.visitId}`);
 
         // Notify clients
         const clients = await self.clients.matchAll();
@@ -60,7 +60,7 @@ async function syncOfflineQueue() {
         });
 
       } catch (error) {
-        console.error(`❌ Failed to sync visit ${request.visitId}:`, error);
+        console.error(`âťŚ Failed to sync visit ${request.visitId}:`, error);
         
         // Notify clients of failure
         const clients = await self.clients.matchAll();
