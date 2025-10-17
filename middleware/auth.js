@@ -1,14 +1,13 @@
 /**
  * 🔐 JWT AUTHENTICATION MIDDLEWARE
  * Professional-grade authentication system
+ * Vercel-compatible with Supabase
  */
 
 import jwt from 'jsonwebtoken';
-import fs from 'fs';
-import path from 'path';
+import { getServiceSupabase } from '../lib/supabase.js';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-super-secret-jwt-key-change-in-production';
-const ACCOUNTS_FILE = path.join(process.cwd(), 'data', 'accounts.json');
 
 // Enhanced JWT token creation
 export function createToken(user) {
@@ -73,15 +72,20 @@ export function requireAuth(requiredRole = null, requiredPermissions = []) {
         });
       }
 
-      // Load user from database to check if still active
-      const accounts = JSON.parse(fs.readFileSync(ACCOUNTS_FILE, 'utf8'));
-      const user = accounts.find(u => u.id === decoded.userId);
+      // Load user from Supabase to check if still active
+      const supabase = getServiceSupabase();
+      const { data: user, error: dbError } = await supabase
+        .from('accounts')
+        .select('*')
+        .eq('id', decoded.userId)
+        .eq('is_active', true)
+        .single();
       
-      if (!user || !user.isActive) {
+      if (dbError || !user) {
         return res.status(401).json({
           success: false,
           error: 'USER_INACTIVE',
-          message: 'User account is inactive'
+          message: 'User account is inactive or not found'
         });
       }
 
@@ -136,7 +140,7 @@ export function requireAuth(requiredRole = null, requiredPermissions = []) {
 }
 
 // Optional authentication (for public endpoints that benefit from user context)
-export function optionalAuth(req, res, next) {
+export async function optionalAuth(req, res, next) {
   const authHeader = req.headers.authorization;
   
   if (authHeader && authHeader.startsWith('Bearer ')) {
@@ -144,8 +148,14 @@ export function optionalAuth(req, res, next) {
     
     try {
       const decoded = verifyToken(token);
-      const accounts = JSON.parse(fs.readFileSync(ACCOUNTS_FILE, 'utf8'));
-      const user = accounts.find(u => u.id === decoded.userId && u.isActive);
+      const supabase = getServiceSupabase();
+      
+      const { data: user } = await supabase
+        .from('accounts')
+        .select('id, email, role, permissions, name, is_active')
+        .eq('id', decoded.userId)
+        .eq('is_active', true)
+        .single();
       
       if (user) {
         req.user = {
