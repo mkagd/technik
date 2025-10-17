@@ -184,6 +184,14 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
+  // Skip API calls and non-existent routes
+  const url = new URL(event.request.url);
+  if (url.pathname.startsWith('/api/') || 
+      url.pathname.startsWith('/client/') ||
+      url.pathname.includes('/_next/')) {
+    return; // Let browser handle normally
+  }
+
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
       if (cachedResponse) {
