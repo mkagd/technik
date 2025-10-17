@@ -10,7 +10,8 @@ import PWADebugPanel from '../components/PWADebugPanel'
 export default function App({ Component, pageProps }) {
   // Register Service Worker for offline visit completion sync
   useEffect(() => {
-    if ('serviceWorker' in navigator && process.env.NODE_ENV === 'production') {
+    // 🔧 TEMPORARILY DISABLED - Service Worker causing fetch errors
+    if (false && 'serviceWorker' in navigator && process.env.NODE_ENV === 'production') {
       navigator.serviceWorker
         .register('/offline-sync-worker.js')
         .then((registration) => {
