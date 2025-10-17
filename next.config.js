@@ -1,6 +1,6 @@
 const withPWA = require('next-pwa')({
   dest: 'public',
-  disable: false, // ✅ TYMCZASOWO WŁĄCZONE dla testów (normalnie: process.env.NODE_ENV === 'development')
+  disable: process.env.NODE_ENV === 'development' || process.env.VERCEL === '1', // ✅ Wyłącz na Vercel
   register: true,
   skipWaiting: true,
   runtimeCaching: [
