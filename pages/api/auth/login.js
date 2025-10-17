@@ -1,6 +1,6 @@
 import bcrypt from 'bcryptjs';
-import { createToken } from '../../../middleware/auth.js';
-import { getServiceSupabase } from '../../../lib/supabase.js';
+import { createToken } from '../../../middleware/auth';
+import { getServiceSupabase } from '../../../lib/supabase';
 
 // Vercel-compatible login using Supabase database
 const ADMIN_EMAIL = (process.env.ADMIN_EMAIL || 'admin@technik.pl').trim();
