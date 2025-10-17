@@ -1,6 +1,7 @@
 /**
  * 🔍 Test Endpoint - Check ALL Environment Variables
  * Sprawdza czy wszystkie wymagane zmienne są ustawione
+ * Last updated: 2025-01-17 10:30
  */
 
 export default function handler(req, res) {
