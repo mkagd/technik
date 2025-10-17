@@ -479,26 +479,25 @@ export default async function handler(req, res) {
           // Pobierz wszystkie rezerwacje
           const { data, error } = await supabase.from('rezerwacje').select('*').order('date', { ascending: true });
           if (!error) {
-            
+            console.log(`✅ Loaded ${data.length} reservations from Supabase`);
             return res.status(200).json({ rezerwacje: data });
           } else {
-            
+            console.error('❌ Supabase GET error:', error);
           }
         }
       } catch (error) {
         console.error('❌ Supabase fetch error:', error);
       }
-    }
-
-    // Próbuj odczytać z pliku JSON (legacy format)
-    try {
-      const fileReservations = readReservations();
       
-    } catch (error) {
-      console.error('❌ File read error:', error);
+      // Jeśli Supabase jest skonfigurowane ale wystąpił błąd, zwróć pustą tablicę
+      // (nie próbuj filesystem na Vercel)
+      if (supabase) {
+        console.log('⚠️ Supabase error, returning empty array (no filesystem on Vercel)');
+        return res.status(200).json({ rezerwacje: [] });
+      }
     }
 
-    // Główne źródło danych: rezervacje.json
+    // Fallback: tylko lokalnie - próbuj odczytać z pliku JSON
     try {
       const reservations = readReservations();
       
