@@ -240,11 +240,9 @@ export default async function handler(req, res) {
                 photos: updatedOrder.photos,
                 notes: updatedOrder.notes,
                 internal_notes: updatedOrder.internalNotes || updatedOrder.internal_notes,
-                metadata: {
-                    ...updatedOrder.metadata,
-                    lastUpdatedBy: 'admin',
-                    lastUpdatedAt: new Date().toISOString()
-                }
+                updated_at: new Date().toISOString()
+                // ❌ USUNIĘTO metadata - kolumna nie istnieje w Supabase
+                // Zamiast tego używamy updated_at do śledzenia zmian
             };
 
             // Remove undefined values
