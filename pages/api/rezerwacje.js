@@ -264,7 +264,6 @@ export default async function handler(req, res) {
         console.log('⚠️⚠️⚠️ Supabase nie zwrócił danych!');
       }
       console.log('🏁🏁🏁 === SUPABASE INSERT END ===');
-    }
     } else {
       // Użyj trwałego przechowywania w pliku JSON
       const savedReservation = addReservation(newReservation);
