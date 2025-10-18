@@ -233,12 +233,22 @@ export default async function handler(req, res) {
       // Użyj Supabase jeśli skonfigurowane
       // Usuń id - Supabase wygeneruje auto-increment
       const { id: _removedId, ...reservationForSupabase } = newReservation;
-      console.log('📤 Wysyłam do Supabase (bez id):', Object.keys(reservationForSupabase));
+      
+      console.log('�🚀🚀 === SUPABASE INSERT START ===');
+      console.log('�📤 Klucze do wysłania:', Object.keys(reservationForSupabase).join(', '));
+      console.log('📤 Przykładowe dane:', JSON.stringify({
+        name: reservationForSupabase.name,
+        phone: reservationForSupabase.phone,
+        email: reservationForSupabase.email
+      }));
       
       const { data: insertData, error } = await supabase.from('rezerwacje').insert([reservationForSupabase]).select();
+      
+      console.log('📥 Supabase response - error:', error ? 'YES' : 'NO');
+      console.log('📥 Supabase response - data:', insertData ? `Array[${insertData.length}]` : 'NULL');
+      
       if (error) {
-        console.error('❌ Supabase error:', error);
-        console.error('❌ Supabase error details:', JSON.stringify(error, null, 2));
+        console.error('❌❌❌ SUPABASE ERROR:', JSON.stringify(error, null, 2));
         // Fallback do pliku JSON
         const savedReservation = addReservation(newReservation);
         if (!savedReservation) {
@@ -246,12 +256,15 @@ export default async function handler(req, res) {
           tempStorage.push(newReservation);
         }
       } else if (insertData && insertData[0]) {
+        console.log('✅✅✅ Supabase zwrócił ID:', insertData[0].id);
         // Zaktualizuj newReservation z danymi z Supabase (zawiera ID!)
         Object.assign(newReservation, insertData[0]);
-        console.log('✅ Rezerwacja zapisana w Supabase z ID:', newReservation.id);
+        console.log('✅ newReservation.id PO UPDATE:', newReservation.id);
       } else {
-        console.log('⚠️ Supabase nie zwrócił danych:', insertData);
+        console.log('⚠️⚠️⚠️ Supabase nie zwrócił danych!');
       }
+      console.log('🏁🏁🏁 === SUPABASE INSERT END ===');
+    }
     } else {
       // Użyj trwałego przechowywania w pliku JSON
       const savedReservation = addReservation(newReservation);
