@@ -186,13 +186,13 @@ export default function AdminRezerwacje() {
       const rezerwacja = rezerwacje.find(r => r.id === rezerwacjaId);
       if (!rezerwacja) return;
 
-      const response = await fetch('/api/rezerwacje', {
+      // ✅ Użyj ID w URL zamiast w body (Next.js routing)
+      const response = await fetch(`/api/rezerwacje/${rezerwacjaId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          id: rezerwacjaId,
           status: newStatus,
           orderId: rezerwacja.orderId,
           orderNumber: rezerwacja.orderNumber,
@@ -201,6 +201,13 @@ export default function AdminRezerwacje() {
       });
 
       if (response.ok) {
+        // 🎯 NATYCHMIAST usuń z UI jeśli zmiana statusu na 'contacted'
+        if (newStatus === 'contacted') {
+          setRezerwacje(prev => prev.filter(r => r.id !== rezerwacjaId));
+          console.log('✅ Rezerwacja usunięta z listy (status -> contacted)');
+        }
+        
+        // Odśwież dane z serwera
         await loadRezerwacje();
         
         // 🔧 Odśwież badge natychmiast po zmianie statusu
