@@ -167,9 +167,108 @@ export default async function handler(req, res) {
                             req.body.clientId = converted.client.id;
                         }
                     } else {
-                        console.log(`✅ Zlecenie już istnieje: ${existingOrder.orderNumber}`);
-                        req.body.orderId = existingOrder.id;
-                        req.body.orderNumber = existingOrder.orderNumber;
+                        console.log(`✅ Zlecenie już istnieje lokalnie: ${existingOrder.orderNumber}`);
+                        
+                        // 🔍 Sprawdź czy zlecenie istnieje w Supabase
+                        if (supabase) {
+                            const { data: existingInSupabase, error: checkError } = await supabase
+                                .from('orders')
+                                .select('id')
+                                .eq('order_number', existingOrder.orderNumber)
+                                .maybeSingle();
+                            
+                            if (!existingInSupabase && !checkError) {
+                                console.log('⚠️ Zlecenie nie istnieje w Supabase - zapisuję...');
+                                
+                                // Najpierw znajdź lub utwórz klienta
+                                let clientId = existingOrder.clientId;
+                                
+                                if (!clientId) {
+                                    // Znajdź klienta po telefonie lub stwórz nowego
+                                    const localClients = await readClients();
+                                    const client = localClients.find(c => 
+                                        c.phone === reservation.client?.phone || 
+                                        c.id === reservation.clientId
+                                    );
+                                    
+                                    if (client) {
+                                        // Zapisz klienta do Supabase
+                                        const clientPayload = {
+                                            name: client.name,
+                                            phone: client.phone,
+                                            email: client.email || '',
+                                            address: client.address || '',
+                                            city: client.city || '',
+                                            street: client.street || '',
+                                            postal_code: client.postalCode || '',
+                                            created_at: client.createdAt || new Date().toISOString(),
+                                            data: client
+                                        };
+                                        
+                                        const { data: clientData, error: clientError } = await supabase
+                                            .from('clients')
+                                            .insert([clientPayload])
+                                            .select()
+                                            .single();
+                                        
+                                        if (!clientError && clientData) {
+                                            console.log(`✅ Klient zapisany w Supabase: ID ${clientData.id}`);
+                                            clientId = clientData.id;
+                                        } else {
+                                            console.error('❌ Błąd zapisu klienta:', clientError);
+                                        }
+                                    }
+                                }
+                                
+                                if (clientId) {
+                                    // Zapisz zlecenie do Supabase
+                                    const orderPayload = {
+                                        order_number: existingOrder.orderNumber,
+                                        client_id: clientId,
+                                        category: existingOrder.category,
+                                        service_type: existingOrder.serviceType,
+                                        description: existingOrder.description || '',
+                                        status: existingOrder.status || 'pending',
+                                        priority: existingOrder.priority || 'normal',
+                                        scheduled_date: existingOrder.scheduledDate || null,
+                                        created_at: existingOrder.createdAt || new Date().toISOString(),
+                                        data: existingOrder
+                                    };
+                                    
+                                    const { data: orderData, error: orderError } = await supabase
+                                        .from('orders')
+                                        .insert([orderPayload])
+                                        .select()
+                                        .single();
+                                    
+                                    if (!orderError && orderData) {
+                                        console.log(`✅ Istniejące zlecenie zapisane w Supabase: ID ${orderData.id}`);
+                                        req.body.orderId = orderData.id;
+                                        req.body.orderNumber = orderData.order_number;
+                                    } else {
+                                        console.error('❌ Błąd zapisu istniejącego zlecenia do Supabase:');
+                                        console.error('  Code:', orderError?.code);
+                                        console.error('  Message:', orderError?.message);
+                                        console.error('  Details:', orderError?.details);
+                                        req.body.orderId = existingOrder.id;
+                                        req.body.orderNumber = existingOrder.orderNumber;
+                                    }
+                                } else {
+                                    req.body.orderId = existingOrder.id;
+                                    req.body.orderNumber = existingOrder.orderNumber;
+                                }
+                            } else if (existingInSupabase) {
+                                console.log(`✅ Zlecenie już jest w Supabase: ID ${existingInSupabase.id}`);
+                                req.body.orderId = existingInSupabase.id;
+                                req.body.orderNumber = existingOrder.orderNumber;
+                            } else {
+                                req.body.orderId = existingOrder.id;
+                                req.body.orderNumber = existingOrder.orderNumber;
+                            }
+                        } else {
+                            req.body.orderId = existingOrder.id;
+                            req.body.orderNumber = existingOrder.orderNumber;
+                        }
                     }
                 }
             }
