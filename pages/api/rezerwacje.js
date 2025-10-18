@@ -50,6 +50,9 @@ try {
 }
 
 export default async function handler(req, res) {
+  // 🚨 DEBUG: Sprawdź czy Supabase jest zainicjalizowany
+  console.log('🔥🔥🔥 HANDLER START - supabase is:', supabase ? 'INITIALIZED' : 'NULL');
+  
   if (req.method === 'POST') {
     
 
