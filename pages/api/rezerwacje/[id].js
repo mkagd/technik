@@ -187,8 +187,8 @@ export default async function handler(req, res) {
                                     // Znajdź klienta po telefonie lub stwórz nowego
                                     const localClients = await readClients();
                                     const client = localClients.find(c => 
-                                        c.phone === reservation.client?.phone || 
-                                        c.id === reservation.clientId
+                                        c.phone === rezerwacja.data?.client?.phone || 
+                                        c.id === rezerwacja.client_id
                                     );
                                     
                                     if (client) {
