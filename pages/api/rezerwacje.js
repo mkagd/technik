@@ -24,19 +24,26 @@ try {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL;
   const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY;
   
-  console.log('🔍 Checking Supabase config:', {
+  console.log('🔍🔍🔍 Checking Supabase config:', {
     hasUrl: !!supabaseUrl,
     hasKey: !!supabaseKey,
-    urlPreview: supabaseUrl ? supabaseUrl.substring(0, 30) + '...' : 'MISSING'
+    urlPreview: supabaseUrl ? supabaseUrl.substring(0, 50) : 'MISSING',
+    keyPreview: supabaseKey ? supabaseKey.substring(0, 20) + '...' : 'MISSING',
+    urlCheck: supabaseUrl ? !supabaseUrl.includes('twoj-projekt') : false,
+    keyCheck: supabaseKey ? !supabaseKey.includes('wtetrtvtblzkguoxfumx') : false
   });
   
   if (supabaseUrl && supabaseKey &&
     !supabaseUrl.includes('twoj-projekt') &&
     !supabaseKey.includes('wtetrtvtblzkguoxfumx')) {
     supabase = createClient(supabaseUrl, supabaseKey);
-    console.log('✅ Supabase client created successfully');
+    console.log('✅✅✅ Supabase client created successfully!');
   } else {
-    console.warn('⚠️ Supabase not configured - using fallback storage');
+    console.warn('⚠️⚠️⚠️ Supabase not configured - using fallback storage');
+    if (!supabaseUrl) console.warn('  - Missing URL');
+    if (!supabaseKey) console.warn('  - Missing KEY');
+    if (supabaseUrl && supabaseUrl.includes('twoj-projekt')) console.warn('  - URL contains placeholder');
+    if (supabaseKey && supabaseKey.includes('wtetrtvtblzkguoxfumx')) console.warn('  - KEY contains placeholder');
   }
 } catch (error) {
   console.error('❌ Supabase initialization error:', error);
