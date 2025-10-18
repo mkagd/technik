@@ -231,9 +231,14 @@ export default async function handler(req, res) {
 
     if (supabase) {
       // Użyj Supabase jeśli skonfigurowane
-      const { data: insertData, error } = await supabase.from('rezerwacje').insert([newReservation]).select();
+      // Usuń id - Supabase wygeneruje auto-increment
+      const { id: _removedId, ...reservationForSupabase } = newReservation;
+      console.log('📤 Wysyłam do Supabase (bez id):', Object.keys(reservationForSupabase));
+      
+      const { data: insertData, error } = await supabase.from('rezerwacje').insert([reservationForSupabase]).select();
       if (error) {
-        console.error('Supabase error:', error);
+        console.error('❌ Supabase error:', error);
+        console.error('❌ Supabase error details:', JSON.stringify(error, null, 2));
         // Fallback do pliku JSON
         const savedReservation = addReservation(newReservation);
         if (!savedReservation) {
@@ -244,6 +249,8 @@ export default async function handler(req, res) {
         // Zaktualizuj newReservation z danymi z Supabase (zawiera ID!)
         Object.assign(newReservation, insertData[0]);
         console.log('✅ Rezerwacja zapisana w Supabase z ID:', newReservation.id);
+      } else {
+        console.log('⚠️ Supabase nie zwrócił danych:', insertData);
       }
     } else {
       // Użyj trwałego przechowywania w pliku JSON
