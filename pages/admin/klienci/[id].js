@@ -78,15 +78,16 @@ export default function KlientDetale() {
         setKlient(data);
       } else if (response.status === 404) {
         showToast.error('Nie znaleziono klienta o ID: ' + id);
-        router.push('/admin/klienci');
+        // Użyj replace zamiast push aby uniknąć hard navigation error
+        router.replace('/admin/klienci');
       } else {
         showToast.error(data.message || 'Nie znaleziono klienta');
-        router.push('/admin/klienci');
+        router.replace('/admin/klienci');
       }
     } catch (error) {
       console.error('❌ Błąd pobierania klienta:', error);
       showToast.error('Błąd połączenia z serwerem');
-      router.push('/admin/klienci');
+      router.replace('/admin/klienci');
     } finally {
       setLoading(false);
     }
