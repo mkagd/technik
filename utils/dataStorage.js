@@ -80,7 +80,7 @@ export const deleteReservation = (id) => {
 export const updateReservation = (id, updates) => {
     try {
         const reservations = readReservations();
-        const index = reservations.findIndex(r => r.id === id);
+        const index = reservations.findIndex(r => r.id?.toString() === id?.toString());
         if (index !== -1) {
             reservations[index] = { ...reservations[index], ...updates };
             writeReservations(reservations);
@@ -92,3 +92,16 @@ export const updateReservation = (id, updates) => {
         return null;
     }
 };
+
+// Re-exporty z clientOrderStorage.js
+export {
+    convertReservationToClientOrder,
+    readClients,
+    readOrders,
+    updateOrder,
+    writeClients,
+    writeOrders,
+    addClient,
+    addOrder,
+    updateClient
+} from './clientOrderStorage';
