@@ -244,15 +244,31 @@ export default async function handler(req, res) {
       // Usuń id - Supabase wygeneruje auto-increment
       const { id: _removedId, ...reservationForSupabase } = newReservation;
       
-      console.log('�🚀🚀 === SUPABASE INSERT START ===');
-      console.log('�📤 Klucze do wysłania:', Object.keys(reservationForSupabase).join(', '));
+      // ✅ Konwersja camelCase → snake_case dla Supabase
+      const toSnakeCase = (obj) => {
+        if (Array.isArray(obj)) return obj.map(toSnakeCase);
+        if (obj !== null && typeof obj === 'object') {
+          return Object.keys(obj).reduce((result, key) => {
+            const snakeKey = key.replace(/([A-Z])/g, '_$1').toLowerCase();
+            result[snakeKey] = toSnakeCase(obj[key]);
+            return result;
+          }, {});
+        }
+        return obj;
+      };
+      
+      const snakeCaseData = toSnakeCase(reservationForSupabase);
+      
+      console.log('🚀🚀 === SUPABASE INSERT START ===');
+      console.log(' Klucze do wysłania:', Object.keys(snakeCaseData).join(', '));
       console.log('📤 Przykładowe dane:', JSON.stringify({
-        name: reservationForSupabase.name,
-        phone: reservationForSupabase.phone,
-        email: reservationForSupabase.email
+        name: snakeCaseData.name,
+        phone: snakeCaseData.phone,
+        email: snakeCaseData.email
       }));
       
-      const { data: insertData, error } = await supabase.from('rezerwacje').insert([reservationForSupabase]).select();
+      // ✅ POPRAWKA: Użyj prawidłowej nazwy tabeli 'rezerwacje'
+      const { data: insertData, error } = await supabase.from('rezerwacje').insert([snakeCaseData]).select();
       
       console.log('📥 Supabase response - error:', error ? 'YES' : 'NO');
       console.log('📥 Supabase response - data:', insertData ? `Array[${insertData.length}]` : 'NULL');
@@ -497,7 +513,7 @@ export default async function handler(req, res) {
         
         // Jeśli podano ID, pobierz pojedynczą rezerwację
         if (id) {
-          const { data, error } = await supabase.from('rezerwacje').select('*').eq('id', id).single();
+          const { data, error } = await supabase.from('reservations').select('*').eq('id', id).single();
           if (!error && data) {
             
             return res.status(200).json(data);
@@ -506,7 +522,7 @@ export default async function handler(req, res) {
           }
         } else {
           // Pobierz wszystkie rezerwacje
-          const { data, error } = await supabase.from('rezerwacje').select('*').order('date', { ascending: true });
+          const { data, error } = await supabase.from('reservations').select('*').order('date', { ascending: true });
           if (!error) {
             console.log(`✅ Loaded ${data.length} reservations from Supabase`);
             return res.status(200).json({ rezerwacje: data });
@@ -842,7 +858,7 @@ export default async function handler(req, res) {
     if (supabase) {
       try {
         const { data, error } = await supabase
-          .from('rezerwacje')
+          .from('reservations')
           .update(updateData)
           .eq('id', id)
           .select()
@@ -932,7 +948,7 @@ export default async function handler(req, res) {
     if (supabase) {
       try {
         const { error } = await supabase
-          .from('rezerwacje')
+          .from('reservations')
           .delete()
           .eq('id', id);
 
