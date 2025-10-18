@@ -1,7 +1,8 @@
 // pages/api/clients.js
-// API endpoint dla zarządzania klientami - SUPABASE
+// API endpoint dla zarządzania klientami - SUPABASE + LOCAL FALLBACK
 
 import { getServiceSupabase } from '../../lib/supabase';
+import { readClients } from '../../utils/clientOrderStorage';
 
 export default async function handler(req, res) {
     console.log(`📞 API ${req.method} /api/clients`);
@@ -19,28 +20,38 @@ export default async function handler(req, res) {
                     .eq('id', id)
                     .single();
                 
-                if (error || !client) {
-                    console.log(`❌ Client not found: ${id}`);
-                    return res.status(404).json({ message: 'Klient nie znaleziony' });
+                if (!error && client) {
+                    console.log(`✅ Returning client from Supabase: ${client.name}`);
+                    return res.status(200).json(client);
                 }
                 
-                console.log(`✅ Returning client: ${client.name}`);
-                return res.status(200).json(client);
+                // Fallback: lokalnie
+                const localClients = await readClients();
+                const localClient = localClients.find(c => c.id === id || c.id?.toString() === id?.toString());
+                if (localClient) {
+                    console.log(`✅ Returning client from local: ${localClient.name}`);
+                    return res.status(200).json(localClient);
+                }
+                
+                console.log(`❌ Client not found: ${id}`);
+                return res.status(404).json({ message: 'Klient nie znaleziony' });
             }
             
-            // Zwróć wszystkich klientów
-            const { data: clients, error } = await supabase
+            // Zwróć wszystkich klientów - Supabase + local
+            const { data: supabaseClients = [], error } = await supabase
                 .from('clients')
                 .select('*')
                 .order('created_at', { ascending: false });
             
-            if (error) {
-                console.error('❌ Error reading clients:', error);
-                return res.status(500).json({ message: 'Błąd odczytu klientów' });
-            }
+            // Dodaj lokalnych klientów którzy nie są w Supabase
+            const localClients = await readClients();
+            const supabaseIds = new Set(supabaseClients.map(c => c.id));
+            const localOnlyClients = localClients.filter(c => !supabaseIds.has(c.id));
             
-            console.log(`✅ Returning ${clients?.length || 0} clients`);
-            return res.status(200).json({ clients: clients || [] });
+            const allClients = [...supabaseClients, ...localOnlyClients];
+            
+            console.log(`✅ Returning ${allClients.length} clients (${supabaseClients.length} from Supabase, ${localOnlyClients.length} local)`);
+            return res.status(200).json({ clients: allClients });
         } catch (error) {
             console.error('❌ Error reading clients:', error);
             return res.status(500).json({ message: 'Błąd odczytu klientów' });

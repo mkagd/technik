@@ -1,5 +1,5 @@
 // pages/api/orders.js
-// API endpoint dla zarządzania zamówieniami - SUPABASE + ENHANCED v4.0 + KOMPATYBILNOŚĆ AGD MOBILE
+// API endpoint dla zarządzania zamówieniami - SUPABASE + LOCAL FALLBACK + ENHANCED v4.0 + KOMPATYBILNOŚĆ AGD MOBILE
 // ✅ Migracja do Supabase PostgreSQL
 // ✅ 100% kompatybilność z AGD Mobile (builtInParams, detectedCall, googleContactData)
 // ✅ Nowe funkcje: system wizyt, poprawne clientId (CLI), ORDA format
@@ -7,6 +7,7 @@
 // ✅ Obsługa 74 pól Enhanced v4.0
 
 import { getServiceSupabase } from '../../lib/supabase';
+import { readOrders } from '../../utils/clientOrderStorage';
 
 import { 
     generateOrderId, 
@@ -33,42 +34,53 @@ export default async function handler(req, res) {
                     .or(`id.eq.${id},order_number.eq.${id}`)
                     .single();
                 
-                if (error || !order) {
-                    return res.status(404).json({ message: 'Zamówienie nie znalezione' });
+                if (!error && order) {
+                    return res.status(200).json(order);
                 }
-                return res.status(200).json(order);
+                
+                // Fallback: lokalnie
+                const localOrders = await readOrders();
+                const localOrder = localOrders.find(o => o.id?.toString() === id?.toString() || o.order_number === id);
+                if (localOrder) {
+                    return res.status(200).json(localOrder);
+                }
+                
+                return res.status(404).json({ message: 'Zamówienie nie znalezione' });
             }
             
             // ✅ FIXED: Filtruj po clientId (dla dashboardu klienta)
             if (clientId) {
-                const { data: orders, error } = await supabase
+                const { data: supabaseOrders = [], error } = await supabase
                     .from('orders')
                     .select('*')
                     .eq('client_id', clientId);
                 
-                if (error) {
-                    console.error('Error fetching client orders:', error);
-                    return res.status(500).json({ success: false, message: 'Błąd odczytu zamówień' });
-                }
+                // Fallback: lokalnie
+                const localOrders = await readOrders();
+                const localClientOrders = localOrders.filter(o => o.client_id?.toString() === clientId?.toString() || o.clientId?.toString() === clientId?.toString());
+                
+                const allOrders = [...supabaseOrders, ...localClientOrders.filter(lo => !supabaseOrders.find(so => so.id === lo.id))];
                 
                 return res.status(200).json({ 
                     success: true,
-                    orders: orders || []
+                    orders: allOrders || []
                 });
             }
             
-            // Zwróć wszystkie zamówienia
-            const { data: orders, error } = await supabase
+            // Zwróć wszystkie zamówienia - Supabase + local
+            const { data: supabaseOrders = [], error } = await supabase
                 .from('orders')
                 .select('*')
                 .order('created_at', { ascending: false });
             
-            if (error) {
-                console.error('Error fetching orders:', error);
-                return res.status(500).json({ success: false, message: 'Błąd odczytu zamówień' });
-            }
+            // Fallback: dodaj lokalne zamówienia
+            const localOrders = await readOrders();
+            const supabaseIds = new Set(supabaseOrders.map(o => o.id));
+            const localOnlyOrders = localOrders.filter(o => !supabaseIds.has(o.id));
             
-            return res.status(200).json(orders || []);
+            const allOrders = [...supabaseOrders, ...localOnlyOrders];
+            
+            return res.status(200).json(allOrders || []);
         } catch (error) {
             console.error('Error in GET /api/orders:', error);
             return res.status(500).json({ 
