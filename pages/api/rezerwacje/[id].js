@@ -145,7 +145,11 @@ export default async function handler(req, res) {
                                     req.body.orderId = orderData.id;
                                     req.body.orderNumber = orderData.order_number || converted.order.orderNumber;
                                 } else {
-                                    console.error('❌ Błąd zapisu zlecenia do Supabase:', orderError);
+                                    console.error('❌ Błąd zapisu zlecenia do Supabase:');
+                                    console.error('  Code:', orderError?.code);
+                                    console.error('  Message:', orderError?.message);
+                                    console.error('  Details:', orderError?.details);
+                                    console.error('  Payload:', JSON.stringify(orderPayload, null, 2));
                                 }
                             } else {
                                 console.error('❌ Błąd zapisu klienta do Supabase:', clientError);
